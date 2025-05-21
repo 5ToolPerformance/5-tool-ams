@@ -19,6 +19,18 @@ export default async function Profile() {
             src: session?.user?.image || "",
           }}
         />
+        <div className="mt-4">
+          <h2 className="text-lg font-semibold">User Information</h2>
+          <p className="mt-2 text-sm text-gray-600">
+            Name: {session?.user?.name}
+          </p>
+          <p className="mt-1 text-sm text-gray-600">
+            Email: {session?.user?.email}
+          </p>
+          <p className="mt-1 text-sm text-gray-600">
+            Role: {session?.user?.role}
+          </p>
+        </div>
       </CardBody>
     </Card>
   );

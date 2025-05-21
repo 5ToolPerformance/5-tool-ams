@@ -27,14 +27,6 @@ export default function AppNavbar() {
       label: "Home",
       href: "/",
     },
-    {
-      label: "About",
-      href: "/about",
-    },
-    {
-      label: "Contact",
-      href: "/contact",
-    },
   ];
 
   if (status === "authenticated") {
@@ -53,7 +45,7 @@ export default function AppNavbar() {
         />
         <NavbarBrand>
           <IconPackage />
-          <p className="font-bold text-inherit">Next.js Starter</p>
+          <p className="font-bold text-inherit">5 Tool Performance</p>
         </NavbarBrand>
       </NavbarContent>
 

@@ -1,6 +1,6 @@
 {
-  "id": "5e85d638-21f6-4f72-928f-5087da6791a6",
-  "prevId": "00000000-0000-0000-0000-000000000000",
+  "id": "70186414-b8a0-4d37-9ff0-d8a7e946fa9f",
+  "prevId": "5e85d638-21f6-4f72-928f-5087da6791a6",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -176,6 +176,14 @@
           "type": "varchar(2048)",
           "primaryKey": false,
           "notNull": true
+        },
+        "role": {
+          "name": "role",
+          "type": "roles",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'player'"
         }
       },
       "indexes": {},
@@ -195,7 +203,17 @@
       "isRLSEnabled": false
     }
   },
-  "enums": {},
+  "enums": {
+    "public.roles": {
+      "name": "roles",
+      "schema": "public",
+      "values": [
+        "player",
+        "coach",
+        "admin"
+      ]
+    }
+  },
   "schemas": {},
   "sequences": {},
   "roles": {},

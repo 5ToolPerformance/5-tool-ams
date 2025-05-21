@@ -1,4 +1,6 @@
-import { pgTable, timestamp, uuid, varchar } from "drizzle-orm/pg-core";
+import { pgEnum, pgTable, timestamp, uuid, varchar } from "drizzle-orm/pg-core";
+
+export const rolesEnum = pgEnum("roles", ["player", "coach", "admin"]);
 
 const users = pgTable("user", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -6,6 +8,7 @@ const users = pgTable("user", {
   email: varchar("email", { length: 320 }).notNull().unique(),
   emailVerified: timestamp("emailVerified", { mode: "date" }),
   image: varchar("image", { length: 2048 }).notNull(),
+  role: rolesEnum("role").default("player"),
 });
 
 export default users;
