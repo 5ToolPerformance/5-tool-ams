@@ -1,4 +1,7 @@
+import { relations } from "drizzle-orm";
 import { pgEnum, pgTable, timestamp, uuid, varchar } from "drizzle-orm/pg-core";
+
+import playerInformation from "./playerInformation";
 
 export const rolesEnum = pgEnum("roles", ["player", "coach", "admin"]);
 
@@ -12,3 +15,10 @@ const users = pgTable("user", {
 });
 
 export default users;
+
+export const usersRelations = relations(users, ({ one }) => ({
+  playerInfo: one(playerInformation, {
+    fields: [users.id],
+    references: [playerInformation.userId],
+  }),
+}));

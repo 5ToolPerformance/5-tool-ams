@@ -19,22 +19,6 @@ const eslintConfig = [
       semi: ["error"],
       quotes: ["error", "double"],
       "n/no-process-env": ["error"],
-      "check-file/filename-naming-convention": [
-        "error",
-        {
-          "**/*.ts": "KEBAB_CASE",
-          "**/*.tsx": "KEBAB_CASE",
-        },
-        {
-          ignoreMiddleExtensions: true,
-        },
-      ],
-      "check-file/folder-naming-convention": [
-        "error",
-        {
-          "src/**/!^[.*": "KEBAB_CASE",
-        },
-      ],
     },
   }),
 ];

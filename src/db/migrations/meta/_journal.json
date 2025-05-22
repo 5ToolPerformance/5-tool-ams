@@ -15,6 +15,13 @@
       "when": 1747857076366,
       "tag": "0001_sour_dazzler",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1747925617329,
+      "tag": "0002_absent_blade",
+      "breakpoints": true
     }
   ]
 }
