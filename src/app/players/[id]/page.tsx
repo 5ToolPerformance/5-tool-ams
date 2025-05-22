@@ -4,6 +4,7 @@ import { getServerSession } from "next-auth";
 
 import LessonForm from "@/components/lesson-form/page";
 import options from "@/config/auth";
+import { formatDateOnly } from "@/lib/dates";
 import { getNotesByUserId } from "@/lib/db/notes";
 import { getPlayerInformationByUserId } from "@/lib/db/playerInformation";
 import { getUserById } from "@/lib/db/users";
@@ -58,7 +59,12 @@ export default async function PlayerPage({
         <section className="rounded-md border p-4">
           {playerNotes.map((note) => (
             <div key={note.id} className="mb-4">
-              <h3 className="text-lg font-semibold">Lesson</h3>
+              <h3 className="text-xl font-semibold">
+                {formatDateOnly(note.lessonDate)}
+              </h3>
+              <h3 className="text-lg font-light">
+                Coach: {getUserById(note.coachId).then((coach) => coach.name)}
+              </h3>
               <p>{note.notes}</p>
             </div>
           ))}
