@@ -30,6 +30,7 @@ export default async function Profile() {
           <p className="mt-1 text-sm text-gray-600">
             Role: {session?.user?.role}
           </p>
+          <p className="mt-1 text-sm text-gray-600">ID: {session?.user?.id}</p>
         </div>
       </CardBody>
     </Card>

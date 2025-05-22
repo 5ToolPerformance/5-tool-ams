@@ -1,5 +1,10 @@
 import { notFound } from "next/navigation";
 
+import { getServerSession } from "next-auth";
+
+import LessonForm from "@/components/lesson-form/page";
+import options from "@/config/auth";
+import { getNotesByUserId } from "@/lib/db/notes";
 import { getPlayerInformationByUserId } from "@/lib/db/playerInformation";
 import { getUserById } from "@/lib/db/users";
 
@@ -8,15 +13,22 @@ export default async function PlayerPage({
 }: {
   params: { id: string };
 }) {
-  const user = await getUserById(params.id);
+  const playerId = await params.id;
+  const user = await getUserById(playerId);
   if (!user) return notFound();
 
-  const playerInfo = await getPlayerInformationByUserId(params.id);
+  const playerInfo = await getPlayerInformationByUserId(playerId);
+  const playerNotes = await getNotesByUserId(playerId);
+  const session = await getServerSession(options);
 
   return (
     <div className="m-4 space-y-4 rounded-md bg-slate-600 p-6">
       <h1 className="text-2xl font-bold">{user.name}</h1>
-
+      <div>
+        {["coach", "admin"].includes(session?.user?.role ?? "") && (
+          <LessonForm playerId={playerId} />
+        )}
+      </div>
       <section className="rounded-md border p-4">
         <h2 className="text-xl font-semibold">Basic Info</h2>
         <p>
@@ -39,6 +51,17 @@ export default async function PlayerPage({
           <p>
             <strong>Height:</strong> {playerInfo.height}
           </p>
+        </section>
+      )}
+
+      {playerNotes && (
+        <section className="rounded-md border p-4">
+          {playerNotes.map((note) => (
+            <div key={note.id} className="mb-4">
+              <h3 className="text-lg font-semibold">Lesson</h3>
+              <p>{note.notes}</p>
+            </div>
+          ))}
         </section>
       )}
     </div>

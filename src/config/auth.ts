@@ -11,6 +11,9 @@ const options: NextAuthOptions = {
   pages: {
     signIn: "/",
   },
+  session: {
+    strategy: "jwt",
+  },
   adapter: DrizzleAdapter(db),
   providers: [
     GoogleProvider({
@@ -20,12 +23,18 @@ const options: NextAuthOptions = {
   ],
   callbacks: {
     jwt({ token, user }) {
-      if (user && "role" in user) token.role = user.role;
+      if (user && "role" in user) {
+        token.role = user.role;
+        token.id = user.id;
+      }
       return token;
     },
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     async session({ session, token }) {
       if (!session.user?.email) return session;
+
+      if (token?.sub && session.user) {
+        session.user.id = token.sub;
+      }
 
       const [dbUser] = await db
         .select()

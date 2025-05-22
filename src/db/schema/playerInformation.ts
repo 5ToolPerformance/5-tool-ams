@@ -13,7 +13,7 @@ export const playerInformation = pgTable("player_information", {
   position: text("position").notNull(),
   throws: text("throws").notNull(),
   hits: text("hits").notNull(),
-  expires: timestamp("expires", { mode: "date" }).notNull(),
+  date_of_birth: timestamp("date_of_birth", { mode: "date" }).notNull(),
 });
 
 export default playerInformation;

@@ -1,4 +1,5 @@
 export { default as accounts } from "./accounts";
+export { default as notes } from "./lessons";
 export {
   default as playerInformation,
   playerInformationRelations,
