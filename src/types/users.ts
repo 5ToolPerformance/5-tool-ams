@@ -1,13 +1,13 @@
 export interface Player {
-  id: string;
+  id: string | null;
   username?: string | null;
   name: string | null;
-  email: string;
-  image?: string;
-  hits?: string;
-  throws?: string;
-  positions?: string;
-  date_of_birth?: Date;
-  height?: number;
-  weight?: number;
+  email: string | null;
+  image?: string | null;
+  hits?: string | null;
+  throws?: string | null;
+  positions?: string | null;
+  date_of_birth?: Date | null;
+  height?: number | null;
+  weight?: number | null;
 }
