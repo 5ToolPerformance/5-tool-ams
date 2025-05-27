@@ -12,6 +12,7 @@ const users = pgTable("user", {
   emailVerified: timestamp("emailVerified", { mode: "date" }),
   image: varchar("image", { length: 2048 }).notNull(),
   role: rolesEnum("role").default("player"),
+  username: varchar("username", { length: 25 }).unique(),
 });
 
 export default users;

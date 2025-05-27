@@ -9,12 +9,14 @@ import { getNotesByUserId } from "@/lib/db/notes";
 import { getPlayerInformationByUserId } from "@/lib/db/playerInformation";
 import { getUserById } from "@/lib/db/users";
 
-export default async function PlayerPage({
-  params,
-}: {
-  params: { id: string };
-}) {
-  const playerId = await params.id;
+type PlayerPageProps = {
+  params: {
+    playerId: string;
+  };
+};
+
+export default async function PlayerPage({ params }: PlayerPageProps) {
+  const { playerId } = await params;
   const user = await getUserById(playerId);
   if (!user) return notFound();
 
@@ -57,6 +59,7 @@ export default async function PlayerPage({
 
       {playerNotes && (
         <section className="rounded-md border p-4">
+          <h1 className="text-2xl font-bold">Lessons</h1>
           {playerNotes.map((note) => (
             <div key={note.id} className="mb-4">
               <h3 className="text-xl font-semibold">
