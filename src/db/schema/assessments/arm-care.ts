@@ -2,7 +2,7 @@ import { pgTable, real, text, timestamp, uuid } from "drizzle-orm/pg-core";
 
 import users from "../users";
 
-export const armCare = pgTable("arm_care", {
+const armCare = pgTable("arm_care", {
   id: uuid("id").primaryKey().defaultRandom(),
   userId: uuid("userId")
     .notNull()
@@ -26,3 +26,5 @@ export const armCare = pgTable("arm_care", {
   lessonDate: timestamp("lesson_date", { mode: "date" }).notNull(),
   createdOn: timestamp("created_on", { mode: "date" }).notNull().defaultNow(),
 });
+
+export default armCare;

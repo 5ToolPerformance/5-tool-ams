@@ -50,6 +50,13 @@
       "when": 1748354603237,
       "tag": "0006_right_the_phantom",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1748367461698,
+      "tag": "0007_light_paibok",
+      "breakpoints": true
     }
   ]
 }
