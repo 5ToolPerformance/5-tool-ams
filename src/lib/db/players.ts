@@ -23,12 +23,6 @@ export const getAllPlayers = async () => {
 };
 
 export const getPlayerById = async (id: string) => {
-  console.log("Searching for user ID:", id);
-  console.log("ID length:", id.length);
-  console.log(
-    "ID format check:",
-    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id)
-  );
   const result = await db
     .select({
       id: users.id,
