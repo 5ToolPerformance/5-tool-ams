@@ -109,10 +109,13 @@ const PlayerDashboard: React.FC<PlayerDashboardProps> = ({ player }) => {
                 </Button>
               </DropdownTrigger>
               <DropdownMenu
-                selectedKeys={[selectedTab]}
+                selectedKeys={new Set([selectedTab])}
+                selectionMode="single"
                 onSelectionChange={(keys) => {
-                  const key = Array.from(keys)[0] as string;
-                  setSelectedTab(key);
+                  const selectedKeys = Array.from(keys as Set<string>);
+                  if (selectedKeys.length > 0) {
+                    setSelectedTab(selectedKeys[0]);
+                  }
                 }}
               >
                 {tabOptions.map((option) => {

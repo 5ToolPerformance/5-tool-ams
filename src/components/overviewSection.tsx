@@ -1,6 +1,8 @@
 import { Calendar, Card, CardBody } from "@heroui/react";
 import { Target, TrendingUp } from "lucide-react";
 
+import { GrowthChart } from "./charts/growth";
+
 const OverviewSection: React.FC = () => {
   return (
     <div className="space-y-6">
@@ -52,31 +54,8 @@ const OverviewSection: React.FC = () => {
       {/* Recent Activity */}
       <Card>
         <CardBody className="p-6">
-          <h3 className="mb-4 text-lg font-semibold">Recent Activity</h3>
-          <div className="space-y-3">
-            <div className="flex items-center gap-3 rounded-lg bg-content2 p-3">
-              <div className="h-2 w-2 rounded-full bg-primary"></div>
-              <div className="flex-1">
-                <p className="font-medium">
-                  Completed batting practice session
-                </p>
-                <p className="text-sm text-default-600">2 hours ago</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-3 rounded-lg bg-content2 p-3">
-              <div className="h-2 w-2 rounded-full bg-success"></div>
-              <div className="flex-1">
-                <p className="font-medium">New lesson note added</p>
-                <p className="text-sm text-default-600">1 day ago</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-3 rounded-lg bg-content2 p-3">
-              <div className="h-2 w-2 rounded-full bg-warning"></div>
-              <div className="flex-1">
-                <p className="font-medium">Workout plan updated</p>
-                <p className="text-sm text-default-600">3 days ago</p>
-              </div>
-            </div>
+          <div className="md:w-full lg:w-1/2">
+            <GrowthChart />
           </div>
         </CardBody>
       </Card>

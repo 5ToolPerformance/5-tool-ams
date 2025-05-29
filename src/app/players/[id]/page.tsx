@@ -10,10 +10,9 @@ type PlayerPageProps = {
 };
 
 export default async function PlayerPage({ params }: PlayerPageProps) {
-  const resolvedParams = params;
+  const resolvedParams = await params;
   const { id } = resolvedParams;
   const player = await getPlayerById(id);
-  console.log("Player data:", player);
   if (!player) return notFound();
 
   return <PlayerDashboard player={player} />;
