@@ -57,6 +57,13 @@
       "when": 1748367461698,
       "tag": "0007_light_paibok",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1748532739674,
+      "tag": "0008_elite_otto_octavius",
+      "breakpoints": true
     }
   ]
 }
