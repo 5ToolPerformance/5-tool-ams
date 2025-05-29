@@ -1,12 +1,18 @@
-import { Card, CardBody } from "@heroui/react";
+import { redirect } from "next/navigation";
 
-export default function CreateLessonPage() {
-  return (
-    <Card className="mx-auto mt-4 max-w-md">
-      <CardBody className="text-center">
-        <h1 className="text-5xl">Create Lesson Page</h1>
-        <p className="text-xl">Placeholder page</p>
-      </CardBody>
-    </Card>
-  );
+import { getServerSession } from "next-auth";
+
+import { LessonForm } from "@/components/lesson-form/page";
+import options from "@/config/auth";
+import requireAuth from "@/utils/require-auth";
+
+export default async function CreateLessonPage() {
+  await requireAuth();
+  const session = await getServerSession(options);
+
+  if (!session?.user) {
+    redirect("/");
+  }
+
+  return <LessonForm />;
 }

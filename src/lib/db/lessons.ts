@@ -7,7 +7,7 @@ import { desc, eq } from "drizzle-orm";
 export class LessonService {
   static async getUsers() {
     try {
-      return await db.select().from(users).where(eq(users.role, "player")).orderBy(users.name);
+      return await db.select().from(users).where(eq(users.role, "player"));
     } catch (error) {
       console.error("Error fetching users:", error);
       throw new Error("Failed to fetch users");
@@ -16,7 +16,7 @@ export class LessonService {
 
   static async getCoaches() {
     try {
-      return await db.select().from(users).where(eq(users.role, "coach")).orderBy(users.name);
+      return await db.select().from(users).where(eq(users.role, "coach"));
     } catch (error) {
       console.error("Error fetching coaches:", error);
       throw new Error("Failed to fetch coaches");
