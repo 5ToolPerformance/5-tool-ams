@@ -1,19 +1,20 @@
-import { LessonService } from "@/lib/db/lessons";
-import { CreateLessonRequest } from "@/types/lessons";
 import { NextRequest, NextResponse } from "next/server";
+
+import { LessonService } from "@/lib/services/lessons";
+import { CreateLessonRequest } from "@/types/lessons";
 
 export async function POST(request: NextRequest) {
   try {
     const body: CreateLessonRequest = await request.json();
-    
+
     // Validate the request data
     const validationErrors = LessonService.validateLessonData(body);
     if (validationErrors.length > 0) {
       return NextResponse.json(
-        { 
+        {
           success: false,
-          error: "Validation failed", 
-          details: validationErrors 
+          error: "Validation failed",
+          details: validationErrors,
         },
         { status: 400 }
       );
@@ -21,18 +22,18 @@ export async function POST(request: NextRequest) {
 
     // Create the lesson
     const lesson = await LessonService.createLesson(body);
-    
+
     return NextResponse.json({
       success: true,
       data: lesson,
-      message: "Lesson created successfully"
+      message: "Lesson created successfully",
     });
   } catch (error) {
     console.error("Error in POST /api/lessons:", error);
     return NextResponse.json(
-      { 
+      {
         success: false,
-        error: "Internal server error" 
+        error: "Internal server error",
       },
       { status: 500 }
     );
@@ -47,33 +48,33 @@ export async function GET(request: NextRequest) {
 
     if (coachId) {
       const lessons = await LessonService.getLessonsByCoach(coachId);
-      return NextResponse.json({ 
+      return NextResponse.json({
         success: true,
-        data: lessons 
+        data: lessons,
       });
     }
 
     if (userId) {
       const lessons = await LessonService.getLessonsByUser(userId);
-      return NextResponse.json({ 
+      return NextResponse.json({
         success: true,
-        data: lessons 
+        data: lessons,
       });
     }
 
     return NextResponse.json(
-      { 
+      {
         success: false,
-        error: "Either coachId or userId is required" 
+        error: "Either coachId or userId is required",
       },
       { status: 400 }
     );
   } catch (error) {
     console.error("Error in GET /api/lessons:", error);
     return NextResponse.json(
-      { 
+      {
         success: false,
-        error: "Internal server error" 
+        error: "Internal server error",
       },
       { status: 500 }
     );

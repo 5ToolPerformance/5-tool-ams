@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 
 import options from "@/config/auth";
-import { LessonService } from "@/lib/db/lessons";
+import { LessonService } from "@/lib/services/lessons";
 
 export async function GET() {
   const session = await getServerSession(options);
@@ -14,8 +14,8 @@ export async function GET() {
 
   const allPlayers = await LessonService.getUsers();
 
-  return NextResponse.json({ 
-      success: true,
-      data: allPlayers 
-    });
+  return NextResponse.json({
+    success: true,
+    data: allPlayers,
+  });
 }

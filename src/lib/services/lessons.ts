@@ -1,9 +1,13 @@
+import { desc, eq } from "drizzle-orm";
+
 import db from "@/db";
 import lesson from "@/db/schema/lesson";
 import users from "@/db/schema/users";
 import { CreateLessonRequest, LessonType } from "@/types/lessons";
-import { desc, eq } from "drizzle-orm";
 
+/**
+ * Service for managing lessons in the database.
+ */
 export class LessonService {
   static async getUsers() {
     try {
@@ -23,6 +27,11 @@ export class LessonService {
     }
   }
 
+  /**
+   * Create a new lesson in the database.
+   * @param data - Data for creating a new lesson
+   * @returns The newly created lesson object
+   */
   static async createLesson(data: CreateLessonRequest) {
     try {
       const [newLesson] = await db
@@ -43,6 +52,12 @@ export class LessonService {
     }
   }
 
+  /**
+   * Fetch a lesson by its unique ID in the database.
+   * @param id - The ID of the lesson to fetch
+   * @returns The lesson object with player and coach data, or null if not found
+   * @throws Error if there is an error with the database query
+   */
   static async getLessonById(id: string) {
     try {
       // Get the lesson
@@ -59,7 +74,7 @@ export class LessonService {
       const foundLesson = lessonData[0];
 
       // Get user (player) data
-      const userData = await db
+      const playerData = await db
         .select()
         .from(users)
         .where(eq(users.id, foundLesson.userId))
@@ -74,7 +89,7 @@ export class LessonService {
 
       return {
         ...foundLesson,
-        user: userData[0] || null,
+        user: playerData[0] || null,
         coach: coachData[0] || null,
       };
     } catch (error) {
@@ -83,6 +98,12 @@ export class LessonService {
     }
   }
 
+  /**
+   * Fetch all lessons in the database.
+   * @param userId - The ID of the user to fetch lessons for
+   * @returns An array of all lessons with player and coach data
+   * @throws Error if there is an error with the database query
+   */
   static async getLessonsByUser(userId: string) {
     try {
       // Get lessons for the user
@@ -162,7 +183,12 @@ export class LessonService {
       errors.push("Lesson type is required");
     }
 
-    const validTypes: LessonType[] = ["strength", "hitting", "pithing", "fielding"];
+    const validTypes: LessonType[] = [
+      "strength",
+      "hitting",
+      "pithing",
+      "fielding",
+    ];
     if (data.type && !validTypes.includes(data.type)) {
       errors.push("Invalid lesson type");
     }
@@ -193,11 +219,18 @@ export class LessonService {
     }
   }
 
+  /**
+   * Update an existing lesson in the database.
+   * @param id - The is of the lesson to update
+   * @param data - The data to update the lesson with
+   * @returns The updated lesson object
+   * @throws Error if there is an error with the database query
+   */
   static async updateLesson(id: string, data: Partial<CreateLessonRequest>) {
     try {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const updateData: any = {};
-      
+
       if (data.userId) updateData.userId = data.userId;
       if (data.coachId) updateData.coachId = data.coachId;
       if (data.type) updateData.type = data.type;
@@ -218,6 +251,12 @@ export class LessonService {
   }
 
   // Alternative method using joins for better performance
+  /**
+   * Fetch lessons for a specific coach with user data using joins.
+   * @param coachId - The ID of the coach to fetch lessons for
+   * @returns the lessons with user data for the specified coach
+   * @throws Error if there is an error with the database query
+   */
   static async getLessonsByCoachWithJoin(coachId: string) {
     try {
       return await db
@@ -235,7 +274,13 @@ export class LessonService {
     }
   }
 
-  static async getLessonsByUserWithJoin(userId: string) {
+  /**
+   * Fetch lessons for a specific player with user data using joins.
+   * @param coachId - The ID of the coach to fetch lessons for
+   * @returns the lessons with user data for the specified coach
+   * @throws Error if there is an error with the database query
+   */
+  static async getLessonsByPlayerWithJoin(userId: string) {
     try {
       return await db
         .select({
