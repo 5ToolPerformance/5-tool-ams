@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 
 import options from "@/config/auth";
-import { LessonService } from "@/lib/services/lessons";
+import { UserService } from "@/lib/services/users";
 
 export async function GET() {
   const session = await getServerSession(options);
@@ -12,7 +12,7 @@ export async function GET() {
     return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
   }
 
-  const allPlayers = await LessonService.getUsers();
+  const allPlayers = await UserService.getAllPlayers();
 
   return NextResponse.json({
     success: true,
