@@ -18,7 +18,7 @@ export async function GET(
     }
 
     // Get lessons for the player
-    const lessons = await LessonService.getLessonsByPlayerWithJoin(id);
+    const lessons = await LessonService.getLessonsByCoachWithJoin(id);
 
     return NextResponse.json({ lessons });
   } catch (error) {

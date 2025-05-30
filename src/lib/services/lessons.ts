@@ -262,7 +262,7 @@ export class LessonService {
       return await db
         .select({
           lesson: lesson,
-          user: users,
+          player: users,
         })
         .from(lesson)
         .innerJoin(users, eq(lesson.userId, users.id))
