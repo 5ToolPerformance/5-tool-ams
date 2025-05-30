@@ -1,19 +1,27 @@
-import { Card, CardBody } from "@heroui/react";
-
-import { LESSON_TYPES } from "@/types/lessons";
+import { Card, CardBody, Chip } from "@heroui/react";
 
 export interface LessonData {
-  id: string;
-  date: string;
-  type: string;
-  notes: string;
-  armCare?: string;
-  smfa?: string;
-  hawkinsForce?: string;
-  totalStrength?: string;
+  lesson: {
+    id: string;
+    userId: string;
+    coachId: string;
+    type: string;
+    armCare?: string;
+    smfa?: string;
+    hawkinsForce?: string;
+    trueStrength?: string;
+    notes: string;
+    createdOn: string;
+    lessonDate: string;
+  };
   coach: {
-    id: number;
+    id: string;
     name: string;
+    email: string;
+    emailVerified: string | null;
+    image: string;
+    role: string;
+    username: string | null;
   };
 }
 
@@ -32,7 +40,10 @@ const LessonCard: React.FC<LessonCardProps> = ({ lesson }) => {
     });
   };
 
-  const lessonType = LESSON_TYPES.find((type) => type.value === lesson.type);
+  // Generate a title from the lesson type
+  const generateTitle = (type: string) => {
+    return `${type.charAt(0).toUpperCase() + type.slice(1)} Training`;
+  };
 
   return (
     <Card>
@@ -40,24 +51,22 @@ const LessonCard: React.FC<LessonCardProps> = ({ lesson }) => {
         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div className="flex-1">
             <div className="mb-2 flex items-center gap-2">
-              <h3 className="text-lg font-semibold">{lessonType?.label}</h3>
+              <h3 className="text-lg font-semibold">
+                {generateTitle(lesson.lesson.type)}
+              </h3>
               <span className="text-sm text-default-500">
-                • {formatDate(lesson.date)}
+                • {formatDate(lesson.lesson.lessonDate)}
               </span>
             </div>
             <p className="mb-3 text-sm text-primary">
-              with Coach {lesson.coach.name}
+              with {lesson.coach.name}
             </p>
-            <p className="mb-4 text-default-700">{lesson.notes}</p>
-            {/*{lesson.skills && lesson.skills.length > 0 && (
-              <div className="flex flex-wrap gap-2">
-                {lesson.skills.map((skill, index) => (
-                  <Chip key={index} size="sm" variant="flat" color="secondary">
-                    {skill}
-                  </Chip>
-                ))}
-              </div>
-            )}*/}
+            <p className="mb-4 text-default-700">{lesson.lesson.notes}</p>
+            <div className="flex flex-wrap gap-2">
+              <Chip size="sm" variant="flat" color="secondary">
+                {lesson.lesson.type}
+              </Chip>
+            </div>
           </div>
         </div>
       </CardBody>

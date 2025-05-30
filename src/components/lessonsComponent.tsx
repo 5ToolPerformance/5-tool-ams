@@ -6,7 +6,7 @@ import LessonCard, { LessonData } from "@/components/lessons/lessonCard";
 import { LESSON_TYPES } from "@/types/lessons";
 
 interface LessonsSectionProps {
-  playerId: string | number | null;
+  playerId: string | number;
 }
 
 const LessonsSection: React.FC<LessonsSectionProps> = ({ playerId }) => {
@@ -28,7 +28,8 @@ const LessonsSection: React.FC<LessonsSectionProps> = ({ playerId }) => {
         }
 
         const data = await response.json();
-        setLessons(data);
+        // Extract the lessons array from the response object
+        setLessons(data.lessons || []);
       } catch (err) {
         setError(err instanceof Error ? err.message : "An error occurred");
         console.error("Error fetching lessons:", err);
@@ -42,17 +43,22 @@ const LessonsSection: React.FC<LessonsSectionProps> = ({ playerId }) => {
     }
   }, [playerId]);
 
+  // Get unique lesson types for filter options
   const availableLessonTypes = useMemo(() => {
+    // Ensure lessons is an array before filtering
     if (!Array.isArray(lessons) || lessons.length === 0) {
       return [];
     }
 
+    // Filter LESSON_TYPES to only show types that actually exist in the current lessons
     return LESSON_TYPES.filter((type) =>
-      lessons.some((lesson) => lesson.type === type.value)
+      lessons.some((lessonItem) => lessonItem.lesson.type === type.value)
     );
   }, [lessons]);
 
+  // Filter lessons based on selected filter
   const filteredLessons = useMemo(() => {
+    // Ensure lessons is an array before filtering
     if (!Array.isArray(lessons)) {
       return [];
     }
@@ -60,7 +66,9 @@ const LessonsSection: React.FC<LessonsSectionProps> = ({ playerId }) => {
     if (selectedFilter === "all") {
       return lessons;
     }
-    return lessons.filter((lesson) => lesson.type === selectedFilter);
+    return lessons.filter(
+      (lessonItem) => lessonItem.lesson.type === selectedFilter
+    );
   }, [lessons, selectedFilter]);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -156,8 +164,8 @@ const LessonsSection: React.FC<LessonsSectionProps> = ({ playerId }) => {
           </p>
         </div>
       ) : (
-        filteredLessons.map((lesson) => (
-          <LessonCard key={lesson.id} lesson={lesson} />
+        filteredLessons.map((lessonItem) => (
+          <LessonCard key={lessonItem.lesson.id} lesson={lessonItem} />
         ))
       )}
     </div>
