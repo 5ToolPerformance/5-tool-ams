@@ -38,7 +38,7 @@ const PlayerDashboard: React.FC<PlayerDashboardProps> = ({ player }) => {
       case "overview":
         return <OverviewSection />;
       case "lessons":
-        return <LessonsSection />;
+        return <LessonsSection playerId={player.id} />;
       case "plans":
         return <PlansSection />;
       default:

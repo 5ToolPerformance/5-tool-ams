@@ -1,76 +1,167 @@
-import { Card, CardBody, Chip } from "@heroui/react";
+import { useEffect, useMemo, useState } from "react";
 
-const LessonsSection: React.FC = () => {
-  const lessons = [
-    {
-      id: 1,
-      date: "2024-05-25",
-      title: "Batting Stance Improvement",
-      coach: "Coach Martinez",
-      notes:
-        "Great progress on stance alignment. Focus on keeping shoulders square and maintaining balance through the swing.",
-      skills: ["Batting", "Stance", "Balance"],
-    },
-    {
-      id: 2,
-      date: "2024-05-22",
-      title: "Fielding Fundamentals",
-      coach: "Coach Johnson",
-      notes:
-        "Worked on glove positioning and footwork. Remember to stay low and move your feet to the ball.",
-      skills: ["Fielding", "Footwork", "Glove Work"],
-    },
-    {
-      id: 3,
-      date: "2024-05-20",
-      title: "Base Running Technique",
-      coach: "Coach Williams",
-      notes:
-        "Excellent improvement in first step quickness. Continue working on reading the pitcher's moves.",
-      skills: ["Base Running", "Speed", "Game Awareness"],
-    },
-  ];
+import { Button, Select, SelectItem } from "@heroui/react";
+
+import LessonCard, { LessonData } from "@/components/lessons/lessonCard";
+import { LESSON_TYPES } from "@/types/lessons";
+
+interface LessonsSectionProps {
+  playerId: string | number | null;
+}
+
+const LessonsSection: React.FC<LessonsSectionProps> = ({ playerId }) => {
+  const [lessons, setLessons] = useState<LessonData[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [selectedFilter, setSelectedFilter] = useState<string>("all");
+
+  useEffect(() => {
+    const fetchLessons = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        const response = await fetch(`/api/players/${playerId}/lessons`);
+
+        if (!response.ok) {
+          throw new Error(`Failed to fetch lessons: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        setLessons(data);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "An error occurred");
+        console.error("Error fetching lessons:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (playerId) {
+      fetchLessons();
+    }
+  }, [playerId]);
+
+  const availableLessonTypes = useMemo(() => {
+    if (!Array.isArray(lessons) || lessons.length === 0) {
+      return [];
+    }
+
+    return LESSON_TYPES.filter((type) =>
+      lessons.some((lesson) => lesson.type === type.value)
+    );
+  }, [lessons]);
+
+  const filteredLessons = useMemo(() => {
+    if (!Array.isArray(lessons)) {
+      return [];
+    }
+
+    if (selectedFilter === "all") {
+      return lessons;
+    }
+    return lessons.filter((lesson) => lesson.type === selectedFilter);
+  }, [lessons, selectedFilter]);
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const handleFilterChange = (keys: any) => {
+    setSelectedFilter(Array.from(keys)[0] as string);
+  };
+
+  const clearFilter = () => {
+    setSelectedFilter("all");
+  };
+
+  if (loading) {
+    return (
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <h2 className="text-xl font-semibold">Lesson Notes</h2>
+        </div>
+        <div className="flex items-center justify-center py-8">
+          <p className="text-default-500">Loading lessons...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <h2 className="text-xl font-semibold">Lesson Notes</h2>
+        </div>
+        <div className="flex items-center justify-center py-8">
+          <p className="text-danger">Error loading lessons: {error}</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <h2 className="text-xl font-semibold">Lesson Notes</h2>
+
+        {availableLessonTypes.length > 0 && (
+          <div className="flex items-center gap-2">
+            <Select
+              size="sm"
+              placeholder="Filter by type"
+              className="w-48"
+              selectedKeys={[selectedFilter]}
+              onSelectionChange={handleFilterChange}
+            >
+              <>
+                <SelectItem key="all">All Types</SelectItem>
+                {availableLessonTypes.map((type) => (
+                  <SelectItem key={type.value}>{type.label}</SelectItem>
+                ))}
+              </>
+            </Select>
+
+            {selectedFilter !== "all" && (
+              <Button
+                size="sm"
+                variant="light"
+                onPress={clearFilter}
+                className="text-default-500"
+              >
+                Clear
+              </Button>
+            )}
+          </div>
+        )}
+      </div>
+
+      <div className="flex items-center justify-between">
         <p className="text-sm text-default-600">
-          {lessons.length} total lessons
+          {selectedFilter === "all"
+            ? `${lessons.length} total lesson${lessons.length !== 1 ? "s" : ""}`
+            : `${filteredLessons.length} of ${lessons.length} lessons`}
+          {selectedFilter !== "all" && (
+            <span className="ml-1 text-primary">
+              (filtered by {selectedFilter})
+            </span>
+          )}
         </p>
       </div>
 
-      {lessons.map((lesson) => (
-        <Card key={lesson.id}>
-          <CardBody className="p-6">
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-              <div className="flex-1">
-                <div className="mb-2 flex items-center gap-2">
-                  <h3 className="text-lg font-semibold">{lesson.title}</h3>
-                  <span className="text-sm text-default-500">
-                    • {lesson.date}
-                  </span>
-                </div>
-                <p className="mb-3 text-sm text-primary">with {lesson.coach}</p>
-                <p className="mb-4 text-default-700">{lesson.notes}</p>
-                <div className="flex flex-wrap gap-2">
-                  {lesson.skills.map((skill, index) => (
-                    <Chip
-                      key={index}
-                      size="sm"
-                      variant="flat"
-                      color="secondary"
-                    >
-                      {skill}
-                    </Chip>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </CardBody>
-        </Card>
-      ))}
+      {filteredLessons.length === 0 ? (
+        <div className="flex items-center justify-center py-8">
+          <p className="text-default-500">
+            {selectedFilter === "all"
+              ? "No lessons found for this player."
+              : `No ${selectedFilter} lessons found for this player.`}
+          </p>
+        </div>
+      ) : (
+        filteredLessons.map((lesson) => (
+          <LessonCard key={lesson.id} lesson={lesson} />
+        ))
+      )}
     </div>
   );
 };
+
 export default LessonsSection;
