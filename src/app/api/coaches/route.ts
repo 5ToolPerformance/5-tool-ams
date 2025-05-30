@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
 
-import { LessonService } from "@/lib/services/lessons";
+import { UserService } from "@/lib/services/users";
 
 export async function GET() {
   try {
-    const coaches = await LessonService.getCoaches();
+    const coaches = await UserService.getAllCoaches();
     console.log("Coaches retrieved successfully:", coaches);
     return NextResponse.json({
       success: true,

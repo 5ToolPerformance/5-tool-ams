@@ -18,9 +18,9 @@ export async function GET(
     }
 
     // Get lessons for the player
-    const player = await UserService.getUserById(id);
+    const coach = await UserService.getUserById(id);
 
-    return NextResponse.json({ player });
+    return NextResponse.json({ coach });
   } catch (error) {
     console.error("Error fetching player by id:", error);
 

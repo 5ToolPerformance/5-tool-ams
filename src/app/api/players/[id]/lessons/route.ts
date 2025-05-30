@@ -1,6 +1,8 @@
+// app/api/players/[id]/lessons/route.ts
+// Adjust path as needed
 import { NextRequest, NextResponse } from "next/server";
 
-import { UserService } from "@/lib/services/users";
+import { LessonService } from "@/lib/services/lessons";
 
 export async function GET(
   request: NextRequest,
@@ -18,14 +20,14 @@ export async function GET(
     }
 
     // Get lessons for the player
-    const player = await UserService.getUserById(id);
+    const lessons = await LessonService.getLessonsByPlayerWithJoin(id);
 
-    return NextResponse.json({ player });
+    return NextResponse.json({ lessons });
   } catch (error) {
-    console.error("Error fetching player by id:", error);
+    console.error("Error fetching lessons for player:", error);
 
     return NextResponse.json(
-      { error: "Failed to fetch player" },
+      { error: "Failed to fetch lessons" },
       { status: 500 }
     );
   }
