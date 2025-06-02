@@ -2,11 +2,11 @@
 export const LESSON_TYPES = [
   { value: "strength", label: "Strength Training" },
   { value: "hitting", label: "Hitting Practice" },
-  { value: "pithing", label: "Pitching Training" },
+  { value: "pitching", label: "Pitching Training" },
   { value: "fielding", label: "Fielding Practice" },
 ] as const;
 
-export type LessonType = "strength" | "hitting" | "pithing" | "fielding";
+export type LessonType = "strength" | "hitting" | "pitching" | "fielding";
 
 // Form data interface
 export interface LessonFormData {

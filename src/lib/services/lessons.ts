@@ -186,7 +186,7 @@ export class LessonService {
     const validTypes: LessonType[] = [
       "strength",
       "hitting",
-      "pithing",
+      "pitching",
       "fielding",
     ];
     if (data.type && !validTypes.includes(data.type)) {

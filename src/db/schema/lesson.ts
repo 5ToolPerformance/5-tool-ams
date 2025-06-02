@@ -9,7 +9,7 @@ import users from "./users";
 export const lessonTypes = pgEnum("lesson_types", [
   "strength",
   "hitting",
-  "pithing",
+  "pitching",
   "fielding",
 ]);
 
