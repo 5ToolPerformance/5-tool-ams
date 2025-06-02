@@ -143,7 +143,7 @@ export const LessonForm: React.FC = () => {
   }
 
   return (
-    <div className="mx-auto max-w-2xl space-y-6 p-6">
+    <div className="mx-auto space-y-6 p-6">
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold">Create New Lesson</h1>
         <Button variant="light" onPress={() => router.back()}>

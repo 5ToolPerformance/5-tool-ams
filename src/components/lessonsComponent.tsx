@@ -6,7 +6,7 @@ import LessonCard, { LessonData } from "@/components/lessons/lessonCard";
 import { LESSON_TYPES } from "@/types/lessons";
 
 interface LessonsSectionProps {
-  playerId: string | number;
+  playerId: string | number | null;
 }
 
 const LessonsSection: React.FC<LessonsSectionProps> = ({ playerId }) => {
