@@ -36,13 +36,13 @@ const PlayerDashboard: React.FC<PlayerDashboardProps> = ({ player }) => {
   const renderContent = () => {
     switch (selectedTab) {
       case "overview":
-        return <OverviewSection />;
+        return <OverviewSection playerId={player.id} />;
       case "lessons":
         return <LessonsSection playerId={player.id} />;
       case "plans":
         return <PlansSection />;
       default:
-        return <OverviewSection />;
+        return <OverviewSection playerId={player.id} />;
     }
   };
 

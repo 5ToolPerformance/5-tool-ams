@@ -134,6 +134,35 @@ const StrengthAssessmentForms = () => {
     </div>
   );
 
+  const ArmCareForm = () => (
+    <div className="rounded-lg border border-blue-200 bg-blue-50 p-6">
+      <h3 className="mb-4 text-lg font-semibold text-blue-900">
+        ArmCare Assessment
+      </h3>
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+        <form.Field name="strengthAssessment.maxSquat">
+          {(field) => (
+            <div>
+              <label className="block text-sm font-medium leading-6 text-gray-900">
+                Max Squat (lbs)
+              </label>
+              <div className="mt-2">
+                <input
+                  type="number"
+                  step="0.01"
+                  value={field.state.value || ""}
+                  onChange={(e) => field.handleChange(e.target.value)}
+                  className="block w-full rounded-md border-0 px-3 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  placeholder="275.00"
+                />
+              </div>
+            </div>
+          )}
+        </form.Field>
+      </div>
+    </div>
+  );
+
   const ForcePlateAssessmentForm = () => (
     <div className="rounded-lg border border-green-200 bg-green-50 p-6">
       <h3 className="mb-4 text-lg font-semibold text-green-900">
