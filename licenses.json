@@ -1,0 +1,936 @@
+{
+  "@auth/drizzle-adapter@1.9.1": {
+    "licenses": "ISC",
+    "repository": "https://github.com/nextauthjs/next-auth",
+    "publisher": "Anthony Shew",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/@auth/drizzle-adapter",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/@auth/drizzle-adapter/LICENSE"
+  },
+  "@eslint/eslintrc@3.3.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/eslint/eslintrc",
+    "publisher": "Nicholas C. Zakas",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/@eslint/eslintrc",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/@eslint/eslintrc/LICENSE"
+  },
+  "@eslint/js@9.28.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/eslint/eslint",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/@eslint/js",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/@eslint/js/LICENSE"
+  },
+  "@heroui/accordion@2.2.17": {
+    "licenses": "MIT",
+    "repository": "https://github.com/heroui-inc/heroui",
+    "publisher": "HeroUI",
+    "email": "support@heroui.com",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/@heroui/accordion",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/@heroui/accordion/LICENSE"
+  },
+  "@heroui/alert@2.2.20": {
+    "licenses": "MIT",
+    "repository": "https://github.com/heroui-inc/heroui",
+    "publisher": "HeroUI",
+    "email": "support@heroui.com",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/@heroui/alert",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/@heroui/alert/LICENSE"
+  },
+  "@heroui/aria-utils@2.2.17": {
+    "licenses": "MIT",
+    "repository": "https://github.com/heroui-inc/heroui",
+    "publisher": "HeroUI",
+    "email": "support@heroui.com",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/@heroui/aria-utils",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/@heroui/aria-utils/LICENSE"
+  },
+  "@heroui/autocomplete@2.3.21": {
+    "licenses": "MIT",
+    "repository": "https://github.com/heroui-inc/heroui",
+    "publisher": "HeroUI",
+    "email": "support@heroui.com",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/@heroui/autocomplete",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/@heroui/autocomplete/LICENSE"
+  },
+  "@heroui/avatar@2.2.16": {
+    "licenses": "MIT",
+    "repository": "https://github.com/heroui-inc/heroui",
+    "publisher": "HeroUI",
+    "email": "support@heroui.com",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/@heroui/avatar",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/@heroui/avatar/LICENSE"
+  },
+  "@heroui/badge@2.2.12": {
+    "licenses": "MIT",
+    "repository": "https://github.com/heroui-inc/heroui",
+    "publisher": "HeroUI",
+    "email": "support@heroui.com",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/@heroui/badge",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/@heroui/badge/LICENSE"
+  },
+  "@heroui/breadcrumbs@2.2.16": {
+    "licenses": "MIT",
+    "repository": "https://github.com/heroui-inc/heroui",
+    "publisher": "HeroUI",
+    "email": "support@heroui.com",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/@heroui/breadcrumbs",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/@heroui/breadcrumbs/LICENSE"
+  },
+  "@heroui/button@2.2.20": {
+    "licenses": "MIT",
+    "repository": "https://github.com/heroui-inc/heroui",
+    "publisher": "HeroUI",
+    "email": "support@heroui.com",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/@heroui/button",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/@heroui/button/LICENSE"
+  },
+  "@heroui/calendar@2.2.20": {
+    "licenses": "MIT",
+    "repository": "https://github.com/heroui-inc/heroui",
+    "publisher": "HeroUI",
+    "email": "support@heroui.com",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/@heroui/calendar",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/@heroui/calendar/LICENSE"
+  },
+  "@heroui/card@2.2.19": {
+    "licenses": "MIT",
+    "repository": "https://github.com/heroui-inc/heroui",
+    "publisher": "HeroUI",
+    "email": "support@heroui.com",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/@heroui/card",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/@heroui/card/LICENSE"
+  },
+  "@heroui/checkbox@2.3.19": {
+    "licenses": "MIT",
+    "repository": "https://github.com/heroui-inc/heroui",
+    "publisher": "HeroUI",
+    "email": "support@heroui.com",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/@heroui/checkbox",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/@heroui/checkbox/LICENSE"
+  },
+  "@heroui/chip@2.2.16": {
+    "licenses": "MIT",
+    "repository": "https://github.com/heroui-inc/heroui",
+    "publisher": "HeroUI",
+    "email": "support@heroui.com",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/@heroui/chip",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/@heroui/chip/LICENSE"
+  },
+  "@heroui/code@2.2.15": {
+    "licenses": "MIT",
+    "repository": "https://github.com/heroui-inc/heroui",
+    "publisher": "HeroUI",
+    "email": "support@heroui.com",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/@heroui/code",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/@heroui/code/LICENSE"
+  },
+  "@heroui/date-input@2.3.19": {
+    "licenses": "MIT",
+    "repository": "https://github.com/heroui-inc/heroui",
+    "publisher": "HeroUI",
+    "email": "support@heroui.com",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/@heroui/date-input",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/@heroui/date-input/LICENSE"
+  },
+  "@heroui/date-picker@2.3.20": {
+    "licenses": "MIT",
+    "repository": "https://github.com/heroui-inc/heroui",
+    "publisher": "HeroUI",
+    "email": "support@heroui.com",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/@heroui/date-picker",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/@heroui/date-picker/LICENSE"
+  },
+  "@heroui/divider@2.2.14": {
+    "licenses": "MIT",
+    "repository": "https://github.com/heroui-inc/heroui",
+    "publisher": "HeroUI",
+    "email": "support@heroui.com",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/@heroui/divider",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/@heroui/divider/LICENSE"
+  },
+  "@heroui/dom-animation@2.1.9": {
+    "licenses": "MIT",
+    "repository": "https://github.com/heroui-inc/heroui",
+    "publisher": "HeroUI",
+    "email": "support@heroui.com",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/@heroui/dom-animation",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/@heroui/dom-animation/LICENSE"
+  },
+  "@heroui/drawer@2.2.17": {
+    "licenses": "MIT",
+    "repository": "https://github.com/heroui-inc/heroui",
+    "publisher": "HeroUI",
+    "email": "support@heroui.com",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/@heroui/drawer",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/@heroui/drawer/LICENSE"
+  },
+  "@heroui/dropdown@2.3.20": {
+    "licenses": "MIT",
+    "repository": "https://github.com/heroui-inc/heroui",
+    "publisher": "HeroUI",
+    "email": "support@heroui.com",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/@heroui/dropdown",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/@heroui/dropdown/LICENSE"
+  },
+  "@heroui/form@2.1.19": {
+    "licenses": "MIT",
+    "repository": "https://github.com/heroui-inc/heroui",
+    "publisher": "HeroUI",
+    "email": "support@heroui.com",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/@heroui/form",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/@heroui/form/LICENSE"
+  },
+  "@heroui/framer-utils@2.1.16": {
+    "licenses": "MIT",
+    "repository": "https://github.com/heroui-inc/heroui",
+    "publisher": "HeroUI",
+    "email": "support@heroui.com",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/@heroui/framer-utils",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/@heroui/framer-utils/LICENSE"
+  },
+  "@heroui/image@2.2.12": {
+    "licenses": "MIT",
+    "repository": "https://github.com/heroui-inc/heroui",
+    "publisher": "HeroUI",
+    "email": "support@heroui.com",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/@heroui/image",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/@heroui/image/LICENSE"
+  },
+  "@heroui/input-otp@2.1.19": {
+    "licenses": "MIT",
+    "repository": "https://github.com/heroui-inc/heroui",
+    "publisher": "HeroUI",
+    "email": "support@heroui.com",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/@heroui/input-otp",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/@heroui/input-otp/LICENSE"
+  },
+  "@heroui/input@2.4.20": {
+    "licenses": "MIT",
+    "repository": "https://github.com/heroui-inc/heroui",
+    "publisher": "HeroUI",
+    "email": "support@heroui.com",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/@heroui/input",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/@heroui/input/LICENSE"
+  },
+  "@heroui/kbd@2.2.16": {
+    "licenses": "MIT",
+    "repository": "https://github.com/heroui-inc/heroui",
+    "publisher": "HeroUI",
+    "email": "support@heroui.com",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/@heroui/kbd",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/@heroui/kbd/LICENSE"
+  },
+  "@heroui/link@2.2.17": {
+    "licenses": "MIT",
+    "repository": "https://github.com/heroui-inc/heroui",
+    "publisher": "HeroUI",
+    "email": "support@heroui.com",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/@heroui/link",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/@heroui/link/LICENSE"
+  },
+  "@heroui/listbox@2.3.19": {
+    "licenses": "MIT",
+    "repository": "https://github.com/heroui-inc/heroui",
+    "publisher": "HeroUI",
+    "email": "support@heroui.com",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/@heroui/listbox",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/@heroui/listbox/LICENSE"
+  },
+  "@heroui/menu@2.2.19": {
+    "licenses": "MIT",
+    "repository": "https://github.com/heroui-inc/heroui",
+    "publisher": "HeroUI",
+    "email": "support@heroui.com",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/@heroui/menu",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/@heroui/menu/LICENSE"
+  },
+  "@heroui/modal@2.2.17": {
+    "licenses": "MIT",
+    "repository": "https://github.com/heroui-inc/heroui",
+    "publisher": "HeroUI",
+    "email": "support@heroui.com",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/@heroui/modal",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/@heroui/modal/LICENSE"
+  },
+  "@heroui/navbar@2.2.18": {
+    "licenses": "MIT",
+    "repository": "https://github.com/heroui-inc/heroui",
+    "publisher": "HeroUI",
+    "email": "support@heroui.com",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/@heroui/navbar",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/@heroui/navbar/LICENSE"
+  },
+  "@heroui/number-input@2.0.10": {
+    "licenses": "MIT",
+    "repository": "https://github.com/heroui-inc/heroui",
+    "publisher": "HeroUI",
+    "email": "support@heroui.com",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/@heroui/number-input",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/@heroui/number-input/LICENSE"
+  },
+  "@heroui/pagination@2.2.18": {
+    "licenses": "MIT",
+    "repository": "https://github.com/heroui-inc/heroui",
+    "publisher": "HeroUI",
+    "email": "support@heroui.com",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/@heroui/pagination",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/@heroui/pagination/LICENSE"
+  },
+  "@heroui/popover@2.3.20": {
+    "licenses": "MIT",
+    "repository": "https://github.com/heroui-inc/heroui",
+    "publisher": "HeroUI",
+    "email": "support@heroui.com",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/@heroui/popover",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/@heroui/popover/LICENSE"
+  },
+  "@heroui/progress@2.2.16": {
+    "licenses": "MIT",
+    "repository": "https://github.com/heroui-inc/heroui",
+    "publisher": "HeroUI",
+    "email": "support@heroui.com",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/@heroui/progress",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/@heroui/progress/LICENSE"
+  },
+  "@heroui/radio@2.3.19": {
+    "licenses": "MIT",
+    "repository": "https://github.com/heroui-inc/heroui",
+    "publisher": "HeroUI",
+    "email": "support@heroui.com",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/@heroui/radio",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/@heroui/radio/LICENSE"
+  },
+  "@heroui/react-rsc-utils@2.1.7": {
+    "licenses": "MIT",
+    "repository": "https://github.com/heroui-inc/heroui",
+    "publisher": "HeroUI",
+    "email": "support@heroui.com",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/@heroui/react-rsc-utils",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/@heroui/react-rsc-utils/LICENSE"
+  },
+  "@heroui/react-utils@2.1.10": {
+    "licenses": "MIT",
+    "repository": "https://github.com/heroui-inc/heroui",
+    "publisher": "HeroUI",
+    "email": "support@heroui.com",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/@heroui/react-utils",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/@heroui/react-utils/LICENSE"
+  },
+  "@heroui/react@2.7.9": {
+    "licenses": "MIT",
+    "repository": "https://github.com/heroui-inc/heroui",
+    "publisher": "HeroUI",
+    "email": "support@heroui.com",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/@heroui/react",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/@heroui/react/LICENSE"
+  },
+  "@heroui/ripple@2.2.15": {
+    "licenses": "MIT",
+    "repository": "https://github.com/heroui-inc/heroui",
+    "publisher": "HeroUI",
+    "email": "support@heroui.com",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/@heroui/ripple",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/@heroui/ripple/LICENSE"
+  },
+  "@heroui/scroll-shadow@2.3.13": {
+    "licenses": "MIT",
+    "repository": "https://github.com/heroui-inc/heroui",
+    "publisher": "HeroUI",
+    "email": "support@heroui.com",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/@heroui/scroll-shadow",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/@heroui/scroll-shadow/LICENSE"
+  },
+  "@heroui/select@2.4.20": {
+    "licenses": "MIT",
+    "repository": "https://github.com/heroui-inc/heroui",
+    "publisher": "HeroUI",
+    "email": "support@heroui.com",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/@heroui/select",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/@heroui/select/LICENSE"
+  },
+  "@heroui/shared-icons@2.1.8": {
+    "licenses": "MIT",
+    "repository": "https://github.com/heroui-inc/heroui",
+    "publisher": "HeroUI",
+    "email": "support@heroui.com",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/@heroui/shared-icons",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/@heroui/shared-icons/LICENSE"
+  },
+  "@heroui/shared-utils@2.1.9": {
+    "licenses": "MIT",
+    "repository": "https://github.com/heroui-inc/heroui",
+    "publisher": "HeroUI",
+    "email": "support@heroui.com",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/@heroui/shared-utils",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/@heroui/shared-utils/LICENSE"
+  },
+  "@heroui/skeleton@2.2.12": {
+    "licenses": "MIT",
+    "repository": "https://github.com/heroui-inc/heroui",
+    "publisher": "HeroUI",
+    "email": "support@heroui.com",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/@heroui/skeleton",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/@heroui/skeleton/LICENSE"
+  },
+  "@heroui/slider@2.4.17": {
+    "licenses": "MIT",
+    "repository": "https://github.com/heroui-inc/heroui",
+    "publisher": "HeroUI",
+    "email": "support@heroui.com",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/@heroui/slider",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/@heroui/slider/LICENSE"
+  },
+  "@heroui/snippet@2.2.21": {
+    "licenses": "MIT",
+    "repository": "https://github.com/heroui-inc/heroui",
+    "publisher": "HeroUI",
+    "email": "support@heroui.com",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/@heroui/snippet",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/@heroui/snippet/LICENSE"
+  },
+  "@heroui/spacer@2.2.15": {
+    "licenses": "MIT",
+    "repository": "https://github.com/heroui-inc/heroui",
+    "publisher": "HeroUI",
+    "email": "support@heroui.com",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/@heroui/spacer",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/@heroui/spacer/LICENSE"
+  },
+  "@heroui/spinner@2.2.17": {
+    "licenses": "MIT",
+    "repository": "https://github.com/heroui-inc/heroui",
+    "publisher": "HeroUI",
+    "email": "support@heroui.com",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/@heroui/spinner",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/@heroui/spinner/LICENSE"
+  },
+  "@heroui/switch@2.2.18": {
+    "licenses": "MIT",
+    "repository": "https://github.com/heroui-inc/heroui",
+    "publisher": "HeroUI",
+    "email": "support@heroui.com",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/@heroui/switch",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/@heroui/switch/LICENSE"
+  },
+  "@heroui/system-rsc@2.3.14": {
+    "licenses": "MIT",
+    "repository": "https://github.com/heroui-inc/heroui",
+    "publisher": "HeroUI",
+    "email": "support@heroui.com",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/@heroui/system-rsc",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/@heroui/system-rsc/LICENSE"
+  },
+  "@heroui/system@2.4.16": {
+    "licenses": "MIT",
+    "repository": "https://github.com/heroui-inc/heroui",
+    "publisher": "HeroUI",
+    "email": "support@heroui.com",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/@heroui/system",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/@heroui/system/LICENSE"
+  },
+  "@heroui/table@2.2.19": {
+    "licenses": "MIT",
+    "repository": "https://github.com/heroui-inc/heroui",
+    "publisher": "HeroUI",
+    "email": "support@heroui.com",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/@heroui/table",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/@heroui/table/LICENSE"
+  },
+  "@heroui/tabs@2.2.17": {
+    "licenses": "MIT",
+    "repository": "https://github.com/heroui-inc/heroui",
+    "publisher": "HeroUI",
+    "email": "support@heroui.com",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/@heroui/tabs",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/@heroui/tabs/LICENSE"
+  },
+  "@heroui/theme@2.4.16": {
+    "licenses": "MIT",
+    "repository": "https://github.com/heroui-inc/heroui",
+    "publisher": "HeroUI",
+    "email": "support@heroui.com",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/@heroui/theme",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/@heroui/theme/LICENSE"
+  },
+  "@heroui/toast@2.0.10": {
+    "licenses": "MIT",
+    "repository": "https://github.com/heroui-inc/heroui",
+    "publisher": "HeroUI",
+    "email": "support@heroui.com",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/@heroui/toast",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/@heroui/toast/LICENSE"
+  },
+  "@heroui/tooltip@2.2.17": {
+    "licenses": "MIT",
+    "repository": "https://github.com/heroui-inc/heroui",
+    "publisher": "HeroUI",
+    "email": "support@heroui.com",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/@heroui/tooltip",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/@heroui/tooltip/LICENSE"
+  },
+  "@heroui/use-aria-accordion@2.2.12": {
+    "licenses": "MIT",
+    "repository": "https://github.com/heroui-inc/heroui",
+    "publisher": "HeroUI",
+    "email": "support@heroui.com",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/@heroui/use-aria-accordion",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/@heroui/use-aria-accordion/LICENSE"
+  },
+  "@heroui/use-aria-button@2.2.14": {
+    "licenses": "MIT",
+    "repository": "https://github.com/heroui-inc/heroui",
+    "publisher": "HeroUI",
+    "email": "support@heroui.com",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/@heroui/use-aria-button",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/@heroui/use-aria-button/LICENSE"
+  },
+  "@heroui/use-aria-link@2.2.15": {
+    "licenses": "MIT",
+    "repository": "https://github.com/heroui-inc/heroui",
+    "publisher": "HeroUI",
+    "email": "support@heroui.com",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/@heroui/use-aria-link",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/@heroui/use-aria-link/LICENSE"
+  },
+  "@heroui/use-aria-modal-overlay@2.2.13": {
+    "licenses": "MIT",
+    "repository": "https://github.com/heroui-inc/heroui",
+    "publisher": "HeroUI",
+    "email": "support@heroui.com",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/@heroui/use-aria-modal-overlay",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/@heroui/use-aria-modal-overlay/LICENSE"
+  },
+  "@heroui/use-aria-multiselect@2.4.13": {
+    "licenses": "MIT",
+    "repository": "https://github.com/heroui-inc/heroui",
+    "publisher": "HeroUI",
+    "email": "support@heroui.com",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/@heroui/use-aria-multiselect",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/@heroui/use-aria-multiselect/LICENSE"
+  },
+  "@heroui/use-callback-ref@2.1.7": {
+    "licenses": "MIT",
+    "repository": "https://github.com/heroui-inc/heroui",
+    "publisher": "HeroUI",
+    "email": "support@heroui.com",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/@heroui/use-callback-ref",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/@heroui/use-callback-ref/LICENSE"
+  },
+  "@heroui/use-clipboard@2.1.8": {
+    "licenses": "MIT",
+    "repository": "https://github.com/heroui-inc/heroui",
+    "publisher": "HeroUI",
+    "email": "support@heroui.com",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/@heroui/use-clipboard",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/@heroui/use-clipboard/LICENSE"
+  },
+  "@heroui/use-data-scroll-overflow@2.2.10": {
+    "licenses": "MIT",
+    "repository": "https://github.com/heroui-inc/heroui",
+    "publisher": "HeroUI",
+    "email": "support@heroui.com",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/@heroui/use-data-scroll-overflow",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/@heroui/use-data-scroll-overflow/LICENSE"
+  },
+  "@heroui/use-disclosure@2.2.12": {
+    "licenses": "MIT",
+    "repository": "https://github.com/heroui-inc/heroui",
+    "publisher": "HeroUI",
+    "email": "support@heroui.com",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/@heroui/use-disclosure",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/@heroui/use-disclosure/LICENSE"
+  },
+  "@heroui/use-draggable@2.1.12": {
+    "licenses": "MIT",
+    "repository": "https://github.com/heroui-inc/heroui",
+    "publisher": "HeroUI",
+    "email": "support@heroui.com",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/@heroui/use-draggable",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/@heroui/use-draggable/LICENSE"
+  },
+  "@heroui/use-image@2.1.9": {
+    "licenses": "MIT",
+    "repository": "https://github.com/heroui-inc/heroui",
+    "publisher": "HeroUI",
+    "email": "support@heroui.com",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/@heroui/use-image",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/@heroui/use-image/LICENSE"
+  },
+  "@heroui/use-intersection-observer@2.2.12": {
+    "licenses": "MIT",
+    "repository": "https://github.com/heroui-inc/heroui",
+    "publisher": "HeroUI",
+    "email": "support@heroui.com",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/@heroui/use-intersection-observer",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/@heroui/use-intersection-observer/LICENSE"
+  },
+  "@heroui/use-is-mobile@2.2.9": {
+    "licenses": "MIT",
+    "repository": "https://github.com/heroui-inc/heroui",
+    "publisher": "HeroUI",
+    "email": "support@heroui.com",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/@heroui/use-is-mobile",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/@heroui/use-is-mobile/LICENSE"
+  },
+  "@heroui/use-is-mounted@2.1.7": {
+    "licenses": "MIT",
+    "repository": "https://github.com/heroui-inc/heroui",
+    "publisher": "HeroUI",
+    "email": "support@heroui.com",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/@heroui/use-is-mounted",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/@heroui/use-is-mounted/LICENSE"
+  },
+  "@heroui/use-measure@2.1.7": {
+    "licenses": "MIT",
+    "repository": "https://github.com/heroui-inc/heroui",
+    "publisher": "HeroUI",
+    "email": "support@heroui.com",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/@heroui/use-measure",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/@heroui/use-measure/LICENSE"
+  },
+  "@heroui/use-pagination@2.2.13": {
+    "licenses": "MIT",
+    "repository": "https://github.com/heroui-inc/heroui",
+    "publisher": "HeroUI",
+    "email": "support@heroui.com",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/@heroui/use-pagination",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/@heroui/use-pagination/LICENSE"
+  },
+  "@heroui/use-safe-layout-effect@2.1.7": {
+    "licenses": "MIT",
+    "repository": "https://github.com/heroui-inc/heroui",
+    "publisher": "HeroUI",
+    "email": "support@heroui.com",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/@heroui/use-safe-layout-effect",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/@heroui/use-safe-layout-effect/LICENSE"
+  },
+  "@heroui/use-scroll-position@2.1.7": {
+    "licenses": "MIT",
+    "repository": "https://github.com/heroui-inc/heroui",
+    "publisher": "HeroUI",
+    "email": "support@heroui.com",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/@heroui/use-scroll-position",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/@heroui/use-scroll-position/LICENSE"
+  },
+  "@heroui/use-update-effect@2.1.7": {
+    "licenses": "MIT",
+    "repository": "https://github.com/heroui-inc/heroui",
+    "publisher": "HeroUI",
+    "email": "support@heroui.com",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/@heroui/use-update-effect",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/@heroui/use-update-effect/LICENSE"
+  },
+  "@heroui/user@2.2.16": {
+    "licenses": "MIT",
+    "repository": "https://github.com/heroui-inc/heroui",
+    "publisher": "HeroUI",
+    "email": "support@heroui.com",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/@heroui/user",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/@heroui/user/LICENSE"
+  },
+  "@internationalized/date@3.8.1": {
+    "licenses": "Apache-2.0",
+    "repository": "https://github.com/adobe/react-spectrum/tree/main/packages/@internationalized/date",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/@internationalized/date",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/@internationalized/date/LICENSE"
+  },
+  "@neondatabase/serverless@0.10.4": {
+    "licenses": "MIT",
+    "repository": "https://github.com/neondatabase/serverless",
+    "publisher": "Neon",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/@neondatabase/serverless",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/@neondatabase/serverless/LICENSE"
+  },
+  "@next/eslint-plugin-next@15.3.3": {
+    "licenses": "MIT",
+    "repository": "https://github.com/vercel/next.js",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/@next/eslint-plugin-next",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/@next/eslint-plugin-next/README.md"
+  },
+  "@t3-oss/env-nextjs@0.12.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/t3-oss/t3-env",
+    "publisher": "Julius Marminge",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/@t3-oss/env-nextjs"
+  },
+  "@tabler/icons-react@3.34.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/tabler/tabler-icons",
+    "publisher": "codecalm",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/@tabler/icons-react",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/@tabler/icons-react/LICENSE"
+  },
+  "@tanstack/react-form@1.12.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/TanStack/form",
+    "publisher": "tannerlinsley",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/@tanstack/react-form",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/@tanstack/react-form/LICENSE"
+  },
+  "@trivago/prettier-plugin-sort-imports@5.2.2": {
+    "licenses": "Apache-2.0",
+    "repository": "https://github.com/trivago/prettier-plugin-sort-imports",
+    "publisher": "Ayush Sharma",
+    "email": "ayush.sharma@trivago.com",
+    "url": "https://github.com/ayusharma",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/@trivago/prettier-plugin-sort-imports",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/@trivago/prettier-plugin-sort-imports/LICENSE"
+  },
+  "@types/node@20.17.57": {
+    "licenses": "MIT",
+    "repository": "https://github.com/DefinitelyTyped/DefinitelyTyped",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/@types/node",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/@types/node/LICENSE"
+  },
+  "@types/react-dom@19.1.5": {
+    "licenses": "MIT",
+    "repository": "https://github.com/DefinitelyTyped/DefinitelyTyped",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/@types/react-dom",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/@types/react-dom/LICENSE"
+  },
+  "@types/react@19.1.6": {
+    "licenses": "MIT",
+    "repository": "https://github.com/DefinitelyTyped/DefinitelyTyped",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/@types/react",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/@types/react/LICENSE"
+  },
+  "class-variance-authority@0.7.1": {
+    "licenses": "Apache-2.0",
+    "repository": "https://github.com/joe-bell/cva",
+    "publisher": "Joe Bell",
+    "url": "https://joebell.co.uk",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/class-variance-authority",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/class-variance-authority/LICENSE"
+  },
+  "clsx@2.1.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/lukeed/clsx",
+    "publisher": "Luke Edwards",
+    "email": "luke.edwards05@gmail.com",
+    "url": "https://lukeed.com",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/clsx",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/clsx/license"
+  },
+  "dotenv-expand@12.0.2": {
+    "licenses": "BSD-2-Clause",
+    "repository": "https://github.com/motdotla/dotenv-expand",
+    "publisher": "motdotla",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/dotenv-expand",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/dotenv-expand/LICENSE"
+  },
+  "dotenv@16.5.0": {
+    "licenses": "BSD-2-Clause",
+    "repository": "https://github.com/motdotla/dotenv",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/dotenv",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/dotenv/LICENSE"
+  },
+  "drizzle-kit@0.30.6": {
+    "licenses": "MIT",
+    "repository": "https://github.com/drizzle-team/drizzle-orm",
+    "publisher": "Drizzle Team",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/drizzle-kit",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/drizzle-kit/README.md"
+  },
+  "drizzle-orm@0.40.1": {
+    "licenses": "Apache-2.0",
+    "repository": "https://github.com/drizzle-team/drizzle-orm",
+    "publisher": "Drizzle Team",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/drizzle-orm",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/drizzle-orm/README.md"
+  },
+  "eslint-config-next@15.1.7": {
+    "licenses": "MIT",
+    "repository": "https://github.com/vercel/next.js",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/eslint-config-next"
+  },
+  "eslint-config-prettier@10.1.5": {
+    "licenses": "MIT",
+    "repository": "https://github.com/prettier/eslint-config-prettier",
+    "publisher": "Simon Lydell",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/eslint-config-prettier",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/eslint-config-prettier/LICENSE"
+  },
+  "eslint-plugin-check-file@3.2.0": {
+    "licenses": "Apache-2.0",
+    "repository": "https://github.com/dukeluo/eslint-plugin-check-file",
+    "publisher": "Huan Luo",
+    "email": "dukeluo@outlook.com",
+    "url": "https://shaiwang.life",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/eslint-plugin-check-file",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/eslint-plugin-check-file/LICENSE"
+  },
+  "eslint-plugin-n@17.19.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/eslint-community/eslint-plugin-n",
+    "publisher": "Toru Nagashima",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/eslint-plugin-n",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/eslint-plugin-n/LICENSE"
+  },
+  "eslint-plugin-react-hooks@5.2.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/facebook/react",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/eslint-plugin-react-hooks",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/eslint-plugin-react-hooks/LICENSE"
+  },
+  "eslint-plugin-react@7.37.5": {
+    "licenses": "MIT",
+    "repository": "https://github.com/jsx-eslint/eslint-plugin-react",
+    "publisher": "Yannick Croissant",
+    "email": "yannick.croissant+npm@gmail.com",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/eslint-plugin-react",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/eslint-plugin-react/LICENSE"
+  },
+  "eslint@9.28.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/eslint/eslint",
+    "publisher": "Nicholas C. Zakas",
+    "email": "nicholas+npm@nczconsulting.com",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/eslint",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/eslint/LICENSE"
+  },
+  "framer-motion@12.16.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/motiondivision/motion",
+    "publisher": "Matt Perry",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/framer-motion",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/framer-motion/LICENSE.md"
+  },
+  "globals@16.2.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/sindresorhus/globals",
+    "publisher": "Sindre Sorhus",
+    "email": "sindresorhus@gmail.com",
+    "url": "https://sindresorhus.com",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/globals",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/globals/license"
+  },
+  "jiti@2.4.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/unjs/jiti",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/jiti",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/jiti/LICENSE"
+  },
+  "lucide-react@0.511.0": {
+    "licenses": "ISC",
+    "repository": "https://github.com/lucide-icons/lucide",
+    "publisher": "Eric Fennis",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/lucide-react",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/lucide-react/LICENSE"
+  },
+  "next-auth@4.24.11": {
+    "licenses": "ISC",
+    "repository": "https://github.com/nextauthjs/next-auth",
+    "publisher": "Iain Collins",
+    "email": "me@iaincollins.com",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/next-auth",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/next-auth/LICENSE"
+  },
+  "next-starter@0.1.0": {
+    "licenses": "UNLICENSED",
+    "private": true,
+    "path": "/home/justin/Code/5-tool-ams",
+    "licenseFile": "/home/justin/Code/5-tool-ams/README.md"
+  },
+  "next-themes@0.4.6": {
+    "licenses": "MIT",
+    "repository": "https://github.com/pacocoursey/next-themes",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/next-themes",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/next-themes/license.md"
+  },
+  "next@15.1.7": {
+    "licenses": "MIT",
+    "repository": "https://github.com/vercel/next.js",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/next",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/next/license.md"
+  },
+  "postcss@8.5.4": {
+    "licenses": "MIT",
+    "repository": "https://github.com/postcss/postcss",
+    "publisher": "Andrey Sitnik",
+    "email": "andrey@sitnik.ru",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/postcss",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/postcss/LICENSE"
+  },
+  "postgres@3.4.7": {
+    "licenses": "Unlicense",
+    "repository": "https://github.com/porsager/postgres",
+    "publisher": "Rasmus Porsager",
+    "email": "rasmus@porsager.com",
+    "url": "https://www.porsager.com",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/postgres",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/postgres/README.md"
+  },
+  "prettier-plugin-tailwindcss@0.6.12": {
+    "licenses": "MIT",
+    "repository": "https://github.com/tailwindlabs/prettier-plugin-tailwindcss",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/prettier-plugin-tailwindcss",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/prettier-plugin-tailwindcss/LICENSE"
+  },
+  "prettier@3.5.3": {
+    "licenses": "MIT",
+    "repository": "https://github.com/prettier/prettier",
+    "publisher": "James Long",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/prettier",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/prettier/LICENSE"
+  },
+  "react-dom@19.1.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/facebook/react",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/react-dom",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/react-dom/LICENSE"
+  },
+  "react@19.1.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/facebook/react",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/react",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/react/LICENSE"
+  },
+  "recharts@2.15.3": {
+    "licenses": "MIT",
+    "repository": "https://github.com/recharts/recharts",
+    "publisher": "recharts group",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/recharts",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/recharts/LICENSE"
+  },
+  "tailwind-merge@3.3.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/dcastil/tailwind-merge",
+    "publisher": "Dany Castillo",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/tailwind-merge",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/tailwind-merge/LICENSE.md"
+  },
+  "tailwindcss-animate@1.0.7": {
+    "licenses": "MIT",
+    "publisher": "Jamie Kyle",
+    "email": "me@thejameskyle.com",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/tailwindcss-animate",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/tailwindcss-animate/LICENSE"
+  },
+  "tailwindcss@3.4.17": {
+    "licenses": "MIT",
+    "repository": "https://github.com/tailwindlabs/tailwindcss",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/tailwindcss",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/tailwindcss/LICENSE"
+  },
+  "typescript-eslint@8.33.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/typescript-eslint/typescript-eslint",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/typescript-eslint",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/typescript-eslint/LICENSE"
+  },
+  "typescript@5.8.3": {
+    "licenses": "Apache-2.0",
+    "repository": "https://github.com/microsoft/TypeScript",
+    "publisher": "Microsoft Corp.",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/typescript",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/typescript/LICENSE.txt"
+  },
+  "zod@3.25.49": {
+    "licenses": "MIT",
+    "repository": "https://github.com/colinhacks/zod",
+    "publisher": "Colin McDonnell",
+    "email": "zod@colinhacks.com",
+    "path": "/home/justin/Code/5-tool-ams/node_modules/zod",
+    "licenseFile": "/home/justin/Code/5-tool-ams/node_modules/zod/LICENSE"
+  }
+}
+
