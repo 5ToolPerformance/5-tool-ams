@@ -22,13 +22,13 @@ const lessonAssessments = pgTable(
       .defaultNow()
       .notNull(),
   },
-  (table) => ({
-    lessonIdx: index("lesson_assessments_lesson_idx").on(table.lessonId),
-    typeIdx: index("lesson_assessments_type_idx").on(table.assessmentType),
-    uniqueAssessment: index("lesson_assessments_unique_idx").on(
+  (table) => [
+    index("lesson_assessments_lesson_idx").on(table.lessonId),
+    index("lesson_assessments_type_idx").on(table.assessmentType),
+    index("lesson_assessments_unique_idx").on(
       table.assessmentType,
       table.assessmentId
     ),
-  })
+  ]
 );
 export default lessonAssessments;

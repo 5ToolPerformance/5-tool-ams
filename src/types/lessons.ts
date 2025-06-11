@@ -63,3 +63,50 @@ export interface LessonWithRelations extends Lesson {
   user?: User;
   coach?: User;
 }
+
+export interface LessonCreateData {
+  coachId: string;
+  playerId: string;
+  lessonType: LessonType;
+  lessonDate: string;
+  notes: string;
+  strengthAssessment?: {
+    maxSquat?: string;
+    maxBench?: string;
+    maxDeadlift?: string;
+    bodyWeight?: string;
+    notes?: string;
+  };
+  forcePlateAssessment?: {
+    jumpHeight?: string;
+    groundReactionForce?: string;
+    contactTime?: string;
+    peakPower?: string;
+    rateOfForceDevelopment?: string;
+    notes?: string;
+  };
+  hittingAssessment?: {
+    exitVelocity?: string;
+    launchAngle?: string;
+    spinRate?: string;
+    distance?: string;
+    strikeZoneContact?: string;
+    hardHitRate?: string;
+    notes?: string;
+  };
+  armCareAssessment?: {
+    shoulder_er_l?: string;
+    shoulder_er_r?: string;
+    shoulder_ir_l?: string;
+    shoulder_ir_r?: string;
+    shoulder_flexion_l?: string;
+    shoulder_flexion_r?: string;
+    supine_hip_er_l?: string;
+    supine_hip_er_r?: string;
+    supine_hip_ir_l?: string;
+    supine_hip_ir_r?: string;
+    straight_leg_l?: string;
+    straight_leg_r?: string;
+    notes?: string;
+  };
+}
