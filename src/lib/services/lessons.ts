@@ -1,6 +1,7 @@
 import { desc, eq } from "drizzle-orm";
 
 import db from "@/db";
+import { armCare, smfa } from "@/db/schema";
 import lesson from "@/db/schema/lesson";
 import users from "@/db/schema/users";
 import { LessonCreateData, LessonType } from "@/types/lessons";
@@ -16,18 +17,83 @@ export class LessonService {
    */
   static async createLesson(data: LessonCreateData) {
     try {
-      const [newLesson] = await db
-        .insert(lesson)
-        .values({
-          playerId: data.playerId,
-          coachId: data.coachId,
-          lessonType: data.type,
-          lessonDate: new Date(data.lessonDate),
-          notes: data.notes,
-        })
-        .returning();
+      return await db.transaction(async (tx) => {
+        const [newLesson] = await tx
+          .insert(lesson)
+          .values({
+            coachId: data.coachId,
+            playerId: data.playerId,
+            lessonType: data.type,
+            lessonDate: new Date(data.lessonDate),
+            notes: data.notes || null,
+          })
+          .returning({ id: lesson.id });
 
-      return newLesson;
+        const lessonId = newLesson.id;
+        const assessmentIds: { type: string; id: string }[] = [];
+
+        if (data.armCare) {
+          const [armCareAssessment] = await tx
+            .insert(armCare)
+            .values({
+              lessonId: lessonId,
+              playerId: data.playerId,
+              coachId: data.coachId,
+              notes: data.armCare.notes,
+              shoulder_er_l: data.armCare.shoulder_er_l,
+              shoulder_er_r: data.armCare.shoulder_er_r,
+              shoulder_ir_l: data.armCare.shoulder_ir_l,
+              shoulder_ir_r: data.armCare.shoulder_ir_r,
+              shoulder_flexion_l: data.armCare.shoulder_flexion_l,
+              shoulder_flexion_r: data.armCare.shoulder_flexion_r,
+              supine_hip_er_l: data.armCare.supine_hip_er_l,
+              supine_hip_er_r: data.armCare.supine_hip_er_r,
+              supine_hip_ir_l: data.armCare.supine_hip_ir_l,
+              supine_hip_ir_r: data.armCare.supine_hip_ir_r,
+              straight_leg_l: data.armCare.straight_leg_l,
+              straight_leg_r: data.armCare.straight_leg_r,
+              lessonDate: new Date(data.lessonDate),
+            })
+            .returning({ id: armCare.id });
+
+          assessmentIds.push({ type: "arm_care", id: armCareAssessment.id });
+        }
+
+        if (data.smfa) {
+          const [smfaAssessment] = await tx
+            .insert(smfa)
+            .values({
+              lessonId: lessonId,
+              playerId: data.playerId,
+              coachId: data.coachId,
+              notes: data.smfa.notes,
+              pelvic_rotation_l: data.smfa.pelvic_rotation_l,
+              pelvic_rotation_r: data.smfa.pelvic_rotation_r,
+              seated_trunk_rotation_l: data.smfa.seated_trunk_rotation_l,
+              seated_trunk_rotation_r: data.smfa.seated_trunk_rotation_r,
+              ankle_test_l: data.smfa.ankle_test_l,
+              ankle_test_r: data.smfa.ankle_test_r,
+              forearm_test_l: data.smfa.forearm_test_l,
+              forearm_test_r: data.smfa.forearm_test_r,
+              cervical_rotation_l: data.smfa.cervical_rotation_l,
+              cervical_rotation_r: data.smfa.cervical_rotation_r,
+              msf_l: data.smfa.msf_l,
+              msf_r: data.smfa.msf_r,
+              mse_l: data.smfa.mse_l,
+              mse_r: data.smfa.mse_r,
+              msr_l: data.smfa.msr_l,
+              msr_r: data.smfa.msr_r,
+              pelvic_tilt: data.smfa.pelvic_tilt,
+              squat_test: data.smfa.squat_test,
+              cervical_flexion: data.smfa.cervical_flexion,
+              cervical_extension: data.smfa.cervical_extension,
+              lessonDate: new Date(data.lessonDate),
+            })
+            .returning({ id: smfa.id });
+
+          assessmentIds.push({ type: "smfa", id: smfaAssessment.id });
+        }
+      });
     } catch (error) {
       console.error("Error creating lesson:", error);
       throw new Error("Failed to create lesson");

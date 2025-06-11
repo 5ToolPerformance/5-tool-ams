@@ -1,8 +1,3 @@
-import { relations } from "drizzle-orm/relations";
-
-import lesson from "./lesson";
-import users from "./users";
-
 export { default as accounts } from "./accounts";
 export { default as armCare } from "./assessments/arm-care";
 export { default as hawkinsForcePlate } from "./assessments/hawkins-force-plate";
@@ -20,16 +15,3 @@ export {
 } from "./playerInformation";
 export { default as sessions } from "./sessions";
 export { rolesEnum, default as users, usersRelations } from "./users";
-
-export const lessonRelations = relations(lesson, ({ one }) => ({
-  user: one(users, {
-    fields: [lesson.playerId],
-    references: [users.id],
-    relationName: "userLessons",
-  }),
-  coach: one(users, {
-    fields: [lesson.coachId],
-    references: [users.id],
-    relationName: "coachLessons",
-  }),
-}));
