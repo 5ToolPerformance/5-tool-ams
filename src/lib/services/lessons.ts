@@ -3,43 +3,25 @@ import { desc, eq } from "drizzle-orm";
 import db from "@/db";
 import lesson from "@/db/schema/lesson";
 import users from "@/db/schema/users";
-import { CreateLessonRequest, LessonType } from "@/types/lessons";
+import { LessonCreateData, LessonType } from "@/types/lessons";
 
 /**
  * Service for managing lessons in the database.
  */
 export class LessonService {
-  static async getUsers() {
-    try {
-      return await db.select().from(users).where(eq(users.role, "player"));
-    } catch (error) {
-      console.error("Error fetching users:", error);
-      throw new Error("Failed to fetch users");
-    }
-  }
-
-  static async getCoaches() {
-    try {
-      return await db.select().from(users).where(eq(users.role, "coach"));
-    } catch (error) {
-      console.error("Error fetching coaches:", error);
-      throw new Error("Failed to fetch coaches");
-    }
-  }
-
   /**
    * Create a new lesson in the database.
    * @param data - Data for creating a new lesson
    * @returns The newly created lesson object
    */
-  static async createLesson(data: CreateLessonRequest) {
+  static async createLesson(data: LessonCreateData) {
     try {
       const [newLesson] = await db
         .insert(lesson)
         .values({
-          userId: data.userId,
+          playerId: data.playerId,
           coachId: data.coachId,
-          type: data.type,
+          lessonType: data.type,
           lessonDate: new Date(data.lessonDate),
           notes: data.notes,
         })
@@ -77,7 +59,7 @@ export class LessonService {
       const playerData = await db
         .select()
         .from(users)
-        .where(eq(users.id, foundLesson.userId))
+        .where(eq(users.id, foundLesson.playerId))
         .limit(1);
 
       // Get coach data
@@ -110,7 +92,7 @@ export class LessonService {
       const lessons = await db
         .select()
         .from(lesson)
-        .where(eq(lesson.userId, userId))
+        .where(eq(lesson.playerId, userId))
         .orderBy(desc(lesson.lessonDate));
 
       // Get coach data for each lesson
@@ -151,7 +133,7 @@ export class LessonService {
           const userData = await db
             .select()
             .from(users)
-            .where(eq(users.id, lessonItem.userId))
+            .where(eq(users.id, lessonItem.playerId))
             .limit(1);
 
           return {
@@ -168,10 +150,10 @@ export class LessonService {
     }
   }
 
-  static validateLessonData(data: CreateLessonRequest): string[] {
+  static validateLessonData(data: LessonCreateData): string[] {
     const errors: string[] = [];
 
-    if (!data.userId) {
+    if (!data.playerId) {
       errors.push("Player is required");
     }
 
@@ -226,12 +208,12 @@ export class LessonService {
    * @returns The updated lesson object
    * @throws Error if there is an error with the database query
    */
-  static async updateLesson(id: string, data: Partial<CreateLessonRequest>) {
+  static async updateLesson(id: string, data: Partial<LessonCreateData>) {
     try {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const updateData: any = {};
 
-      if (data.userId) updateData.userId = data.userId;
+      if (data.playerId) updateData.userId = data.playerId;
       if (data.coachId) updateData.coachId = data.coachId;
       if (data.type) updateData.type = data.type;
       if (data.lessonDate) updateData.lessonDate = new Date(data.lessonDate);
@@ -265,7 +247,7 @@ export class LessonService {
           player: users,
         })
         .from(lesson)
-        .innerJoin(users, eq(lesson.userId, users.id))
+        .innerJoin(users, eq(lesson.playerId, users.id))
         .where(eq(lesson.coachId, coachId))
         .orderBy(desc(lesson.lessonDate));
     } catch (error) {
@@ -289,7 +271,7 @@ export class LessonService {
         })
         .from(lesson)
         .innerJoin(users, eq(lesson.coachId, users.id))
-        .where(eq(lesson.userId, userId))
+        .where(eq(lesson.playerId, userId))
         .orderBy(desc(lesson.lessonDate));
     } catch (error) {
       console.error("Error fetching lessons by user with join:", error);
@@ -297,6 +279,11 @@ export class LessonService {
     }
   }
 
+  /**
+   * Fetch the number of lessons that a player has completed
+   * @param userId - The ID of the player to get lesson count for
+   * @returns The number of lessons completed
+   */
   static async getNumberOfLessonsByPlayer(userId: string) {
     try {
       const lessons = await db
@@ -306,7 +293,7 @@ export class LessonService {
         })
         .from(lesson)
         .innerJoin(users, eq(lesson.coachId, users.id))
-        .where(eq(lesson.userId, userId));
+        .where(eq(lesson.playerId, userId));
 
       return lessons.length;
     } catch (error) {
