@@ -1,4 +1,5 @@
 import { relations } from "drizzle-orm/relations";
+
 import armCare from "./assessments/arm-care";
 import hawkinsForcePlate from "./assessments/hawkins-force-plate";
 import smfa from "./assessments/smfa";
@@ -12,10 +13,14 @@ export { default as hawkinsForcePlate } from "./assessments/hawkins-force-plate"
 export { default as smfa } from "./assessments/smfa";
 export { default as trueStrength } from "./assessments/true-strength";
 export { default as lesson, lessonTypes } from "./lesson";
+export {
+  assessmentTypeEnum,
+  default as lessonAssessments,
+} from "./lessonAssessments";
 export { default as notes } from "./notes";
 export {
   default as playerInformation,
-  playerInformationRelations
+  playerInformationRelations,
 } from "./playerInformation";
 export { default as sessions } from "./sessions";
 export { rolesEnum, default as users, usersRelations } from "./users";

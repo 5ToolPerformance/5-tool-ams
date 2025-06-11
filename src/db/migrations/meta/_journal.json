@@ -64,6 +64,20 @@
       "when": 1748532739674,
       "tag": "0008_elite_otto_octavius",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1749653653494,
+      "tag": "0009_watery_master_mold",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1749654061349,
+      "tag": "0010_worthless_james_howlett",
+      "breakpoints": true
     }
   ]
 }
