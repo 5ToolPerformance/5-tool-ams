@@ -7,7 +7,7 @@ import {
   uuid,
 } from "drizzle-orm/pg-core";
 
-import lesson from "../lesson";
+import { lesson } from "@/db/schema";
 
 const smfa = pgTable(
   "smfa",

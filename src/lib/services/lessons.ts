@@ -1,9 +1,19 @@
 import { desc, eq } from "drizzle-orm";
 
 import db from "@/db";
-import { armCare, smfa } from "@/db/schema";
-import lesson from "@/db/schema/lesson";
-import users from "@/db/schema/users";
+import {
+  armCare,
+  hawkinsForcePlate,
+  lesson,
+  smfa,
+  trueStrength,
+  users,
+} from "@/db/schema";
+import {
+  ForcePlateInsert,
+  SmfaInsert,
+  TrueStrengthInsert,
+} from "@/types/database";
 import { LessonCreateData, LessonType } from "@/types/lessons";
 
 /**
@@ -88,10 +98,69 @@ export class LessonService {
               cervical_flexion: data.smfa.cervical_flexion,
               cervical_extension: data.smfa.cervical_extension,
               lessonDate: new Date(data.lessonDate),
-            })
+            } as SmfaInsert)
             .returning({ id: smfa.id });
 
           assessmentIds.push({ type: "smfa", id: smfaAssessment.id });
+        }
+
+        if (data.forcePlate) {
+          const [forcePlateAssessment] = await tx
+            .insert(hawkinsForcePlate)
+            .values({
+              playerId: data.playerId,
+              coachId: data.coachId,
+              lessonId: lessonId,
+              notes: data.forcePlate.notes,
+              cmj: data.forcePlate.cmj,
+              drop_jump: data.forcePlate.drop_jump,
+              pogo: data.forcePlate.pogo,
+              mid_thigh_pull: data.forcePlate.mid_thigh_pull,
+              mtp_time: data.forcePlate.mtp_time,
+              cop_ml_l: data.forcePlate.cop_ml_l,
+              cop_ml_r: data.forcePlate.cop_ml_r,
+              cop_ap_l: data.forcePlate.cop_ap_l,
+              cop_ap_r: data.forcePlate.cop_ap_r,
+              lessonDate: new Date(data.lessonDate),
+            } as ForcePlateInsert)
+            .returning({ id: hawkinsForcePlate.id });
+
+          assessmentIds.push({
+            type: "force_plate",
+            id: forcePlateAssessment.id,
+          });
+        }
+
+        if (data.trueStrength) {
+          const [trueStrengthAssessment] = await tx
+            .insert(trueStrength)
+            .values({
+              playerId: data.playerId,
+              coachId: data.coachId,
+              lessonId: lessonId,
+              notes: data.trueStrength.notes,
+              seated_shoulder_er_l: data.trueStrength.seated_shoulder_er_l,
+              seated_shoulder_er_r: data.trueStrength.seated_shoulder_er_r,
+              seated_shoulder_ir_l: data.trueStrength.seated_shoulder_ir_l,
+              seated_shoulder_ir_r: data.trueStrength.seated_shoulder_ir_r,
+              shoulder_rotation_l: data.trueStrength.shoulder_rotation_l,
+              shoulder_rotation_r: data.trueStrength.shoulder_rotation_r,
+              shoulder_rotation_rfd_l:
+                data.trueStrength.shoulder_rotation_rfd_l,
+              shoulder_rotation_rfd_r:
+                data.trueStrength.shoulder_rotation_rfd_r,
+              hip_rotation_l: data.trueStrength.hip_rotation_l,
+              hip_rotation_r: data.trueStrength.hip_rotation_r,
+              hip_rotation_rfd_l: data.trueStrength.hip_rotation_rfd_l,
+              hip_rotation_rfd_r: data.trueStrength.hip_rotation_rfd_r,
+              lessonDate: new Date(data.lessonDate),
+            } as TrueStrengthInsert)
+            .returning({ id: trueStrength.id });
+
+          assessmentIds.push({
+            type: "force_plate",
+            id: trueStrengthAssessment.id,
+          });
         }
       });
     } catch (error) {
