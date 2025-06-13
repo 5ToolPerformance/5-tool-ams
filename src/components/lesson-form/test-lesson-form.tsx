@@ -1,21 +1,24 @@
 "use client";
 
-import React from "react";
+import router from "next/router";
+import React, { useState } from "react";
 
+import { Button, Input, Select, SelectItem, Textarea } from "@heroui/react";
 import { useForm } from "@tanstack/react-form";
-import { ChevronDown } from "lucide-react";
 
-import { LessonCreateData } from "@/types/lessons";
+import { LESSON_TYPES, LessonCreateData, LessonType } from "@/types/lessons";
+import { User } from "@/types/users";
 
-// Types based on our schema
-type LessonType = "strength" | "hitting" | "pitching" | "conditioning";
+interface LessonsCreateProps {
+  coachId: string | number | null | undefined;
+}
 
-const LessonCreationForm = () => {
+const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
   const form = useForm<LessonCreateData>({
     defaultValues: {
-      coachId: 1,
-      playerId: 0,
-      lessonType: "strength",
+      coachId: coachId,
+      playerId: null,
+      type: "strength",
       lessonDate: new Date().toISOString().split("T")[0],
       notes: "",
     },
@@ -31,6 +34,45 @@ const LessonCreationForm = () => {
     setSelectedLessonType("strength");
   }, []);
 
+  const handleDateChange = (dateString: string) => {
+    if (dateString) {
+      form.setFieldValue("lessonDate", dateString);
+    }
+  };
+
+  const [users, setUsers] = useState<User[]>([]);
+  const [coaches, setCoaches] = useState<User[]>([]);
+
+  React.useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [playersResponse, coachesResponse] = await Promise.all([
+          fetch("/api/players"),
+          fetch("/api/coaches"),
+        ]);
+
+        const playersData = await playersResponse.json();
+        const coachesData = await coachesResponse.json();
+
+        if (playersData.success && playersData.data) {
+          setUsers(playersData.data);
+        }
+
+        if (coachesData.success && coachesData.data) {
+          setCoaches(coachesData.data);
+        }
+
+        if (!playersData.success || !coachesData.success) {
+          console.log("Players: ", playersData, "Coaches: ", coachesData);
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
   const [selectedLessonType, setSelectedLessonType] =
     React.useState<LessonType>("strength");
 
@@ -39,113 +81,263 @@ const LessonCreationForm = () => {
     strength: ["armCare", "smfa", "forcePlate", "trueStrength"],
     hitting: ["hittingAssessment"],
     pitching: ["pitchingAssessment"], // Assuming pitching uses hitting assessments
-    conditioning: ["forcePlateAssessment"],
+    catching: ["catchingAssessment"],
   };
 
-  const StrengthAssessmentForm = () => (
+  const ArmCareAssessmentForm = () => (
     <div className="rounded-lg border border-blue-200 bg-blue-50 p-6">
       <h3 className="mb-4 text-lg font-semibold text-blue-900">
-        Strength Assessment
+        ArmCare Assessment
       </h3>
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-        <form.Field name="strengthAssessment.maxSquat">
+        {/* Shoulder ER*/}
+        <form.Field name="armCare.shoulder_er_l">
           {(field) => (
-            <div>
-              <label className="block text-sm font-medium leading-6 text-gray-900">
-                Max Squat (lbs)
-              </label>
-              <div className="mt-2">
-                <input
-                  type="number"
-                  step="0.01"
-                  value={field.state.value || ""}
-                  onChange={(e) => field.handleChange(e.target.value)}
-                  className="block w-full rounded-md border-0 px-3 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  placeholder="275.00"
-                />
-              </div>
-            </div>
+            <Input
+              type="number"
+              label="Shoulder ER (L)"
+              value={
+                field.state.value !== undefined && field.state.value !== null
+                  ? String(field.state.value)
+                  : ""
+              }
+              onChange={(e) => field.handleChange(Number(e.target.value))}
+              onBlur={field.handleBlur}
+              isInvalid={!!field.state.meta.errors.length}
+              errorMessage={field.state.meta.errors.join(", ")}
+              isRequired
+            />
           )}
         </form.Field>
 
-        <form.Field name="strengthAssessment.maxBench">
+        <form.Field name="armCare.shoulder_er_r">
           {(field) => (
-            <div>
-              <label className="block text-sm font-medium leading-6 text-gray-900">
-                Max Bench (lbs)
-              </label>
-              <div className="mt-2">
-                <input
-                  type="number"
-                  step="0.01"
-                  value={field.state.value || ""}
-                  onChange={(e) => field.handleChange(e.target.value)}
-                  className="block w-full rounded-md border-0 px-3 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  placeholder="225.00"
-                />
-              </div>
-            </div>
+            <Input
+              type="number"
+              label="Shoulder ER (R)"
+              value={
+                field.state.value !== undefined && field.state.value !== null
+                  ? String(field.state.value)
+                  : ""
+              }
+              onChange={(e) => field.handleChange(Number(e.target.value))}
+              onBlur={field.handleBlur}
+              isInvalid={!!field.state.meta.errors.length}
+              errorMessage={field.state.meta.errors.join(", ")}
+              isRequired
+            />
+          )}
+        </form.Field>
+        {/* Shoulder IR*/}
+        <form.Field name="armCare.shoulder_ir_l">
+          {(field) => (
+            <Input
+              type="number"
+              label="Shoulder IR (L)"
+              value={
+                field.state.value !== undefined && field.state.value !== null
+                  ? String(field.state.value)
+                  : ""
+              }
+              onChange={(e) => field.handleChange(Number(e.target.value))}
+              onBlur={field.handleBlur}
+              isInvalid={!!field.state.meta.errors.length}
+              errorMessage={field.state.meta.errors.join(", ")}
+              isRequired
+            />
           )}
         </form.Field>
 
-        <form.Field name="strengthAssessment.maxDeadlift">
+        <form.Field name="armCare.shoulder_ir_r">
           {(field) => (
-            <div>
-              <label className="block text-sm font-medium leading-6 text-gray-900">
-                Max Deadlift (lbs)
-              </label>
-              <div className="mt-2">
-                <input
-                  type="number"
-                  step="0.01"
-                  value={field.state.value || ""}
-                  onChange={(e) => field.handleChange(e.target.value)}
-                  className="block w-full rounded-md border-0 px-3 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  placeholder="315.00"
-                />
-              </div>
-            </div>
+            <Input
+              type="number"
+              label="Shoulder IR (R)"
+              value={
+                field.state.value !== undefined && field.state.value !== null
+                  ? String(field.state.value)
+                  : ""
+              }
+              onChange={(e) => field.handleChange(Number(e.target.value))}
+              onBlur={field.handleBlur}
+              isInvalid={!!field.state.meta.errors.length}
+              errorMessage={field.state.meta.errors.join(", ")}
+              isRequired
+            />
+          )}
+        </form.Field>
+        {/* Shoulder Flexion*/}
+        <form.Field name="armCare.shoulder_flexion_l">
+          {(field) => (
+            <Input
+              type="number"
+              label="Shoulder Flexion (L)"
+              value={
+                field.state.value !== undefined && field.state.value !== null
+                  ? String(field.state.value)
+                  : ""
+              }
+              onChange={(e) => field.handleChange(Number(e.target.value))}
+              onBlur={field.handleBlur}
+              isInvalid={!!field.state.meta.errors.length}
+              errorMessage={field.state.meta.errors.join(", ")}
+              isRequired
+            />
           )}
         </form.Field>
 
-        <form.Field name="strengthAssessment.bodyWeight">
+        <form.Field name="armCare.shoulder_flexion_r">
           {(field) => (
-            <div>
-              <label className="block text-sm font-medium leading-6 text-gray-900">
-                Body Weight (lbs)
-              </label>
-              <div className="mt-2">
-                <input
-                  type="number"
-                  step="0.01"
-                  value={field.state.value || ""}
-                  onChange={(e) => field.handleChange(e.target.value)}
-                  className="block w-full rounded-md border-0 px-3 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  placeholder="180.50"
-                />
-              </div>
-            </div>
+            <Input
+              type="number"
+              label="Shoulder Flexion (R)"
+              value={
+                field.state.value !== undefined && field.state.value !== null
+                  ? String(field.state.value)
+                  : ""
+              }
+              onChange={(e) => field.handleChange(Number(e.target.value))}
+              onBlur={field.handleBlur}
+              isInvalid={!!field.state.meta.errors.length}
+              errorMessage={field.state.meta.errors.join(", ")}
+              isRequired
+            />
+          )}
+        </form.Field>
+
+        {/* Supine Hip ER*/}
+        <form.Field name="armCare.supine_hip_er_l">
+          {(field) => (
+            <Input
+              type="number"
+              label="Supine Hip ER (L)"
+              value={
+                field.state.value !== undefined && field.state.value !== null
+                  ? String(field.state.value)
+                  : ""
+              }
+              onChange={(e) => field.handleChange(Number(e.target.value))}
+              onBlur={field.handleBlur}
+              isInvalid={!!field.state.meta.errors.length}
+              errorMessage={field.state.meta.errors.join(", ")}
+              isRequired
+            />
+          )}
+        </form.Field>
+
+        <form.Field name="armCare.supine_hip_er_r">
+          {(field) => (
+            <Input
+              type="number"
+              label="Supine Hip ER (R)"
+              value={
+                field.state.value !== undefined && field.state.value !== null
+                  ? String(field.state.value)
+                  : ""
+              }
+              onChange={(e) => field.handleChange(Number(e.target.value))}
+              onBlur={field.handleBlur}
+              isInvalid={!!field.state.meta.errors.length}
+              errorMessage={field.state.meta.errors.join(", ")}
+              isRequired
+            />
+          )}
+        </form.Field>
+
+        {/* Supine Hip IR*/}
+        <form.Field name="armCare.supine_hip_ir_l">
+          {(field) => (
+            <Input
+              type="number"
+              label="Supine Hip IR (L)"
+              value={
+                field.state.value !== undefined && field.state.value !== null
+                  ? String(field.state.value)
+                  : ""
+              }
+              onChange={(e) => field.handleChange(Number(e.target.value))}
+              onBlur={field.handleBlur}
+              isInvalid={!!field.state.meta.errors.length}
+              errorMessage={field.state.meta.errors.join(", ")}
+              isRequired
+            />
+          )}
+        </form.Field>
+
+        <form.Field name="armCare.supine_hip_ir_r">
+          {(field) => (
+            <Input
+              type="number"
+              label="Supine Hip IR (R)"
+              value={
+                field.state.value !== undefined && field.state.value !== null
+                  ? String(field.state.value)
+                  : ""
+              }
+              onChange={(e) => field.handleChange(Number(e.target.value))}
+              onBlur={field.handleBlur}
+              isInvalid={!!field.state.meta.errors.length}
+              errorMessage={field.state.meta.errors.join(", ")}
+              isRequired
+            />
+          )}
+        </form.Field>
+
+        {/* Straight Leg*/}
+        <form.Field name="armCare.straight_leg_l">
+          {(field) => (
+            <Input
+              type="number"
+              label="Straight Leg (L)"
+              value={
+                field.state.value !== undefined && field.state.value !== null
+                  ? String(field.state.value)
+                  : ""
+              }
+              onChange={(e) => field.handleChange(Number(e.target.value))}
+              onBlur={field.handleBlur}
+              isInvalid={!!field.state.meta.errors.length}
+              errorMessage={field.state.meta.errors.join(", ")}
+              isRequired
+            />
+          )}
+        </form.Field>
+
+        <form.Field name="armCare.straight_leg_r">
+          {(field) => (
+            <Input
+              type="number"
+              label="Straight Leg (R)"
+              value={
+                field.state.value !== undefined && field.state.value !== null
+                  ? String(field.state.value)
+                  : ""
+              }
+              onChange={(e) => field.handleChange(Number(e.target.value))}
+              onBlur={field.handleBlur}
+              isInvalid={!!field.state.meta.errors.length}
+              errorMessage={field.state.meta.errors.join(", ")}
+              isRequired
+            />
           )}
         </form.Field>
       </div>
 
       <div className="mt-4">
-        <form.Field name="strengthAssessment.notes">
+        {/* Notes */}
+        <form.Field name="armCare.notes">
           {(field) => (
-            <div>
-              <label className="block text-sm font-medium leading-6 text-gray-900">
-                Assessment Notes
-              </label>
-              <div className="mt-2">
-                <textarea
-                  rows={3}
-                  value={field.state.value || ""}
-                  onChange={(e) => field.handleChange(e.target.value)}
-                  className="block w-full rounded-md border-0 px-3 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  placeholder="New PR on squat today..."
-                />
-              </div>
-            </div>
+            <Textarea
+              label="Notes"
+              placeholder="Add any notes about this assessment..."
+              description="Optional field for additional assessment details"
+              value={
+                typeof field.state.value === "string" ? field.state.value : ""
+              }
+              onChange={(e) => field.handleChange(e.target.value)}
+              onBlur={field.handleBlur}
+              minRows={4}
+            />
           )}
         </form.Field>
       </div>
@@ -157,128 +349,6 @@ const LessonCreationForm = () => {
       <h3 className="mb-4 text-lg font-semibold text-green-900">
         Force Plate Assessment
       </h3>
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-        <form.Field name="forcePlateAssessment.jumpHeight">
-          {(field) => (
-            <div>
-              <label className="block text-sm font-medium leading-6 text-gray-900">
-                Jump Height (inches)
-              </label>
-              <div className="mt-2">
-                <input
-                  type="number"
-                  step="0.01"
-                  value={field.state.value || ""}
-                  onChange={(e) => field.handleChange(e.target.value)}
-                  className="block w-full rounded-md border-0 px-3 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  placeholder="28.5"
-                />
-              </div>
-            </div>
-          )}
-        </form.Field>
-
-        <form.Field name="forcePlateAssessment.groundReactionForce">
-          {(field) => (
-            <div>
-              <label className="block text-sm font-medium leading-6 text-gray-900">
-                Ground Reaction Force (N)
-              </label>
-              <div className="mt-2">
-                <input
-                  type="number"
-                  step="0.01"
-                  value={field.state.value || ""}
-                  onChange={(e) => field.handleChange(e.target.value)}
-                  className="block w-full rounded-md border-0 px-3 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  placeholder="2400.00"
-                />
-              </div>
-            </div>
-          )}
-        </form.Field>
-
-        <form.Field name="forcePlateAssessment.contactTime">
-          {(field) => (
-            <div>
-              <label className="block text-sm font-medium leading-6 text-gray-900">
-                Contact Time (seconds)
-              </label>
-              <div className="mt-2">
-                <input
-                  type="number"
-                  step="0.001"
-                  value={field.state.value || ""}
-                  onChange={(e) => field.handleChange(e.target.value)}
-                  className="block w-full rounded-md border-0 px-3 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  placeholder="0.245"
-                />
-              </div>
-            </div>
-          )}
-        </form.Field>
-
-        <form.Field name="forcePlateAssessment.peakPower">
-          {(field) => (
-            <div>
-              <label className="block text-sm font-medium leading-6 text-gray-900">
-                Peak Power (W)
-              </label>
-              <div className="mt-2">
-                <input
-                  type="number"
-                  step="0.01"
-                  value={field.state.value || ""}
-                  onChange={(e) => field.handleChange(e.target.value)}
-                  className="block w-full rounded-md border-0 px-3 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  placeholder="3200.00"
-                />
-              </div>
-            </div>
-          )}
-        </form.Field>
-
-        <form.Field name="forcePlateAssessment.rateOfForceDevelopment">
-          {(field) => (
-            <div className="sm:col-span-2">
-              <label className="block text-sm font-medium leading-6 text-gray-900">
-                Rate of Force Development (N/s)
-              </label>
-              <div className="mt-2">
-                <input
-                  type="number"
-                  step="0.01"
-                  value={field.state.value || ""}
-                  onChange={(e) => field.handleChange(e.target.value)}
-                  className="block w-full rounded-md border-0 px-3 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  placeholder="1800.00"
-                />
-              </div>
-            </div>
-          )}
-        </form.Field>
-      </div>
-
-      <div className="mt-4">
-        <form.Field name="forcePlateAssessment.notes">
-          {(field) => (
-            <div>
-              <label className="block text-sm font-medium leading-6 text-gray-900">
-                Assessment Notes
-              </label>
-              <div className="mt-2">
-                <textarea
-                  rows={3}
-                  value={field.state.value || ""}
-                  onChange={(e) => field.handleChange(e.target.value)}
-                  className="block w-full rounded-md border-0 px-3 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  placeholder="Great improvement in explosive power..."
-                />
-              </div>
-            </div>
-          )}
-        </form.Field>
-      </div>
     </div>
   );
 
@@ -287,155 +357,11 @@ const LessonCreationForm = () => {
       <h3 className="mb-4 text-lg font-semibold text-orange-900">
         Hitting Assessment
       </h3>
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-        <form.Field name="hittingAssessment.exitVelocity">
-          {(field) => (
-            <div>
-              <label className="block text-sm font-medium leading-6 text-gray-900">
-                Exit Velocity (mph)
-              </label>
-              <div className="mt-2">
-                <input
-                  type="number"
-                  step="0.01"
-                  value={field.state.value || ""}
-                  onChange={(e) => field.handleChange(e.target.value)}
-                  className="block w-full rounded-md border-0 px-3 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  placeholder="95.5"
-                />
-              </div>
-            </div>
-          )}
-        </form.Field>
-
-        <form.Field name="hittingAssessment.launchAngle">
-          {(field) => (
-            <div>
-              <label className="block text-sm font-medium leading-6 text-gray-900">
-                Launch Angle (degrees)
-              </label>
-              <div className="mt-2">
-                <input
-                  type="number"
-                  step="0.01"
-                  value={field.state.value || ""}
-                  onChange={(e) => field.handleChange(e.target.value)}
-                  className="block w-full rounded-md border-0 px-3 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  placeholder="25.5"
-                />
-              </div>
-            </div>
-          )}
-        </form.Field>
-
-        <form.Field name="hittingAssessment.spinRate">
-          {(field) => (
-            <div>
-              <label className="block text-sm font-medium leading-6 text-gray-900">
-                Spin Rate (rpm)
-              </label>
-              <div className="mt-2">
-                <input
-                  type="number"
-                  value={field.state.value || ""}
-                  onChange={(e) => field.handleChange(e.target.value)}
-                  className="block w-full rounded-md border-0 px-3 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  placeholder="2200"
-                />
-              </div>
-            </div>
-          )}
-        </form.Field>
-
-        <form.Field name="hittingAssessment.distance">
-          {(field) => (
-            <div>
-              <label className="block text-sm font-medium leading-6 text-gray-900">
-                Distance (feet)
-              </label>
-              <div className="mt-2">
-                <input
-                  type="number"
-                  value={field.state.value || ""}
-                  onChange={(e) => field.handleChange(e.target.value)}
-                  className="block w-full rounded-md border-0 px-3 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  placeholder="380"
-                />
-              </div>
-            </div>
-          )}
-        </form.Field>
-
-        <form.Field name="hittingAssessment.strikeZoneContact">
-          {(field) => (
-            <div>
-              <label className="block text-sm font-medium leading-6 text-gray-900">
-                Strike Zone Contact (%)
-              </label>
-              <div className="mt-2">
-                <input
-                  type="number"
-                  step="0.001"
-                  min="0"
-                  max="1"
-                  value={field.state.value || ""}
-                  onChange={(e) => field.handleChange(e.target.value)}
-                  className="block w-full rounded-md border-0 px-3 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  placeholder="0.850"
-                />
-              </div>
-            </div>
-          )}
-        </form.Field>
-
-        <form.Field name="hittingAssessment.hardHitRate">
-          {(field) => (
-            <div>
-              <label className="block text-sm font-medium leading-6 text-gray-900">
-                Hard Hit Rate (%)
-              </label>
-              <div className="mt-2">
-                <input
-                  type="number"
-                  step="0.001"
-                  min="0"
-                  max="1"
-                  value={field.state.value || ""}
-                  onChange={(e) => field.handleChange(e.target.value)}
-                  className="block w-full rounded-md border-0 px-3 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  placeholder="0.650"
-                />
-              </div>
-            </div>
-          )}
-        </form.Field>
-      </div>
-
-      <div className="mt-4">
-        <form.Field name="hittingAssessment.notes">
-          {(field) => (
-            <div>
-              <label className="block text-sm font-medium leading-6 text-gray-900">
-                Assessment Notes
-              </label>
-              <div className="mt-2">
-                <textarea
-                  rows={3}
-                  value={field.state.value || ""}
-                  onChange={(e) => field.handleChange(e.target.value)}
-                  className="block w-full rounded-md border-0 px-3 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  placeholder="Improved bat speed and contact quality..."
-                />
-              </div>
-            </div>
-          )}
-        </form.Field>
-      </div>
     </div>
   );
 
   return (
-    <div className="mx-auto max-w-4xl bg-white p-6">
+    <div className="mx-auto max-w-4xl p-6">
       <div className="mb-8">
         <h1 className="text-3xl font-bold leading-tight tracking-tight text-gray-900">
           Create New Lesson
@@ -446,7 +372,7 @@ const LessonCreationForm = () => {
         </p>
       </div>
 
-      <div
+      <form
         onSubmit={(e) => {
           e.preventDefault();
           e.stopPropagation();
@@ -460,92 +386,133 @@ const LessonCreationForm = () => {
             Lesson Information
           </h2>
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-            <form.Field name="playerId">
+            {/* Player Selection */}
+            <form.Field
+              name="playerId"
+              validators={{
+                onChange: ({ value }) =>
+                  !value ? "Please select a player" : undefined,
+              }}
+            >
               {(field) => (
-                <div>
-                  <label className="block text-sm font-medium leading-6 text-gray-900">
-                    Player ID <span className="text-red-500">*</span>
-                  </label>
-                  <div className="mt-2">
-                    <input
-                      type="number"
-                      required
-                      value={field.state.value}
-                      onChange={(e) =>
-                        field.handleChange(Number(e.target.value))
-                      }
-                      className="block w-full rounded-md border-0 px-3 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                      placeholder="Enter player ID"
-                    />
-                  </div>
-                </div>
+                <Select
+                  label="Player"
+                  placeholder="Select a player"
+                  selectedKeys={field.state.value ? [field.state.value] : []}
+                  onSelectionChange={(keys) => {
+                    const selectedKey = Array.from(keys)[0] as string;
+                    field.handleChange(selectedKey);
+                  }}
+                  isInvalid={!!field.state.meta.errors.length}
+                  errorMessage={field.state.meta.errors.join(", ")}
+                  isRequired
+                >
+                  {users.map((user) => (
+                    <SelectItem key={user.id}>
+                      {user.name || user.email || `User ${user.id.slice(0, 8)}`}
+                    </SelectItem>
+                  ))}
+                </Select>
               )}
             </form.Field>
 
-            <form.Field name="lessonType">
+            {/* Coach Selection */}
+            <form.Field
+              name="coachId"
+              validators={{
+                onChange: ({ value }) =>
+                  !value ? "Please select a coach" : undefined,
+              }}
+            >
               {(field) => (
-                <div>
-                  <label className="block text-sm font-medium leading-6 text-gray-900">
-                    Lesson Type <span className="text-red-500">*</span>
-                  </label>
-                  <div className="relative mt-2">
-                    <select
-                      value={field.state.value}
-                      onChange={(e) => {
-                        const newValue = e.target.value as LessonType;
-                        field.handleChange(newValue);
-                        setSelectedLessonType(newValue);
-                      }}
-                      className="block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                    >
-                      <option value="strength">Strength Training</option>
-                      <option value="hitting">Hitting</option>
-                      <option value="pitching">Pitching</option>
-                      <option value="conditioning">Conditioning</option>
-                    </select>
-                    <ChevronDown className="pointer-events-none absolute right-3 top-2 h-5 w-5 text-gray-400" />
-                  </div>
-                </div>
+                <Select
+                  label="Coach"
+                  placeholder="Select a coach"
+                  selectedKeys={field.state.value ? [field.state.value] : []}
+                  onSelectionChange={(keys) => {
+                    const selectedKey = Array.from(keys)[0] as string;
+                    field.handleChange(selectedKey);
+                  }}
+                  isInvalid={!!field.state.meta.errors.length}
+                  errorMessage={field.state.meta.errors.join(", ")}
+                  isRequired
+                >
+                  {coaches.map((coach) => (
+                    <SelectItem key={coach.id}>
+                      {coach.name ||
+                        coach.email ||
+                        `Coach ${coach.id.slice(0, 8)}`}
+                    </SelectItem>
+                  ))}
+                </Select>
               )}
             </form.Field>
 
-            <form.Field name="lessonDate">
+            {/* Lesson Type Selection */}
+            <form.Field
+              name="type"
+              validators={{
+                onChange: ({ value }) =>
+                  !value ? "Please select a lesson type" : undefined,
+              }}
+            >
               {(field) => (
-                <div>
-                  <label className="block text-sm font-medium leading-6 text-gray-900">
-                    Lesson Date <span className="text-red-500">*</span>
-                  </label>
-                  <div className="mt-2">
-                    <input
-                      type="date"
-                      required
-                      value={field.state.value}
-                      onChange={(e) => field.handleChange(e.target.value)}
-                      className="block w-full rounded-md border-0 px-3 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                    />
-                  </div>
-                </div>
+                <Select
+                  label="Lesson Type"
+                  placeholder="Select lesson type"
+                  selectedKeys={[field.state.value]}
+                  onSelectionChange={(keys) => {
+                    const selectedKey = Array.from(keys)[0] as LessonType;
+                    field.handleChange(selectedKey);
+                    setSelectedLessonType(selectedKey);
+                  }}
+                  isInvalid={!!field.state.meta.errors.length}
+                  errorMessage={field.state.meta.errors.join(", ")}
+                  isRequired
+                >
+                  {LESSON_TYPES.map((type) => (
+                    <SelectItem key={type.value}>{type.label}</SelectItem>
+                  ))}
+                </Select>
+              )}
+            </form.Field>
+
+            {/* Lesson Date - Using HTML date input */}
+            <form.Field
+              name="lessonDate"
+              validators={{
+                onChange: ({ value }) =>
+                  !value ? "Please select a lesson date" : undefined,
+              }}
+            >
+              {(field) => (
+                <Input
+                  type="date"
+                  label="Lesson Date"
+                  value={field.state.value}
+                  onChange={(e) => handleDateChange(e.target.value)}
+                  onBlur={field.handleBlur}
+                  isInvalid={!!field.state.meta.errors.length}
+                  errorMessage={field.state.meta.errors.join(", ")}
+                  isRequired
+                />
               )}
             </form.Field>
           </div>
 
           <div className="mt-6">
+            {/* Notes */}
             <form.Field name="notes">
               {(field) => (
-                <div>
-                  <label className="block text-sm font-medium leading-6 text-gray-900">
-                    Lesson Notes
-                  </label>
-                  <div className="mt-2">
-                    <textarea
-                      rows={3}
-                      value={field.state.value}
-                      onChange={(e) => field.handleChange(e.target.value)}
-                      className="block w-full rounded-md border-0 px-3 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                      placeholder="Overall lesson notes and observations..."
-                    />
-                  </div>
-                </div>
+                <Textarea
+                  label="Notes"
+                  placeholder="Add any notes about this lesson..."
+                  description="Optional field for additional lesson details"
+                  value={field.state.value}
+                  onChange={(e) => field.handleChange(e.target.value)}
+                  onBlur={field.handleBlur}
+                  minRows={4}
+                />
               )}
             </form.Field>
           </div>
@@ -555,9 +522,9 @@ const LessonCreationForm = () => {
         <div className="space-y-6">
           <h2 className="text-xl font-semibold text-gray-900">Assessments</h2>
 
-          {assessmentConfigs[selectedLessonType]?.includes(
-            "strengthAssessment"
-          ) && <StrengthAssessmentForm />}
+          {assessmentConfigs[selectedLessonType]?.includes("armCare") && (
+            <ArmCareAssessmentForm />
+          )}
 
           {assessmentConfigs[selectedLessonType]?.includes(
             "forcePlateAssessment"
@@ -569,25 +536,25 @@ const LessonCreationForm = () => {
         </div>
 
         {/* Submit Button */}
-        <div className="flex justify-end space-x-3 border-t border-gray-200 pt-6">
-          <button
-            type="button"
-            className="rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium leading-4 text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+        <div className="flex justify-end space-x-3">
+          <Button
+            variant="light"
+            onPress={() => router.back()}
+            isDisabled={form.state.isSubmitting}
           >
             Cancel
-          </button>
-          <button
+          </Button>
+          <Button
             type="submit"
-            onClick={(e) => {
-              e.preventDefault();
-              form.handleSubmit();
-            }}
-            className="ml-3 inline-flex justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+            color="primary"
+            size="lg"
+            isLoading={form.state.isSubmitting}
+            isDisabled={form.state.isSubmitting || !form.state.canSubmit}
           >
-            Create Lesson
-          </button>
+            {form.state.isSubmitting ? "Creating Lesson..." : "Create Lesson"}
+          </Button>
         </div>
-      </div>
+      </form>
     </div>
   );
 };

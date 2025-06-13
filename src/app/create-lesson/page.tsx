@@ -10,9 +10,10 @@ export default async function CreateLessonPage() {
   await requireAuth();
   const session = await getServerSession(options);
 
-  if (!session?.user) {
+  if (!session?.user || session.user.role !== "coach") {
     redirect("/");
   }
+  const userId = session.user.id;
 
-  return <LessonCreationForm />;
+  return <LessonCreationForm coachId={userId} />;
 }

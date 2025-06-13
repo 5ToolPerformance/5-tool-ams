@@ -11,3 +11,9 @@ export interface Player {
   height?: number | null;
   weight?: number | null;
 }
+
+export interface User {
+  id: string;
+  name: string | null;
+  email: string | null;
+}
