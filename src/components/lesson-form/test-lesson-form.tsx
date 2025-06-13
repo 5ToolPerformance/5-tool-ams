@@ -5,44 +5,13 @@ import React from "react";
 import { useForm } from "@tanstack/react-form";
 import { ChevronDown } from "lucide-react";
 
+import { LessonCreateData } from "@/types/lessons";
+
 // Types based on our schema
 type LessonType = "strength" | "hitting" | "pitching" | "conditioning";
 
-interface LessonFormData {
-  coachId: number;
-  playerId: number;
-  lessonType: LessonType;
-  lessonDate: string;
-  notes: string;
-  // Assessment data
-  strengthAssessment?: {
-    maxSquat?: string;
-    maxBench?: string;
-    maxDeadlift?: string;
-    bodyWeight?: string;
-    notes?: string;
-  };
-  forcePlateAssessment?: {
-    jumpHeight?: string;
-    groundReactionForce?: string;
-    contactTime?: string;
-    peakPower?: string;
-    rateOfForceDevelopment?: string;
-    notes?: string;
-  };
-  hittingAssessment?: {
-    exitVelocity?: string;
-    launchAngle?: string;
-    spinRate?: string;
-    distance?: string;
-    strikeZoneContact?: string;
-    hardHitRate?: string;
-    notes?: string;
-  };
-}
-
 const LessonCreationForm = () => {
-  const form = useForm<LessonFormData>({
+  const form = useForm<LessonCreateData>({
     defaultValues: {
       coachId: 1,
       playerId: 0,
@@ -67,9 +36,9 @@ const LessonCreationForm = () => {
 
   // Assessment form configurations
   const assessmentConfigs = {
-    strength: ["strengthAssessment", "forcePlateAssessment"],
+    strength: ["armCare", "smfa", "forcePlate", "trueStrength"],
     hitting: ["hittingAssessment"],
-    pitching: ["hittingAssessment"], // Assuming pitching uses hitting assessments
+    pitching: ["pitchingAssessment"], // Assuming pitching uses hitting assessments
     conditioning: ["forcePlateAssessment"],
   };
 

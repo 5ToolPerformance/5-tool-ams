@@ -1,4 +1,12 @@
-import { ArmCare, ForcePlate, SMFA, TrueStrength } from "./assessments";
+import {
+  ArmCare,
+  CatchingAssessment,
+  ForcePlate,
+  HittingAssessment,
+  PitchingAssessment,
+  SMFA,
+  TrueStrength,
+} from "./assessments";
 import {
   ArmCareSelect,
   ForcePlateSelect,
@@ -12,10 +20,10 @@ export const LESSON_TYPES = [
   { value: "strength", label: "Strength Training" },
   { value: "hitting", label: "Hitting Practice" },
   { value: "pitching", label: "Pitching Training" },
-  { value: "fielding", label: "Fielding Practice" },
+  { value: "catching", label: "Catching Practice" },
 ] as const;
 
-export type LessonType = "strength" | "hitting" | "pitching" | "fielding";
+export type LessonType = "strength" | "hitting" | "pitching" | "catching";
 
 /**
  * Base Data for a Lesson
@@ -36,6 +44,9 @@ export interface LessonCreateData extends BaseLessonData {
   smfa?: SMFA;
   forcePlate?: ForcePlate;
   trueStrength?: TrueStrength;
+  hittingAssessment?: HittingAssessment;
+  pitchingAssessment?: PitchingAssessment;
+  catchingAssessment?: CatchingAssessment;
 }
 
 /**

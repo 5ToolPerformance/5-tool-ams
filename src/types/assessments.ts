@@ -91,6 +91,41 @@ export interface TrueStrength {
   createdOn: Date;
 }
 
+export interface HittingAssessment {
+  id: string;
+  playerId: string;
+  coachId: string;
+  lessonId: string;
+  coachNotes?: string;
+  playerNotes?: string;
+  head?: string;
+  load?: string;
+  upper?: string;
+  lower?: string;
+  lessonDate: Date;
+  createdOn: Date;
+}
+
+export interface GeneralAssessment {
+  id: string;
+  playerId: string;
+  coachId: string;
+  lessonId: string;
+  coachNotes?: string;
+  playerNotes?: string;
+  lessonDate: Date;
+  createdOn: Date;
+}
+
+export interface PitchingAssessment extends GeneralAssessment {
+  core?: string;
+  stride?: string;
+}
+
+export interface CatchingAssessment extends GeneralAssessment {
+  arm?: string;
+}
+
 export type NewArmCare = Omit<ArmCare, "id" | "createdOn">;
 export type NewSMFA = Omit<SMFA, "id" | "createdOn">;
 export type NewForcePlate = Omit<ForcePlate, "id" | "createOn">;
