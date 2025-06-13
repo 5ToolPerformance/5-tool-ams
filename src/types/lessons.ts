@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { FormApi } from "@tanstack/react-form";
 import {
   ArmCare,
   CatchingAssessment,
@@ -61,3 +63,6 @@ export interface LessonWithAssessment {
     trueStrength: TrueStrengthSelect;
   };
 }
+
+export type LessonForm = FormApi<LessonCreateData>
+export type LessonFieldApi<T = any> = FieldApi<LessonCreateData, T, undefined, undefined>;

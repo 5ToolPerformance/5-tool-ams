@@ -1,3 +1,5 @@
+import { LessonForm } from "./lessons";
+
 export interface ArmCare {
   id: string;
   playerId: string;
@@ -130,3 +132,6 @@ export type NewArmCare = Omit<ArmCare, "id" | "createdOn">;
 export type NewSMFA = Omit<SMFA, "id" | "createdOn">;
 export type NewForcePlate = Omit<ForcePlate, "id" | "createOn">;
 export type NewTrueStrength = Omit<TrueStrength, "id" | "createdOn">;
+export interface BaseAssessmentProps {
+  form: LessonForm;
+}
