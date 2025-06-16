@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import { LessonService } from "@/lib/services/lessons";
-import { CreateLessonRequest } from "@/types/lessons";
+import { LessonCreateData } from "@/types/lessons";
 
 export async function POST(request: NextRequest) {
   try {
-    const body: CreateLessonRequest = await request.json();
+    const body: LessonCreateData = await request.json();
 
     // Validate the request data
     const validationErrors = LessonService.validateLessonData(body);

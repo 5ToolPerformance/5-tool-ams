@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { FormApi } from "@tanstack/react-form";
 import {
   ArmCare,
   CatchingAssessment,
@@ -22,10 +20,10 @@ export const LESSON_TYPES = [
   { value: "strength", label: "Strength Training" },
   { value: "hitting", label: "Hitting Practice" },
   { value: "pitching", label: "Pitching Training" },
-  { value: "catching", label: "Catching Practice" },
+  { value: "fielding", label: "Catching Practice" },
 ] as const;
 
-export type LessonType = "strength" | "hitting" | "pitching" | "catching";
+export type LessonType = "strength" | "hitting" | "pitching" | "fielding";
 
 /**
  * Base Data for a Lesson
@@ -63,6 +61,3 @@ export interface LessonWithAssessment {
     trueStrength: TrueStrengthSelect;
   };
 }
-
-export type LessonForm = FormApi<LessonCreateData>
-export type LessonFieldApi<T = any> = FieldApi<LessonCreateData, T, undefined, undefined>;

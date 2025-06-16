@@ -10,6 +10,7 @@ import {
   users,
 } from "@/db/schema";
 import {
+  ArmCareInsert,
   ForcePlateInsert,
   SmfaInsert,
   TrueStrengthInsert,
@@ -63,7 +64,7 @@ export class LessonService {
               straight_leg_l: data.armCare.straight_leg_l,
               straight_leg_r: data.armCare.straight_leg_r,
               lessonDate: new Date(data.lessonDate),
-            })
+            } as ArmCareInsert)
             .returning({ id: armCare.id });
 
           assessmentIds.push({ type: "arm_care", id: armCareAssessment.id });

@@ -1,5 +1,3 @@
-import { LessonForm } from "./lessons";
-
 export interface ArmCare {
   id: string;
   playerId: string;
@@ -104,6 +102,10 @@ export interface HittingAssessment {
   load?: string;
   upper?: string;
   lower?: string;
+  exit_velo_avg?: number;
+  spin_axis?: number;
+  max_distance?: number;
+  linedrive_pct?: number;
   lessonDate: Date;
   createdOn: Date;
 }
@@ -132,6 +134,3 @@ export type NewArmCare = Omit<ArmCare, "id" | "createdOn">;
 export type NewSMFA = Omit<SMFA, "id" | "createdOn">;
 export type NewForcePlate = Omit<ForcePlate, "id" | "createOn">;
 export type NewTrueStrength = Omit<TrueStrength, "id" | "createdOn">;
-export interface BaseAssessmentProps {
-  form: LessonForm;
-}
