@@ -1,0 +1,1 @@
+ALTER TYPE "public"."lesson_types" ADD VALUE 'catching';

@@ -5,11 +5,7 @@ export interface LessonData {
     id: string;
     userId: string;
     coachId: string;
-    type: string;
-    armCare?: string;
-    smfa?: string;
-    hawkinsForce?: string;
-    trueStrength?: string;
+    lessonType: string;
     notes: string;
     createdOn: string;
     lessonDate: string;
@@ -52,7 +48,7 @@ const LessonCard: React.FC<LessonCardProps> = ({ lesson }) => {
           <div className="flex-1">
             <div className="mb-2 flex items-center gap-2">
               <h3 className="text-lg font-semibold">
-                {generateTitle(lesson.lesson.type)}
+                {generateTitle(lesson.lesson.lessonType)}
               </h3>
               <span className="text-sm text-default-500">
                 • {formatDate(lesson.lesson.lessonDate)}
@@ -64,7 +60,7 @@ const LessonCard: React.FC<LessonCardProps> = ({ lesson }) => {
             <p className="mb-4 text-default-700">{lesson.lesson.notes}</p>
             <div className="flex flex-wrap gap-2">
               <Chip size="sm" variant="flat" color="secondary">
-                {lesson.lesson.type}
+                {lesson.lesson.lessonType}
               </Chip>
             </div>
           </div>

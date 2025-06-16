@@ -130,6 +130,12 @@ export interface CatchingAssessment extends GeneralAssessment {
   arm?: string;
 }
 
+export type AssessmentType =
+  | "arm_care"
+  | "smfa"
+  | "force_plate"
+  | "true_strength";
+
 export type NewArmCare = Omit<ArmCare, "id" | "createdOn">;
 export type NewSMFA = Omit<SMFA, "id" | "createdOn">;
 export type NewForcePlate = Omit<ForcePlate, "id" | "createOn">;

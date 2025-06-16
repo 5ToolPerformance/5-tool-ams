@@ -5,10 +5,12 @@ import {
   armCare,
   hawkinsForcePlate,
   lesson,
+  lessonAssessments,
   smfa,
   trueStrength,
   users,
 } from "@/db/schema";
+import { AssessmentType } from "@/types/assessments";
 import {
   ArmCareInsert,
   ForcePlateInsert,
@@ -159,9 +161,19 @@ export class LessonService {
             .returning({ id: trueStrength.id });
 
           assessmentIds.push({
-            type: "force_plate",
+            type: "true_strength",
             id: trueStrengthAssessment.id,
           });
+        }
+
+        if (assessmentIds.length > 0) {
+          await tx.insert(lessonAssessments).values(
+            assessmentIds.map(({ type, id }) => ({
+              lessonId,
+              assessmentType: type as AssessmentType, // Cast to your enum type
+              assessmentId: id,
+            }))
+          );
         }
       });
     } catch (error) {

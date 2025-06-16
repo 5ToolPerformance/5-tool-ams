@@ -115,6 +115,7 @@ const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
     hitting: ["hittingAssessment"],
     pitching: ["pitchingAssessment"], // Assuming pitching uses hitting assessments
     catching: ["catchingAssessment"],
+    fielding: ["fieldingAssessment"],
   };
 
   const ArmCareAssessmentForm = () => (

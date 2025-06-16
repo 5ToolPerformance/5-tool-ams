@@ -14,6 +14,7 @@ export const lessonTypes = pgEnum("lesson_types", [
   "hitting",
   "pitching",
   "fielding",
+  "catching",
 ]);
 
 const lesson = pgTable(

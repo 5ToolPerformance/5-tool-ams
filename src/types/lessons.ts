@@ -23,7 +23,12 @@ export const LESSON_TYPES = [
   { value: "fielding", label: "Catching Practice" },
 ] as const;
 
-export type LessonType = "strength" | "hitting" | "pitching" | "fielding";
+export type LessonType =
+  | "strength"
+  | "hitting"
+  | "pitching"
+  | "fielding"
+  | "catching";
 
 /**
  * Base Data for a Lesson
