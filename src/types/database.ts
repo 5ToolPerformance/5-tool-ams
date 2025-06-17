@@ -2,6 +2,7 @@ import {
   armCare,
   hawkinsForcePlate,
   lesson,
+  motorPreferences,
   smfa,
   trueStrength,
 } from "@/db/schema";
@@ -25,3 +26,7 @@ export type TrueStrengthInsert = typeof trueStrength.$inferInsert;
 // Lesson Db schema types
 export type LessonSelect = typeof lesson.$inferSelect;
 export type LessonInsert = typeof lesson.$inferInsert;
+
+// Motor Preferences Db schema types
+export type MotorPreferencesSelect = typeof motorPreferences.$inferSelect;
+export type MotorPreferencesInsert = typeof motorPreferences.$inferInsert;

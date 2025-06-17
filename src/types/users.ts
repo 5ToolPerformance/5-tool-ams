@@ -17,3 +17,13 @@ export interface User {
   name: string | null;
   email: string | null;
 }
+
+export interface PlayerInformation {
+  userId: string;
+  height: number;
+  weight: number;
+  position: string;
+  throws: string;
+  hits: string;
+  date_of_birth: Date;
+}

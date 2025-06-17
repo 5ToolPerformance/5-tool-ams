@@ -1,9 +1,16 @@
 import { eq } from "drizzle-orm";
 
 import db from "@/db";
-import { playerInformation } from "@/db/schema";
+import { motorPreferences, playerInformation } from "@/db/schema";
+import { MotorPreferencesForm } from "@/types/assessments";
+import { PlayerInformation } from "@/types/users";
 
 export class PlayerService {
+  /**
+   * Retrieve the Player's information given a playerId
+   * @param playerId - The ID of the player to get information for
+   * @returns playerInformation for the given playerId if it exists
+   */
   static async getPlayerInformationById(playerId: string) {
     try {
       const playerData = await db
@@ -22,8 +29,17 @@ export class PlayerService {
       throw new Error("Failed to fetch player information");
     }
   }
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  static async createPlayerInformation(playerId: string, data: any) {
+
+  /**
+   * Create playerInformation in database for a player based on ID
+   * @param playerId - The ID of the player for the information to be assigned to
+   * @param data - The information for to be posted for the player
+   * @returns The completed playerInformation to be posted in the Db
+   */
+  static async createPlayerInformation(
+    playerId: string,
+    data: PlayerInformation
+  ) {
     try {
       const [newPlayerInfo] = await db
         .insert(playerInformation)
@@ -42,6 +58,33 @@ export class PlayerService {
     } catch (error) {
       console.error("Error creating player information:", error);
       throw new Error("Failed to create player information");
+    }
+  }
+
+  /**
+   * Create a motor preference exam in the database
+   * @param data - The form data for the Motor Preference Assessment
+   * @returns the completed Motor Preference assessment type
+   */
+  static async createMotorPreferences(data: MotorPreferencesForm) {
+    try {
+      const [newMotorPreference] = await db
+        .insert(motorPreferences)
+        .values({
+          playerId: data.playerId,
+          coachId: data.coachId,
+          archetype: data.archetype,
+          extensionLeg: data.extensionLeg,
+          breath: data.breath,
+          association: data.association,
+          assessmentDate: data.assessmentDate,
+        })
+        .returning();
+
+      return newMotorPreference;
+    } catch (error) {
+      console.error("Error creating motor preference assessment:", error);
+      throw new Error("Failed to create motor preference assessment");
     }
   }
 }

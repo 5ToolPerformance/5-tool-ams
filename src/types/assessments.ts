@@ -136,7 +136,20 @@ export type AssessmentType =
   | "force_plate"
   | "true_strength";
 
+export type Archetype = "aerial" | "terrestrial";
+export type leftRight = "left" | "right" | "switch";
+
 export type NewArmCare = Omit<ArmCare, "id" | "createdOn">;
 export type NewSMFA = Omit<SMFA, "id" | "createdOn">;
 export type NewForcePlate = Omit<ForcePlate, "id" | "createOn">;
 export type NewTrueStrength = Omit<TrueStrength, "id" | "createdOn">;
+
+export interface MotorPreferencesForm {
+  playerId: string;
+  coachId: string;
+  archetype: Archetype;
+  breath: boolean;
+  extensionLeg: leftRight;
+  association: boolean;
+  assessmentDate: Date;
+}
