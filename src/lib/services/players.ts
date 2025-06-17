@@ -87,4 +87,26 @@ export class PlayerService {
       throw new Error("Failed to create motor preference assessment");
     }
   }
+
+  static async getMotorPreferencesById(playerId: string) {
+    try {
+      const playerMPE = await db
+        .select()
+        .from(motorPreferences)
+        .where(eq(motorPreferences.playerId, playerId))
+        .limit(1);
+
+      if (playerMPE.length === 0) {
+        return null;
+      }
+
+      return playerMPE;
+    } catch (error) {
+      console.error(
+        "Error fetching motor preference assessment by player id:",
+        error
+      );
+      throw new Error("Failed to fetch motor preference assessment");
+    }
+  }
 }

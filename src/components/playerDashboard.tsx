@@ -15,7 +15,6 @@ import { BarChart3, BookOpen, ChevronDown, Dumbbell } from "lucide-react";
 
 import { Player } from "@/types/users";
 
-import MotorPreferencesModal from "./assessments/motorPreferencesAssessment";
 import LessonsSection from "./lessonsComponent";
 import OverviewSection from "./overviewSection";
 import PlansSection from "./plans/plansComponent";
@@ -56,7 +55,6 @@ const PlayerDashboard: React.FC<PlayerDashboardProps> = ({ player }) => {
       <div className="mx-auto max-w-6xl space-y-6">
         {/* Player Card */}
         <PlayerCard player={player} size="lg" />
-        <MotorPreferencesModal />
 
         {/* Navigation - Tabs on larger screens, Dropdown on mobile */}
         <div className="w-full">
