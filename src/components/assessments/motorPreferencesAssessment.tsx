@@ -1,14 +1,67 @@
 import {
   Button,
+  Checkbox,
+  Input,
   Modal,
   ModalBody,
   ModalContent,
   ModalFooter,
   ModalHeader,
+  Select,
+  SelectItem,
   useDisclosure,
 } from "@heroui/react";
+import { useForm } from "@tanstack/react-form";
 
-export default function MotorPreferencesModal() {
+import { ApiResponse } from "@/types/api";
+import {
+  Archetype,
+  MotorPreferencesForm,
+  leftRight,
+} from "@/types/assessments";
+
+export default function MotorPreferencesModal({
+  playerId,
+  coachId,
+}: {
+  playerId: string | null;
+  coachId: string | undefined;
+}) {
+  const form = useForm<MotorPreferencesForm>({
+    defaultValues: {
+      playerId: playerId,
+      coachId: coachId,
+      assessmentDate: new Date().toISOString().split("T")[0],
+      archetype: "aerial" as Archetype, // or "terrestrial"
+      breath: false,
+      extensionLeg: "left" as leftRight, // or "right" | "switch"
+      association: false,
+    },
+    onSubmit: async ({ value }) => {
+      console.log("Form submitted:", value);
+      try {
+        const response = await fetch(
+          `/api/players/${playerId}/motor-preference`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(value),
+          }
+        );
+
+        const result: ApiResponse<MotorPreferencesForm> = await response.json();
+
+        if (!result.success) {
+          throw new Error(result.error || "Failed to create motor preference");
+        }
+      } catch (error) {
+        console.error("Error creating motor preference:", error);
+      }
+    },
+  });
+
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   return (
@@ -24,7 +77,87 @@ export default function MotorPreferencesModal() {
                 Motor Preferences
               </ModalHeader>
               <ModalBody>
-                <h1>Form Goes Here</h1>
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    form.handleSubmit();
+                  }}
+                >
+                  <form.Field name="archetype">
+                    {(field) => (
+                      <Select
+                        label="Archetype"
+                        selectedKeys={
+                          field.state.value ? [field.state.value] : []
+                        }
+                        onSelectionChange={(keys) => {
+                          const selectedKey = Array.from(keys)[0] as Archetype;
+                          field.handleChange(selectedKey);
+                        }}
+                      >
+                        <SelectItem key="aerial">Aerial</SelectItem>
+                        <SelectItem key="terrestrial">Terrestrial</SelectItem>
+                      </Select>
+                    )}
+                  </form.Field>
+
+                  <form.Field name="breath">
+                    {(field) => (
+                      <Checkbox
+                        isSelected={field.state.value}
+                        onValueChange={field.handleChange}
+                      >
+                        Uses Breath
+                      </Checkbox>
+                    )}
+                  </form.Field>
+
+                  <form.Field name="extensionLeg">
+                    {(field) => (
+                      <Select
+                        label="Extension Leg"
+                        selectedKeys={
+                          field.state.value ? [field.state.value] : []
+                        }
+                        onSelectionChange={(keys) => {
+                          const selectedKey = Array.from(keys)[0] as leftRight;
+                          field.handleChange(selectedKey);
+                        }}
+                      >
+                        <SelectItem key="left">Left</SelectItem>
+                        <SelectItem key="right">Right</SelectItem>
+                        <SelectItem key="switch">Switch</SelectItem>
+                      </Select>
+                    )}
+                  </form.Field>
+
+                  <form.Field name="association">
+                    {(field) => (
+                      <Checkbox
+                        isSelected={field.state.value}
+                        onValueChange={field.handleChange}
+                      >
+                        Uses Association
+                      </Checkbox>
+                    )}
+                  </form.Field>
+
+                  <form.Field name="assessmentDate">
+                    {(field) => (
+                      <Input
+                        type="date"
+                        label="Assessment Date"
+                        value={field.state.value}
+                        onChange={(e) => field.handleChange(e.target.value)}
+                      />
+                    )}
+                  </form.Field>
+
+                  <Button type="submit" color="primary">
+                    Save Preferences
+                  </Button>
+                </form>
               </ModalBody>
               <ModalFooter>
                 <Button color="danger" variant="flat" onPress={onClose}>

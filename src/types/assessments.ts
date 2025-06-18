@@ -151,5 +151,5 @@ export interface MotorPreferencesForm {
   breath: boolean;
   extensionLeg: leftRight;
   association: boolean;
-  assessmentDate: Date;
+  assessmentDate: string;
 }

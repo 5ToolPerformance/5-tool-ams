@@ -1,9 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import {
   Button,
+  Card,
+  CardHeader,
   Dropdown,
   DropdownItem,
   DropdownMenu,
@@ -13,8 +15,10 @@ import {
 } from "@heroui/react";
 import { BarChart3, BookOpen, ChevronDown, Dumbbell } from "lucide-react";
 
+import { ApiService } from "@/lib/services/api";
 import { Player } from "@/types/users";
 
+import MotorPreferencesModal from "./assessments/motorPreferencesAssessment";
 import LessonsSection from "./lessonsComponent";
 import OverviewSection from "./overviewSection";
 import PlansSection from "./plans/plansComponent";
@@ -22,10 +26,40 @@ import PlayerCard from "./players/playerCard";
 
 interface PlayerDashboardProps {
   player: Player;
+  coachId: string | undefined;
 }
 
-const PlayerDashboard: React.FC<PlayerDashboardProps> = ({ player }) => {
+const PlayerDashboard: React.FC<PlayerDashboardProps> = ({
+  player,
+  coachId,
+}) => {
   const [selectedTab, setSelectedTab] = useState<string>("overview");
+  const [motorPreference, setMotorPreference] = useState();
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchPlayerData = async () => {
+      if (!player?.id) {
+        setError("Player ID is missing");
+        setLoading(false);
+        return;
+      }
+      try {
+        setLoading(true);
+        // Example: Fetch player data by ID
+        const data = await ApiService.fetchMotorPreferenceById(player.id);
+        setMotorPreference(data);
+      } catch (err) {
+        setError("Failed to fetch player data");
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPlayerData();
+  }, [player.id]);
 
   const tabOptions = [
     { key: "overview", label: "Overview", icon: BarChart3 },
@@ -53,8 +87,22 @@ const PlayerDashboard: React.FC<PlayerDashboardProps> = ({ player }) => {
   return (
     <div className="min-h-screen p-4 md:p-6 lg:p-8">
       <div className="mx-auto max-w-6xl space-y-6">
-        {/* Player Card */}
-        <PlayerCard player={player} size="lg" />
+        {/* Player Card and Motor Preference Side by Side */}
+        <div className="flex flex-col items-start gap-6 md:flex-row">
+          <PlayerCard player={player} size="lg" />
+          <div>
+            <Card className="p-6">
+              <CardHeader>
+                <h3 className="text-lg font-semibold">Motor Preferences</h3>
+              </CardHeader>
+              {motorPreference ? (
+                <p>Motor Preference Info Here</p>
+              ) : (
+                <MotorPreferencesModal playerId={player.id} coachId={coachId} />
+              )}
+            </Card>
+          </div>
+        </div>
 
         {/* Navigation - Tabs on larger screens, Dropdown on mobile */}
         <div className="w-full">

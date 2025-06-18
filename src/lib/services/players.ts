@@ -77,7 +77,7 @@ export class PlayerService {
           extensionLeg: data.extensionLeg,
           breath: data.breath,
           association: data.association,
-          assessmentDate: data.assessmentDate,
+          assessmentDate: new Date(data.assessmentDate),
         })
         .returning();
 
