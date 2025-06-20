@@ -14,5 +14,8 @@
     "**/components/**/index.tsx": "${dirname} - Component"
   },
   "eslint.validate": ["javascript", "javascript", "html", "typescript"],
-  "cSpell.words": ["heroui", "smfa"]
+  "cSpell.words": [
+    "heroui",
+    "smfa"
+  ]
 }
