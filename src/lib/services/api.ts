@@ -50,6 +50,12 @@ export class ApiService {
       return res.json();
     }
 
+    /**
+     * Creates a motor preference assessment for a player.
+     * @param data - The MotorPreferencesForm object containing the assessment data.
+     * @returns The created MotorPreferences object.
+     * @throws Error if there is an issue with the API request.
+     */
     static async createMotorPreference(data: MotorPreferencesForm) {
       const res = await fetch(`/api/players/${data.playerId}/motor-preference`, {
         method: "POST",
@@ -60,5 +66,21 @@ export class ApiService {
       });
       if (!res.ok) throw new Error("Failed to create motor preference");
       return res.json();
+    }
+
+    /**
+     * Fetches a player and their information by their ID from the API.
+     * @param id - The ID of the player to fetch.
+     * @returns The Player and PlayerInformation objects if found, otherwise null.
+     * @throws Error if there is an issue with the API request.
+     */
+    static async fetchPlayerWithInformationById(id: string) {
+      const player = await fetch(`/api/players/${id}`);
+      if (!player.ok) throw new Error("Failed to fetch player");
+      const playerInfo = await fetch(`/api/players/${id}/player-information`);
+      if (!playerInfo.ok) throw new Error("Failed to fetch player information");
+      const motorPreference = await fetch(`/api/players/${id}/motor-preference`);
+      if (!motorPreference.ok) throw new Error("Failed to fetch motor preference");
+      return { player: await player.json(), playerInfo: await playerInfo.json(), motorPreference: await motorPreference.json() };
     }
 }
