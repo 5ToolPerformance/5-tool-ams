@@ -2,12 +2,15 @@ import { Card, CardBody, User } from "@heroui/react";
 import { getServerSession } from "next-auth";
 
 import options from "@/config/auth";
+import { LessonService } from "@/lib/services/lessons";
 import requireAuth from "@/utils/require-auth";
 
 export default async function Profile() {
   await requireAuth();
   const session = await getServerSession(options);
-
+  const testInfo = await LessonService.getLessonsByPlayerWithJoinAndAssessments(
+    "ab415c5b-b71e-4e3c-900c-09da5e3d173a"
+  );
   return (
     <Card className="mx-auto mt-4 max-w-md">
       <CardBody>

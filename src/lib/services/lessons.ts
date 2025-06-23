@@ -449,4 +449,29 @@ export class LessonService {
       throw new Error("Failed to fetch number of lessons");
     }
   }
+
+  /**
+   * Fetch all lessons for a player with join and assessments
+   * @param userId - The ID of the player to get lessons for
+   * @returns An array of lessons with player and coach data
+   * @throws Error if there is an error with the database query
+   */
+  static async getLessonsByPlayerWithJoinAndAssessments(userId: string) {
+    try {
+      return await db
+        .select({
+          lesson: lesson,
+          coach: users,
+          assessments: lessonAssessments,
+        })
+        .from(lesson)
+        .innerJoin(users, eq(lesson.coachId, users.id))
+        .innerJoin(lessonAssessments, eq(lesson.id, lessonAssessments.lessonId))
+        .where(eq(lesson.playerId, userId))
+        .orderBy(desc(lesson.lessonDate));
+    } catch (error) {
+      console.error("Error fetching lessons by user with join and assessments:", error);
+      throw new Error("Failed to fetch lessons");
+    }
+  }
 }
