@@ -217,10 +217,19 @@ export class LessonService {
         .where(eq(users.id, foundLesson.coachId))
         .limit(1);
 
+      const assessmentData = await db
+        .select({
+          assessmentType: lessonAssessments.assessmentType,
+          assessmentId: lessonAssessments.assessmentId,
+        })
+        .from(lessonAssessments)
+        .where(eq(lessonAssessments.lessonId, id));
+
       return {
         ...foundLesson,
         user: playerData[0] || null,
         coach: coachData[0] || null,
+        assessments: assessmentData || null,
       };
     } catch (error) {
       console.error("Error fetching lesson:", error);
@@ -470,7 +479,10 @@ export class LessonService {
         .where(eq(lesson.playerId, userId))
         .orderBy(desc(lesson.lessonDate));
     } catch (error) {
-      console.error("Error fetching lessons by user with join and assessments:", error);
+      console.error(
+        "Error fetching lessons by user with join and assessments:",
+        error
+      );
       throw new Error("Failed to fetch lessons");
     }
   }

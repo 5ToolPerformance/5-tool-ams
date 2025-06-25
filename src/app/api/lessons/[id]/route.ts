@@ -7,7 +7,8 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
-    const lesson = await LessonService.getLessonById(params.id);
+    const { id } = await params;
+    const lesson = await LessonService.getLessonById(id);
 
     if (!lesson) {
       return NextResponse.json(
