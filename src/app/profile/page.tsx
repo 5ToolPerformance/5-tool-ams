@@ -1,14 +1,12 @@
 import { Card, CardBody, User } from "@heroui/react";
 import { getServerSession } from "next-auth";
 
-import ArmCareClient from "@/components/assessments/ArmCareClient";
 import options from "@/config/auth";
 import requireAuth from "@/utils/require-auth";
 
 export default async function Profile() {
   await requireAuth();
   const session = await getServerSession(options);
-  const assessmentId = "361e33ce-4c0c-461c-a61e-7c3917ad1cea";
   return (
     <div className="space-y-6">
       <Card className="mx-auto max-w-md">
@@ -38,12 +36,8 @@ export default async function Profile() {
           </div>
         </CardBody>
       </Card>
-      
-      <div className="max-w-4xl mx-auto">
-        <ArmCareClient assessmentId={assessmentId} />
-      </div>
     </div>
   );
 }
 
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";

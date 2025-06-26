@@ -90,6 +90,18 @@ export class ApiService {
   }
 
   /**
+   * Fetches a lesson by its ID from the API.
+   * @param id - The ID of the lesson to fetch.
+   * @returns The lesson object if found, otherwise null.
+   * @throws Error if there is an issue with the API request.
+   */
+  static async fetchLessonById(id: string) {
+    const res = await fetch(`/api/lessons/${id}`);
+    if (!res.ok) throw new Error("Failed to fetch lesson");
+    return res.json();
+  }
+
+  /**
    * Fetches a lesson assessment by its ID from the API.
    * @param id - The ID of the lesson assessment to fetch.
    * @param type - The type of the lesson assessment to fetch.
