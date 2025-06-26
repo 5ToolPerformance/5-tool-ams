@@ -19,6 +19,8 @@ import {
 } from "@/types/database";
 import { LessonCreateData, LessonType } from "@/types/lessons";
 
+import { AssessmentService } from "./assessments";
+
 /**
  * Service for managing lessons in the database.
  */
@@ -484,6 +486,20 @@ export class LessonService {
         error
       );
       throw new Error("Failed to fetch lessons");
+    }
+  }
+
+  static async getLessonAssessmentById(id: string, type: string) {
+    if (type === "force_plate") {
+      return await AssessmentService.getForcePlateAssessmentById(id);
+    } else if (type === "true_strength") {
+      return await AssessmentService.getTrueStrengthAssessmentById(id);
+    } else if (type === "arm_care") {
+      return await AssessmentService.getArmCareAssessmentById(id);
+    } else if (type === "smfa") {
+      return await AssessmentService.getSmfaAssessmentById(id);
+    } else {
+      throw new Error("Invalid assessment type");
     }
   }
 }
