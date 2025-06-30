@@ -19,7 +19,10 @@ export interface User {
 }
 
 export interface PlayerInformation {
-  userId: string;
+  userId?: string;
+  firstName: string;
+  lastName: string;
+  profilePictureUrl?: string;
   height: number;
   weight: number;
   position: string;

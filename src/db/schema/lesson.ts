@@ -7,6 +7,7 @@ import {
   uuid,
 } from "drizzle-orm/pg-core";
 
+import playerInformation from "./playerInformation";
 import users from "./users";
 
 export const lessonTypes = pgEnum("lesson_types", [
@@ -23,7 +24,7 @@ const lesson = pgTable(
     id: uuid("id").primaryKey().defaultRandom(),
     playerId: uuid("player_id")
       .notNull()
-      .references(() => users.id, { onDelete: "cascade" }),
+      .references(() => playerInformation.id, { onDelete: "cascade" }),
     coachId: uuid("coach_id")
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),

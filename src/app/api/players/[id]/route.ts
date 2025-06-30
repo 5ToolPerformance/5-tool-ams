@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { UserService } from "@/lib/services/users";
+import { PlayerService } from "@/lib/services/players";
 
 export async function GET(
   request: NextRequest,
@@ -18,14 +18,20 @@ export async function GET(
     }
 
     // Get lessons for the player
-    const player = await UserService.getUserById(id);
+    const player = await PlayerService.getPlayerById(id);
 
-    return NextResponse.json({ player });
+    return NextResponse.json({
+      success: true,
+      data: player,
+    });
   } catch (error) {
     console.error("Error fetching player by id:", error);
 
     return NextResponse.json(
-      { error: "Failed to fetch player" },
+      {
+        success: false,
+        error: "Failed to fetch player",
+      },
       { status: 500 }
     );
   }

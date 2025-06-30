@@ -5,9 +5,10 @@ import users from "./users";
 
 export const playerInformation = pgTable("player_information", {
   id: uuid("id").primaryKey().defaultRandom(),
-  userId: uuid("userId")
-    .notNull()
-    .references(() => users.id, { onDelete: "cascade" }),
+  userId: uuid("userId").references(() => users.id, { onDelete: "cascade" }),
+  firstName: text("first_name").notNull(),
+  lastName: text("last_name").notNull(),
+  profilePictureUrl: text("profile_picture_url"),
   height: real("height").notNull(),
   weight: real("weight").notNull(),
   position: text("position").notNull(),

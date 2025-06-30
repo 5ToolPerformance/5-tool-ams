@@ -16,7 +16,7 @@ export class PlayerService {
       const playerData = await db
         .select()
         .from(playerInformation)
-        .where(eq(playerInformation.userId, playerId))
+        .where(eq(playerInformation.id, playerId))
         .limit(1);
 
       if (playerData.length === 0) {
@@ -45,6 +45,8 @@ export class PlayerService {
         .insert(playerInformation)
         .values({
           userId: playerId,
+          firstName: data.firstName,
+          lastName: data.lastName,
           height: data.height,
           weight: data.weight,
           position: data.position,
@@ -107,6 +109,36 @@ export class PlayerService {
         error
       );
       throw new Error("Failed to fetch motor preference assessment");
+    }
+  }
+
+  static async getAllPlayersWithInformation() {
+    try {
+      const players = await db.select().from(playerInformation);
+
+      return players;
+    } catch (error) {
+      console.error("Error fetching players with information:", error);
+      throw new Error("Failed to fetch players with information");
+    }
+  }
+
+  static async getPlayerById(playerId: string) {
+    try {
+      const player = await db
+        .select()
+        .from(playerInformation)
+        .where(eq(playerInformation.id, playerId))
+        .limit(1);
+
+      if (player.length === 0) {
+        return null;
+      }
+
+      return player;
+    } catch (error) {
+      console.error("Error fetching player by id:", error);
+      throw new Error("Failed to fetch player");
     }
   }
 }
