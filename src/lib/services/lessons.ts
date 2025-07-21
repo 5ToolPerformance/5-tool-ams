@@ -489,6 +489,13 @@ export class LessonService {
     }
   }
 
+  /**
+   * Fetch a lesson assessment by its unique ID in the database.
+   * @param id - The ID of the lesson assessment to fetch
+   * @param type - The type of the lesson assessment to fetch
+   * @returns The lesson assessment object, or null if not found
+   * @throws Error if there is an error with the database query
+   */
   static async getLessonAssessmentById(id: string, type: string) {
     if (type === "force_plate") {
       return await AssessmentService.getForcePlateAssessmentById(id);
@@ -498,6 +505,10 @@ export class LessonService {
       return await AssessmentService.getArmCareAssessmentById(id);
     } else if (type === "smfa") {
       return await AssessmentService.getSmfaAssessmentById(id);
+    } else if (type === "hitting") {
+      return await AssessmentService.getHittingAssessmentById(id);
+    } else if (type === "pitching") {
+      return await AssessmentService.getPitchingAssessmentById(id);
     } else {
       throw new Error("Invalid assessment type");
     }
