@@ -6,7 +6,7 @@ import {
   hawkinsForcePlate,
   lesson,
   lessonAssessments,
-  smfa,
+  smfaBoolean,
   trueStrength,
   users,
 } from "@/db/schema";
@@ -76,7 +76,7 @@ export class LessonService {
 
         if (data.smfa) {
           const [smfaAssessment] = await tx
-            .insert(smfa)
+            .insert(smfaBoolean)
             .values({
               lessonId: lessonId,
               playerId: data.playerId,
@@ -104,7 +104,7 @@ export class LessonService {
               cervical_extension: data.smfa.cervical_extension,
               lessonDate: new Date(data.lessonDate),
             } as SmfaInsert)
-            .returning({ id: smfa.id });
+            .returning({ id: smfaBoolean.id });
 
           assessmentIds.push({ type: "smfa", id: smfaAssessment.id });
         }

@@ -3,7 +3,7 @@ import {
   hawkinsForcePlate,
   lesson,
   motorPreferences,
-  smfa,
+  smfaBoolean,
   trueStrength,
 } from "@/db/schema";
 
@@ -12,8 +12,8 @@ export type ArmCareSelect = typeof armCare.$inferSelect;
 export type ArmCareInsert = typeof armCare.$inferInsert;
 
 // SMFA Db schema types
-export type SmfaSelect = typeof smfa.$inferSelect;
-export type SmfaInsert = typeof smfa.$inferInsert;
+export type SmfaSelect = typeof smfaBoolean.$inferSelect;
+export type SmfaInsert = typeof smfaBoolean.$inferInsert;
 
 // ForcePlate Db schema types
 export type ForcePlateSelect = typeof hawkinsForcePlate.$inferSelect;
