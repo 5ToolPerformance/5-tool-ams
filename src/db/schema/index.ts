@@ -6,7 +6,7 @@ export {
   leftRightEnum,
   default as motorPreferences,
 } from "./assessments/motorPreferences";
-export { default as smfa } from "./assessments/smfa";
+export { default as smfa, smfaBoolean } from "./assessments/smfa";
 export { default as trueStrength } from "./assessments/trueStrength";
 export { default as lesson, lessonTypes } from "./lesson";
 export {
@@ -20,3 +20,9 @@ export {
 } from "./playerInformation";
 export { default as sessions } from "./sessions";
 export { rolesEnum, default as users, usersRelations } from "./users";
+
+export { default as hittingAssessment } from "./assessments/hittingAssessment";
+export {
+  dateRangeEnum,
+  default as pitchingAssessment,
+} from "./assessments/pitchingAssessment";
