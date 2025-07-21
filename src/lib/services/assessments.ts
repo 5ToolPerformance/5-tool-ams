@@ -1,6 +1,14 @@
-import db from "@/db";
-import { armCare, hawkinsForcePlate, smfa, trueStrength } from "@/db/schema";
 import { eq } from "drizzle-orm";
+
+import db from "@/db";
+import {
+  armCare,
+  hawkinsForcePlate,
+  hittingAssessment,
+  pitchingAssessment,
+  smfa,
+  trueStrength,
+} from "@/db/schema";
 
 /**
  * Service for managing assessments in the database.
@@ -44,7 +52,10 @@ export class AssessmentService {
    */
   static async getForcePlateAssessmentById(id: string) {
     try {
-      return await db.select().from(hawkinsForcePlate).where(eq(hawkinsForcePlate.id, id));
+      return await db
+        .select()
+        .from(hawkinsForcePlate)
+        .where(eq(hawkinsForcePlate.id, id));
     } catch (error) {
       console.error("Error fetching force plate assessment by ID:", error);
       throw new Error("Failed to fetch force plate assessment");
@@ -59,10 +70,49 @@ export class AssessmentService {
    */
   static async getTrueStrengthAssessmentById(id: string) {
     try {
-      return await db.select().from(trueStrength).where(eq(trueStrength.id, id));
+      return await db
+        .select()
+        .from(trueStrength)
+        .where(eq(trueStrength.id, id));
     } catch (error) {
       console.error("Error fetching true strength assessment by ID:", error);
       throw new Error("Failed to fetch true strength assessment");
+    }
+  }
+
+  /**
+   * Fetch a hitting assessment by its unique ID in the database.
+   * @param id - The ID of the hitting assessment to fetch
+   * @returns The hitting assessment object, or null if not found
+   * @throws Error if there is an error with the database query
+   */
+  static async getHittingAssessmentById(id: string) {
+    try {
+      return await db
+        .select()
+        .from(hittingAssessment)
+        .where(eq(hittingAssessment.id, id));
+    } catch (error) {
+      console.error("Error fetching hitting assessment by ID:", error);
+      throw new Error("Failed to fetch hitting assessment");
+    }
+  }
+
+  /**
+   * Fetch a pitching assessment by its unique ID in the database.
+   * @param id - The ID of the pitching assessment to fetch
+   * @returns The pitching assessment object, or null if not found
+   * @throws Error if there is an error with the database query
+   */
+  static async getPitchingAssessmentById(id: string) {
+    try {
+      return await db
+        .select()
+        .from(pitchingAssessment)
+        .where(eq(pitchingAssessment.id, id));
+    } catch (error) {
+      console.error("Error fetching pitching assessment by ID:", error);
+      throw new Error("Failed to fetch pitching assessment");
     }
   }
 }
