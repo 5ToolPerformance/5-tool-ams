@@ -4,8 +4,6 @@ import { useEffect, useState } from "react";
 
 import {
   Button,
-  Card,
-  CardHeader,
   Dropdown,
   DropdownItem,
   DropdownMenu,
@@ -16,13 +14,14 @@ import {
 import { BarChart3, BookOpen, ChevronDown, Dumbbell } from "lucide-react";
 
 import { ApiService } from "@/lib/services/api";
-import { PlayerSelect } from "@/types/database";
+import { MotorPreferencesSelect, PlayerSelect } from "@/types/database";
 
 import MotorPreferencesModal from "./assessments/motorPreferencesAssessment";
 import LessonsSection from "./lessonsComponent";
 import OverviewSection from "./overviewSection";
 import PlansSection from "./plans/plansComponent";
 import PlayerCard from "./players/playerCard";
+import { MotorPreferenceCard } from "./ui/MotorPreferenceCard";
 
 interface PlayerDashboardProps {
   player: PlayerSelect;
@@ -34,7 +33,8 @@ const PlayerDashboard: React.FC<PlayerDashboardProps> = ({
   coachId,
 }) => {
   const [selectedTab, setSelectedTab] = useState<string>("overview");
-  const [motorPreference, setMotorPreference] = useState();
+  const [motorPreference, setMotorPreference] =
+    useState<MotorPreferencesSelect>();
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -91,16 +91,11 @@ const PlayerDashboard: React.FC<PlayerDashboardProps> = ({
         <div className="flex flex-col items-start gap-6 md:flex-row">
           <PlayerCard player={player} size="lg" />
           <div>
-            <Card className="p-6">
-              <CardHeader>
-                <h3 className="text-lg font-semibold">Motor Preferences</h3>
-              </CardHeader>
-              {motorPreference ? (
-                <p>{JSON.stringify(motorPreference)}</p>
-              ) : (
-                <MotorPreferencesModal playerId={player.id} coachId={coachId} />
-              )}
-            </Card>
+            {motorPreference ? (
+              <MotorPreferenceCard motorPreference={motorPreference} />
+            ) : (
+              <MotorPreferencesModal playerId={player.id} coachId={coachId} />
+            )}
           </div>
         </div>
 
