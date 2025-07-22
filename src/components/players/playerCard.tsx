@@ -28,7 +28,7 @@ const PlayerProfileCard: React.FC<PlayerProfileCardProps> = ({
       username: "text-xs",
       name: "text-sm",
       details: "text-xs",
-      chip: "text-xs px-1 py-0.5 min-h-5",
+      chip: "text-xs px-2 h-6 min-w-[24px] flex items-center justify-center",
     },
     md: {
       card: "p-4",
@@ -36,7 +36,7 @@ const PlayerProfileCard: React.FC<PlayerProfileCardProps> = ({
       username: "text-sm",
       name: "text-base",
       details: "text-sm",
-      chip: "text-xs",
+      chip: "text-xs px-2 h-6 min-w-[28px] flex items-center justify-center",
     },
     lg: {
       card: "p-6",
@@ -44,11 +44,26 @@ const PlayerProfileCard: React.FC<PlayerProfileCardProps> = ({
       username: "text-base",
       name: "text-lg",
       details: "text-base",
-      chip: "text-sm",
+      chip: "text-sm px-2.5 h-7 min-w-[32px] flex items-center justify-center",
     },
   };
 
   const currentSize = sizeClasses[size] || sizeClasses.md;
+
+  const calculateAge = (birthDate: Date): string => {
+    const today = new Date();
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+
+    if (
+      monthDiff < 0 ||
+      (monthDiff === 0 && today.getDate() < birthDate.getDate())
+    ) {
+      age--;
+    }
+
+    return age.toString();
+  };
 
   const playerName = `${player.firstName} ${player.lastName}`;
 
@@ -76,7 +91,7 @@ const PlayerProfileCard: React.FC<PlayerProfileCardProps> = ({
 
           {player.date_of_birth && (
             <p className={`text-default-500 ${currentSize.details}`}>
-              Date of Birth: {player.date_of_birth.toLocaleDateString()}
+              Age: {calculateAge(player.date_of_birth)}
             </p>
           )}
 
@@ -88,9 +103,6 @@ const PlayerProfileCard: React.FC<PlayerProfileCardProps> = ({
                   {player.hits}
                 </span>
               </span>
-            )}
-            {player.hits && player.throws && (
-              <span className="text-default-400">•</span>
             )}
             {player.throws && (
               <span className="text-default-500">

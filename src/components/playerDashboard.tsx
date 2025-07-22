@@ -38,8 +38,6 @@ const PlayerDashboard: React.FC<PlayerDashboardProps> = ({
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  console.log(player);
-
   useEffect(() => {
     const fetchPlayerData = async () => {
       if (!player?.id) {
