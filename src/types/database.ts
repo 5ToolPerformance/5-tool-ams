@@ -3,9 +3,14 @@ import {
   hawkinsForcePlate,
   lesson,
   motorPreferences,
+  playerInformation,
   smfaBoolean,
   trueStrength,
 } from "@/db/schema";
+
+// Player Db schema types
+export type PlayerSelect = typeof playerInformation.$inferSelect;
+export type PlayerInsert = typeof playerInformation.$inferInsert;
 
 // ArmCare Db schema types
 export type ArmCareSelect = typeof armCare.$inferSelect;

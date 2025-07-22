@@ -16,7 +16,7 @@ import {
 import { BarChart3, BookOpen, ChevronDown, Dumbbell } from "lucide-react";
 
 import { ApiService } from "@/lib/services/api";
-import { Player } from "@/types/users";
+import { PlayerSelect } from "@/types/database";
 
 import MotorPreferencesModal from "./assessments/motorPreferencesAssessment";
 import LessonsSection from "./lessonsComponent";
@@ -25,7 +25,7 @@ import PlansSection from "./plans/plansComponent";
 import PlayerCard from "./players/playerCard";
 
 interface PlayerDashboardProps {
-  player: Player;
+  player: PlayerSelect;
   coachId: string | undefined;
 }
 
@@ -37,6 +37,8 @@ const PlayerDashboard: React.FC<PlayerDashboardProps> = ({
   const [motorPreference, setMotorPreference] = useState();
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+
+  console.log(player);
 
   useEffect(() => {
     const fetchPlayerData = async () => {

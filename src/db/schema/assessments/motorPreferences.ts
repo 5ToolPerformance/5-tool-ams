@@ -1,16 +1,16 @@
 import { boolean, pgEnum, pgTable, timestamp, uuid } from "drizzle-orm/pg-core";
 
-import users from "../users";
+import playerInformation from "../playerInformation";
 
 export const leftRightEnum = pgEnum("left-right", ["left", "right", "switch"]);
 
 export const archetypesEnum = pgEnum("archetypes", ["aerial", "terrestrial"]);
 
 const motorPreferences = pgTable("motor_preferences", {
-  id: uuid("id").defaultRandom().notNull(),
+  id: uuid("id").defaultRandom().notNull().primaryKey(),
   playerId: uuid("player_id")
     .notNull()
-    .references(() => users.id, { onDelete: "cascade" }),
+    .references(() => playerInformation.id, { onDelete: "cascade" }),
   coachId: uuid("coach_id").notNull(),
   archetype: archetypesEnum("archetype").notNull(),
   extensionLeg: leftRightEnum("extension_leg").notNull(),

@@ -19,6 +19,7 @@ export interface User {
 }
 
 export interface PlayerInformation {
+  id: string;
   userId?: string;
   firstName: string;
   lastName: string;

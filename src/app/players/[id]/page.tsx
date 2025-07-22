@@ -4,7 +4,7 @@ import { getServerSession } from "next-auth";
 
 import PlayerDashboard from "@/components/playerDashboard";
 import options from "@/config/auth";
-import { getPlayerById } from "@/lib/db/players";
+import { PlayerService } from "@/lib/services/players";
 
 type PlayerPageProps = {
   params: {
@@ -22,7 +22,7 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
   }
   const resolvedParams = await params;
   const { id } = resolvedParams;
-  const player = await getPlayerById(id);
+  const player = await PlayerService.getPlayerById(id);
   if (!player) return notFound();
 
   return <PlayerDashboard player={player} coachId={coachId} />;

@@ -90,6 +90,11 @@ export class PlayerService {
     }
   }
 
+  /**
+   * Retrieve the Motor Preference Assessment given a playerId
+   * @param playerId - The ID of the player to get the Motor Preference Assessment for
+   * @returns motorPreference for the given playerId if it exists
+   */
   static async getMotorPreferencesById(playerId: string) {
     try {
       const playerMPE = await db
@@ -112,6 +117,10 @@ export class PlayerService {
     }
   }
 
+  /**
+   * Retrieve all players with their information
+   * @returns An array of PlayerInformation objects
+   */
   static async getAllPlayersWithInformation() {
     try {
       const players = await db.select().from(playerInformation);
@@ -123,6 +132,11 @@ export class PlayerService {
     }
   }
 
+  /**
+   * Retrieve a player by their ID
+   * @param playerId - The ID of the player to retrieve
+   * @returns The PlayerInformation object if found, otherwise null
+   */
   static async getPlayerById(playerId: string) {
     try {
       const player = await db
@@ -135,7 +149,7 @@ export class PlayerService {
         return null;
       }
 
-      return player;
+      return player[0];
     } catch (error) {
       console.error("Error fetching player by id:", error);
       throw new Error("Failed to fetch player");

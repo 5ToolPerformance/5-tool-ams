@@ -2,10 +2,10 @@ import React from "react";
 
 import { Avatar, Card, CardBody, Chip } from "@heroui/react";
 
-import { Player } from "@/types/users";
+import { PlayerSelect } from "@/types/database";
 
 interface PlayerProfileCardProps {
-  player: Player;
+  player: PlayerSelect;
   className?: string;
   size?: "sm" | "md" | "lg";
 }
@@ -15,8 +15,8 @@ const PlayerProfileCard: React.FC<PlayerProfileCardProps> = ({
   className = "",
   size = "md",
 }) => {
-  const positionsArray = player.positions
-    ? player.positions
+  const positionsArray = player.position
+    ? player.position
         .split(",")
         .map((pos) => pos.trim())
         .filter((pos) => pos.length > 0)
@@ -50,6 +50,8 @@ const PlayerProfileCard: React.FC<PlayerProfileCardProps> = ({
 
   const currentSize = sizeClasses[size] || sizeClasses.md;
 
+  const playerName = `${player.firstName} ${player.lastName}`;
+
   return (
     <Card className={`w-full max-w-md ${className}`} shadow="sm">
       <CardBody
@@ -57,18 +59,11 @@ const PlayerProfileCard: React.FC<PlayerProfileCardProps> = ({
       >
         <div className="flex-shrink-0">
           <Avatar
-            src={player.image}
-            alt={`${player.name || player.username}'s profile`}
+            src={player.profilePictureUrl || ""}
+            alt={`${player.firstName}'s profile`}
             className={currentSize.avatar}
             showFallback
-            name={
-              player.name
-                ? player.name
-                    .split(" ")
-                    .map((n) => n[0])
-                    .join("")
-                : player.username?.charAt(0)
-            }
+            name={playerName}
           />
         </div>
 
@@ -76,14 +71,8 @@ const PlayerProfileCard: React.FC<PlayerProfileCardProps> = ({
           <h3
             className={`truncate font-semibold text-foreground ${currentSize.name}`}
           >
-            {player.name}
+            {playerName}
           </h3>
-
-          {player.name && player.name !== player.username && (
-            <p className={`truncate text-default-600 ${currentSize.username}`}>
-              @{player.username}
-            </p>
-          )}
 
           {player.date_of_birth && (
             <p className={`text-default-500 ${currentSize.details}`}>
