@@ -8,6 +8,8 @@ import {
   ModalContent,
   ModalFooter,
   ModalHeader,
+  Select,
+  SelectItem,
   useDisclosure,
 } from "@heroui/react";
 import { parseDate } from "@internationalized/date";
@@ -20,7 +22,9 @@ interface PlayerCreateFormProps {
   onPlayerCreated?: (player: PlayerSelect) => void;
 }
 
-export default function PlayerCreateForm({ onPlayerCreated }: PlayerCreateFormProps) {
+export default function PlayerCreateForm({
+  onPlayerCreated,
+}: PlayerCreateFormProps) {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   const form = useForm<PlayerInsert>({
@@ -50,7 +54,7 @@ export default function PlayerCreateForm({ onPlayerCreated }: PlayerCreateFormPr
         if (!result.success) {
           throw new Error(result.error || "Failed to create player");
         }
-        
+
         if (onPlayerCreated && result.data) {
           // The API should return the created player with all required fields
           onPlayerCreated(result.data as PlayerSelect);
@@ -140,21 +144,47 @@ export default function PlayerCreateForm({ onPlayerCreated }: PlayerCreateFormPr
 
                   <form.Field name="throws">
                     {(field) => (
-                      <Input
+                      <Select
                         label="Throws"
-                        value={field.state.value}
-                        onChange={(e) => field.handleChange(e.target.value)}
-                      />
+                        placeholder="throws"
+                        selectedKeys={
+                          field.state.value ? [field.state.value] : []
+                        }
+                        onSelectionChange={(keys) => {
+                          const selectedKey = Array.from(keys)[0] as string;
+                          field.handleChange(selectedKey);
+                        }}
+                        isInvalid={!!field.state.meta.errors.length}
+                        errorMessage={field.state.meta.errors.join(", ")}
+                        isRequired
+                      >
+                        <SelectItem key="right">Right</SelectItem>
+                        <SelectItem key="left">Left</SelectItem>
+                        <SelectItem key="switch">Switch</SelectItem>
+                      </Select>
                     )}
                   </form.Field>
 
                   <form.Field name="hits">
                     {(field) => (
-                      <Input
+                      <Select
                         label="Hits"
-                        value={field.state.value}
-                        onChange={(e) => field.handleChange(e.target.value)}
-                      />
+                        placeholder="hits"
+                        selectedKeys={
+                          field.state.value ? [field.state.value] : []
+                        }
+                        onSelectionChange={(keys) => {
+                          const selectedKey = Array.from(keys)[0] as string;
+                          field.handleChange(selectedKey);
+                        }}
+                        isInvalid={!!field.state.meta.errors.length}
+                        errorMessage={field.state.meta.errors.join(", ")}
+                        isRequired
+                      >
+                        <SelectItem key="right">Right</SelectItem>
+                        <SelectItem key="left">Left</SelectItem>
+                        <SelectItem key="switch">Switch</SelectItem>
+                      </Select>
                     )}
                   </form.Field>
 
