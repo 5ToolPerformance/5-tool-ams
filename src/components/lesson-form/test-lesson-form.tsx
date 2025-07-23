@@ -16,6 +16,7 @@ import {
 import { useForm } from "@tanstack/react-form";
 
 import { ApiResponse } from "@/types/api";
+import { PlayerSelect } from "@/types/database";
 import { LESSON_TYPES, LessonCreateData, LessonType } from "@/types/lessons";
 import { User } from "@/types/users";
 
@@ -73,7 +74,7 @@ const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
     }
   };
 
-  const [users, setUsers] = useState<User[]>([]);
+  const [players, setPlayers] = useState<PlayerSelect[]>([]);
   const [coaches, setCoaches] = useState<User[]>([]);
 
   React.useEffect(() => {
@@ -88,7 +89,7 @@ const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
         const coachesData = await coachesResponse.json();
 
         if (playersData.success && playersData.data) {
-          setUsers(playersData.data);
+          setPlayers(playersData.data);
         }
 
         if (coachesData.success && coachesData.data) {
@@ -395,14 +396,14 @@ const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
           <form.Field name="smfa.pelvic_rotation_l">
             {(field) => (
               <Input
-                type="number"
+                type="checkbox"
                 label="Pelvic Rotation (L)"
                 value={
                   field.state.value !== undefined && field.state.value !== null
                     ? String(field.state.value)
                     : ""
                 }
-                onChange={(e) => field.handleChange(Number(e.target.value))}
+                onChange={(e) => field.handleChange(Boolean(e.target.value))}
                 onBlur={field.handleBlur}
                 isInvalid={!!field.state.meta.errors.length}
                 errorMessage={field.state.meta.errors.join(", ")}
@@ -414,14 +415,14 @@ const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
           <form.Field name="smfa.pelvic_rotation_r">
             {(field) => (
               <Input
-                type="number"
+                type="checkbox"
                 label="Pelvic Rotation (R)"
                 value={
                   field.state.value !== undefined && field.state.value !== null
                     ? String(field.state.value)
                     : ""
                 }
-                onChange={(e) => field.handleChange(Number(e.target.value))}
+                onChange={(e) => field.handleChange(Boolean(e.target.value))}
                 onBlur={field.handleBlur}
                 isInvalid={!!field.state.meta.errors.length}
                 errorMessage={field.state.meta.errors.join(", ")}
@@ -434,14 +435,14 @@ const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
           <form.Field name="smfa.seated_trunk_rotation_l">
             {(field) => (
               <Input
-                type="number"
+                type="checkbox"
                 label="Seated Trunk Rotation (L)"
                 value={
                   field.state.value !== undefined && field.state.value !== null
                     ? String(field.state.value)
                     : ""
                 }
-                onChange={(e) => field.handleChange(Number(e.target.value))}
+                onChange={(e) => field.handleChange(Boolean(e.target.value))}
                 onBlur={field.handleBlur}
                 isInvalid={!!field.state.meta.errors.length}
                 errorMessage={field.state.meta.errors.join(", ")}
@@ -453,14 +454,14 @@ const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
           <form.Field name="smfa.seated_trunk_rotation_r">
             {(field) => (
               <Input
-                type="number"
+                type="checkbox"
                 label="Seated Trunk Rotation (R)"
                 value={
                   field.state.value !== undefined && field.state.value !== null
                     ? String(field.state.value)
                     : ""
                 }
-                onChange={(e) => field.handleChange(Number(e.target.value))}
+                onChange={(e) => field.handleChange(Boolean(e.target.value))}
                 onBlur={field.handleBlur}
                 isInvalid={!!field.state.meta.errors.length}
                 errorMessage={field.state.meta.errors.join(", ")}
@@ -473,14 +474,14 @@ const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
           <form.Field name="smfa.ankle_test_l">
             {(field) => (
               <Input
-                type="number"
+                type="checkbox"
                 label="Ankle Test (L)"
                 value={
                   field.state.value !== undefined && field.state.value !== null
                     ? String(field.state.value)
                     : ""
                 }
-                onChange={(e) => field.handleChange(Number(e.target.value))}
+                onChange={(e) => field.handleChange(Boolean(e.target.value))}
                 onBlur={field.handleBlur}
                 isInvalid={!!field.state.meta.errors.length}
                 errorMessage={field.state.meta.errors.join(", ")}
@@ -492,14 +493,14 @@ const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
           <form.Field name="smfa.ankle_test_r">
             {(field) => (
               <Input
-                type="number"
+                type="checkbox"
                 label="Ankle Test (R)"
                 value={
                   field.state.value !== undefined && field.state.value !== null
                     ? String(field.state.value)
                     : ""
                 }
-                onChange={(e) => field.handleChange(Number(e.target.value))}
+                onChange={(e) => field.handleChange(Boolean(e.target.value))}
                 onBlur={field.handleBlur}
                 isInvalid={!!field.state.meta.errors.length}
                 errorMessage={field.state.meta.errors.join(", ")}
@@ -512,14 +513,14 @@ const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
           <form.Field name="smfa.forearm_test_l">
             {(field) => (
               <Input
-                type="number"
+                type="checkbox"
                 label="Forearm Test (L)"
                 value={
                   field.state.value !== undefined && field.state.value !== null
                     ? String(field.state.value)
                     : ""
                 }
-                onChange={(e) => field.handleChange(Number(e.target.value))}
+                onChange={(e) => field.handleChange(Boolean(e.target.value))}
                 onBlur={field.handleBlur}
                 isInvalid={!!field.state.meta.errors.length}
                 errorMessage={field.state.meta.errors.join(", ")}
@@ -531,14 +532,14 @@ const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
           <form.Field name="smfa.forearm_test_r">
             {(field) => (
               <Input
-                type="number"
+                type="checkbox"
                 label="Forearm Test (R)"
                 value={
                   field.state.value !== undefined && field.state.value !== null
                     ? String(field.state.value)
                     : ""
                 }
-                onChange={(e) => field.handleChange(Number(e.target.value))}
+                onChange={(e) => field.handleChange(Boolean(e.target.value))}
                 onBlur={field.handleBlur}
                 isInvalid={!!field.state.meta.errors.length}
                 errorMessage={field.state.meta.errors.join(", ")}
@@ -551,14 +552,14 @@ const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
           <form.Field name="smfa.cervical_rotation_l">
             {(field) => (
               <Input
-                type="number"
+                type="checkbox"
                 label="Cervical Rotation (L)"
                 value={
                   field.state.value !== undefined && field.state.value !== null
                     ? String(field.state.value)
                     : ""
                 }
-                onChange={(e) => field.handleChange(Number(e.target.value))}
+                onChange={(e) => field.handleChange(Boolean(e.target.value))}
                 onBlur={field.handleBlur}
                 isInvalid={!!field.state.meta.errors.length}
                 errorMessage={field.state.meta.errors.join(", ")}
@@ -570,14 +571,14 @@ const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
           <form.Field name="smfa.cervical_rotation_r">
             {(field) => (
               <Input
-                type="number"
+                type="checkbox"
                 label="Cervical Rotation (R)"
                 value={
                   field.state.value !== undefined && field.state.value !== null
                     ? String(field.state.value)
                     : ""
                 }
-                onChange={(e) => field.handleChange(Number(e.target.value))}
+                onChange={(e) => field.handleChange(Boolean(e.target.value))}
                 onBlur={field.handleBlur}
                 isInvalid={!!field.state.meta.errors.length}
                 errorMessage={field.state.meta.errors.join(", ")}
@@ -590,14 +591,14 @@ const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
           <form.Field name="smfa.msf_l">
             {(field) => (
               <Input
-                type="number"
+                type="checkbox"
                 label="MSF (L)"
                 value={
                   field.state.value !== undefined && field.state.value !== null
                     ? String(field.state.value)
                     : ""
                 }
-                onChange={(e) => field.handleChange(Number(e.target.value))}
+                onChange={(e) => field.handleChange(Boolean(e.target.value))}
                 onBlur={field.handleBlur}
                 isInvalid={!!field.state.meta.errors.length}
                 errorMessage={field.state.meta.errors.join(", ")}
@@ -609,14 +610,14 @@ const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
           <form.Field name="smfa.msf_r">
             {(field) => (
               <Input
-                type="number"
+                type="checkbox"
                 label="MSF (R)"
                 value={
                   field.state.value !== undefined && field.state.value !== null
                     ? String(field.state.value)
                     : ""
                 }
-                onChange={(e) => field.handleChange(Number(e.target.value))}
+                onChange={(e) => field.handleChange(Boolean(e.target.value))}
                 onBlur={field.handleBlur}
                 isInvalid={!!field.state.meta.errors.length}
                 errorMessage={field.state.meta.errors.join(", ")}
@@ -629,14 +630,14 @@ const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
           <form.Field name="smfa.mse_l">
             {(field) => (
               <Input
-                type="number"
+                type="checkbox"
                 label="MSE (L)"
                 value={
                   field.state.value !== undefined && field.state.value !== null
                     ? String(field.state.value)
                     : ""
                 }
-                onChange={(e) => field.handleChange(Number(e.target.value))}
+                onChange={(e) => field.handleChange(Boolean(e.target.value))}
                 onBlur={field.handleBlur}
                 isInvalid={!!field.state.meta.errors.length}
                 errorMessage={field.state.meta.errors.join(", ")}
@@ -648,14 +649,14 @@ const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
           <form.Field name="smfa.mse_r">
             {(field) => (
               <Input
-                type="number"
+                type="checkbox"
                 label="MSE (R)"
                 value={
                   field.state.value !== undefined && field.state.value !== null
                     ? String(field.state.value)
                     : ""
                 }
-                onChange={(e) => field.handleChange(Number(e.target.value))}
+                onChange={(e) => field.handleChange(Boolean(e.target.value))}
                 onBlur={field.handleBlur}
                 isInvalid={!!field.state.meta.errors.length}
                 errorMessage={field.state.meta.errors.join(", ")}
@@ -668,14 +669,14 @@ const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
           <form.Field name="smfa.msr_l">
             {(field) => (
               <Input
-                type="number"
+                type="checkbox"
                 label="MSR (L)"
                 value={
                   field.state.value !== undefined && field.state.value !== null
                     ? String(field.state.value)
                     : ""
                 }
-                onChange={(e) => field.handleChange(Number(e.target.value))}
+                onChange={(e) => field.handleChange(Boolean(e.target.value))}
                 onBlur={field.handleBlur}
                 isInvalid={!!field.state.meta.errors.length}
                 errorMessage={field.state.meta.errors.join(", ")}
@@ -687,14 +688,14 @@ const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
           <form.Field name="smfa.msr_r">
             {(field) => (
               <Input
-                type="number"
+                type="checkbox"
                 label="MSR (R)"
                 value={
                   field.state.value !== undefined && field.state.value !== null
                     ? String(field.state.value)
                     : ""
                 }
-                onChange={(e) => field.handleChange(Number(e.target.value))}
+                onChange={(e) => field.handleChange(Boolean(e.target.value))}
                 onBlur={field.handleBlur}
                 isInvalid={!!field.state.meta.errors.length}
                 errorMessage={field.state.meta.errors.join(", ")}
@@ -707,14 +708,14 @@ const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
           <form.Field name="smfa.pelvic_tilt">
             {(field) => (
               <Input
-                type="number"
+                type="checkbox"
                 label="Pelvic Tilt"
                 value={
                   field.state.value !== undefined && field.state.value !== null
                     ? String(field.state.value)
                     : ""
                 }
-                onChange={(e) => field.handleChange(Number(e.target.value))}
+                onChange={(e) => field.handleChange(Boolean(e.target.value))}
                 onBlur={field.handleBlur}
                 isInvalid={!!field.state.meta.errors.length}
                 errorMessage={field.state.meta.errors.join(", ")}
@@ -727,14 +728,14 @@ const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
           <form.Field name="smfa.squat_test">
             {(field) => (
               <Input
-                type="number"
+                type="checkbox"
                 label="Squat Test"
                 value={
                   field.state.value !== undefined && field.state.value !== null
                     ? String(field.state.value)
                     : ""
                 }
-                onChange={(e) => field.handleChange(Number(e.target.value))}
+                onChange={(e) => field.handleChange(Boolean(e.target.value))}
                 onBlur={field.handleBlur}
                 isInvalid={!!field.state.meta.errors.length}
                 errorMessage={field.state.meta.errors.join(", ")}
@@ -747,14 +748,14 @@ const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
           <form.Field name="smfa.cervical_flexion">
             {(field) => (
               <Input
-                type="number"
+                type="checkbox"
                 label="Cervical Flexion"
                 value={
                   field.state.value !== undefined && field.state.value !== null
                     ? String(field.state.value)
                     : ""
                 }
-                onChange={(e) => field.handleChange(Number(e.target.value))}
+                onChange={(e) => field.handleChange(Boolean(e.target.value))}
                 onBlur={field.handleBlur}
                 isInvalid={!!field.state.meta.errors.length}
                 errorMessage={field.state.meta.errors.join(", ")}
@@ -767,14 +768,14 @@ const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
           <form.Field name="smfa.cervical_extension">
             {(field) => (
               <Input
-                type="number"
+                type="checkbox"
                 label="Cervical Extension"
                 value={
                   field.state.value !== undefined && field.state.value !== null
                     ? String(field.state.value)
                     : ""
                 }
-                onChange={(e) => field.handleChange(Number(e.target.value))}
+                onChange={(e) => field.handleChange(Boolean(e.target.value))}
                 onBlur={field.handleBlur}
                 isInvalid={!!field.state.meta.errors.length}
                 errorMessage={field.state.meta.errors.join(", ")}
@@ -1337,9 +1338,10 @@ const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
                   errorMessage={field.state.meta.errors.join(", ")}
                   isRequired
                 >
-                  {users.map((user) => (
-                    <SelectItem key={user.id}>
-                      {user.name || user.email || `User ${user.id.slice(0, 8)}`}
+                  {players.map((player) => (
+                    <SelectItem key={player.id}>
+                      {player.firstName + " " + player.lastName ||
+                        `Player ${player.id.slice(0, 8)}`}
                     </SelectItem>
                   ))}
                 </Select>
