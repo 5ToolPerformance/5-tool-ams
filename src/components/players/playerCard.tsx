@@ -50,14 +50,15 @@ const PlayerProfileCard: React.FC<PlayerProfileCardProps> = ({
 
   const currentSize = sizeClasses[size] || sizeClasses.md;
 
-  const calculateAge = (birthDate: Date): string => {
+  const calculateAge = (birthDate: string): string => {
     const today = new Date();
-    let age = today.getFullYear() - birthDate.getFullYear();
-    const monthDiff = today.getMonth() - birthDate.getMonth();
+    const birthDateObj = new Date(birthDate);
+    let age = today.getFullYear() - birthDateObj.getFullYear();
+    const monthDiff = today.getMonth() - birthDateObj.getMonth();
 
     if (
       monthDiff < 0 ||
-      (monthDiff === 0 && today.getDate() < birthDate.getDate())
+      (monthDiff === 0 && today.getDate() < birthDateObj.getDate())
     ) {
       age--;
     }

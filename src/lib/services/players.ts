@@ -3,7 +3,7 @@ import { eq } from "drizzle-orm";
 import db from "@/db";
 import { motorPreferences, playerInformation } from "@/db/schema";
 import { MotorPreferencesForm } from "@/types/assessments";
-import { PlayerInformation } from "@/types/users";
+import { PlayerInsert } from "@/types/database";
 
 export class PlayerService {
   /**
@@ -32,19 +32,15 @@ export class PlayerService {
 
   /**
    * Create playerInformation in database for a player based on ID
-   * @param playerId - The ID of the player for the information to be assigned to
    * @param data - The information for to be posted for the player
    * @returns The completed playerInformation to be posted in the Db
    */
-  static async createPlayerInformation(
-    playerId: string,
-    data: PlayerInformation
-  ) {
+  static async createPlayerInformation(data: PlayerInsert) {
     try {
       const [newPlayerInfo] = await db
         .insert(playerInformation)
         .values({
-          userId: playerId,
+          userId: data.userId,
           firstName: data.firstName,
           lastName: data.lastName,
           height: data.height,

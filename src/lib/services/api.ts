@@ -35,7 +35,8 @@ export class ApiService {
   static async fetchAllPlayers() {
     const res = await fetch("/api/players");
     if (!res.ok) throw new Error("Failed to fetch players");
-    return res.json();
+    const jsonData = await res.json();
+    return jsonData.data || [];
   }
 
   /**

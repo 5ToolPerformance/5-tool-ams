@@ -14,7 +14,7 @@ export const playerInformation = pgTable("player_information", {
   position: text("position").notNull(),
   throws: text("throws").notNull(),
   hits: text("hits").notNull(),
-  date_of_birth: timestamp("date_of_birth", { mode: "date" }).notNull(),
+  date_of_birth: timestamp("date_of_birth", { mode: "string" }).notNull(),
 });
 
 export default playerInformation;
