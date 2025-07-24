@@ -14,10 +14,20 @@ import {
 // Lesson types based on your schema
 export const LESSON_TYPES = [
   { value: "strength", label: "Strength Training" },
-  { value: "hitting", label: "Hitting Practice" },
-  { value: "pitching", label: "Pitching Training" },
-  { value: "fielding", label: "Catching Practice" },
+  { value: "hitting", label: "Hitting" },
+  { value: "pitching", label: "Pitching" },
+  { value: "fielding", label: "Fielding" },
 ] as const;
+
+export const DATE_RANGE_ENUM = [
+  { value: "1-2", label: "1-2 days" },
+  { value: "3-4", label: "3-4 days" },
+  { value: "5-6", label: "5-6 days" },
+  { value: "7+", label: "7+ days" },
+  { value: "na", label: "Not Applicable" },
+] as const;
+
+export type DateRange = "1-2" | "3-4" | "5-6" | "7+" | "na";
 
 export type LessonType =
   | "strength"

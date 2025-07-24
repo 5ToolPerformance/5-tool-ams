@@ -17,7 +17,13 @@ import { useForm } from "@tanstack/react-form";
 
 import { ApiResponse } from "@/types/api";
 import { PlayerSelect } from "@/types/database";
-import { LESSON_TYPES, LessonCreateData, LessonType } from "@/types/lessons";
+import {
+  DATE_RANGE_ENUM,
+  DateRange,
+  LESSON_TYPES,
+  LessonCreateData,
+  LessonType,
+} from "@/types/lessons";
 import { User } from "@/types/users";
 
 interface LessonsCreateProps {
@@ -1284,11 +1290,463 @@ const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
   );
 
   const HittingAssessmentForm = () => (
-    <div className="rounded-lg border border-orange-200 bg-default p-6">
-      <h3 className="mb-4 text-lg font-semibold text-orange-900 dark:text-orange-200">
-        Hitting Assessment
-      </h3>
-    </div>
+    <Card className="mb-1 rounded-lg border border-orange-200 bg-default p-6">
+      <CardHeader>
+        <h3 className="mb-4 text-lg font-semibold text-orange-900 dark:text-orange-100">
+          Hitting Assessment
+        </h3>
+      </CardHeader>
+      <CardBody>
+        <form.Field name="hittingAssessment.upper">
+          {(field) => (
+            <Textarea
+              className="py-2"
+              label="Upper"
+              value={
+                field.state.value !== undefined && field.state.value !== null
+                  ? String(field.state.value)
+                  : ""
+              }
+              onChange={(e) => field.handleChange(e.target.value)}
+              onBlur={field.handleBlur}
+              isInvalid={!!field.state.meta.errors.length}
+              errorMessage={field.state.meta.errors.join(", ")}
+              isRequired
+            />
+          )}
+        </form.Field>
+        <form.Field name="hittingAssessment.lower">
+          {(field) => (
+            <Textarea
+              label="Lower"
+              className="py-2"
+              value={
+                field.state.value !== undefined && field.state.value !== null
+                  ? String(field.state.value)
+                  : ""
+              }
+              onChange={(e) => field.handleChange(e.target.value)}
+              onBlur={field.handleBlur}
+              isInvalid={!!field.state.meta.errors.length}
+              errorMessage={field.state.meta.errors.join(", ")}
+              isRequired
+            />
+          )}
+        </form.Field>
+        <form.Field name="hittingAssessment.head">
+          {(field) => (
+            <Textarea
+              label="Head"
+              className="py-2"
+              value={
+                field.state.value !== undefined && field.state.value !== null
+                  ? String(field.state.value)
+                  : ""
+              }
+              onChange={(e) => field.handleChange(e.target.value)}
+              onBlur={field.handleBlur}
+              isInvalid={!!field.state.meta.errors.length}
+              errorMessage={field.state.meta.errors.join(", ")}
+              isRequired
+            />
+          )}
+        </form.Field>
+        <form.Field name="hittingAssessment.load">
+          {(field) => (
+            <Textarea
+              label="Load"
+              className="py-2"
+              value={
+                field.state.value !== undefined && field.state.value !== null
+                  ? String(field.state.value)
+                  : ""
+              }
+              onChange={(e) => field.handleChange(e.target.value)}
+              onBlur={field.handleBlur}
+              isInvalid={!!field.state.meta.errors.length}
+              errorMessage={field.state.meta.errors.join(", ")}
+              isRequired
+            />
+          )}
+        </form.Field>
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+          <form.Field name="hittingAssessment.max_ev">
+            {(field) => (
+              <Input
+                type="number"
+                label="Max EV"
+                className="py-2"
+                placeholder="102.3"
+                value={
+                  field.state.value !== undefined && field.state.value !== null
+                    ? String(field.state.value)
+                    : ""
+                }
+                onChange={(e) => field.handleChange(Number(e.target.value))}
+                onBlur={field.handleBlur}
+                isInvalid={!!field.state.meta.errors.length}
+                errorMessage={field.state.meta.errors.join(", ")}
+                isRequired
+              />
+            )}
+          </form.Field>
+          <form.Field name="hittingAssessment.line_drive_pct">
+            {(field) => (
+              <Input
+                type="number"
+                label="Line Drive Pct"
+                placeholder="67.3"
+                className="py-2"
+                value={
+                  field.state.value !== undefined && field.state.value !== null
+                    ? String(field.state.value)
+                    : ""
+                }
+                onChange={(e) => field.handleChange(Number(e.target.value))}
+                onBlur={field.handleBlur}
+                isInvalid={!!field.state.meta.errors.length}
+                errorMessage={field.state.meta.errors.join(", ")}
+                isRequired
+              />
+            )}
+          </form.Field>
+        </div>
+      </CardBody>
+    </Card>
+  );
+
+  const PitchingAssessmentForm = () => (
+    <>
+      <Card className="mb-1 rounded-lg border border-green-200 bg-default p-6">
+        <CardHeader>
+          <h3 className="mb-4 text-lg font-semibold text-green-900 dark:text-green-100">
+            Pitching Assessment
+          </h3>
+        </CardHeader>
+        <CardBody>
+          <form.Field name="pitchingAssessment.upper">
+            {(field) => (
+              <Textarea
+                className="py-2"
+                label="Upper"
+                value={
+                  field.state.value !== undefined && field.state.value !== null
+                    ? String(field.state.value)
+                    : ""
+                }
+                onChange={(e) => field.handleChange(e.target.value)}
+                onBlur={field.handleBlur}
+                isInvalid={!!field.state.meta.errors.length}
+                errorMessage={field.state.meta.errors.join(", ")}
+                isRequired
+              />
+            )}
+          </form.Field>
+          <form.Field name="pitchingAssessment.mid">
+            {(field) => (
+              <Textarea
+                className="py-2"
+                label="Mid"
+                value={
+                  field.state.value !== undefined && field.state.value !== null
+                    ? String(field.state.value)
+                    : ""
+                }
+                onChange={(e) => field.handleChange(e.target.value)}
+                onBlur={field.handleBlur}
+                isInvalid={!!field.state.meta.errors.length}
+                errorMessage={field.state.meta.errors.join(", ")}
+                isRequired
+              />
+            )}
+          </form.Field>
+          <form.Field name="pitchingAssessment.lower">
+            {(field) => (
+              <Textarea
+                className="py-2"
+                label="Lower"
+                value={
+                  field.state.value !== undefined && field.state.value !== null
+                    ? String(field.state.value)
+                    : ""
+                }
+                onChange={(e) => field.handleChange(e.target.value)}
+                onBlur={field.handleBlur}
+                isInvalid={!!field.state.meta.errors.length}
+                errorMessage={field.state.meta.errors.join(", ")}
+                isRequired
+              />
+            )}
+          </form.Field>
+          <div className="grid grid-cols-2 gap-6 sm:grid-cols-4">
+            <form.Field name="pitchingAssessment.velo_mound_2oz">
+              {(field) => (
+                <Input
+                  type="number"
+                  label="Mound Velo (2oz)"
+                  className="py-2"
+                  placeholder="85.3"
+                  value={
+                    field.state.value !== undefined &&
+                    field.state.value !== null
+                      ? String(field.state.value)
+                      : ""
+                  }
+                  onChange={(e) => field.handleChange(Number(e.target.value))}
+                  onBlur={field.handleBlur}
+                  isInvalid={!!field.state.meta.errors.length}
+                  errorMessage={field.state.meta.errors.join(", ")}
+                  isRequired
+                />
+              )}
+            </form.Field>
+            <form.Field name="pitchingAssessment.velo_mound_4oz">
+              {(field) => (
+                <Input
+                  type="number"
+                  label="Mound Velo (4oz)"
+                  className="py-2"
+                  placeholder="85.3"
+                  value={
+                    field.state.value !== undefined &&
+                    field.state.value !== null
+                      ? String(field.state.value)
+                      : ""
+                  }
+                  onChange={(e) => field.handleChange(Number(e.target.value))}
+                  onBlur={field.handleBlur}
+                  isInvalid={!!field.state.meta.errors.length}
+                  errorMessage={field.state.meta.errors.join(", ")}
+                  isRequired
+                />
+              )}
+            </form.Field>
+            <form.Field name="pitchingAssessment.velo_mound_5oz">
+              {(field) => (
+                <Input
+                  type="number"
+                  label="Mound Velo (5oz)"
+                  className="py-2"
+                  placeholder="85.3"
+                  value={
+                    field.state.value !== undefined &&
+                    field.state.value !== null
+                      ? String(field.state.value)
+                      : ""
+                  }
+                  onChange={(e) => field.handleChange(Number(e.target.value))}
+                  onBlur={field.handleBlur}
+                  isInvalid={!!field.state.meta.errors.length}
+                  errorMessage={field.state.meta.errors.join(", ")}
+                  isRequired
+                />
+              )}
+            </form.Field>
+            <form.Field name="pitchingAssessment.velo_mound_6oz">
+              {(field) => (
+                <Input
+                  type="number"
+                  label="Mound Velo (6oz)"
+                  className="py-2"
+                  placeholder="85.3"
+                  value={
+                    field.state.value !== undefined &&
+                    field.state.value !== null
+                      ? String(field.state.value)
+                      : ""
+                  }
+                  onChange={(e) => field.handleChange(Number(e.target.value))}
+                  onBlur={field.handleBlur}
+                  isInvalid={!!field.state.meta.errors.length}
+                  errorMessage={field.state.meta.errors.join(", ")}
+                  isRequired
+                />
+              )}
+            </form.Field>
+            <form.Field name="pitchingAssessment.velo_pull_down_2oz">
+              {(field) => (
+                <Input
+                  type="number"
+                  label="Pull Down Velo (2oz)"
+                  className="py-2"
+                  placeholder="85.3"
+                  value={
+                    field.state.value !== undefined &&
+                    field.state.value !== null
+                      ? String(field.state.value)
+                      : ""
+                  }
+                  onChange={(e) => field.handleChange(Number(e.target.value))}
+                  onBlur={field.handleBlur}
+                  isInvalid={!!field.state.meta.errors.length}
+                  errorMessage={field.state.meta.errors.join(", ")}
+                  isRequired
+                />
+              )}
+            </form.Field>
+            <form.Field name="pitchingAssessment.velo_pull_down_4oz">
+              {(field) => (
+                <Input
+                  type="number"
+                  label="Pull Down Velo (4oz)"
+                  className="py-2"
+                  placeholder="85.3"
+                  value={
+                    field.state.value !== undefined &&
+                    field.state.value !== null
+                      ? String(field.state.value)
+                      : ""
+                  }
+                  onChange={(e) => field.handleChange(Number(e.target.value))}
+                  onBlur={field.handleBlur}
+                  isInvalid={!!field.state.meta.errors.length}
+                  errorMessage={field.state.meta.errors.join(", ")}
+                  isRequired
+                />
+              )}
+            </form.Field>
+            <form.Field name="pitchingAssessment.velo_pull_down_5oz">
+              {(field) => (
+                <Input
+                  type="number"
+                  label="Pull Down Velo (5oz)"
+                  className="py-2"
+                  placeholder="85.3"
+                  value={
+                    field.state.value !== undefined &&
+                    field.state.value !== null
+                      ? String(field.state.value)
+                      : ""
+                  }
+                  onChange={(e) => field.handleChange(Number(e.target.value))}
+                  onBlur={field.handleBlur}
+                  isInvalid={!!field.state.meta.errors.length}
+                  errorMessage={field.state.meta.errors.join(", ")}
+                  isRequired
+                />
+              )}
+            </form.Field>
+            <form.Field name="pitchingAssessment.velo_pull_down_6oz">
+              {(field) => (
+                <Input
+                  type="number"
+                  label="Pull Down Velo (6oz)"
+                  className="py-2"
+                  placeholder="85.3"
+                  value={
+                    field.state.value !== undefined &&
+                    field.state.value !== null
+                      ? String(field.state.value)
+                      : ""
+                  }
+                  onChange={(e) => field.handleChange(Number(e.target.value))}
+                  onBlur={field.handleBlur}
+                  isInvalid={!!field.state.meta.errors.length}
+                  errorMessage={field.state.meta.errors.join(", ")}
+                  isRequired
+                />
+              )}
+            </form.Field>
+          </div>
+          <form.Field name="pitchingAssessment.goals">
+            {(field) => (
+              <Textarea
+                label="Goals"
+                className="py-2"
+                placeholder="Enter goals"
+                value={field.state.value || ""}
+                onChange={(e) => field.handleChange(e.target.value)}
+                onBlur={field.handleBlur}
+                isInvalid={!!field.state.meta.errors.length}
+                errorMessage={field.state.meta.errors.join(", ")}
+                isRequired
+              />
+            )}
+          </form.Field>
+        </CardBody>
+      </Card>
+      <Card className="mb-1 rounded-lg border border-green-200 bg-default p-6">
+        <CardHeader>
+          <h3 className="mb-4 text-lg font-semibold text-green-900 dark:text-green-100">
+            Check-in
+          </h3>
+        </CardHeader>
+        <CardBody>
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+            <form.Field name="pitchingAssessment.last_time_pitched">
+              {(field) => (
+                <Select
+                  label="Last Time Pitched"
+                  placeholder="Select a date range"
+                  selectedKeys={field.state.value ? [field.state.value] : []}
+                  onSelectionChange={(keys) => {
+                    const selectedKey = Array.from(keys)[0] as DateRange;
+                    field.handleChange(selectedKey);
+                  }}
+                >
+                  {DATE_RANGE_ENUM.map((range) => (
+                    <SelectItem key={range.value}>{range.label}</SelectItem>
+                  ))}
+                </Select>
+              )}
+            </form.Field>
+            <form.Field name="pitchingAssessment.next_time_pitched">
+              {(field) => (
+                <Select
+                  label="Next Time Pitched"
+                  placeholder="Select a date range"
+                  selectedKeys={field.state.value ? [field.state.value] : []}
+                  onSelectionChange={(keys) => {
+                    const selectedKey = Array.from(keys)[0] as DateRange;
+                    field.handleChange(selectedKey);
+                  }}
+                >
+                  {DATE_RANGE_ENUM.map((range) => (
+                    <SelectItem key={range.value}>{range.label}</SelectItem>
+                  ))}
+                </Select>
+              )}
+            </form.Field>
+          </div>
+          <form.Field name="pitchingAssessment.feel">
+            {(field) => (
+              <Input
+                type="number"
+                label="Feel"
+                min={0}
+                max={10}
+                className="py-2"
+                placeholder="1-10"
+                value={
+                  field.state.value !== undefined && field.state.value !== null
+                    ? String(field.state.value)
+                    : ""
+                }
+                onChange={(e) => field.handleChange(Number(e.target.value))}
+                onBlur={field.handleBlur}
+                isInvalid={!!field.state.meta.errors.length}
+                errorMessage={field.state.meta.errors.join(", ")}
+                isRequired
+              />
+            )}
+          </form.Field>
+          <form.Field name="pitchingAssessment.concerns">
+            {(field) => (
+              <Textarea
+                label="Concerns"
+                className="py-2"
+                placeholder="Enter concerns"
+                value={field.state.value || ""}
+                onChange={(e) => field.handleChange(e.target.value)}
+                onBlur={field.handleBlur}
+                isInvalid={!!field.state.meta.errors.length}
+                errorMessage={field.state.meta.errors.join(", ")}
+              />
+            )}
+          </form.Field>
+        </CardBody>
+      </Card>
+    </>
   );
 
   return (
@@ -1470,6 +1928,10 @@ const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
           {assessmentConfigs[selectedLessonType]?.includes(
             "hittingAssessment"
           ) && <HittingAssessmentForm />}
+
+          {assessmentConfigs[selectedLessonType]?.includes(
+            "pitchingAssessment"
+          ) && <PitchingAssessmentForm />}
         </div>
 
         {/* Submit Button */}
