@@ -1,16 +1,12 @@
-import {
-  ArmCare,
-  CatchingAssessment,
-  ForcePlate,
-  HittingAssessment,
-  PitchingAssessment,
-  SMFA,
-  TrueStrength,
-} from "./assessments";
+import { ArmCare, ForcePlate, SMFA, TrueStrength } from "./assessments";
 import {
   ArmCareSelect,
   ForcePlateSelect,
+  HittingAssessmentInsert,
+  HittingAssessmentSelect,
   LessonSelect,
+  PitchingAssessmentInsert,
+  PitchingAssessmentSelect,
   SmfaSelect,
   TrueStrengthSelect,
 } from "./database";
@@ -49,9 +45,8 @@ export interface LessonCreateData extends BaseLessonData {
   smfa?: SMFA;
   forcePlate?: ForcePlate;
   trueStrength?: TrueStrength;
-  hittingAssessment?: HittingAssessment;
-  pitchingAssessment?: PitchingAssessment;
-  catchingAssessment?: CatchingAssessment;
+  hittingAssessment?: HittingAssessmentInsert;
+  pitchingAssessment?: PitchingAssessmentInsert;
 }
 
 /**
@@ -64,5 +59,7 @@ export interface LessonWithAssessment {
     smfa: SmfaSelect;
     forcePlate: ForcePlateSelect;
     trueStrength: TrueStrengthSelect;
+    hittingAssessment: HittingAssessmentSelect;
+    pitchingAssessment: PitchingAssessmentSelect;
   };
 }

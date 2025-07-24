@@ -1,8 +1,10 @@
 import {
   armCare,
   hawkinsForcePlate,
+  hittingAssessment,
   lesson,
   motorPreferences,
+  pitchingAssessment,
   playerInformation,
   smfaBoolean,
   trueStrength,
@@ -35,3 +37,11 @@ export type LessonInsert = typeof lesson.$inferInsert;
 // Motor Preferences Db schema types
 export type MotorPreferencesSelect = typeof motorPreferences.$inferSelect;
 export type MotorPreferencesInsert = typeof motorPreferences.$inferInsert;
+
+// Hitting Assessment Db schema types
+export type HittingAssessmentSelect = typeof hittingAssessment.$inferSelect;
+export type HittingAssessmentInsert = typeof hittingAssessment.$inferInsert;
+
+// Pitching Assessment Db schema types
+export type PitchingAssessmentSelect = typeof pitchingAssessment.$inferSelect;
+export type PitchingAssessmentInsert = typeof pitchingAssessment.$inferInsert;
