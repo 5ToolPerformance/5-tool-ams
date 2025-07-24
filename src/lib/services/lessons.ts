@@ -4,8 +4,10 @@ import db from "@/db";
 import {
   armCare,
   hawkinsForcePlate,
+  hittingAssessment,
   lesson,
   lessonAssessments,
+  pitchingAssessment,
   smfaBoolean,
   trueStrength,
   users,
@@ -14,6 +16,8 @@ import { AssessmentType } from "@/types/assessments";
 import {
   ArmCareInsert,
   ForcePlateInsert,
+  HittingAssessmentInsert,
+  PitchingAssessmentInsert,
   SmfaInsert,
   TrueStrengthInsert,
 } from "@/types/database";
@@ -165,6 +169,65 @@ export class LessonService {
           assessmentIds.push({
             type: "true_strength",
             id: trueStrengthAssessment.id,
+          });
+        }
+
+        if (data.hittingAssessment) {
+          const [hittingAssessmentForm] = await tx
+            .insert(hittingAssessment)
+            .values({
+              lessonId: lessonId,
+              playerId: data.playerId,
+              coachId: data.coachId,
+              notes: data.hittingAssessment.notes,
+              upper: data.hittingAssessment.upper,
+              lower: data.hittingAssessment.lower,
+              head: data.hittingAssessment.head,
+              load: data.hittingAssessment.load,
+              max_ev: data.hittingAssessment.max_ev,
+              line_drive_pct: data.hittingAssessment.line_drive_pct,
+              lessonDate: new Date(data.lessonDate),
+            } as HittingAssessmentInsert)
+            .returning({ id: hittingAssessment.id });
+
+          assessmentIds.push({
+            type: "hitting_assessment",
+            id: hittingAssessmentForm.id,
+          });
+        }
+
+        if (data.pitchingAssessment) {
+          const [pitchingAssessmentForm] = await tx
+            .insert(pitchingAssessment)
+            .values({
+              lessonId: lessonId,
+              playerId: data.playerId,
+              coachId: data.coachId,
+              notes: data.pitchingAssessment.notes,
+              upper: data.pitchingAssessment.upper,
+              mid: data.pitchingAssessment.mid,
+              lower: data.pitchingAssessment.lower,
+              velo_mound_2oz: data.pitchingAssessment.velo_mound_2oz,
+              velo_mound_4oz: data.pitchingAssessment.velo_mound_4oz,
+              velo_mound_5oz: data.pitchingAssessment.velo_mound_5oz,
+              velo_mound_6oz: data.pitchingAssessment.velo_mound_6oz,
+              velo_pull_down_2oz: data.pitchingAssessment.velo_pull_down_2oz,
+              velo_pull_down_4oz: data.pitchingAssessment.velo_pull_down_4oz,
+              velo_pull_down_5oz: data.pitchingAssessment.velo_pull_down_5oz,
+              velo_pull_down_6oz: data.pitchingAssessment.velo_pull_down_6oz,
+              strike_pct: data.pitchingAssessment.strike_pct,
+              goals: data.pitchingAssessment.goals,
+              last_time_pitched: data.pitchingAssessment.last_time_pitched,
+              next_time_pitched: data.pitchingAssessment.next_time_pitched,
+              feel: data.pitchingAssessment.feel,
+              concerns: data.pitchingAssessment.concerns,
+              lessonDate: new Date(data.lessonDate),
+            } as PitchingAssessmentInsert)
+            .returning({ id: pitchingAssessment.id });
+
+          assessmentIds.push({
+            type: "pitching_assessment",
+            id: pitchingAssessmentForm.id,
           });
         }
 
