@@ -1648,6 +1648,41 @@ const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
               )}
             </form.Field>
           </div>
+          <form.Field name="pitchingAssessment.strike_pct">
+            {(field) => (
+              <Input
+                type="number"
+                label="Strike %"
+                className="py-2"
+                placeholder="73%"
+                value={
+                  field.state.value !== undefined && field.state.value !== null
+                    ? String(field.state.value)
+                    : ""
+                }
+                onChange={(e) => field.handleChange(Number(e.target.value))}
+                onBlur={field.handleBlur}
+                isInvalid={!!field.state.meta.errors.length}
+                errorMessage={field.state.meta.errors.join(", ")}
+                isRequired
+              />
+            )}
+          </form.Field>
+          <form.Field name="pitchingAssessment.notes">
+            {(field) => (
+              <Textarea
+                label="Notes"
+                className="py-2"
+                placeholder="Enter notes"
+                value={field.state.value || ""}
+                onChange={(e) => field.handleChange(e.target.value)}
+                onBlur={field.handleBlur}
+                isInvalid={!!field.state.meta.errors.length}
+                errorMessage={field.state.meta.errors.join(", ")}
+                isRequired
+              />
+            )}
+          </form.Field>
           <form.Field name="pitchingAssessment.goals">
             {(field) => (
               <Textarea

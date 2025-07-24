@@ -8,6 +8,8 @@ export const assessmentTypeEnum = pgEnum("assessment_type", [
   "force_plate",
   "true_strength",
   "arm_care",
+  "hitting_assessment",
+  "pitching_assessment",
 ]);
 
 const lessonAssessments = pgTable(
