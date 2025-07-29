@@ -1,12 +1,11 @@
 import { Card, CardBody, User } from "@heroui/react";
-import { getServerSession } from "next-auth";
 
-import options from "@/config/auth";
+import { auth } from "@/auth";
 import requireAuth from "@/utils/require-auth";
 
 export default async function Profile() {
   await requireAuth();
-  const session = await getServerSession(options);
+  const session = await auth();
   return (
     <div className="space-y-6">
       <Card className="mx-auto max-w-md">

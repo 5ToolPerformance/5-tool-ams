@@ -1,14 +1,12 @@
 import { redirect } from "next/navigation";
 
-import { getServerSession } from "next-auth";
-
+import { auth } from "@/auth";
 import LessonCreationForm from "@/components/lesson-form/test-lesson-form";
-import options from "@/config/auth";
 import requireAuth from "@/utils/require-auth";
 
 export default async function CreateLessonPage() {
   await requireAuth();
-  const session = await getServerSession(options);
+  const session = await auth();
 
   if (!session?.user || session.user.role !== "coach") {
     redirect("/");

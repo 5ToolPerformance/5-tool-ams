@@ -8,10 +8,13 @@ expand(config({ path: "./.env.local" }));
 export const env = createEnv({
   server: {
     NODE_ENV: z.enum(["development", "production"]),
-    NEXTAUTH_URL: z.string().url(),
-    NEXTAUTH_SECRET: z.string(),
+    AUTH_URL: z.string().url(),
+    AUTH_SECRET: z.string(),
     GOOGLE_CLIENT_ID: z.string(),
     GOOGLE_CLIENT_SECRET: z.string(),
+    AUTH_MICROSOFT_ENTRA_ID_ID: z.string(),
+    AUTH_MICROSOFT_ENTRA_ID_SECRET: z.string(),
+    AUTH_MICROSOFT_ENTRA_ID_ISSUER: z.string(),
     DATABASE_URL: z.string().url(),
   },
   onValidationError: (error) => {

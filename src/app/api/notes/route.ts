@@ -1,13 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { getServerSession } from "next-auth";
-
-import options from "@/config/auth";
-// your custom auth config
+import { auth } from "@/auth";
 import { createLessonNote } from "@/lib/db/notes";
 
 export async function POST(req: NextRequest) {
-  const session = await getServerSession(options);
+  const session = await auth();
   if (
     !session?.user?.id ||
     !["coach", "admin"].includes(session.user.role ?? "")

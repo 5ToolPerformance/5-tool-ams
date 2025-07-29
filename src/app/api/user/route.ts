@@ -1,12 +1,10 @@
 import { NextResponse } from "next/server";
 
-import { getServerSession } from "next-auth";
-
-import options from "@/config/auth";
+import { auth } from "@/auth";
 import { UserService } from "@/lib/services/users";
 
 export async function GET() {
-  const session = await getServerSession(options);
+  const session = await auth();
 
   if (!session || !["coach", "admin"].includes(session.user.role ?? "")) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
