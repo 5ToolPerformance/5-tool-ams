@@ -84,6 +84,14 @@ const PlayerDashboard: React.FC<PlayerDashboardProps> = ({
     (option) => option.key === selectedTab
   );
 
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
+
   return (
     <div className="min-h-screen p-4 md:p-6 lg:p-8">
       <div className="mx-auto max-w-6xl space-y-6">

@@ -1831,12 +1831,17 @@ const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
                   errorMessage={field.state.meta.errors.join(", ")}
                   isRequired
                 >
-                  {players.map((player) => (
-                    <SelectItem key={player.id}>
-                      {player.firstName + " " + player.lastName ||
-                        `Player ${player.id.slice(0, 8)}`}
-                    </SelectItem>
-                  ))}
+                  {players.map((player) => {
+                    const playerFullName = player.firstName.concat(
+                      " ",
+                      player.lastName
+                    );
+                    return (
+                      <SelectItem key={player.id}>
+                        {playerFullName || `Player ${player.id.slice(0, 8)}`}
+                      </SelectItem>
+                    );
+                  })}
                 </Select>
               )}
             </form.Field>
