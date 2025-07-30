@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 
-import SidebarLayout from "@/components/app-navbar/sidebar-layout";
-import Providers from "@/components/providers";
+import Providers from "@/components/layout/providers";
+import SidebarLayout from "@/components/layout/sidebar-layout";
 
 import "./globals.css";
 
