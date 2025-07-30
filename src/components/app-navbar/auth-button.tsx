@@ -9,7 +9,7 @@ import {
   DropdownMenu,
   DropdownTrigger,
 } from "@heroui/react";
-import { IconBrandGoogle, IconBrandMinecraft } from "@tabler/icons-react";
+import { IconBrandMinecraft } from "@tabler/icons-react";
 import { signIn, signOut, useSession } from "next-auth/react";
 
 export default function AuthButton({ minimal = true }: { minimal?: boolean }) {
@@ -27,7 +27,7 @@ export default function AuthButton({ minimal = true }: { minimal?: boolean }) {
     if (minimal) {
       return (
         <Button onPress={signOutClick} color="danger" variant="ghost">
-          <IconBrandGoogle />
+          <IconBrandMinecraft />
           Sign Out
         </Button>
       );
@@ -58,25 +58,13 @@ export default function AuthButton({ minimal = true }: { minimal?: boolean }) {
   }
 
   return (
-    <>
-      <Button
-        onPress={() => signIn("google", { callbackUrl: "/profile" })}
-        color="danger"
-        variant="ghost"
-      >
-        <IconBrandGoogle />
-        Sign In
-      </Button>
-      <Button
-        onPress={() =>
-          signIn("microsoft-entra-id", { callbackUrl: "/profile" })
-        }
-        color="danger"
-        variant="ghost"
-      >
-        <IconBrandMinecraft />
-        Sign In
-      </Button>
-    </>
+    <Button
+      onPress={() => signIn("microsoft-entra-id", { callbackUrl: "/profile" })}
+      color="danger"
+      variant="ghost"
+    >
+      <IconBrandMinecraft />
+      Sign In
+    </Button>
   );
 }
