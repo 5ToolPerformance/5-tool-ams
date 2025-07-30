@@ -20,10 +20,13 @@ export async function GET(
     const motorPref = await PlayerService.getMotorPreferencesById(id);
 
     if (!motorPref) {
-      return NextResponse.json({
-        success: false,
-        error: "Motor Preferences Not Found",
-      }, { status: 404 });
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Motor Preferences Not Found",
+        },
+        { status: 404 }
+      );
     }
 
     return NextResponse.json({

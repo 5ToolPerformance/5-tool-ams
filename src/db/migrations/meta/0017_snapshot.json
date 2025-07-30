@@ -81,12 +81,8 @@
           "name": "account_userId_user_id_fk",
           "tableFrom": "account",
           "tableTo": "user",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -270,12 +266,8 @@
           "name": "arm_care_lesson_id_lesson_id_fk",
           "tableFrom": "arm_care",
           "tableTo": "lesson",
-          "columnsFrom": [
-            "lesson_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["lesson_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -411,12 +403,8 @@
           "name": "hawkins_force_plate_lesson_id_lesson_id_fk",
           "tableFrom": "hawkins_force_plate",
           "tableTo": "lesson",
-          "columnsFrom": [
-            "lesson_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["lesson_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -528,12 +516,8 @@
           "name": "hitting_assessment_lesson_id_lesson_id_fk",
           "tableFrom": "hitting_assessment",
           "tableTo": "lesson",
-          "columnsFrom": [
-            "lesson_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["lesson_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -661,12 +645,8 @@
           "name": "lesson_player_id_player_information_id_fk",
           "tableFrom": "lesson",
           "tableTo": "player_information",
-          "columnsFrom": [
-            "player_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["player_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -674,12 +654,8 @@
           "name": "lesson_coach_id_user_id_fk",
           "tableFrom": "lesson",
           "tableTo": "user",
-          "columnsFrom": [
-            "coach_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["coach_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -786,12 +762,8 @@
           "name": "lesson_assessments_lesson_id_lesson_id_fk",
           "tableFrom": "lesson_assessments",
           "tableTo": "lesson",
-          "columnsFrom": [
-            "lesson_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["lesson_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -872,12 +844,8 @@
           "name": "motor_preferences_player_id_user_id_fk",
           "tableFrom": "motor_preferences",
           "tableTo": "user",
-          "columnsFrom": [
-            "player_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["player_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -937,12 +905,8 @@
           "name": "notes_userId_user_id_fk",
           "tableFrom": "notes",
           "tableTo": "user",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -950,12 +914,8 @@
           "name": "notes_coachId_user_id_fk",
           "tableFrom": "notes",
           "tableTo": "user",
-          "columnsFrom": [
-            "coachId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["coachId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -1135,12 +1095,8 @@
           "name": "pitching_assessment_lesson_id_lesson_id_fk",
           "tableFrom": "pitching_assessment",
           "tableTo": "lesson",
-          "columnsFrom": [
-            "lesson_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["lesson_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -1229,12 +1185,8 @@
           "name": "player_information_userId_user_id_fk",
           "tableFrom": "player_information",
           "tableTo": "user",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -1274,12 +1226,8 @@
           "name": "session_userId_user_id_fk",
           "tableFrom": "session",
           "tableTo": "user",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -1511,12 +1459,8 @@
           "name": "smfa_lesson_id_lesson_id_fk",
           "tableFrom": "smfa",
           "tableTo": "lesson",
-          "columnsFrom": [
-            "lesson_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["lesson_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -1748,12 +1692,8 @@
           "name": "smfa_boolean_lesson_id_lesson_id_fk",
           "tableFrom": "smfa_boolean",
           "tableTo": "lesson",
-          "columnsFrom": [
-            "lesson_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["lesson_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -1937,12 +1877,8 @@
           "name": "true_strength_lesson_id_lesson_id_fk",
           "tableFrom": "true_strength",
           "tableTo": "lesson",
-          "columnsFrom": [
-            "lesson_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["lesson_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -2010,16 +1946,12 @@
         "user_email_unique": {
           "name": "user_email_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "email"
-          ]
+          "columns": ["email"]
         },
         "user_username_unique": {
           "name": "user_username_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "username"
-          ]
+          "columns": ["username"]
         }
       },
       "policies": {},
@@ -2031,61 +1963,32 @@
     "public.archetypes": {
       "name": "archetypes",
       "schema": "public",
-      "values": [
-        "aerial",
-        "terrestrial"
-      ]
+      "values": ["aerial", "terrestrial"]
     },
     "public.assessment_type": {
       "name": "assessment_type",
       "schema": "public",
-      "values": [
-        "are_care",
-        "smfa",
-        "force_plate",
-        "true_strength",
-        "arm_care"
-      ]
+      "values": ["are_care", "smfa", "force_plate", "true_strength", "arm_care"]
     },
     "public.date_range": {
       "name": "date_range",
       "schema": "public",
-      "values": [
-        "1-2",
-        "3-4",
-        "5-6",
-        "7+",
-        "na"
-      ]
+      "values": ["1-2", "3-4", "5-6", "7+", "na"]
     },
     "public.left-right": {
       "name": "left-right",
       "schema": "public",
-      "values": [
-        "left",
-        "right",
-        "switch"
-      ]
+      "values": ["left", "right", "switch"]
     },
     "public.lesson_types": {
       "name": "lesson_types",
       "schema": "public",
-      "values": [
-        "strength",
-        "hitting",
-        "pitching",
-        "fielding",
-        "catching"
-      ]
+      "values": ["strength", "hitting", "pitching", "fielding", "catching"]
     },
     "public.roles": {
       "name": "roles",
       "schema": "public",
-      "values": [
-        "player",
-        "coach",
-        "admin"
-      ]
+      "values": ["player", "coach", "admin"]
     }
   },
   "schemas": {},

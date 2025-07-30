@@ -81,12 +81,8 @@
           "name": "account_userId_user_id_fk",
           "tableFrom": "account",
           "tableTo": "user",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -218,12 +214,8 @@
           "name": "arm_care_userId_user_id_fk",
           "tableFrom": "arm_care",
           "tableTo": "user",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -231,12 +223,8 @@
           "name": "arm_care_coachId_user_id_fk",
           "tableFrom": "arm_care",
           "tableTo": "user",
-          "columnsFrom": [
-            "coachId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["coachId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -350,12 +338,8 @@
           "name": "hawkins_force_plate_userId_user_id_fk",
           "tableFrom": "hawkins_force_plate",
           "tableTo": "user",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -363,12 +347,8 @@
           "name": "hawkins_force_plate_coachId_user_id_fk",
           "tableFrom": "hawkins_force_plate",
           "tableTo": "user",
-          "columnsFrom": [
-            "coachId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["coachId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -428,12 +408,8 @@
           "name": "notes_userId_user_id_fk",
           "tableFrom": "notes",
           "tableTo": "user",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -441,12 +417,8 @@
           "name": "notes_coachId_user_id_fk",
           "tableFrom": "notes",
           "tableTo": "user",
-          "columnsFrom": [
-            "coachId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["coachId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -517,12 +489,8 @@
           "name": "player_information_userId_user_id_fk",
           "tableFrom": "player_information",
           "tableTo": "user",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -562,12 +530,8 @@
           "name": "session_userId_user_id_fk",
           "tableFrom": "session",
           "tableTo": "user",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -747,12 +711,8 @@
           "name": "smfa_userId_user_id_fk",
           "tableFrom": "smfa",
           "tableTo": "user",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -760,12 +720,8 @@
           "name": "smfa_coachId_user_id_fk",
           "tableFrom": "smfa",
           "tableTo": "user",
-          "columnsFrom": [
-            "coachId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["coachId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -897,12 +853,8 @@
           "name": "true_strength_userId_user_id_fk",
           "tableFrom": "true_strength",
           "tableTo": "user",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -910,12 +862,8 @@
           "name": "true_strength_coachId_user_id_fk",
           "tableFrom": "true_strength",
           "tableTo": "user",
-          "columnsFrom": [
-            "coachId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["coachId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -983,16 +931,12 @@
         "user_email_unique": {
           "name": "user_email_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "email"
-          ]
+          "columns": ["email"]
         },
         "user_username_unique": {
           "name": "user_username_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "username"
-          ]
+          "columns": ["username"]
         }
       },
       "policies": {},
@@ -1004,11 +948,7 @@
     "public.roles": {
       "name": "roles",
       "schema": "public",
-      "values": [
-        "player",
-        "coach",
-        "admin"
-      ]
+      "values": ["player", "coach", "admin"]
     }
   },
   "schemas": {},
