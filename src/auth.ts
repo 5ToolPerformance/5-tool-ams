@@ -18,6 +18,7 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
     MicrosoftEntraID({
       clientId: env.AUTH_MICROSOFT_ENTRA_ID_ID,
       clientSecret: env.AUTH_MICROSOFT_ENTRA_ID_SECRET,
+      issuer: env.AUTH_MICROSOFT_ENTRA_ID_ISSUER,
     }),
   ],
   session: {

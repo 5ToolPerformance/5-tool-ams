@@ -10,7 +10,7 @@ const users = pgTable("user", {
   name: varchar("name", { length: 255 }),
   email: varchar("email", { length: 320 }).notNull().unique(),
   emailVerified: timestamp("emailVerified", { mode: "date" }),
-  image: varchar("image", { length: 2048 }).notNull(),
+  image: varchar("image", { length: 2048 }),
   role: rolesEnum("role").default("player"),
   username: varchar("username", { length: 25 }).unique(),
 });
