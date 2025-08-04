@@ -41,7 +41,7 @@ export default function PlayerCreateForm({
     onSubmit: async ({ value }) => {
       console.log("Form submitted:", value);
       try {
-        const response = await fetch(`/api/players`, {
+        const response = await fetch("/api/players", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

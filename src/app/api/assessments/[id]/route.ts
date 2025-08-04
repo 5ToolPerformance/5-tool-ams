@@ -1,14 +1,11 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextRequest, NextResponse } from "next/server";
 
 import { LessonService } from "@/lib/services/lessons";
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function GET(request: NextRequest, context: any) {
   try {
-    const resolvedParams = await params;
-    const { id } = resolvedParams;
+    const { id } = context.params;
     const type = request.nextUrl.searchParams.get("type");
 
     if (!type) {

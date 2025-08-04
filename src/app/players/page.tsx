@@ -45,7 +45,7 @@ export default function PlayersPage() {
         player.firstName?.toLowerCase().includes(term) ||
         player.lastName?.toLowerCase().includes(term)
     );
-  }, [players, searchTerm]);
+  }, [players, searchTerm, isLoading]);
 
   return (
     <div className="container mx-auto px-4 py-6">
