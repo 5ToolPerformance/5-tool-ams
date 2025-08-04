@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import { PlayerService } from "@/lib/services/players";
-import { PlayerInformation } from "@/types/users";
+import { RouteParams } from "@/types/api";
+import { PlayerInsert } from "@/types/database";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: RouteParams<{ id: string }>
 ) {
   try {
     const { id } = await params;
@@ -32,14 +33,10 @@ export async function GET(
   }
 }
 
-export async function POST(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function POST(request: NextRequest) {
   try {
-    const { id } = await params;
-    const body: PlayerInformation = await request.json();
-    const playerInfo = await PlayerService.createPlayerInformation(id, body);
+    const body: PlayerInsert = await request.json();
+    const playerInfo = await PlayerService.createPlayerInformation(body);
 
     return NextResponse.json({
       success: true,

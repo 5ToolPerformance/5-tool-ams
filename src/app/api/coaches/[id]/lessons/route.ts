@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import { LessonService } from "@/lib/services/lessons";
+import { RouteParams } from "@/types/api";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: RouteParams<{ id: string }>
 ) {
   try {
     const { id } = await params;

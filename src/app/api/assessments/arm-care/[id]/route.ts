@@ -2,13 +2,14 @@
 import { NextResponse } from "next/server";
 
 import { AssessmentService } from "@/lib/services/assessments";
+import { RouteParams } from "@/types/api";
 
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: RouteParams<{ id: string }>
 ) {
   try {
-    const { id } = params;
+    const { id } = await params;
     const result = await AssessmentService.getArmCareAssessmentById(id);
 
     if (!result || result.length === 0) {

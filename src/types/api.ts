@@ -7,3 +7,10 @@ export interface ApiResponse<T> {
   error?: string;
   message?: string;
 }
+
+/**
+ * Type for Route Parameters
+ */
+export type RouteParams<T = Record<string, string>> = {
+  params: Promise<T>;
+};
