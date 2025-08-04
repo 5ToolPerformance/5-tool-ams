@@ -39,10 +39,11 @@ export async function GET(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: RouteParams<{ id: string }>
 ) {
   try {
-    const deletedLesson = await LessonService.deleteLessonById(params.id);
+    const { id } = await params;
+    const deletedLesson = await LessonService.deleteLessonById(id);
 
     return NextResponse.json({
       success: true,
