@@ -1,13 +1,9 @@
 import { LessonPageComponent } from "@/components/lessons/LessonPage";
+import { PageProps } from "@/types/page";
 
-type LessonPageProps = {
-  params: {
-    id: string;
-  };
-};
+type LessonPageProps = PageProps<{ id: string }>;
 
 export default async function LessonPage({ params }: LessonPageProps) {
-  const resolvedParams = await params;
-  const id = resolvedParams.id;
+  const { id } = await params;
   return <LessonPageComponent lessonId={id} />;
 }

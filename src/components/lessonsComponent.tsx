@@ -52,7 +52,7 @@ const LessonsSection: React.FC<LessonsSectionProps> = ({ playerId }) => {
 
     // Filter LESSON_TYPES to only show types that actually exist in the current lessons
     return LESSON_TYPES.filter((type) =>
-      lessons.some((lessonItem) => lessonItem.lesson.type === type.value)
+      lessons.some((lessonItem) => lessonItem.lesson.lessonType === type.value)
     );
   }, [lessons]);
 
@@ -67,7 +67,7 @@ const LessonsSection: React.FC<LessonsSectionProps> = ({ playerId }) => {
       return lessons;
     }
     return lessons.filter(
-      (lessonItem) => lessonItem.lesson.type === selectedFilter
+      (lessonItem) => lessonItem.lesson.lessonType === selectedFilter
     );
   }, [lessons, selectedFilter]);
 

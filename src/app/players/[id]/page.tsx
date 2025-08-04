@@ -3,12 +3,9 @@ import { notFound } from "next/navigation";
 import { auth } from "@/auth";
 import PlayerDashboard from "@/components/playerDashboard";
 import { PlayerService } from "@/lib/services/players";
+import { PageProps } from "@/types/page";
 
-type PlayerPageProps = {
-  params: {
-    id: string;
-  };
-};
+type PlayerPageProps = PageProps<{ id: string }>;
 
 export default async function PlayerPage({ params }: PlayerPageProps) {
   const session = await auth();
@@ -18,8 +15,7 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
   if (session.user.role === "coach") {
     coachId = session.user.id;
   }
-  const resolvedParams = await params;
-  const { id } = resolvedParams;
+  const { id } = await params;
   const player = await PlayerService.getPlayerById(id);
   if (!player) return notFound();
 

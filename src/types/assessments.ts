@@ -1,3 +1,5 @@
+import { HittingAssessmentInsert, PitchingAssessmentInsert } from "./database";
+
 export interface ArmCare {
   id: string;
   playerId: string;
@@ -139,10 +141,30 @@ export type AssessmentType =
 export type Archetype = "aerial" | "terrestrial";
 export type leftRight = "left" | "right" | "switch";
 
-export type NewArmCare = Omit<ArmCare, "id" | "createdOn">;
-export type NewSMFA = Omit<SMFA, "id" | "createdOn">;
-export type NewForcePlate = Omit<ForcePlate, "id" | "createOn">;
-export type NewTrueStrength = Omit<TrueStrength, "id" | "createdOn">;
+export type NewArmCare = Omit<
+  ArmCare,
+  "id" | "createdOn" | "lessonDate" | "coachId" | "playerId" | "lessonId"
+>;
+export type NewSMFA = Omit<
+  SMFA,
+  "id" | "createdOn" | "lessonDate" | "coachId" | "playerId" | "lessonId"
+>;
+export type NewForcePlate = Omit<
+  ForcePlate,
+  "id" | "createdOn" | "lessonDate" | "coachId" | "playerId" | "lessonId"
+>;
+export type NewTrueStrength = Omit<
+  TrueStrength,
+  "id" | "createdOn" | "lessonDate" | "coachId" | "playerId" | "lessonId"
+>;
+export type NewHittingAssessment = Omit<
+  HittingAssessmentInsert,
+  "coachId" | "playerId" | "lessonId"
+>;
+export type NewPitchingAssessment = Omit<
+  PitchingAssessmentInsert,
+  "coachId" | "playerId" | "lessonId"
+>;
 
 export interface MotorPreferencesForm {
   playerId: string;

@@ -27,7 +27,7 @@ export default function MotorPreferencesModal({
   playerId: string | null;
   coachId: string | undefined;
 }) {
-  const form = useForm<MotorPreferencesForm>({
+  const form = useForm({
     defaultValues: {
       playerId: playerId,
       coachId: coachId,

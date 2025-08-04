@@ -11,7 +11,6 @@ export default function Providers({ children }: { children: React.ReactNode }) {
   return (
     <SessionProvider>
       <HeroUIProvider
-        // @ts-expect-error ignore
         navigate={router.push}
         className="flex h-full w-full flex-col"
       >

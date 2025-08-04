@@ -15,6 +15,7 @@ import {
 } from "@heroui/react";
 import { useForm } from "@tanstack/react-form";
 
+import { getCompleteLessonDefaults } from "@/lib/form-defaults";
 import { ApiResponse } from "@/types/api";
 import { PlayerSelect } from "@/types/database";
 import {
@@ -33,16 +34,11 @@ interface LessonsCreateProps {
 const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
   const router = useRouter();
 
-  const form = useForm<LessonCreateData>({
-    defaultValues: {
-      coachId: coachId,
-      playerId: null,
-      type: "strength",
-      lessonDate: new Date().toISOString().split("T")[0],
-      notes: "",
-    },
+  const form = useForm({
+    defaultValues: getCompleteLessonDefaults(coachId as string),
     onSubmit: async ({ value }) => {
-      console.log("Form submitted:", value);
+      const completeData = value as LessonCreateData;
+      console.log("Form submitted:", completeData);
       try {
         const response = await fetch("/api/lessons", {
           method: "POST",
@@ -413,7 +409,6 @@ const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
                 onBlur={field.handleBlur}
                 isInvalid={!!field.state.meta.errors.length}
                 errorMessage={field.state.meta.errors.join(", ")}
-                isRequired
               />
             )}
           </form.Field>
@@ -432,7 +427,6 @@ const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
                 onBlur={field.handleBlur}
                 isInvalid={!!field.state.meta.errors.length}
                 errorMessage={field.state.meta.errors.join(", ")}
-                isRequired
               />
             )}
           </form.Field>
@@ -452,7 +446,6 @@ const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
                 onBlur={field.handleBlur}
                 isInvalid={!!field.state.meta.errors.length}
                 errorMessage={field.state.meta.errors.join(", ")}
-                isRequired
               />
             )}
           </form.Field>
@@ -471,7 +464,6 @@ const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
                 onBlur={field.handleBlur}
                 isInvalid={!!field.state.meta.errors.length}
                 errorMessage={field.state.meta.errors.join(", ")}
-                isRequired
               />
             )}
           </form.Field>
@@ -491,7 +483,6 @@ const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
                 onBlur={field.handleBlur}
                 isInvalid={!!field.state.meta.errors.length}
                 errorMessage={field.state.meta.errors.join(", ")}
-                isRequired
               />
             )}
           </form.Field>
@@ -510,7 +501,6 @@ const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
                 onBlur={field.handleBlur}
                 isInvalid={!!field.state.meta.errors.length}
                 errorMessage={field.state.meta.errors.join(", ")}
-                isRequired
               />
             )}
           </form.Field>
@@ -530,7 +520,6 @@ const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
                 onBlur={field.handleBlur}
                 isInvalid={!!field.state.meta.errors.length}
                 errorMessage={field.state.meta.errors.join(", ")}
-                isRequired
               />
             )}
           </form.Field>
@@ -549,7 +538,6 @@ const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
                 onBlur={field.handleBlur}
                 isInvalid={!!field.state.meta.errors.length}
                 errorMessage={field.state.meta.errors.join(", ")}
-                isRequired
               />
             )}
           </form.Field>
@@ -569,7 +557,6 @@ const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
                 onBlur={field.handleBlur}
                 isInvalid={!!field.state.meta.errors.length}
                 errorMessage={field.state.meta.errors.join(", ")}
-                isRequired
               />
             )}
           </form.Field>
@@ -588,7 +575,6 @@ const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
                 onBlur={field.handleBlur}
                 isInvalid={!!field.state.meta.errors.length}
                 errorMessage={field.state.meta.errors.join(", ")}
-                isRequired
               />
             )}
           </form.Field>
@@ -608,7 +594,6 @@ const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
                 onBlur={field.handleBlur}
                 isInvalid={!!field.state.meta.errors.length}
                 errorMessage={field.state.meta.errors.join(", ")}
-                isRequired
               />
             )}
           </form.Field>
@@ -627,7 +612,6 @@ const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
                 onBlur={field.handleBlur}
                 isInvalid={!!field.state.meta.errors.length}
                 errorMessage={field.state.meta.errors.join(", ")}
-                isRequired
               />
             )}
           </form.Field>
@@ -647,7 +631,6 @@ const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
                 onBlur={field.handleBlur}
                 isInvalid={!!field.state.meta.errors.length}
                 errorMessage={field.state.meta.errors.join(", ")}
-                isRequired
               />
             )}
           </form.Field>
@@ -666,7 +649,6 @@ const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
                 onBlur={field.handleBlur}
                 isInvalid={!!field.state.meta.errors.length}
                 errorMessage={field.state.meta.errors.join(", ")}
-                isRequired
               />
             )}
           </form.Field>
@@ -686,7 +668,6 @@ const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
                 onBlur={field.handleBlur}
                 isInvalid={!!field.state.meta.errors.length}
                 errorMessage={field.state.meta.errors.join(", ")}
-                isRequired
               />
             )}
           </form.Field>
@@ -705,7 +686,6 @@ const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
                 onBlur={field.handleBlur}
                 isInvalid={!!field.state.meta.errors.length}
                 errorMessage={field.state.meta.errors.join(", ")}
-                isRequired
               />
             )}
           </form.Field>
@@ -725,7 +705,6 @@ const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
                 onBlur={field.handleBlur}
                 isInvalid={!!field.state.meta.errors.length}
                 errorMessage={field.state.meta.errors.join(", ")}
-                isRequired
               />
             )}
           </form.Field>
@@ -745,7 +724,6 @@ const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
                 onBlur={field.handleBlur}
                 isInvalid={!!field.state.meta.errors.length}
                 errorMessage={field.state.meta.errors.join(", ")}
-                isRequired
               />
             )}
           </form.Field>
@@ -765,7 +743,6 @@ const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
                 onBlur={field.handleBlur}
                 isInvalid={!!field.state.meta.errors.length}
                 errorMessage={field.state.meta.errors.join(", ")}
-                isRequired
               />
             )}
           </form.Field>
@@ -785,7 +762,6 @@ const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
                 onBlur={field.handleBlur}
                 isInvalid={!!field.state.meta.errors.length}
                 errorMessage={field.state.meta.errors.join(", ")}
-                isRequired
               />
             )}
           </form.Field>
