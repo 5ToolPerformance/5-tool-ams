@@ -4,6 +4,7 @@ import { usePathname } from "next/navigation";
 
 import { Button, Link } from "@heroui/react";
 import {
+  Icon3dCubeSphereOff,
   IconBallBaseball,
   IconHome,
   IconPackage,
@@ -30,6 +31,7 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
       label: "Home",
       href: "/",
       icon: IconHome,
+      target: "_self",
     },
   ];
 
@@ -39,16 +41,25 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
         label: "Profile",
         href: "/profile",
         icon: IconUser,
+        target: "_self",
       },
       {
         label: "Players",
         href: "/players",
         icon: IconUsers,
+        target: "_self",
       },
       {
         label: "Create Lesson",
         href: "/create-lesson",
         icon: IconBallBaseball,
+        target: "_self",
+      },
+      {
+        label: "Feedback",
+        href: "https://forms.office.com/r/parLxEE76t",
+        icon: Icon3dCubeSphereOff,
+        target: "_blank",
       }
     );
   }
@@ -106,6 +117,7 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
                         ? "border-l-2 border-primary bg-primary/10 text-primary"
                         : "text-foreground-600 hover:bg-default-100 hover:text-foreground"
                     } `}
+                    target={item.target}
                   >
                     <Icon size={20} />
                     {item.label}
