@@ -12,7 +12,7 @@ import {
   SelectItem,
   useDisclosure,
 } from "@heroui/react";
-import { parseDate } from "@internationalized/date";
+import { CalendarDate, parseDate } from "@internationalized/date";
 import { useForm } from "@tanstack/react-form";
 
 import { ApiResponse } from "@/types/api";
@@ -27,7 +27,7 @@ export default function PlayerCreateForm({
 }: PlayerCreateFormProps) {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
-  const form = useForm<PlayerInsert>({
+  const form = useForm({
     defaultValues: {
       firstName: "",
       lastName: "",
@@ -193,8 +193,22 @@ export default function PlayerCreateForm({
                       <Input
                         type="date"
                         label="Date of Birth"
-                        value={field.state.value}
-                        onChange={(e) => field.handleChange(e.target.value)}
+                        value={
+                          field.state.value ? field.state.value.toString() : ""
+                        }
+                        onChange={(e) => {
+                          if (e.target.value) {
+                            // Convert string to CalendarDate
+                            const [year, month, day] = e.target.value
+                              .split("-")
+                              .map(Number);
+                            field.handleChange(
+                              new CalendarDate(year, month, day)
+                            );
+                          } else {
+                            field.handleChange(new CalendarDate(2000, 1, 1));
+                          }
+                        }}
                       />
                     )}
                   </form.Field>
