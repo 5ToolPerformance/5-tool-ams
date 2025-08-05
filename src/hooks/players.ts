@@ -7,7 +7,9 @@ export function useAllPlayers() {
 }
 
 export function useUserById(id: string) {
-  return useSWR(id ? ["user", id] : null, () => ApiService.fetchUserById(id));
+  return useSWR(id ? ["user", id] : null, ([, userId]) =>
+    ApiService.fetchUserById(userId)
+  );
 }
 
 export function useMotorPreferences(id: string) {

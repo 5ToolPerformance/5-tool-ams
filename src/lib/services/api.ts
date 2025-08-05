@@ -10,9 +10,10 @@ export class ApiService {
    * @throws Error if there is an issue with the API request.
    */
   static async fetchAllUsers() {
-    const res = await fetch("/api/user");
-    if (!res.ok) throw new Error("Failed to fetch users");
-    return res.json();
+    const response = await fetch("/api/user");
+    if (!response.ok) throw new Error("Failed to fetch users");
+    const result = await response.json();
+    return result.data;
   }
 
   /**
@@ -22,9 +23,10 @@ export class ApiService {
    * @throws Error if there is an issue with the API request.
    */
   static async fetchUserById(id: string) {
-    const res = await fetch(`/api/users/${id}`);
-    if (!res.ok) throw new Error("Failed to fetch user");
-    return res.json();
+    const response = await fetch(`/api/users/${id}`);
+    if (!response.ok) throw new Error("Failed to fetch user");
+    const result = await response.json();
+    return result.data;
   }
 
   /**
@@ -33,10 +35,10 @@ export class ApiService {
    * @throws Error if there is an issue with the API request.
    */
   static async fetchAllPlayers() {
-    const res = await fetch("/api/players");
-    if (!res.ok) throw new Error("Failed to fetch players");
-    const jsonData = await res.json();
-    return jsonData.data || [];
+    const response = await fetch("/api/players");
+    if (!response.ok) throw new Error("Failed to fetch players");
+    const result = await response.json();
+    return result.data || [];
   }
 
   /**
@@ -46,9 +48,10 @@ export class ApiService {
    * @throws Error if there is an issue with the API request.
    */
   static async fetchMotorPreferenceById(id: string) {
-    const res = await fetch(`/api/players/${id}/motor-preference`);
-    if (!res.ok) throw new Error("Failed to fetch motor preference");
-    return res.json();
+    const response = await fetch(`/api/players/${id}/motor-preference`);
+    if (!response.ok) throw new Error("Failed to fetch motor preference");
+    const result = await response.json();
+    return result.data;
   }
 
   /**
@@ -58,15 +61,19 @@ export class ApiService {
    * @throws Error if there is an issue with the API request.
    */
   static async createMotorPreference(data: MotorPreferencesForm) {
-    const res = await fetch(`/api/players/${data.playerId}/motor-preference`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    });
-    if (!res.ok) throw new Error("Failed to create motor preference");
-    return res.json();
+    const response = await fetch(
+      `/api/players/${data.playerId}/motor-preference`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      }
+    );
+    if (!response.ok) throw new Error("Failed to create motor preference");
+    const result = await response.json();
+    return result.data;
   }
 
   /**
@@ -97,9 +104,10 @@ export class ApiService {
    * @throws Error if there is an issue with the API request.
    */
   static async fetchLessonById(id: string) {
-    const res = await fetch(`/api/lessons/${id}`);
-    if (!res.ok) throw new Error("Failed to fetch lesson");
-    return res.json();
+    const response = await fetch(`/api/lessons/${id}`);
+    if (!response.ok) throw new Error("Failed to fetch lesson");
+    const result = await response.json();
+    return result.data;
   }
 
   /**
@@ -110,8 +118,9 @@ export class ApiService {
    * @throws Error if there is an issue with the API request.
    */
   static async fetchLessonAssessmentById(id: string, type: string) {
-    const res = await fetch(`/api/assessments/${id}?type=${type}`);
-    if (!res.ok) throw new Error("Failed to fetch lesson assessment");
-    return res.json();
+    const response = await fetch(`/api/assessments/${id}?type=${type}`);
+    if (!response.ok) throw new Error("Failed to fetch lesson assessment");
+    const result = await response.json();
+    return result.data;
   }
 }

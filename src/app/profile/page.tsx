@@ -1,11 +1,25 @@
 import { Card, CardBody, User } from "@heroui/react";
 
 import { auth } from "@/auth";
+import CoachDashboard from "@/components/dashboards/CoachDashboard";
 import requireAuth from "@/utils/require-auth";
 
 export default async function Profile() {
   await requireAuth();
   const session = await auth();
+
+  if (!session?.user?.id) {
+    return <div>Profile not found</div>;
+  }
+
+  if (session?.user?.role === "coach") {
+    return <CoachDashboard coachId={session.user.id} />;
+  }
+
+  if (session?.user?.role === "admin") {
+    return <div>Admin Profile</div>;
+  }
+
   return (
     <div className="space-y-6">
       <Card className="mx-auto max-w-md">
