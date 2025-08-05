@@ -22,6 +22,16 @@ interface PlayerCreateFormProps {
   onPlayerCreated?: (player: PlayerSelect) => void;
 }
 
+const formatDateForDB = (calendarDate: CalendarDate) => {
+  if (calendarDate instanceof CalendarDate) {
+    const year = calendarDate.year;
+    const month = String(calendarDate.month).padStart(2, "0");
+    const day = String(calendarDate.day).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  }
+  return calendarDate;
+};
+
 export default function PlayerCreateForm({
   onPlayerCreated,
 }: PlayerCreateFormProps) {
@@ -39,14 +49,17 @@ export default function PlayerCreateForm({
       date_of_birth: parseDate(new Date().toISOString().split("T")[0]),
     },
     onSubmit: async ({ value }) => {
-      console.log("Form submitted:", value);
+      const formattedValue = {
+        ...value,
+        date_of_birth: formatDateForDB(value.date_of_birth),
+      };
       try {
         const response = await fetch("/api/players", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(value),
+          body: JSON.stringify(formattedValue),
         });
 
         const result: ApiResponse<PlayerInsert> = await response.json();
@@ -95,7 +108,6 @@ export default function PlayerCreateForm({
                       />
                     )}
                   </form.Field>
-
                   <form.Field name="lastName">
                     {(field) => (
                       <Input
@@ -105,7 +117,6 @@ export default function PlayerCreateForm({
                       />
                     )}
                   </form.Field>
-
                   <form.Field name="height">
                     {(field) => (
                       <Input
@@ -118,7 +129,6 @@ export default function PlayerCreateForm({
                       />
                     )}
                   </form.Field>
-
                   <form.Field name="weight">
                     {(field) => (
                       <Input
@@ -131,7 +141,6 @@ export default function PlayerCreateForm({
                       />
                     )}
                   </form.Field>
-
                   <form.Field name="position">
                     {(field) => (
                       <Input
@@ -141,7 +150,6 @@ export default function PlayerCreateForm({
                       />
                     )}
                   </form.Field>
-
                   <form.Field name="throws">
                     {(field) => (
                       <Select
@@ -164,7 +172,6 @@ export default function PlayerCreateForm({
                       </Select>
                     )}
                   </form.Field>
-
                   <form.Field name="hits">
                     {(field) => (
                       <Select
@@ -187,18 +194,18 @@ export default function PlayerCreateForm({
                       </Select>
                     )}
                   </form.Field>
-
                   <form.Field name="date_of_birth">
                     {(field) => (
                       <Input
                         type="date"
                         label="Date of Birth"
                         value={
-                          field.state.value ? field.state.value.toString() : ""
+                          field.state.value instanceof CalendarDate
+                            ? `${field.state.value.year}-${String(field.state.value.month).padStart(2, "0")}-${String(field.state.value.day).padStart(2, "0")}`
+                            : field.state.value || ""
                         }
                         onChange={(e) => {
                           if (e.target.value) {
-                            // Convert string to CalendarDate
                             const [year, month, day] = e.target.value
                               .split("-")
                               .map(Number);
@@ -212,7 +219,6 @@ export default function PlayerCreateForm({
                       />
                     )}
                   </form.Field>
-
                   <Button type="submit" color="primary">
                     Save Player
                   </Button>
