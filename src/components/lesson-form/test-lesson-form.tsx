@@ -38,14 +38,39 @@ const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
     defaultValues: getCompleteLessonDefaults(coachId as string),
     onSubmit: async ({ value }) => {
       const completeData = value as LessonCreateData;
-      console.log("Form submitted:", completeData);
+      const filterAssessmentData = (
+        data: LessonCreateData,
+        selectedAssessments: string[]
+      ) => {
+        const filtered = { ...data };
+
+        if (!selectedAssessments.includes("armCare")) {
+          filtered.armCare = undefined;
+          filtered.smfa = undefined;
+          filtered.forcePlate = undefined;
+          filtered.trueStrength = undefined;
+        }
+        if (!selectedAssessments.includes("hittingAssessment")) {
+          filtered.hittingAssessment = undefined;
+        }
+        if (!selectedAssessments.includes("pitchingAssessment")) {
+          filtered.pitchingAssessment = undefined;
+        }
+
+        return filtered;
+      };
+
+      const filteredData = filterAssessmentData(
+        completeData,
+        assessmentConfigs[selectedLessonType]
+      );
       try {
         const response = await fetch("/api/lessons", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(value),
+          body: JSON.stringify(filteredData),
         });
 
         const result: ApiResponse<LessonCreateData> = await response.json();
@@ -116,7 +141,7 @@ const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
   const assessmentConfigs = {
     strength: ["armCare", "smfa", "forcePlate", "trueStrength"],
     hitting: ["hittingAssessment"],
-    pitching: ["pitchingAssessment"], // Assuming pitching uses hitting assessments
+    pitching: ["pitchingAssessment"],
     catching: ["catchingAssessment"],
     fielding: ["fieldingAssessment"],
   };
@@ -1472,7 +1497,6 @@ const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
                   onBlur={field.handleBlur}
                   isInvalid={!!field.state.meta.errors.length}
                   errorMessage={field.state.meta.errors.join(", ")}
-                  isRequired
                 />
               )}
             </form.Field>
@@ -1493,7 +1517,6 @@ const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
                   onBlur={field.handleBlur}
                   isInvalid={!!field.state.meta.errors.length}
                   errorMessage={field.state.meta.errors.join(", ")}
-                  isRequired
                 />
               )}
             </form.Field>
@@ -1514,7 +1537,6 @@ const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
                   onBlur={field.handleBlur}
                   isInvalid={!!field.state.meta.errors.length}
                   errorMessage={field.state.meta.errors.join(", ")}
-                  isRequired
                 />
               )}
             </form.Field>
@@ -1535,7 +1557,6 @@ const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
                   onBlur={field.handleBlur}
                   isInvalid={!!field.state.meta.errors.length}
                   errorMessage={field.state.meta.errors.join(", ")}
-                  isRequired
                 />
               )}
             </form.Field>
@@ -1556,7 +1577,6 @@ const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
                   onBlur={field.handleBlur}
                   isInvalid={!!field.state.meta.errors.length}
                   errorMessage={field.state.meta.errors.join(", ")}
-                  isRequired
                 />
               )}
             </form.Field>
@@ -1577,7 +1597,6 @@ const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
                   onBlur={field.handleBlur}
                   isInvalid={!!field.state.meta.errors.length}
                   errorMessage={field.state.meta.errors.join(", ")}
-                  isRequired
                 />
               )}
             </form.Field>
@@ -1598,7 +1617,6 @@ const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
                   onBlur={field.handleBlur}
                   isInvalid={!!field.state.meta.errors.length}
                   errorMessage={field.state.meta.errors.join(", ")}
-                  isRequired
                 />
               )}
             </form.Field>
@@ -1619,7 +1637,6 @@ const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
                   onBlur={field.handleBlur}
                   isInvalid={!!field.state.meta.errors.length}
                   errorMessage={field.state.meta.errors.join(", ")}
-                  isRequired
                 />
               )}
             </form.Field>
@@ -1640,7 +1657,6 @@ const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
                 onBlur={field.handleBlur}
                 isInvalid={!!field.state.meta.errors.length}
                 errorMessage={field.state.meta.errors.join(", ")}
-                isRequired
               />
             )}
           </form.Field>
@@ -1655,7 +1671,6 @@ const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
                 onBlur={field.handleBlur}
                 isInvalid={!!field.state.meta.errors.length}
                 errorMessage={field.state.meta.errors.join(", ")}
-                isRequired
               />
             )}
           </form.Field>
@@ -1670,7 +1685,6 @@ const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
                 onBlur={field.handleBlur}
                 isInvalid={!!field.state.meta.errors.length}
                 errorMessage={field.state.meta.errors.join(", ")}
-                isRequired
               />
             )}
           </form.Field>
@@ -1737,7 +1751,6 @@ const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
                 onBlur={field.handleBlur}
                 isInvalid={!!field.state.meta.errors.length}
                 errorMessage={field.state.meta.errors.join(", ")}
-                isRequired
               />
             )}
           </form.Field>
@@ -1936,10 +1949,6 @@ const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
               <TrueStrengthAssessmentForm />
             </div>
           )}
-
-          {assessmentConfigs[selectedLessonType]?.includes(
-            "forcePlateAssessment"
-          ) && <ForcePlateAssessmentForm />}
 
           {assessmentConfigs[selectedLessonType]?.includes(
             "hittingAssessment"
