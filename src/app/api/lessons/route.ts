@@ -44,18 +44,34 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const coachId = searchParams.get("coachId");
-    const userId = searchParams.get("userId");
+    const playerId = searchParams.get("playerId");
 
     if (coachId) {
-      const lessons = await LessonService.getLessonsByCoach(coachId);
+      const lessons = await LessonService.getLessonsByCoachWithJoin(coachId);
       return NextResponse.json({
         success: true,
         data: lessons,
       });
     }
 
-    if (userId) {
-      const lessons = await LessonService.getLessonsByUser(userId);
+    if (playerId) {
+      const lessons = await LessonService.getLessonsByPlayerWithJoin(playerId);
+      return NextResponse.json({
+        success: true,
+        data: lessons,
+      });
+    }
+
+    if (!playerId && !coachId) {
+      const lessons = await LessonService.getAllLessons();
+
+      if (lessons.length === 0) {
+        return NextResponse.json({
+          success: false,
+          error: "No lessons found",
+        });
+      }
+
       return NextResponse.json({
         success: true,
         data: lessons,

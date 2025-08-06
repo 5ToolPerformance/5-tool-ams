@@ -11,7 +11,8 @@ import {
   Divider,
 } from "@heroui/react";
 
-import { useUserById } from "@/hooks";
+import { useLessonsByCoachId, useUserById } from "@/hooks";
+import { CoachesService } from "@/lib/services/coaches";
 
 type Props = {
   coachId: string;
@@ -54,9 +55,18 @@ const placeholderLessons = [
 ];
 
 export default function CoachDashboard({ coachId }: Props) {
-  const { data, isLoading, error } = useUserById(coachId);
+  const {
+    data: coach,
+    isLoading: coachLoading,
+    error: coachError,
+  } = useUserById(coachId);
+  const {
+    data: lessons,
+    isLoading: lessonsLoading,
+    error: lessonsError,
+  } = useLessonsByCoachId(coachId);
 
-  if (isLoading) {
+  if (coachLoading || lessonsLoading) {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <CircularProgress size="lg" />
@@ -64,26 +74,18 @@ export default function CoachDashboard({ coachId }: Props) {
     );
   }
 
-  if (error) {
+  if (coachError || lessonsError) {
     return (
       <Card className="mx-auto mt-8 max-w-4xl">
         <CardBody>
-          <p className="text-danger">Error: {error.message}</p>
+          <p className="text-danger">Error: {coachError?.message}</p>
         </CardBody>
       </Card>
     );
   }
 
   // Calculate summary statistics
-  const totalLessons = placeholderLessons.length;
-  const totalStudents = placeholderLessons.reduce(
-    (sum, lesson) => sum + lesson.students,
-    0
-  );
-  const totalHours = placeholderLessons.reduce((sum, lesson) => {
-    const duration = parseInt(lesson.duration.split(" ")[0]);
-    return sum + duration;
-  }, 0);
+  const totalLessons = CoachesService.countLessons(lessons);
 
   return (
     <div className="mx-auto max-w-6xl space-y-6 p-6">
@@ -91,13 +93,15 @@ export default function CoachDashboard({ coachId }: Props) {
       <Card className="w-full">
         <CardBody className="flex flex-row items-center gap-6 p-8">
           <Avatar
-            src={data?.image || ""}
+            src={coach?.image || ""}
             className="h-24 w-24 text-large"
-            name={data?.name || "Coach"}
+            name={coach?.name || "Coach"}
           />
           <div className="flex flex-col gap-2">
-            <h1 className="text-3xl font-bold">{data?.name || "Coach Name"}</h1>
-            <p className="text-lg text-default-500">Basketball Coach</p>
+            <h1 className="text-3xl font-bold">
+              {coach?.name || "Coach Name"}
+            </h1>
+            <p className="text-lg text-default-500">Pitching Coach</p>
             <div className="mt-2 flex gap-2">
               <Chip color="primary" variant="flat">
                 Active
@@ -124,17 +128,13 @@ export default function CoachDashboard({ coachId }: Props) {
               <div className="mt-1 text-sm text-default-600">Total Lessons</div>
             </div>
             <div className="rounded-lg bg-success-50 p-4 text-center">
-              <div className="text-3xl font-bold text-success">
-                {totalStudents}
-              </div>
+              <div className="text-3xl font-bold text-success">N/A</div>
               <div className="mt-1 text-sm text-default-600">
                 Students Coached
               </div>
             </div>
             <div className="rounded-lg bg-warning-50 p-4 text-center">
-              <div className="text-3xl font-bold text-warning">
-                {Math.round((totalHours / 60) * 10) / 10}h
-              </div>
+              <div className="text-3xl font-bold text-warning">N/A</div>
               <div className="mt-1 text-sm text-default-600">Total Hours</div>
             </div>
           </div>

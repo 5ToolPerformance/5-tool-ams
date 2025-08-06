@@ -8,6 +8,7 @@ import {
   lesson,
   lessonAssessments,
   pitchingAssessment,
+  playerInformation,
   smfaBoolean,
   trueStrength,
   users,
@@ -466,10 +467,10 @@ export class LessonService {
       return await db
         .select({
           lesson: lesson,
-          player: users,
+          coach: users,
         })
         .from(lesson)
-        .innerJoin(users, eq(lesson.playerId, users.id))
+        .innerJoin(users, eq(lesson.coachId, users.id))
         .where(eq(lesson.coachId, coachId))
         .orderBy(desc(lesson.lessonDate));
     } catch (error) {
@@ -484,16 +485,16 @@ export class LessonService {
    * @returns the lessons with user data for the specified coach
    * @throws Error if there is an error with the database query
    */
-  static async getLessonsByPlayerWithJoin(userId: string) {
+  static async getLessonsByPlayerWithJoin(playerId: string) {
     try {
       return await db
         .select({
           lesson: lesson,
-          coach: users,
+          player: playerInformation,
         })
         .from(lesson)
-        .innerJoin(users, eq(lesson.coachId, users.id))
-        .where(eq(lesson.playerId, userId))
+        .innerJoin(playerInformation, eq(lesson.playerId, playerInformation.id))
+        .where(eq(lesson.playerId, playerId))
         .orderBy(desc(lesson.lessonDate));
     } catch (error) {
       console.error("Error fetching lessons by user with join:", error);
@@ -574,6 +575,17 @@ export class LessonService {
       return await AssessmentService.getPitchingAssessmentById(id);
     } else {
       throw new Error("Invalid assessment type");
+    }
+  }
+
+  static async getAllLessons() {
+    try {
+      const lessons = await db.select().from(lesson);
+
+      return lessons;
+    } catch (error) {
+      console.error("Error fetching lessons:", error);
+      throw new Error("Failed to fetch lessons");
     }
   }
 }

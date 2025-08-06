@@ -123,4 +123,17 @@ export class ApiService {
     const result = await response.json();
     return result.data;
   }
+
+  /**
+   * Fetches lessons for a specific coach from the API.
+   * @param coachId - The ID of the coach to fetch lessons for
+   * @returns the lessons for the specified coach
+   * @throws Error if there is an issue with the API request
+   */
+  static async fetchLessonsByCoachId(coachId: string) {
+    const response = await fetch(`/api/lessons?coachId=${coachId}`);
+    if (!response.ok) throw new Error("Failed to fetch lesson");
+    const result = await response.json();
+    return result.data;
+  }
 }
