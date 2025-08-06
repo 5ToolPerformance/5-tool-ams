@@ -14,6 +14,7 @@ import {
 import { useLessonsByCoachId, useUserById } from "@/hooks";
 import { CoachesService } from "@/lib/services/coaches";
 import { DateTimeService } from "@/lib/services/date-time";
+import { StringService } from "@/lib/services/strings";
 import { LessonWithCoachAndUser } from "@/types/lessons";
 
 type Props = {
@@ -133,6 +134,10 @@ export default function CoachDashboard({ coachId }: Props) {
                       <h3 className="text-lg font-semibold">
                         {lesson.player.firstName} {lesson.player.lastName}
                       </h3>
+                      <p className="text-sm text-default-500">
+                        {lesson.lesson.notes ||
+                          "No additional notes were provided"}
+                      </p>
                       <div className="mt-2 flex gap-4 text-sm text-default-600">
                         <span>
                           📅{" "}
@@ -144,11 +149,15 @@ export default function CoachDashboard({ coachId }: Props) {
                     </div>
                     <div className="flex items-center gap-3">
                       <Chip color="primary" variant="flat" size="sm">
-                        {lesson.lesson.lessonType}
+                        {StringService.formatLessonType(
+                          lesson.lesson.lessonType
+                        )}
                       </Chip>
-                      <Button size="sm" variant="light">
-                        View Details
-                      </Button>
+                      <a href={`/lessons/${lesson.lesson.id}`}>
+                        <Button size="sm" variant="light">
+                          View Details
+                        </Button>
+                      </a>
                     </div>
                   </div>
                   {index < lessonsInformation.length - 1 && <Divider />}

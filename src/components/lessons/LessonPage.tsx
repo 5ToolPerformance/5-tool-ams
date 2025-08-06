@@ -10,6 +10,8 @@ import {
 } from "@heroui/react";
 
 import { useLessonById } from "@/hooks";
+import { DateTimeService } from "@/lib/services/date-time";
+import { StringService } from "@/lib/services/strings";
 
 type LessonPageProps = {
   lessonId: string;
@@ -60,13 +62,15 @@ export function LessonPageComponent({ lessonId }: LessonPageProps) {
       <Divider />
       <CardBody>
         <div className="space-y-4">
-          <p>{lesson.data.lessonType}</p>
-          <p>{lesson.data.lessonDate}</p>
-          <p>{lesson.data.lessonNotes}</p>
+          <p>{StringService.formatLessonType(lesson.lessonType)}</p>
+          <p>{DateTimeService.formatLessonDate(lesson.lessonDate)}</p>
+          <p>{lesson.lessonNotes}</p>
           <div className="flex flex-wrap gap-2">
-            {lesson.data.assessments.map(
+            {lesson.assessments.map(
               (assessment: { assessmentType: string }, index: number) => (
-                <Button key={index}>{assessment.assessmentType}</Button>
+                <Button variant="flat" key={index}>
+                  {StringService.formatLessonType(assessment.assessmentType)}
+                </Button>
               )
             )}
           </div>
