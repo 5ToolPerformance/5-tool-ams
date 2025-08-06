@@ -8,7 +8,12 @@ import {
   playerInformation,
   smfaBoolean,
   trueStrength,
+  users,
 } from "@/db/schema";
+
+// User Db schema types
+export type UserSelect = typeof users.$inferSelect;
+export type UserInsert = typeof users.$inferInsert;
 
 // Player Db schema types
 export type PlayerSelect = typeof playerInformation.$inferSelect;

@@ -12,8 +12,10 @@ import {
   HittingAssessmentSelect,
   LessonSelect,
   PitchingAssessmentSelect,
+  PlayerSelect,
   SmfaSelect,
   TrueStrengthSelect,
+  UserSelect,
 } from "./database";
 
 // Lesson types based on your schema
@@ -77,4 +79,10 @@ export interface LessonWithAssessment {
     hittingAssessment: HittingAssessmentSelect;
     pitchingAssessment: PitchingAssessmentSelect;
   };
+}
+
+export interface LessonWithCoachAndUser {
+  lesson: LessonSelect;
+  coach: UserSelect;
+  player: PlayerSelect;
 }

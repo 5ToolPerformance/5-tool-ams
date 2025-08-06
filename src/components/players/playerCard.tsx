@@ -2,6 +2,7 @@ import React from "react";
 
 import { Avatar, Card, CardBody, Chip } from "@heroui/react";
 
+import { DateTimeService } from "@/lib/services/date-time";
 import { PlayerSelect } from "@/types/database";
 
 interface PlayerProfileCardProps {
@@ -92,7 +93,7 @@ const PlayerProfileCard: React.FC<PlayerProfileCardProps> = ({
 
           {player.date_of_birth && (
             <p className={`text-default-500 ${currentSize.details}`}>
-              Age: {calculateAge(player.date_of_birth)}
+              Age: {DateTimeService.getAge(player.date_of_birth)}
             </p>
           )}
 

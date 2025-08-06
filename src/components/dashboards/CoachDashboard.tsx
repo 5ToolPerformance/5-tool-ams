@@ -13,46 +13,12 @@ import {
 
 import { useLessonsByCoachId, useUserById } from "@/hooks";
 import { CoachesService } from "@/lib/services/coaches";
+import { DateTimeService } from "@/lib/services/date-time";
+import { LessonWithCoachAndUser } from "@/types/lessons";
 
 type Props = {
   coachId: string;
 };
-
-// Placeholder data for lessons
-const placeholderLessons = [
-  {
-    id: 1,
-    title: "Advanced Shooting Techniques",
-    date: "2024-01-15",
-    duration: "60 min",
-    students: 8,
-    status: "completed",
-  },
-  {
-    id: 2,
-    title: "Defensive Strategies",
-    date: "2024-01-12",
-    duration: "45 min",
-    students: 12,
-    status: "completed",
-  },
-  {
-    id: 3,
-    title: "Team Coordination Drills",
-    date: "2024-01-10",
-    duration: "90 min",
-    students: 15,
-    status: "completed",
-  },
-  {
-    id: 4,
-    title: "Individual Skills Assessment",
-    date: "2024-01-08",
-    duration: "30 min",
-    students: 6,
-    status: "completed",
-  },
-];
 
 export default function CoachDashboard({ coachId }: Props) {
   const {
@@ -60,8 +26,9 @@ export default function CoachDashboard({ coachId }: Props) {
     isLoading: coachLoading,
     error: coachError,
   } = useUserById(coachId);
+
   const {
-    data: lessons,
+    data: lessonsInformation,
     isLoading: lessonsLoading,
     error: lessonsError,
   } = useLessonsByCoachId(coachId);
@@ -83,9 +50,12 @@ export default function CoachDashboard({ coachId }: Props) {
       </Card>
     );
   }
+  const lessons = lessonsInformation.lesson;
+  console.log("Lessons: ", lessonsInformation);
 
   // Calculate summary statistics
-  const totalLessons = CoachesService.countLessons(lessons);
+  const totalLessons = CoachesService.countLessons(lessonsInformation);
+  const totalPlayers = CoachesService.countPlayers(lessonsInformation);
 
   return (
     <div className="mx-auto max-w-6xl space-y-6 p-6">
@@ -128,7 +98,9 @@ export default function CoachDashboard({ coachId }: Props) {
               <div className="mt-1 text-sm text-default-600">Total Lessons</div>
             </div>
             <div className="rounded-lg bg-success-50 p-4 text-center">
-              <div className="text-3xl font-bold text-success">N/A</div>
+              <div className="text-3xl font-bold text-success">
+                {totalPlayers}
+              </div>
               <div className="mt-1 text-sm text-default-600">
                 Students Coached
               </div>
@@ -153,35 +125,36 @@ export default function CoachDashboard({ coachId }: Props) {
         </CardHeader>
         <CardBody className="pt-2">
           <div className="space-y-4">
-            {placeholderLessons.map((lesson, index) => (
-              <div key={lesson.id}>
-                <div className="flex items-start justify-between rounded-lg p-4 transition-colors hover:bg-default-50">
-                  <div className="flex-1">
-                    <h3 className="text-lg font-semibold">{lesson.title}</h3>
-                    <div className="mt-2 flex gap-4 text-sm text-default-600">
-                      <span>📅 {lesson.date}</span>
-                      <span>⏱️ {lesson.duration}</span>
-                      <span>👥 {lesson.students} students</span>
+            {lessonsInformation.map(
+              (lesson: LessonWithCoachAndUser, index: number) => (
+                <div key={lesson.lesson.id}>
+                  <div className="flex items-start justify-between rounded-lg p-4 transition-colors hover:bg-default-50">
+                    <div className="flex-1">
+                      <h3 className="text-lg font-semibold">
+                        {lesson.player.firstName} {lesson.player.lastName}
+                      </h3>
+                      <div className="mt-2 flex gap-4 text-sm text-default-600">
+                        <span>
+                          📅{" "}
+                          {DateTimeService.formatLessonDate(
+                            lesson.lesson.lessonDate
+                          )}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <Chip color="primary" variant="flat" size="sm">
+                        {lesson.lesson.lessonType}
+                      </Chip>
+                      <Button size="sm" variant="light">
+                        View Details
+                      </Button>
                     </div>
                   </div>
-                  <div className="flex items-center gap-3">
-                    <Chip
-                      color={
-                        lesson.status === "completed" ? "success" : "warning"
-                      }
-                      variant="flat"
-                      size="sm"
-                    >
-                      {lesson.status}
-                    </Chip>
-                    <Button size="sm" variant="light">
-                      View Details
-                    </Button>
-                  </div>
+                  {index < lessonsInformation.length - 1 && <Divider />}
                 </div>
-                {index < placeholderLessons.length - 1 && <Divider />}
-              </div>
-            ))}
+              )
+            )}
           </div>
         </CardBody>
       </Card>
