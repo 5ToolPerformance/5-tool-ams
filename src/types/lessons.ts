@@ -86,3 +86,14 @@ export interface LessonWithCoachAndUser {
   coach: UserSelect;
   player: PlayerSelect;
 }
+
+export interface LessonCounts {
+  total: number;
+  last30Days: number;
+  last7Days: number;
+}
+
+export interface WeeklyChartData {
+  day: string;
+  lessons: number;
+}

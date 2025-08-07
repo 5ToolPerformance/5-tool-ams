@@ -10,7 +10,13 @@ import {
   CircularProgress,
   Divider,
 } from "@heroui/react";
+import { Bar, BarChart, XAxis, YAxis } from "recharts";
 
+import {
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from "@/components/ui/chart";
 import { useLessonsByCoachId, useUserById } from "@/hooks";
 import { CoachesService } from "@/lib/services/coaches";
 import { DateTimeService } from "@/lib/services/date-time";
@@ -51,12 +57,23 @@ export default function CoachDashboard({ coachId }: Props) {
       </Card>
     );
   }
-  const lessons = lessonsInformation.lesson;
-  console.log("Lessons: ", lessonsInformation);
+
+  const lessons =
+    lessonsInformation?.map((item: LessonWithCoachAndUser) => item.lesson) ||
+    [];
 
   // Calculate summary statistics
-  const totalLessons = CoachesService.countLessons(lessonsInformation);
+  const totalCounts = CoachesService.countLessonsByDateRange(lessons);
   const totalPlayers = CoachesService.countPlayers(lessonsInformation);
+
+  const weeklyLessonsData = CoachesService.getLessonsByCurrentWeek(lessons);
+
+  const chartConfig = {
+    lessons: {
+      label: "Lessons",
+      color: "hsl(var(--primary))",
+    },
+  };
 
   return (
     <div className="mx-auto max-w-6xl space-y-6 p-6">
@@ -91,24 +108,53 @@ export default function CoachDashboard({ coachId }: Props) {
           <h2 className="text-2xl font-semibold">Coaching Summary</h2>
         </CardHeader>
         <CardBody className="pt-2">
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-            <div className="rounded-lg bg-primary-50 p-4 text-center">
-              <div className="text-3xl font-bold text-primary">
-                {totalLessons}
+          <div className="flex gap-6">
+            {/* Left Third - Counts */}
+            <div className="w-1/3 space-y-3">
+              <div className="rounded-lg bg-primary-50 p-3">
+                <div className="text-2xl font-bold text-primary">
+                  {totalCounts.total}
+                </div>
+                <div className="text-xs text-default-600">Total Lessons</div>
               </div>
-              <div className="mt-1 text-sm text-default-600">Total Lessons</div>
+              <div className="rounded-lg bg-warning-50 p-3">
+                <div className="text-2xl font-bold text-warning">
+                  {totalCounts.last7Days}
+                </div>
+                <div className="text-xs text-default-600">Last 7 Days</div>
+              </div>
+              <div className="rounded-lg bg-secondary-50 p-3">
+                <div className="text-2xl font-bold text-secondary-300">
+                  {totalCounts.last30Days}
+                </div>
+                <div className="text-xs text-default-600">Last 30 Days</div>
+              </div>
+              <div className="rounded-lg bg-success-50 p-3">
+                <div className="text-2xl font-bold text-success">
+                  {totalPlayers}
+                </div>
+                <div className="text-xs text-default-600">Students Coached</div>
+              </div>
             </div>
-            <div className="rounded-lg bg-success-50 p-4 text-center">
-              <div className="text-3xl font-bold text-success">
-                {totalPlayers}
+
+            {/* Right Two-Thirds - Charts */}
+            <div className="w-2/3">
+              {/* Chart Display */}
+              <div className="rounded-lg border p-4">
+                <h3 className="mb-4 text-lg font-semibold">Weekly Lessons</h3>
+                <ChartContainer config={chartConfig} className="h-[300px]">
+                  <BarChart data={weeklyLessonsData}>
+                    <XAxis dataKey="day" />
+                    <YAxis />
+                    <ChartTooltip content={<ChartTooltipContent />} />
+                    <Bar
+                      dataKey="lessons"
+                      fill="var(--color-lessons)"
+                      radius={[4, 4, 0, 0]}
+                    />
+                  </BarChart>
+                </ChartContainer>
               </div>
-              <div className="mt-1 text-sm text-default-600">
-                Students Coached
-              </div>
-            </div>
-            <div className="rounded-lg bg-warning-50 p-4 text-center">
-              <div className="text-3xl font-bold text-warning">N/A</div>
-              <div className="mt-1 text-sm text-default-600">Total Hours</div>
             </div>
           </div>
         </CardBody>
