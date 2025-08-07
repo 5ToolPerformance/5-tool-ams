@@ -49,9 +49,20 @@ export class ApiService {
    */
   static async fetchMotorPreferenceById(id: string) {
     const response = await fetch(`/api/players/${id}/motor-preference`);
-    if (!response.ok) throw new Error("Failed to fetch motor preference");
-    const result = await response.json();
-    return result.data;
+
+    if (response.ok) {
+      const result = await response.json();
+      return result.data;
+    }
+
+    // Handle different error statuses
+    if (response.status === 404) {
+      return null; // Return null for not found, allowing page to load
+    }
+
+    // Throw error for 500 and other errors
+    const errorResult = await response.json();
+    throw new Error(errorResult.error || "Failed to fetch motor preference");
   }
 
   /**

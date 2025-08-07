@@ -49,7 +49,8 @@ const PlayerDashboard: React.FC<PlayerDashboardProps> = ({
         setLoading(true);
         // Example: Fetch player data by ID
         const data = await ApiService.fetchMotorPreferenceById(player.id);
-        setMotorPreference(data.data);
+
+        setMotorPreference(data);
       } catch (err) {
         setError("Failed to fetch player data");
         console.error(err);

@@ -1,5 +1,8 @@
 import { Card, CardBody, Chip } from "@heroui/react";
 
+import { DateTimeService } from "@/lib/services/date-time";
+import { StringService } from "@/lib/services/strings";
+
 export interface LessonData {
   lesson: {
     id: string;
@@ -26,21 +29,6 @@ interface LessonCardProps {
 }
 
 const LessonCard: React.FC<LessonCardProps> = ({ lesson }) => {
-  // Format date for display
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    });
-  };
-
-  // Generate a title from the lesson type
-  const generateTitle = (type: string) => {
-    return `${type.charAt(0).toUpperCase() + type.slice(1)} Training`;
-  };
-
   return (
     <Card>
       <CardBody className="p-6">
@@ -48,15 +36,13 @@ const LessonCard: React.FC<LessonCardProps> = ({ lesson }) => {
           <div className="flex-1">
             <div className="mb-2 flex items-center gap-2">
               <h3 className="text-lg font-semibold">
-                {generateTitle(lesson.lesson.lessonType)}
+                {StringService.formatLessonType(lesson.lesson.lessonType)}
               </h3>
               <span className="text-sm text-default-500">
-                • {formatDate(lesson.lesson.lessonDate)}
+                • {DateTimeService.formatLessonDate(lesson.lesson.lessonDate)}
               </span>
             </div>
-            <p className="mb-3 text-sm text-primary">
-              with {lesson.coach.name}
-            </p>
+
             <p className="mb-4 text-default-700">{lesson.lesson.notes}</p>
             <div className="flex flex-wrap gap-2">
               <Chip size="sm" variant="flat" color="secondary">

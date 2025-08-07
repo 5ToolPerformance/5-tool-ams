@@ -3,6 +3,7 @@ import React from "react";
 import { Avatar, Card, CardBody, Chip } from "@heroui/react";
 
 import { DateTimeService } from "@/lib/services/date-time";
+import { StringService } from "@/lib/services/strings";
 import { PlayerSelect } from "@/types/database";
 
 interface PlayerProfileCardProps {
@@ -86,7 +87,7 @@ const PlayerProfileCard: React.FC<PlayerProfileCardProps> = ({
               <span className="text-default-500">
                 Bats:{" "}
                 <span className="font-medium text-default-700">
-                  {player.hits}
+                  {StringService.toTitleCase(player.hits)}
                 </span>
               </span>
             )}
@@ -94,7 +95,7 @@ const PlayerProfileCard: React.FC<PlayerProfileCardProps> = ({
               <span className="text-default-500">
                 Throws:{" "}
                 <span className="font-medium text-default-700">
-                  {player.throws}
+                  {StringService.toTitleCase(player.throws)}
                 </span>
               </span>
             )}
