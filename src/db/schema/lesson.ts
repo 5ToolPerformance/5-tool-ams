@@ -30,8 +30,10 @@ const lesson = pgTable(
       .references(() => users.id, { onDelete: "cascade" }),
     lessonType: lessonTypes("lesson_type").notNull(),
     notes: text("notes"),
-    createdOn: timestamp("created_on", { mode: "date" }).notNull().defaultNow(),
-    lessonDate: timestamp("lesson_date", { mode: "date" }).notNull(),
+    createdOn: timestamp("created_on", { mode: "string" })
+      .notNull()
+      .defaultNow(),
+    lessonDate: timestamp("lesson_date", { mode: "string" }).notNull(),
   },
   (table) => [
     index("lesson_coach_idx").on(table.coachId),

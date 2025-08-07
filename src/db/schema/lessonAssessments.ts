@@ -21,7 +21,7 @@ const lessonAssessments = pgTable(
       .references(() => lesson.id, { onDelete: "cascade" }),
     assessmentType: assessmentTypeEnum("assessment_type").notNull(),
     assessmentId: uuid("assessment_id").notNull(),
-    createdOn: timestamp("created_on", { withTimezone: true })
+    createdOn: timestamp("created_on", { mode: "string" })
       .defaultNow()
       .notNull(),
   },
