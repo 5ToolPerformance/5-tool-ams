@@ -89,7 +89,7 @@ export default function CoachDashboard({ coachId }: Props) {
             <h1 className="text-3xl font-bold">
               {coach?.name || "Coach Name"}
             </h1>
-            <p className="text-lg text-default-500">Pitching Coach</p>
+            <p className="text-lg text-default-500">Coach</p>
             <div className="mt-2 flex gap-2">
               <Chip color="primary" variant="flat">
                 Active
