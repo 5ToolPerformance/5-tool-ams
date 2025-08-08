@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 
 import { auth } from "@/auth";
-import PlayerDashboard from "@/components/playerDashboard";
+import PlayerDashboard from "@/components/dashboards/PlayerDashboard";
 import { PlayerService } from "@/lib/services/players";
 import { PageProps } from "@/types/page";
 

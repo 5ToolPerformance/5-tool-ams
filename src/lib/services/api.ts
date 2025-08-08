@@ -147,4 +147,11 @@ export class ApiService {
     const result = await response.json();
     return result.data;
   }
+
+  static async fetchAllLessons() {
+    const response = await fetch("/api/lessons");
+    if (!response.ok) throw new Error("Failed to fetch lesson");
+    const result = await response.json();
+    return result.data;
+  }
 }

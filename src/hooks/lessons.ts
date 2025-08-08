@@ -2,6 +2,12 @@ import { default as useSWR } from "swr";
 
 import { ApiService } from "@/lib/services/api";
 
+/**
+ * Fetches a specific lesson from the API.
+ * @param id - The ID of the lesson to fetch
+ * @returns the lesson with the specified ID
+ * @throws Error if there is an issue with the API request
+ */
 export function useLessonById(id: string) {
   return useSWR(id ? ["lesson", id] : null, () =>
     ApiService.fetchLessonById(id)
@@ -18,4 +24,8 @@ export function useLessonsByCoachId(coachId: string) {
   return useSWR(coachId ? ["lessons", coachId] : null, () =>
     ApiService.fetchLessonsByCoachId(coachId)
   );
+}
+
+export function useAllLessons() {
+  return useSWR("lessons", ApiService.fetchAllLessons);
 }

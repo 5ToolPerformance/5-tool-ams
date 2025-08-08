@@ -16,12 +16,12 @@ import { BarChart3, BookOpen, ChevronDown, Dumbbell } from "lucide-react";
 import { ApiService } from "@/lib/services/api";
 import { MotorPreferencesSelect, PlayerSelect } from "@/types/database";
 
-import MotorPreferencesModal from "./assessments/motorPreferencesAssessment";
-import LessonsSection from "./lessonsComponent";
-import OverviewSection from "./overviewSection";
-import PlansSection from "./plans/plansComponent";
-import PlayerCard from "./players/playerCard";
-import { MotorPreferenceCard } from "./ui/MotorPreferenceCard";
+import MotorPreferencesModal from "../assessments/motorPreferencesAssessment";
+import LessonsSection from "../lessonsComponent";
+import OverviewSection from "../overviewSection";
+import PlansSection from "../plans/plansComponent";
+import PlayerCard from "../players/playerCard";
+import { MotorPreferenceCard } from "../ui/MotorPreferenceCard";
 
 interface PlayerDashboardProps {
   player: PlayerSelect;

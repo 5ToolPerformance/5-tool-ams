@@ -1,6 +1,7 @@
 import { Card, CardBody, User } from "@heroui/react";
 
 import { auth } from "@/auth";
+import AdminDashboard from "@/components/dashboards/AdminDashboard";
 import CoachDashboard from "@/components/dashboards/CoachDashboard";
 import requireAuth from "@/utils/require-auth";
 
@@ -17,7 +18,7 @@ export default async function Profile() {
   }
 
   if (session?.user?.role === "admin") {
-    return <div>Admin Profile</div>;
+    return <AdminDashboard adminId={session.user.id} />;
   }
 
   return (

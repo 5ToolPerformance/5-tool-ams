@@ -2,7 +2,7 @@
 
 import { Card, CardBody, CircularProgress } from "@heroui/react";
 
-import { useUserById } from "@/hooks";
+import { useAllLessons, useUserById } from "@/hooks";
 
 type Props = {
   adminId: string;
@@ -14,6 +14,12 @@ export default function AdminDashboard({ adminId }: Props) {
     isLoading: adminLoading,
     error: adminError,
   } = useUserById(adminId);
+
+  const {
+    data: lessons,
+    isLoading: lessonsLoading,
+    error: lessonsError,
+  } = useAllLessons();
 
   if (adminLoading) {
     return (
@@ -37,6 +43,9 @@ export default function AdminDashboard({ adminId }: Props) {
     <div>
       <h1>Admin Dashboard</h1>
       <p>{admin?.name}</p>
+      {lessonsLoading && <p>Loading lessons...</p>}
+      {lessonsError && <p>Error: {lessonsError?.message}</p>}
+      {lessons && <p>{lessons.length}</p>}
     </div>
   );
 }
