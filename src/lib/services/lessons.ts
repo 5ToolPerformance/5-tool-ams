@@ -44,7 +44,7 @@ export class LessonService {
             coachId: data.coachId,
             playerId: data.playerId,
             lessonType: data.type,
-            lessonDate: new Date(data.lessonDate),
+            lessonDate: data.lessonDate,
             notes: data.notes || null,
           })
           .returning({ id: lesson.id });
@@ -492,9 +492,11 @@ export class LessonService {
       return await db
         .select({
           lesson: lesson,
+          coach: users,
           player: playerInformation,
         })
         .from(lesson)
+        .innerJoin(users, eq(lesson.coachId, users.id))
         .innerJoin(playerInformation, eq(lesson.playerId, playerInformation.id))
         .where(eq(lesson.playerId, playerId))
         .orderBy(desc(lesson.lessonDate));
@@ -582,9 +584,16 @@ export class LessonService {
 
   static async getAllLessons() {
     try {
-      const lessons = await db.select().from(lesson);
-
-      return lessons;
+      return await db
+        .select({
+          lesson: lesson,
+          coach: users,
+          player: playerInformation,
+        })
+        .from(lesson)
+        .innerJoin(users, eq(lesson.coachId, users.id))
+        .innerJoin(playerInformation, eq(lesson.playerId, playerInformation.id))
+        .orderBy(desc(lesson.lessonDate));
     } catch (error) {
       console.error("Error fetching lessons:", error);
       throw new Error("Failed to fetch lessons");
