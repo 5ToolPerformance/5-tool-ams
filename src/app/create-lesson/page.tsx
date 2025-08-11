@@ -8,7 +8,11 @@ export default async function CreateLessonPage() {
   await requireAuth();
   const session = await auth();
 
-  if (!session?.user || session.user.role !== "coach") {
+  if (!session?.user) {
+    redirect("/");
+  }
+
+  if (session.user.role === "player") {
     redirect("/");
   }
   const userId = session.user.id;

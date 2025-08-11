@@ -15,6 +15,7 @@ import {
 } from "@heroui/react";
 import { useForm } from "@tanstack/react-form";
 
+import DecimalNumberInput from "@/components/ui/DecimalNumberInput";
 import { getCompleteLessonDefaults } from "@/lib/form-defaults";
 import { ApiResponse } from "@/types/api";
 import { PlayerSelect } from "@/types/database";
@@ -158,15 +159,15 @@ const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
           {/* Shoulder ER*/}
           <form.Field name="armCare.shoulder_er_l">
             {(field) => (
-              <Input
-                type="number"
+              <DecimalNumberInput
                 label="Shoulder ER (L)"
+                step="0.01"
                 value={
-                  field.state.value !== undefined && field.state.value !== null
-                    ? String(field.state.value)
-                    : ""
+                  typeof field.state.value === "number"
+                    ? field.state.value
+                    : undefined
                 }
-                onChange={(e) => field.handleChange(Number(e.target.value))}
+                onChangeNumber={(n) => field.handleChange(n)}
                 onBlur={field.handleBlur}
                 isInvalid={!!field.state.meta.errors.length}
                 errorMessage={field.state.meta.errors.join(", ")}
@@ -177,15 +178,15 @@ const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
 
           <form.Field name="armCare.shoulder_er_r">
             {(field) => (
-              <Input
-                type="number"
+              <DecimalNumberInput
                 label="Shoulder ER (R)"
+                step="0.01"
                 value={
-                  field.state.value !== undefined && field.state.value !== null
-                    ? String(field.state.value)
-                    : ""
+                  typeof field.state.value === "number"
+                    ? field.state.value
+                    : undefined
                 }
-                onChange={(e) => field.handleChange(Number(e.target.value))}
+                onChangeNumber={(n) => field.handleChange(n)}
                 onBlur={field.handleBlur}
                 isInvalid={!!field.state.meta.errors.length}
                 errorMessage={field.state.meta.errors.join(", ")}
@@ -196,15 +197,15 @@ const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
           {/* Shoulder IR*/}
           <form.Field name="armCare.shoulder_ir_l">
             {(field) => (
-              <Input
-                type="number"
+              <DecimalNumberInput
                 label="Shoulder IR (L)"
+                step="0.01"
                 value={
-                  field.state.value !== undefined && field.state.value !== null
-                    ? String(field.state.value)
-                    : ""
+                  typeof field.state.value === "number"
+                    ? field.state.value
+                    : undefined
                 }
-                onChange={(e) => field.handleChange(Number(e.target.value))}
+                onChangeNumber={(n) => field.handleChange(n)}
                 onBlur={field.handleBlur}
                 isInvalid={!!field.state.meta.errors.length}
                 errorMessage={field.state.meta.errors.join(", ")}
@@ -215,15 +216,15 @@ const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
 
           <form.Field name="armCare.shoulder_ir_r">
             {(field) => (
-              <Input
-                type="number"
+              <DecimalNumberInput
                 label="Shoulder IR (R)"
+                step="0.01"
                 value={
-                  field.state.value !== undefined && field.state.value !== null
-                    ? String(field.state.value)
-                    : ""
+                  typeof field.state.value === "number"
+                    ? field.state.value
+                    : undefined
                 }
-                onChange={(e) => field.handleChange(Number(e.target.value))}
+                onChangeNumber={(n) => field.handleChange(n)}
                 onBlur={field.handleBlur}
                 isInvalid={!!field.state.meta.errors.length}
                 errorMessage={field.state.meta.errors.join(", ")}
@@ -234,15 +235,15 @@ const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
           {/* Shoulder Flexion*/}
           <form.Field name="armCare.shoulder_flexion_l">
             {(field) => (
-              <Input
-                type="number"
+              <DecimalNumberInput
                 label="Shoulder Flexion (L)"
+                step="0.01"
                 value={
-                  field.state.value !== undefined && field.state.value !== null
-                    ? String(field.state.value)
-                    : ""
+                  typeof field.state.value === "number"
+                    ? field.state.value
+                    : undefined
                 }
-                onChange={(e) => field.handleChange(Number(e.target.value))}
+                onChangeNumber={(n) => field.handleChange(n)}
                 onBlur={field.handleBlur}
                 isInvalid={!!field.state.meta.errors.length}
                 errorMessage={field.state.meta.errors.join(", ")}
@@ -253,15 +254,15 @@ const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
 
           <form.Field name="armCare.shoulder_flexion_r">
             {(field) => (
-              <Input
-                type="number"
+              <DecimalNumberInput
                 label="Shoulder Flexion (R)"
+                step="0.01"
                 value={
-                  field.state.value !== undefined && field.state.value !== null
-                    ? String(field.state.value)
-                    : ""
+                  typeof field.state.value === "number"
+                    ? field.state.value
+                    : undefined
                 }
-                onChange={(e) => field.handleChange(Number(e.target.value))}
+                onChangeNumber={(n) => field.handleChange(n)}
                 onBlur={field.handleBlur}
                 isInvalid={!!field.state.meta.errors.length}
                 errorMessage={field.state.meta.errors.join(", ")}
@@ -273,15 +274,15 @@ const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
           {/* Supine Hip ER*/}
           <form.Field name="armCare.supine_hip_er_l">
             {(field) => (
-              <Input
-                type="number"
+              <DecimalNumberInput
                 label="Supine Hip ER (L)"
+                step="0.01"
                 value={
-                  field.state.value !== undefined && field.state.value !== null
-                    ? String(field.state.value)
-                    : ""
+                  typeof field.state.value === "number"
+                    ? field.state.value
+                    : undefined
                 }
-                onChange={(e) => field.handleChange(Number(e.target.value))}
+                onChangeNumber={(n) => field.handleChange(n)}
                 onBlur={field.handleBlur}
                 isInvalid={!!field.state.meta.errors.length}
                 errorMessage={field.state.meta.errors.join(", ")}
@@ -292,15 +293,15 @@ const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
 
           <form.Field name="armCare.supine_hip_er_r">
             {(field) => (
-              <Input
-                type="number"
+              <DecimalNumberInput
                 label="Supine Hip ER (R)"
+                step="0.01"
                 value={
-                  field.state.value !== undefined && field.state.value !== null
-                    ? String(field.state.value)
-                    : ""
+                  typeof field.state.value === "number"
+                    ? field.state.value
+                    : undefined
                 }
-                onChange={(e) => field.handleChange(Number(e.target.value))}
+                onChangeNumber={(n) => field.handleChange(n)}
                 onBlur={field.handleBlur}
                 isInvalid={!!field.state.meta.errors.length}
                 errorMessage={field.state.meta.errors.join(", ")}
@@ -312,15 +313,15 @@ const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
           {/* Supine Hip IR*/}
           <form.Field name="armCare.supine_hip_ir_l">
             {(field) => (
-              <Input
-                type="number"
+              <DecimalNumberInput
                 label="Supine Hip IR (L)"
+                step="0.01"
                 value={
-                  field.state.value !== undefined && field.state.value !== null
-                    ? String(field.state.value)
-                    : ""
+                  typeof field.state.value === "number"
+                    ? field.state.value
+                    : undefined
                 }
-                onChange={(e) => field.handleChange(Number(e.target.value))}
+                onChangeNumber={(n) => field.handleChange(n)}
                 onBlur={field.handleBlur}
                 isInvalid={!!field.state.meta.errors.length}
                 errorMessage={field.state.meta.errors.join(", ")}
@@ -331,15 +332,15 @@ const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
 
           <form.Field name="armCare.supine_hip_ir_r">
             {(field) => (
-              <Input
-                type="number"
+              <DecimalNumberInput
                 label="Supine Hip IR (R)"
+                step="0.01"
                 value={
-                  field.state.value !== undefined && field.state.value !== null
-                    ? String(field.state.value)
-                    : ""
+                  typeof field.state.value === "number"
+                    ? field.state.value
+                    : undefined
                 }
-                onChange={(e) => field.handleChange(Number(e.target.value))}
+                onChangeNumber={(n) => field.handleChange(n)}
                 onBlur={field.handleBlur}
                 isInvalid={!!field.state.meta.errors.length}
                 errorMessage={field.state.meta.errors.join(", ")}
@@ -351,15 +352,15 @@ const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
           {/* Straight Leg*/}
           <form.Field name="armCare.straight_leg_l">
             {(field) => (
-              <Input
-                type="number"
+              <DecimalNumberInput
                 label="Straight Leg (L)"
+                step="0.01"
                 value={
-                  field.state.value !== undefined && field.state.value !== null
-                    ? String(field.state.value)
-                    : ""
+                  typeof field.state.value === "number"
+                    ? field.state.value
+                    : undefined
                 }
-                onChange={(e) => field.handleChange(Number(e.target.value))}
+                onChangeNumber={(n) => field.handleChange(n)}
                 onBlur={field.handleBlur}
                 isInvalid={!!field.state.meta.errors.length}
                 errorMessage={field.state.meta.errors.join(", ")}
@@ -370,15 +371,15 @@ const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
 
           <form.Field name="armCare.straight_leg_r">
             {(field) => (
-              <Input
-                type="number"
+              <DecimalNumberInput
                 label="Straight Leg (R)"
+                step="0.01"
                 value={
-                  field.state.value !== undefined && field.state.value !== null
-                    ? String(field.state.value)
-                    : ""
+                  typeof field.state.value === "number"
+                    ? field.state.value
+                    : undefined
                 }
-                onChange={(e) => field.handleChange(Number(e.target.value))}
+                onChangeNumber={(n) => field.handleChange(n)}
                 onBlur={field.handleBlur}
                 isInvalid={!!field.state.meta.errors.length}
                 errorMessage={field.state.meta.errors.join(", ")}
@@ -826,15 +827,15 @@ const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
           {/* CMJ */}
           <form.Field name="forcePlate.cmj">
             {(field) => (
-              <Input
-                type="number"
+              <DecimalNumberInput
                 label="CMJ"
+                step="0.01"
                 value={
-                  field.state.value !== undefined && field.state.value !== null
-                    ? String(field.state.value)
-                    : ""
+                  typeof field.state.value === "number"
+                    ? field.state.value
+                    : undefined
                 }
-                onChange={(e) => field.handleChange(Number(e.target.value))}
+                onChangeNumber={(n) => field.handleChange(n)}
                 onBlur={field.handleBlur}
                 isInvalid={!!field.state.meta.errors.length}
                 errorMessage={field.state.meta.errors.join(", ")}
@@ -846,15 +847,15 @@ const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
           {/* Drop Jump */}
           <form.Field name="forcePlate.drop_jump">
             {(field) => (
-              <Input
-                type="number"
+              <DecimalNumberInput
                 label="Drop Jump"
+                step="0.01"
                 value={
-                  field.state.value !== undefined && field.state.value !== null
-                    ? String(field.state.value)
-                    : ""
+                  typeof field.state.value === "number"
+                    ? field.state.value
+                    : undefined
                 }
-                onChange={(e) => field.handleChange(Number(e.target.value))}
+                onChangeNumber={(n) => field.handleChange(n)}
                 onBlur={field.handleBlur}
                 isInvalid={!!field.state.meta.errors.length}
                 errorMessage={field.state.meta.errors.join(", ")}
@@ -866,15 +867,15 @@ const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
           {/* Pogo */}
           <form.Field name="forcePlate.pogo">
             {(field) => (
-              <Input
-                type="number"
+              <DecimalNumberInput
                 label="Pogo"
+                step="0.01"
                 value={
-                  field.state.value !== undefined && field.state.value !== null
-                    ? String(field.state.value)
-                    : ""
+                  typeof field.state.value === "number"
+                    ? field.state.value
+                    : undefined
                 }
-                onChange={(e) => field.handleChange(Number(e.target.value))}
+                onChangeNumber={(n) => field.handleChange(n)}
                 onBlur={field.handleBlur}
                 isInvalid={!!field.state.meta.errors.length}
                 errorMessage={field.state.meta.errors.join(", ")}
@@ -886,15 +887,15 @@ const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
           {/* Mid Thigh Pull */}
           <form.Field name="forcePlate.mid_thigh_pull">
             {(field) => (
-              <Input
-                type="number"
+              <DecimalNumberInput
                 label="Mid Thigh Pull"
+                step="0.01"
                 value={
-                  field.state.value !== undefined && field.state.value !== null
-                    ? String(field.state.value)
-                    : ""
+                  typeof field.state.value === "number"
+                    ? field.state.value
+                    : undefined
                 }
-                onChange={(e) => field.handleChange(Number(e.target.value))}
+                onChangeNumber={(n) => field.handleChange(n)}
                 onBlur={field.handleBlur}
                 isInvalid={!!field.state.meta.errors.length}
                 errorMessage={field.state.meta.errors.join(", ")}
@@ -906,15 +907,15 @@ const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
           {/* MTP Time */}
           <form.Field name="forcePlate.mtp_time">
             {(field) => (
-              <Input
-                type="number"
+              <DecimalNumberInput
                 label="MTP Time"
+                step="0.01"
                 value={
-                  field.state.value !== undefined && field.state.value !== null
-                    ? String(field.state.value)
-                    : ""
+                  typeof field.state.value === "number"
+                    ? field.state.value
+                    : undefined
                 }
-                onChange={(e) => field.handleChange(Number(e.target.value))}
+                onChangeNumber={(n) => field.handleChange(n)}
                 onBlur={field.handleBlur}
                 isInvalid={!!field.state.meta.errors.length}
                 errorMessage={field.state.meta.errors.join(", ")}
@@ -926,15 +927,15 @@ const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
           {/* Cop ML */}
           <form.Field name="forcePlate.cop_ml_l">
             {(field) => (
-              <Input
-                type="number"
+              <DecimalNumberInput
                 label="Cop ML (L)"
+                step="0.01"
                 value={
-                  field.state.value !== undefined && field.state.value !== null
-                    ? String(field.state.value)
-                    : ""
+                  typeof field.state.value === "number"
+                    ? field.state.value
+                    : undefined
                 }
-                onChange={(e) => field.handleChange(Number(e.target.value))}
+                onChangeNumber={(n) => field.handleChange(n)}
                 onBlur={field.handleBlur}
                 isInvalid={!!field.state.meta.errors.length}
                 errorMessage={field.state.meta.errors.join(", ")}
@@ -945,15 +946,15 @@ const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
 
           <form.Field name="forcePlate.cop_ml_r">
             {(field) => (
-              <Input
-                type="number"
+              <DecimalNumberInput
                 label="Cop ML (R)"
+                step="0.01"
                 value={
-                  field.state.value !== undefined && field.state.value !== null
-                    ? String(field.state.value)
-                    : ""
+                  typeof field.state.value === "number"
+                    ? field.state.value
+                    : undefined
                 }
-                onChange={(e) => field.handleChange(Number(e.target.value))}
+                onChangeNumber={(n) => field.handleChange(n)}
                 onBlur={field.handleBlur}
                 isInvalid={!!field.state.meta.errors.length}
                 errorMessage={field.state.meta.errors.join(", ")}
@@ -965,15 +966,15 @@ const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
           {/* Cop AP */}
           <form.Field name="forcePlate.cop_ap_l">
             {(field) => (
-              <Input
-                type="number"
+              <DecimalNumberInput
                 label="Cop AP (L)"
+                step="0.01"
                 value={
-                  field.state.value !== undefined && field.state.value !== null
-                    ? String(field.state.value)
-                    : ""
+                  typeof field.state.value === "number"
+                    ? field.state.value
+                    : undefined
                 }
-                onChange={(e) => field.handleChange(Number(e.target.value))}
+                onChangeNumber={(n) => field.handleChange(n)}
                 onBlur={field.handleBlur}
                 isInvalid={!!field.state.meta.errors.length}
                 errorMessage={field.state.meta.errors.join(", ")}
@@ -984,15 +985,15 @@ const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
 
           <form.Field name="forcePlate.cop_ap_r">
             {(field) => (
-              <Input
-                type="number"
+              <DecimalNumberInput
                 label="Cop AP (R)"
+                step="0.01"
                 value={
-                  field.state.value !== undefined && field.state.value !== null
-                    ? String(field.state.value)
-                    : ""
+                  typeof field.state.value === "number"
+                    ? field.state.value
+                    : undefined
                 }
-                onChange={(e) => field.handleChange(Number(e.target.value))}
+                onChangeNumber={(n) => field.handleChange(n)}
                 onBlur={field.handleBlur}
                 isInvalid={!!field.state.meta.errors.length}
                 errorMessage={field.state.meta.errors.join(", ")}
@@ -1036,15 +1037,15 @@ const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
           {/* Seated Shoulder ER*/}
           <form.Field name="trueStrength.seated_shoulder_er_l">
             {(field) => (
-              <Input
-                type="number"
+              <DecimalNumberInput
                 label="Seated Shoulder ER (L)"
+                step="0.01"
                 value={
-                  field.state.value !== undefined && field.state.value !== null
-                    ? String(field.state.value)
-                    : ""
+                  typeof field.state.value === "number"
+                    ? field.state.value
+                    : undefined
                 }
-                onChange={(e) => field.handleChange(Number(e.target.value))}
+                onChangeNumber={(n) => field.handleChange(n)}
                 onBlur={field.handleBlur}
                 isInvalid={!!field.state.meta.errors.length}
                 errorMessage={field.state.meta.errors.join(", ")}
@@ -1055,15 +1056,15 @@ const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
 
           <form.Field name="trueStrength.seated_shoulder_er_r">
             {(field) => (
-              <Input
-                type="number"
+              <DecimalNumberInput
                 label="Seated Shoulder ER (R)"
+                step="0.01"
                 value={
-                  field.state.value !== undefined && field.state.value !== null
-                    ? String(field.state.value)
-                    : ""
+                  typeof field.state.value === "number"
+                    ? field.state.value
+                    : undefined
                 }
-                onChange={(e) => field.handleChange(Number(e.target.value))}
+                onChangeNumber={(n) => field.handleChange(n)}
                 onBlur={field.handleBlur}
                 isInvalid={!!field.state.meta.errors.length}
                 errorMessage={field.state.meta.errors.join(", ")}
@@ -1075,15 +1076,15 @@ const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
           {/* Seated Shoulder IR*/}
           <form.Field name="trueStrength.seated_shoulder_ir_l">
             {(field) => (
-              <Input
-                type="number"
+              <DecimalNumberInput
                 label="Seated Shoulder IR (L)"
+                step="0.01"
                 value={
-                  field.state.value !== undefined && field.state.value !== null
-                    ? String(field.state.value)
-                    : ""
+                  typeof field.state.value === "number"
+                    ? field.state.value
+                    : undefined
                 }
-                onChange={(e) => field.handleChange(Number(e.target.value))}
+                onChangeNumber={(n) => field.handleChange(n)}
                 onBlur={field.handleBlur}
                 isInvalid={!!field.state.meta.errors.length}
                 errorMessage={field.state.meta.errors.join(", ")}
@@ -1094,15 +1095,15 @@ const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
 
           <form.Field name="trueStrength.seated_shoulder_ir_r">
             {(field) => (
-              <Input
-                type="number"
+              <DecimalNumberInput
                 label="Seated Shoulder IR (R)"
+                step="0.01"
                 value={
-                  field.state.value !== undefined && field.state.value !== null
-                    ? String(field.state.value)
-                    : ""
+                  typeof field.state.value === "number"
+                    ? field.state.value
+                    : undefined
                 }
-                onChange={(e) => field.handleChange(Number(e.target.value))}
+                onChangeNumber={(n) => field.handleChange(n)}
                 onBlur={field.handleBlur}
                 isInvalid={!!field.state.meta.errors.length}
                 errorMessage={field.state.meta.errors.join(", ")}
@@ -1114,15 +1115,15 @@ const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
           {/* Shoulder Rotation */}
           <form.Field name="trueStrength.shoulder_rotation_l">
             {(field) => (
-              <Input
-                type="number"
+              <DecimalNumberInput
                 label="Shoulder Rotation (L)"
+                step="0.01"
                 value={
-                  field.state.value !== undefined && field.state.value !== null
-                    ? String(field.state.value)
-                    : ""
+                  typeof field.state.value === "number"
+                    ? field.state.value
+                    : undefined
                 }
-                onChange={(e) => field.handleChange(Number(e.target.value))}
+                onChangeNumber={(n) => field.handleChange(n)}
                 onBlur={field.handleBlur}
                 isInvalid={!!field.state.meta.errors.length}
                 errorMessage={field.state.meta.errors.join(", ")}
@@ -1133,15 +1134,15 @@ const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
 
           <form.Field name="trueStrength.shoulder_rotation_r">
             {(field) => (
-              <Input
-                type="number"
+              <DecimalNumberInput
                 label="Shoulder Rotation (R)"
+                step="0.01"
                 value={
-                  field.state.value !== undefined && field.state.value !== null
-                    ? String(field.state.value)
-                    : ""
+                  typeof field.state.value === "number"
+                    ? field.state.value
+                    : undefined
                 }
-                onChange={(e) => field.handleChange(Number(e.target.value))}
+                onChangeNumber={(n) => field.handleChange(n)}
                 onBlur={field.handleBlur}
                 isInvalid={!!field.state.meta.errors.length}
                 errorMessage={field.state.meta.errors.join(", ")}
@@ -1153,15 +1154,15 @@ const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
           {/* Shoulder Rotation RFD */}
           <form.Field name="trueStrength.shoulder_rotation_rfd_l">
             {(field) => (
-              <Input
-                type="number"
+              <DecimalNumberInput
                 label="Shoulder Rotation RFD (L)"
+                step="0.01"
                 value={
-                  field.state.value !== undefined && field.state.value !== null
-                    ? String(field.state.value)
-                    : ""
+                  typeof field.state.value === "number"
+                    ? field.state.value
+                    : undefined
                 }
-                onChange={(e) => field.handleChange(Number(e.target.value))}
+                onChangeNumber={(n) => field.handleChange(n)}
                 onBlur={field.handleBlur}
                 isInvalid={!!field.state.meta.errors.length}
                 errorMessage={field.state.meta.errors.join(", ")}
@@ -1172,15 +1173,15 @@ const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
 
           <form.Field name="trueStrength.shoulder_rotation_rfd_r">
             {(field) => (
-              <Input
-                type="number"
+              <DecimalNumberInput
                 label="Shoulder Rotation RFD (R)"
+                step="0.01"
                 value={
-                  field.state.value !== undefined && field.state.value !== null
-                    ? String(field.state.value)
-                    : ""
+                  typeof field.state.value === "number"
+                    ? field.state.value
+                    : undefined
                 }
-                onChange={(e) => field.handleChange(Number(e.target.value))}
+                onChangeNumber={(n) => field.handleChange(n)}
                 onBlur={field.handleBlur}
                 isInvalid={!!field.state.meta.errors.length}
                 errorMessage={field.state.meta.errors.join(", ")}
@@ -1192,15 +1193,15 @@ const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
           {/* Hip Rotation */}
           <form.Field name="trueStrength.hip_rotation_l">
             {(field) => (
-              <Input
-                type="number"
+              <DecimalNumberInput
                 label="Hip Rotation (L)"
+                step="0.01"
                 value={
-                  field.state.value !== undefined && field.state.value !== null
-                    ? String(field.state.value)
-                    : ""
+                  typeof field.state.value === "number"
+                    ? field.state.value
+                    : undefined
                 }
-                onChange={(e) => field.handleChange(Number(e.target.value))}
+                onChangeNumber={(n) => field.handleChange(n)}
                 onBlur={field.handleBlur}
                 isInvalid={!!field.state.meta.errors.length}
                 errorMessage={field.state.meta.errors.join(", ")}
@@ -1211,15 +1212,15 @@ const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
 
           <form.Field name="trueStrength.hip_rotation_r">
             {(field) => (
-              <Input
-                type="number"
+              <DecimalNumberInput
                 label="Hip Rotation (R)"
+                step="0.01"
                 value={
-                  field.state.value !== undefined && field.state.value !== null
-                    ? String(field.state.value)
-                    : ""
+                  typeof field.state.value === "number"
+                    ? field.state.value
+                    : undefined
                 }
-                onChange={(e) => field.handleChange(Number(e.target.value))}
+                onChangeNumber={(n) => field.handleChange(n)}
                 onBlur={field.handleBlur}
                 isInvalid={!!field.state.meta.errors.length}
                 errorMessage={field.state.meta.errors.join(", ")}
@@ -1231,15 +1232,15 @@ const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
           {/* Hip Rotation RFD */}
           <form.Field name="trueStrength.hip_rotation_rfd_l">
             {(field) => (
-              <Input
-                type="number"
+              <DecimalNumberInput
                 label="Hip Rotation RFD (L)"
+                step="0.01"
                 value={
-                  field.state.value !== undefined && field.state.value !== null
-                    ? String(field.state.value)
-                    : ""
+                  typeof field.state.value === "number"
+                    ? field.state.value
+                    : undefined
                 }
-                onChange={(e) => field.handleChange(Number(e.target.value))}
+                onChangeNumber={(n) => field.handleChange(n)}
                 onBlur={field.handleBlur}
                 isInvalid={!!field.state.meta.errors.length}
                 errorMessage={field.state.meta.errors.join(", ")}
@@ -1250,15 +1251,15 @@ const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
 
           <form.Field name="trueStrength.hip_rotation_rfd_r">
             {(field) => (
-              <Input
-                type="number"
+              <DecimalNumberInput
                 label="Hip Rotation RFD (R)"
+                step="0.01"
                 value={
-                  field.state.value !== undefined && field.state.value !== null
-                    ? String(field.state.value)
-                    : ""
+                  typeof field.state.value === "number"
+                    ? field.state.value
+                    : undefined
                 }
-                onChange={(e) => field.handleChange(Number(e.target.value))}
+                onChangeNumber={(n) => field.handleChange(n)}
                 onBlur={field.handleBlur}
                 isInvalid={!!field.state.meta.errors.length}
                 errorMessage={field.state.meta.errors.join(", ")}
@@ -1373,17 +1374,17 @@ const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
           <form.Field name="hittingAssessment.max_ev">
             {(field) => (
-              <Input
-                type="number"
+              <DecimalNumberInput
                 label="Max EV"
                 className="py-2"
                 placeholder="102.3"
                 value={
-                  field.state.value !== undefined && field.state.value !== null
-                    ? String(field.state.value)
-                    : ""
+                  typeof field.state.value === "number"
+                    ? field.state.value
+                    : undefined
                 }
-                onChange={(e) => field.handleChange(Number(e.target.value))}
+                step="0.01"
+                onChangeNumber={(n) => field.handleChange(n)}
                 onBlur={field.handleBlur}
                 isInvalid={!!field.state.meta.errors.length}
                 errorMessage={field.state.meta.errors.join(", ")}
@@ -1393,17 +1394,17 @@ const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
           </form.Field>
           <form.Field name="hittingAssessment.line_drive_pct">
             {(field) => (
-              <Input
-                type="number"
+              <DecimalNumberInput
                 label="Line Drive Pct"
                 placeholder="67.3"
                 className="py-2"
                 value={
-                  field.state.value !== undefined && field.state.value !== null
-                    ? String(field.state.value)
-                    : ""
+                  typeof field.state.value === "number"
+                    ? field.state.value
+                    : undefined
                 }
-                onChange={(e) => field.handleChange(Number(e.target.value))}
+                step="0.01"
+                onChangeNumber={(n) => field.handleChange(n)}
                 onBlur={field.handleBlur}
                 isInvalid={!!field.state.meta.errors.length}
                 errorMessage={field.state.meta.errors.join(", ")}
@@ -1482,18 +1483,17 @@ const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
           <div className="grid grid-cols-2 gap-6 sm:grid-cols-4">
             <form.Field name="pitchingAssessment.velo_mound_2oz">
               {(field) => (
-                <Input
-                  type="number"
+                <DecimalNumberInput
                   label="Mound Velo (2oz)"
                   className="py-2"
                   placeholder="85.3"
                   value={
-                    field.state.value !== undefined &&
-                    field.state.value !== null
-                      ? String(field.state.value)
-                      : ""
+                    typeof field.state.value === "number"
+                      ? field.state.value
+                      : undefined
                   }
-                  onChange={(e) => field.handleChange(Number(e.target.value))}
+                  step="0.01"
+                  onChangeNumber={(n) => field.handleChange(n)}
                   onBlur={field.handleBlur}
                   isInvalid={!!field.state.meta.errors.length}
                   errorMessage={field.state.meta.errors.join(", ")}
@@ -1502,18 +1502,17 @@ const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
             </form.Field>
             <form.Field name="pitchingAssessment.velo_mound_4oz">
               {(field) => (
-                <Input
-                  type="number"
+                <DecimalNumberInput
                   label="Mound Velo (4oz)"
                   className="py-2"
                   placeholder="85.3"
                   value={
-                    field.state.value !== undefined &&
-                    field.state.value !== null
-                      ? String(field.state.value)
-                      : ""
+                    typeof field.state.value === "number"
+                      ? field.state.value
+                      : undefined
                   }
-                  onChange={(e) => field.handleChange(Number(e.target.value))}
+                  step="0.01"
+                  onChangeNumber={(n) => field.handleChange(n)}
                   onBlur={field.handleBlur}
                   isInvalid={!!field.state.meta.errors.length}
                   errorMessage={field.state.meta.errors.join(", ")}
@@ -1522,18 +1521,17 @@ const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
             </form.Field>
             <form.Field name="pitchingAssessment.velo_mound_5oz">
               {(field) => (
-                <Input
-                  type="number"
+                <DecimalNumberInput
                   label="Mound Velo (5oz)"
                   className="py-2"
                   placeholder="85.3"
                   value={
-                    field.state.value !== undefined &&
-                    field.state.value !== null
-                      ? String(field.state.value)
-                      : ""
+                    typeof field.state.value === "number"
+                      ? field.state.value
+                      : undefined
                   }
-                  onChange={(e) => field.handleChange(Number(e.target.value))}
+                  step="0.01"
+                  onChangeNumber={(n) => field.handleChange(n)}
                   onBlur={field.handleBlur}
                   isInvalid={!!field.state.meta.errors.length}
                   errorMessage={field.state.meta.errors.join(", ")}
@@ -1542,18 +1540,17 @@ const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
             </form.Field>
             <form.Field name="pitchingAssessment.velo_mound_6oz">
               {(field) => (
-                <Input
-                  type="number"
+                <DecimalNumberInput
                   label="Mound Velo (6oz)"
                   className="py-2"
                   placeholder="85.3"
                   value={
-                    field.state.value !== undefined &&
-                    field.state.value !== null
-                      ? String(field.state.value)
-                      : ""
+                    typeof field.state.value === "number"
+                      ? field.state.value
+                      : undefined
                   }
-                  onChange={(e) => field.handleChange(Number(e.target.value))}
+                  step="0.01"
+                  onChangeNumber={(n) => field.handleChange(n)}
                   onBlur={field.handleBlur}
                   isInvalid={!!field.state.meta.errors.length}
                   errorMessage={field.state.meta.errors.join(", ")}
@@ -1562,18 +1559,17 @@ const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
             </form.Field>
             <form.Field name="pitchingAssessment.velo_pull_down_2oz">
               {(field) => (
-                <Input
-                  type="number"
+                <DecimalNumberInput
                   label="Pull Down Velo (2oz)"
                   className="py-2"
                   placeholder="85.3"
                   value={
-                    field.state.value !== undefined &&
-                    field.state.value !== null
-                      ? String(field.state.value)
-                      : ""
+                    typeof field.state.value === "number"
+                      ? field.state.value
+                      : undefined
                   }
-                  onChange={(e) => field.handleChange(Number(e.target.value))}
+                  step="0.01"
+                  onChangeNumber={(n) => field.handleChange(n)}
                   onBlur={field.handleBlur}
                   isInvalid={!!field.state.meta.errors.length}
                   errorMessage={field.state.meta.errors.join(", ")}
@@ -1582,18 +1578,17 @@ const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
             </form.Field>
             <form.Field name="pitchingAssessment.velo_pull_down_4oz">
               {(field) => (
-                <Input
-                  type="number"
+                <DecimalNumberInput
                   label="Pull Down Velo (4oz)"
                   className="py-2"
                   placeholder="85.3"
                   value={
-                    field.state.value !== undefined &&
-                    field.state.value !== null
-                      ? String(field.state.value)
-                      : ""
+                    typeof field.state.value === "number"
+                      ? field.state.value
+                      : undefined
                   }
-                  onChange={(e) => field.handleChange(Number(e.target.value))}
+                  step="0.01"
+                  onChangeNumber={(n) => field.handleChange(n)}
                   onBlur={field.handleBlur}
                   isInvalid={!!field.state.meta.errors.length}
                   errorMessage={field.state.meta.errors.join(", ")}
@@ -1602,18 +1597,17 @@ const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
             </form.Field>
             <form.Field name="pitchingAssessment.velo_pull_down_5oz">
               {(field) => (
-                <Input
-                  type="number"
+                <DecimalNumberInput
                   label="Pull Down Velo (5oz)"
                   className="py-2"
                   placeholder="85.3"
                   value={
-                    field.state.value !== undefined &&
-                    field.state.value !== null
-                      ? String(field.state.value)
-                      : ""
+                    typeof field.state.value === "number"
+                      ? field.state.value
+                      : undefined
                   }
-                  onChange={(e) => field.handleChange(Number(e.target.value))}
+                  step="0.01"
+                  onChangeNumber={(n) => field.handleChange(n)}
                   onBlur={field.handleBlur}
                   isInvalid={!!field.state.meta.errors.length}
                   errorMessage={field.state.meta.errors.join(", ")}
@@ -1622,18 +1616,17 @@ const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
             </form.Field>
             <form.Field name="pitchingAssessment.velo_pull_down_6oz">
               {(field) => (
-                <Input
-                  type="number"
+                <DecimalNumberInput
                   label="Pull Down Velo (6oz)"
                   className="py-2"
                   placeholder="85.3"
                   value={
-                    field.state.value !== undefined &&
-                    field.state.value !== null
-                      ? String(field.state.value)
-                      : ""
+                    typeof field.state.value === "number"
+                      ? field.state.value
+                      : undefined
                   }
-                  onChange={(e) => field.handleChange(Number(e.target.value))}
+                  step="0.01"
+                  onChangeNumber={(n) => field.handleChange(n)}
                   onBlur={field.handleBlur}
                   isInvalid={!!field.state.meta.errors.length}
                   errorMessage={field.state.meta.errors.join(", ")}
@@ -1643,17 +1636,17 @@ const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
           </div>
           <form.Field name="pitchingAssessment.strike_pct">
             {(field) => (
-              <Input
-                type="number"
+              <DecimalNumberInput
                 label="Strike %"
                 className="py-2"
                 placeholder="73%"
                 value={
-                  field.state.value !== undefined && field.state.value !== null
-                    ? String(field.state.value)
-                    : ""
+                  typeof field.state.value === "number"
+                    ? field.state.value
+                    : undefined
                 }
-                onChange={(e) => field.handleChange(Number(e.target.value))}
+                step="0.01"
+                onChangeNumber={(n) => field.handleChange(n)}
                 onBlur={field.handleBlur}
                 isInvalid={!!field.state.meta.errors.length}
                 errorMessage={field.state.meta.errors.join(", ")}
