@@ -78,6 +78,7 @@ export default function MotorPreferencesModal({
               </ModalHeader>
               <ModalBody>
                 <form
+                  className="flex flex-col gap-4"
                   onSubmit={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
@@ -87,6 +88,7 @@ export default function MotorPreferencesModal({
                   <form.Field name="archetype">
                     {(field) => (
                       <Select
+                        className="w-full"
                         label="Archetype"
                         selectedKeys={
                           field.state.value ? [field.state.value] : []
@@ -105,10 +107,11 @@ export default function MotorPreferencesModal({
                   <form.Field name="breath">
                     {(field) => (
                       <Checkbox
+                        className="py-1"
                         isSelected={field.state.value}
                         onValueChange={field.handleChange}
                       >
-                        Uses Breath
+                        Breath In
                       </Checkbox>
                     )}
                   </form.Field>
@@ -116,6 +119,7 @@ export default function MotorPreferencesModal({
                   <form.Field name="extensionLeg">
                     {(field) => (
                       <Select
+                        className="w-full"
                         label="Extension Leg"
                         selectedKeys={
                           field.state.value ? [field.state.value] : []
@@ -135,10 +139,11 @@ export default function MotorPreferencesModal({
                   <form.Field name="association">
                     {(field) => (
                       <Checkbox
+                        className="py-1"
                         isSelected={field.state.value}
                         onValueChange={field.handleChange}
                       >
-                        Uses Association
+                        Associated
                       </Checkbox>
                     )}
                   </form.Field>
@@ -146,6 +151,7 @@ export default function MotorPreferencesModal({
                   <form.Field name="assessmentDate">
                     {(field) => (
                       <Input
+                        className="w-full"
                         type="date"
                         label="Assessment Date"
                         value={field.state.value}
@@ -154,7 +160,7 @@ export default function MotorPreferencesModal({
                     )}
                   </form.Field>
 
-                  <Button type="submit" color="primary">
+                  <Button type="submit" color="primary" className="w-full">
                     Save Preferences
                   </Button>
                 </form>

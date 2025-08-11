@@ -93,6 +93,7 @@ export default function PlayerCreateForm({
               </ModalHeader>
               <ModalBody>
                 <form
+                  className="flex flex-col gap-4"
                   onSubmit={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
@@ -102,6 +103,7 @@ export default function PlayerCreateForm({
                   <form.Field name="firstName">
                     {(field) => (
                       <Input
+                        className="w-full"
                         label="First Name"
                         value={field.state.value}
                         onChange={(e) => field.handleChange(e.target.value)}
@@ -111,6 +113,7 @@ export default function PlayerCreateForm({
                   <form.Field name="lastName">
                     {(field) => (
                       <Input
+                        className="w-full"
                         label="Last Name"
                         value={field.state.value}
                         onChange={(e) => field.handleChange(e.target.value)}
@@ -120,6 +123,7 @@ export default function PlayerCreateForm({
                   <form.Field name="height">
                     {(field) => (
                       <Input
+                        className="w-full"
                         label="Height (in)"
                         type="number"
                         value={String(field.state.value || "")}
@@ -132,6 +136,7 @@ export default function PlayerCreateForm({
                   <form.Field name="weight">
                     {(field) => (
                       <Input
+                        className="w-full"
                         label="Weight (lbs)"
                         type="number"
                         value={String(field.state.value || "")}
@@ -144,6 +149,7 @@ export default function PlayerCreateForm({
                   <form.Field name="position">
                     {(field) => (
                       <Input
+                        className="w-full"
                         label="Position"
                         value={field.state.value}
                         onChange={(e) => field.handleChange(e.target.value)}
@@ -153,6 +159,7 @@ export default function PlayerCreateForm({
                   <form.Field name="throws">
                     {(field) => (
                       <Select
+                        className="w-full"
                         label="Throws"
                         placeholder="throws"
                         selectedKeys={
@@ -175,6 +182,7 @@ export default function PlayerCreateForm({
                   <form.Field name="hits">
                     {(field) => (
                       <Select
+                        className="w-full"
                         label="Hits"
                         placeholder="hits"
                         selectedKeys={
@@ -197,6 +205,7 @@ export default function PlayerCreateForm({
                   <form.Field name="date_of_birth">
                     {(field) => (
                       <Input
+                        className="w-full"
                         type="date"
                         label="Date of Birth"
                         value={
@@ -219,7 +228,7 @@ export default function PlayerCreateForm({
                       />
                     )}
                   </form.Field>
-                  <Button type="submit" color="primary">
+                  <Button type="submit" color="primary" className="w-full">
                     Save Player
                   </Button>
                 </form>
