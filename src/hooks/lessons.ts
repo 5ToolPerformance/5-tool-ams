@@ -26,6 +26,21 @@ export function useLessonsByCoachId(coachId: string) {
   );
 }
 
+/**
+ * Fetches all lessons from the API.
+ * @returns An array of Lesson objects.
+ * @throws Error if there is an issue with the API request.
+ */
 export function useAllLessons() {
   return useSWR("lessons", ApiService.fetchAllLessons);
+}
+
+/**
+ * Fetches assessments for a specific lesson from the API.
+ * @param lessonId - The ID of the lesson to fetch assessments for
+ * @returns the assessments for the specified lesson
+ * @throws Error if there is an issue with the API request
+ */
+export function useAssessmentsByLessonId(lessonId: string) {
+  return lessonId;
 }

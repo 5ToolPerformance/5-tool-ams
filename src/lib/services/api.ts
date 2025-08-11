@@ -148,8 +148,26 @@ export class ApiService {
     return result.data;
   }
 
+  /**
+   * Fetches all lessons from the API.
+   * @returns An array of Lesson objects.
+   * @throws Error if there is an issue with the API request.
+   */
   static async fetchAllLessons() {
     const response = await fetch("/api/lessons");
+    if (!response.ok) throw new Error("Failed to fetch lesson");
+    const result = await response.json();
+    return result.data;
+  }
+
+  /**
+   * Fetches assessments for a specific lesson from the API.
+   * @param lessonId - The ID of the lesson to fetch assessments for
+   * @returns the assessments for the specified lesson
+   * @throws Error if there is an issue with the API request
+   */
+  static async fetchAssessmentsByLessonId(lessonId: string) {
+    const response = await fetch(`/api/assessments?lessonId=${lessonId}`);
     if (!response.ok) throw new Error("Failed to fetch lesson");
     const result = await response.json();
     return result.data;
