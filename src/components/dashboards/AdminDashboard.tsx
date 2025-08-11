@@ -1,18 +1,18 @@
 "use client";
 
 import {
+  Button,
   Card,
   CardBody,
   CircularProgress,
-  Button,
+  Divider,
   User as HeroUser,
   Table,
-  TableHeader,
-  TableColumn,
   TableBody,
-  TableRow,
   TableCell,
-  Divider,
+  TableColumn,
+  TableHeader,
+  TableRow,
 } from "@heroui/react";
 
 import { useAllLessons, useUserById } from "@/hooks";
@@ -76,8 +76,8 @@ export default function AdminDashboard({ adminId }: Props) {
     const map = new Map<string, { id: string; name: string; count: number }>();
     for (const item of allLessons) {
       const id = item.player.id as string;
-      const first = (item.player as any).firstName ?? "Unknown";
-      const last = (item.player as any).lastName ?? "Player";
+      const first = item.player.firstName ?? "Unknown";
+      const last = item.player.lastName ?? "Player";
       const name = `${first} ${last}`.trim();
       const entry = map.get(id) || { id, name, count: 0 };
       entry.count += 1;
@@ -94,7 +94,9 @@ export default function AdminDashboard({ adminId }: Props) {
           <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
             <div>
               <h1 className="text-xl font-semibold">Admin Dashboard</h1>
-              <p className="text-small text-default-500">Overview and management</p>
+              <p className="text-small text-default-500">
+                Overview and management
+              </p>
             </div>
             <div className="flex items-center gap-3">
               <HeroUser
@@ -106,10 +108,18 @@ export default function AdminDashboard({ adminId }: Props) {
                 }}
               />
               <Divider orientation="vertical" className="h-8" />
-              <Button color="primary" variant="solid" onPress={() => console.log("New Player action")}> 
+              <Button
+                color="primary"
+                variant="solid"
+                onPress={() => console.log("New Player action")}
+              >
                 New Player
               </Button>
-              <Button color="secondary" variant="flat" onPress={() => console.log("Schedule Lesson action")}> 
+              <Button
+                color="secondary"
+                variant="flat"
+                onPress={() => console.log("Schedule Lesson action")}
+              >
                 Schedule Lesson
               </Button>
             </div>
@@ -121,7 +131,9 @@ export default function AdminDashboard({ adminId }: Props) {
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <Card>
           <CardBody>
-            <h2 className="mb-3 text-lg font-semibold">Top Coaches by Lessons</h2>
+            <h2 className="mb-3 text-lg font-semibold">
+              Top Coaches by Lessons
+            </h2>
             {lessonsLoading ? (
               <div className="flex justify-center py-6">
                 <CircularProgress size="sm" />
@@ -134,7 +146,11 @@ export default function AdminDashboard({ adminId }: Props) {
                   <TableColumn>COACH</TableColumn>
                   <TableColumn className="text-right">LESSONS</TableColumn>
                 </TableHeader>
-                <TableBody emptyContent={coachLeaderboard.length === 0 ? "No data" : undefined}>
+                <TableBody
+                  emptyContent={
+                    coachLeaderboard.length === 0 ? "No data" : undefined
+                  }
+                >
                   {coachLeaderboard.map((c) => (
                     <TableRow key={c.id}>
                       <TableCell>
@@ -149,7 +165,9 @@ export default function AdminDashboard({ adminId }: Props) {
                           />
                         </div>
                       </TableCell>
-                      <TableCell className="text-right font-semibold">{c.count}</TableCell>
+                      <TableCell className="text-right font-semibold">
+                        {c.count}
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -160,7 +178,9 @@ export default function AdminDashboard({ adminId }: Props) {
 
         <Card>
           <CardBody>
-            <h2 className="mb-3 text-lg font-semibold">Top Players by Lessons</h2>
+            <h2 className="mb-3 text-lg font-semibold">
+              Top Players by Lessons
+            </h2>
             {lessonsLoading ? (
               <div className="flex justify-center py-6">
                 <CircularProgress size="sm" />
@@ -173,11 +193,17 @@ export default function AdminDashboard({ adminId }: Props) {
                   <TableColumn>PLAYER</TableColumn>
                   <TableColumn className="text-right">LESSONS</TableColumn>
                 </TableHeader>
-                <TableBody emptyContent={playerLeaderboard.length === 0 ? "No data" : undefined}>
+                <TableBody
+                  emptyContent={
+                    playerLeaderboard.length === 0 ? "No data" : undefined
+                  }
+                >
                   {playerLeaderboard.map((p) => (
                     <TableRow key={p.id}>
                       <TableCell>{p.name}</TableCell>
-                      <TableCell className="text-right font-semibold">{p.count}</TableCell>
+                      <TableCell className="text-right font-semibold">
+                        {p.count}
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -205,13 +231,20 @@ export default function AdminDashboard({ adminId }: Props) {
                 <TableColumn>COACH</TableColumn>
                 <TableColumn>PLAYER</TableColumn>
               </TableHeader>
-              <TableBody emptyContent={allLessons.length === 0 ? "No lessons" : undefined}>
+              <TableBody
+                emptyContent={
+                  allLessons.length === 0 ? "No lessons" : undefined
+                }
+              >
                 {allLessons.map((l) => {
                   const dateStr = l.lesson.lessonDate
-                    ? new Date(l.lesson.lessonDate as unknown as string).toLocaleDateString()
+                    ? new Date(
+                        l.lesson.lessonDate as unknown as string
+                      ).toLocaleDateString()
                     : "";
                   const coachName = l.coach.name ?? "Unknown Coach";
-                  const playerName = `${(l.player as any).firstName ?? "Unknown"} ${(l.player as any).lastName ?? "Player"}`.trim();
+                  const playerName =
+                    `${l.player.firstName ?? "Unknown"} ${l.player.lastName ?? "Player"}`.trim();
                   const type = (l.lesson.lessonType as string) || "-";
                   return (
                     <TableRow key={l.lesson.id}>
