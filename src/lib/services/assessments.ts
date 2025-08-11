@@ -5,6 +5,7 @@ import {
   armCare,
   hawkinsForcePlate,
   hittingAssessment,
+  lessonAssessments,
   pitchingAssessment,
   smfa,
   trueStrength,
@@ -113,6 +114,22 @@ export class AssessmentService {
     } catch (error) {
       console.error("Error fetching pitching assessment by ID:", error);
       throw new Error("Failed to fetch pitching assessment");
+    }
+  }
+
+  static async getAssessmentsByLessonId(lessonId: string) {
+    try {
+      const assessmentRelations = await db
+        .select()
+        .from(lessonAssessments)
+        .where(eq(lessonAssessments.lessonId, lessonId));
+
+      if (assessmentRelations.length === 0) {
+        return [];
+      }
+    } catch (error) {
+      console.error("Error fetching assessments by lesson ID:", error);
+      throw new Error("Failed to fetch assessments");
     }
   }
 }
