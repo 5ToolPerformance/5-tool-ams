@@ -1944,12 +1944,12 @@ const LessonCreationForm: React.FC<LessonsCreateProps> = ({ coachId }) => {
           )}
 
           {assessmentConfigs[selectedLessonType]?.includes(
-            "hittingAssessment"
-          ) && <HittingAssessmentForm />}
-
-          {assessmentConfigs[selectedLessonType]?.includes(
             "pitchingAssessment"
           ) && <PitchingAssessmentForm />}
+
+          {assessmentConfigs[selectedLessonType]?.includes(
+            "fieldingAssessment"
+          ) && <HittingAssessmentForm />}
         </div>
 
         {/* Submit Button */}

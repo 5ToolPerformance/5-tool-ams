@@ -4,7 +4,6 @@ import db from "@/db";
 import {
   armCare,
   hawkinsForcePlate,
-  hittingAssessment,
   lesson,
   lessonAssessments,
   pitchingAssessment,
@@ -17,7 +16,6 @@ import { AssessmentType } from "@/types/assessments";
 import {
   ArmCareInsert,
   ForcePlateInsert,
-  HittingAssessmentInsert,
   PitchingAssessmentInsert,
   SmfaInsert,
   TrueStrengthInsert,
@@ -170,30 +168,6 @@ export class LessonService {
           assessmentIds.push({
             type: "true_strength",
             id: trueStrengthAssessment.id,
-          });
-        }
-
-        if (data.hittingAssessment) {
-          const [hittingAssessmentForm] = await tx
-            .insert(hittingAssessment)
-            .values({
-              lessonId: lessonId,
-              playerId: data.playerId,
-              coachId: data.coachId,
-              notes: data.hittingAssessment.notes,
-              upper: data.hittingAssessment.upper,
-              lower: data.hittingAssessment.lower,
-              head: data.hittingAssessment.head,
-              load: data.hittingAssessment.load,
-              max_ev: data.hittingAssessment.max_ev,
-              line_drive_pct: data.hittingAssessment.line_drive_pct,
-              lessonDate: new Date(data.lessonDate),
-            } as HittingAssessmentInsert)
-            .returning({ id: hittingAssessment.id });
-
-          assessmentIds.push({
-            type: "hitting_assessment",
-            id: hittingAssessmentForm.id,
           });
         }
 
