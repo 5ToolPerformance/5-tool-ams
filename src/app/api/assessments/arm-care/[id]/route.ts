@@ -1,11 +1,11 @@
 // src/app/api/assessments/armcare/[id]/route.ts
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 import { AssessmentService } from "@/lib/services/assessments";
 import { RouteParams } from "@/types/api";
 
 export async function GET(
-  request: Request,
+  request: NextRequest,
   { params }: RouteParams<{ id: string }>
 ) {
   try {

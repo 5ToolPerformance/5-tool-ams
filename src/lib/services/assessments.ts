@@ -127,6 +127,37 @@ export class AssessmentService {
       if (assessmentRelations.length === 0) {
         return [];
       }
+
+      const assessmentsPromises = assessmentRelations.map((relation) => {
+        switch (relation.assessmentType) {
+          case "arm_care":
+            return AssessmentService.getArmCareAssessmentById(
+              relation.assessmentId
+            );
+          case "smfa":
+            return AssessmentService.getSmfaAssessmentById(
+              relation.assessmentId
+            );
+          case "force_plate":
+            return AssessmentService.getForcePlateAssessmentById(
+              relation.assessmentId
+            );
+          case "true_strength":
+            return AssessmentService.getTrueStrengthAssessmentById(
+              relation.assessmentId
+            );
+          case "hitting_assessment":
+            return AssessmentService.getHittingAssessmentById(
+              relation.assessmentId
+            );
+          case "pitching_assessment":
+            return AssessmentService.getPitchingAssessmentById(
+              relation.assessmentId
+            );
+        }
+      });
+
+      return Promise.all(assessmentsPromises);
     } catch (error) {
       console.error("Error fetching assessments by lesson ID:", error);
       throw new Error("Failed to fetch assessments");

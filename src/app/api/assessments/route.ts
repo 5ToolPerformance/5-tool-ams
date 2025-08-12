@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { ApiService } from "@/lib/services/api";
+import { AssessmentService } from "@/lib/services/assessments";
 
 export async function GET(request: NextRequest) {
   try {
@@ -14,7 +14,8 @@ export async function GET(request: NextRequest) {
       });
     }
 
-    const assessments = await ApiService.fetchAssessmentsByLessonId(lessonId);
+    const assessments =
+      await AssessmentService.getAssessmentsByLessonId(lessonId);
 
     return NextResponse.json({
       success: true,
