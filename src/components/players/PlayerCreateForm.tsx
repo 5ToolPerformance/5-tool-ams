@@ -2,6 +2,7 @@
 
 import {
   Button,
+  DatePicker,
   Input,
   Modal,
   ModalBody,
@@ -204,23 +205,18 @@ export default function PlayerCreateForm({
                   </form.Field>
                   <form.Field name="date_of_birth">
                     {(field) => (
-                      <Input
+                      <DatePicker
                         className="w-full"
-                        type="date"
                         label="Date of Birth"
+                        showMonthAndYearPickers
                         value={
                           field.state.value instanceof CalendarDate
-                            ? `${field.state.value.year}-${String(field.state.value.month).padStart(2, "0")}-${String(field.state.value.day).padStart(2, "0")}`
-                            : field.state.value || ""
+                            ? field.state.value
+                            : undefined
                         }
-                        onChange={(e) => {
-                          if (e.target.value) {
-                            const [year, month, day] = e.target.value
-                              .split("-")
-                              .map(Number);
-                            field.handleChange(
-                              new CalendarDate(year, month, day)
-                            );
+                        onChange={(value) => {
+                          if (value) {
+                            field.handleChange(value);
                           } else {
                             field.handleChange(new CalendarDate(2000, 1, 1));
                           }
