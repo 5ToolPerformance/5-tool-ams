@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 
 import { auth } from "@/auth";
-import LessonCreationForm from "@/components/lesson-form/test-lesson-form";
+import ModularLessonForm from "@/components/forms";
 import requireAuth from "@/utils/require-auth";
 
 export default async function CreateLessonPage() {
@@ -17,5 +17,5 @@ export default async function CreateLessonPage() {
   }
   const userId = session.user.id;
 
-  return <LessonCreationForm coachId={userId} />;
+  return <ModularLessonForm coachId={userId} />;
 }
