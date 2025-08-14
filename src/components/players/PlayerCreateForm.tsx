@@ -2,6 +2,7 @@
 
 import {
   Button,
+  Checkbox,
   DatePicker,
   Input,
   Modal,
@@ -47,6 +48,7 @@ export default function PlayerCreateForm({
       position: "",
       throws: "",
       hits: "",
+      prospect: false,
       date_of_birth: parseDate(new Date().toISOString().split("T")[0]),
     },
     onSubmit: async ({ value }) => {
@@ -222,6 +224,17 @@ export default function PlayerCreateForm({
                           }
                         }}
                       />
+                    )}
+                  </form.Field>
+                  <form.Field name="prospect">
+                    {(field) => (
+                      <Checkbox
+                        className="py-1"
+                        isSelected={field.state.value}
+                        onValueChange={field.handleChange}
+                      >
+                        Prospect
+                      </Checkbox>
                     )}
                   </form.Field>
                   <Button type="submit" color="primary" className="w-full">

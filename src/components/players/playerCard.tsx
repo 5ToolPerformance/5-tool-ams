@@ -75,6 +75,7 @@ const PlayerProfileCard: React.FC<PlayerProfileCardProps> = ({
           >
             {playerName}
           </h3>
+          {player.prospect && <Chip color="success">Prospect</Chip>}
 
           {player.date_of_birth && (
             <p className={`text-default-500 ${currentSize.details}`}>

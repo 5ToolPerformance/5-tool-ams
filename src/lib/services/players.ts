@@ -48,6 +48,7 @@ export class PlayerService {
           position: data.position,
           throws: data.throws,
           hits: data.hits,
+          prospect: data.prospect,
           date_of_birth: data.date_of_birth,
         })
         .returning();

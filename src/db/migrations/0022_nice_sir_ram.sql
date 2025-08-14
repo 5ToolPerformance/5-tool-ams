@@ -1,0 +1,1 @@
+ALTER TABLE "player_information" ADD COLUMN "prospect" boolean DEFAULT false NOT NULL;

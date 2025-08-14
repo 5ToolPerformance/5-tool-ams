@@ -1,5 +1,5 @@
 import { relations } from "drizzle-orm";
-import { date, pgTable, real, text, uuid } from "drizzle-orm/pg-core";
+import { boolean, date, pgTable, real, text, uuid } from "drizzle-orm/pg-core";
 
 import users from "./users";
 
@@ -14,6 +14,7 @@ export const playerInformation = pgTable("player_information", {
   position: text("position").notNull(),
   throws: text("throws").notNull(),
   hits: text("hits").notNull(),
+  prospect: boolean("prospect").notNull().default(false),
   date_of_birth: date("date_of_birth", { mode: "string" }).notNull(),
 });
 
