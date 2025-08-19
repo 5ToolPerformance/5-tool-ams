@@ -25,7 +25,6 @@ const hittingAssessment = pgTable(
     load: text("load"),
     max_ev: real("max_ev"),
     line_drive_pct: real("line_drive_pct"),
-    lessonDate: timestamp("lesson_date", { mode: "string" }).notNull(),
     createdOn: timestamp("created_on", { mode: "string" })
       .notNull()
       .defaultNow(),
