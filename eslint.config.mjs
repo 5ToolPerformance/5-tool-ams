@@ -19,6 +19,7 @@ const eslintConfig = [
       semi: ["error"],
       quotes: ["error", "double"],
       "n/no-process-env": ["error"],
+      "@typescript-eslint/no-explicit-any": ["warn"],
     },
   }),
 ];
