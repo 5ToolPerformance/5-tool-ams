@@ -1,4 +1,4 @@
-import { Card, CardBody, Chip } from "@heroui/react";
+import { Button, Card, CardBody, Chip } from "@heroui/react";
 
 import { DateTimeService } from "@/lib/services/date-time";
 import { StringService } from "@/lib/services/strings";
@@ -49,6 +49,11 @@ const LessonCard: React.FC<LessonCardProps> = ({ lesson }) => {
                 {lesson.lesson.lessonType}
               </Chip>
             </div>
+            <a href={`/lessons/${lesson.lesson.id}`}>
+              <Button size="sm" variant="light">
+                View Details
+              </Button>
+            </a>
           </div>
         </div>
       </CardBody>

@@ -7,7 +7,7 @@ import {
   hittingAssessment,
   lessonAssessments,
   pitchingAssessment,
-  smfa,
+  smfaBoolean,
   trueStrength,
 } from "@/db/schema";
 
@@ -38,7 +38,7 @@ export class AssessmentService {
    */
   static async getSmfaAssessmentById(id: string) {
     try {
-      return await db.select().from(smfa).where(eq(smfa.id, id));
+      return await db.select().from(smfaBoolean).where(eq(smfaBoolean.id, id));
     } catch (error) {
       console.error("Error fetching smfa assessment by ID:", error);
       throw new Error("Failed to fetch smfa assessment");
@@ -117,7 +117,9 @@ export class AssessmentService {
     }
   }
 
-  static async getAssessmentsByLessonId(lessonId: string) {
+  static async getAssessmentsByLessonId(
+    lessonId: string
+  ): Promise<Array<{ lessonType: string; data: unknown | null }>> {
     try {
       const assessmentRelations = await db
         .select()
@@ -128,36 +130,56 @@ export class AssessmentService {
         return [];
       }
 
-      const assessmentsPromises = assessmentRelations.map((relation) => {
-        switch (relation.assessmentType) {
-          case "arm_care":
-            return AssessmentService.getArmCareAssessmentById(
-              relation.assessmentId
-            );
-          case "smfa":
-            return AssessmentService.getSmfaAssessmentById(
-              relation.assessmentId
-            );
-          case "force_plate":
-            return AssessmentService.getForcePlateAssessmentById(
-              relation.assessmentId
-            );
-          case "true_strength":
-            return AssessmentService.getTrueStrengthAssessmentById(
-              relation.assessmentId
-            );
-          case "hitting_assessment":
-            return AssessmentService.getHittingAssessmentById(
-              relation.assessmentId
-            );
-          case "pitching_assessment":
-            return AssessmentService.getPitchingAssessmentById(
-              relation.assessmentId
-            );
-        }
-      });
+      const results: Array<{ lessonType: string; data: unknown | null }> = await Promise.all(
+        assessmentRelations.map(async (relation) => {
+          let rows: unknown[] | undefined;
 
-      return Promise.all(assessmentsPromises);
+          switch (relation.assessmentType) {
+            case "arm_care":
+            case "are_care": // handle enum typo
+              rows = await AssessmentService.getArmCareAssessmentById(
+                relation.assessmentId
+              );
+              break;
+            case "smfa":
+              rows = await AssessmentService.getSmfaAssessmentById(
+                relation.assessmentId
+              );
+              break;
+            case "force_plate":
+              rows = await AssessmentService.getForcePlateAssessmentById(
+                relation.assessmentId
+              );
+              break;
+            case "true_strength":
+              rows = await AssessmentService.getTrueStrengthAssessmentById(
+                relation.assessmentId
+              );
+              break;
+            case "hitting_assessment":
+              rows = await AssessmentService.getHittingAssessmentById(
+                relation.assessmentId
+              );
+              break;
+            case "pitching_assessment":
+              rows = await AssessmentService.getPitchingAssessmentById(
+                relation.assessmentId
+              );
+              break;
+            default:
+              rows = undefined;
+          }
+
+          const data = Array.isArray(rows) ? (rows[0] as unknown) ?? null : null;
+
+          return {
+            lessonType: relation.assessmentType,
+            data,
+          };
+        })
+      );
+
+      return results;
     } catch (error) {
       console.error("Error fetching assessments by lesson ID:", error);
       throw new Error("Failed to fetch assessments");

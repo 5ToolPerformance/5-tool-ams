@@ -9,9 +9,15 @@ import {
   Skeleton,
 } from "@heroui/react";
 
-import { useLessonById } from "@/hooks";
+import { useAssessmentsByLessonId, useLessonById } from "@/hooks";
 import { DateTimeService } from "@/lib/services/date-time";
 import { StringService } from "@/lib/services/strings";
+
+import ArmCareViewer from "../assessments/ArmCareViewer";
+import SmfaViewer from "../assessments/SmfaViewer";
+import ForcePlateViewer from "../assessments/ForcePlateViewer";
+import TrueStrengthViewer from "../assessments/TrueStrengthViewer";
+import PitchingAssessmentViewer from "../assessments/PitchingAssessmentViewer";
 
 type LessonPageProps = {
   lessonId: string;
@@ -19,8 +25,13 @@ type LessonPageProps = {
 
 export function LessonPageComponent({ lessonId }: LessonPageProps) {
   const { data: lesson, error, isLoading } = useLessonById(lessonId);
+  const {
+    data: assessments,
+    error: assessError,
+    isLoading: assessLoading,
+  } = useAssessmentsByLessonId(lessonId);
 
-  if (isLoading) {
+  if (isLoading || assessLoading) {
     return (
       <Card className="mx-auto w-full max-w-4xl">
         <CardHeader className="flex items-center justify-between">
@@ -38,7 +49,7 @@ export function LessonPageComponent({ lessonId }: LessonPageProps) {
     );
   }
 
-  if (error) {
+  if (error || assessError) {
     return (
       <Card className="mx-auto w-full max-w-4xl">
         <CardHeader className="flex items-center justify-between">
@@ -64,7 +75,7 @@ export function LessonPageComponent({ lessonId }: LessonPageProps) {
         <div className="space-y-4">
           <p>{StringService.formatLessonType(lesson.lessonType)}</p>
           <p>{DateTimeService.formatLessonDate(lesson.lessonDate)}</p>
-          <p>{lesson.lessonNotes}</p>
+          <p>{lesson.notes}</p>
           <div className="flex flex-wrap gap-2">
             {lesson.assessments.map(
               (assessment: { assessmentType: string }, index: number) => (
@@ -74,6 +85,49 @@ export function LessonPageComponent({ lessonId }: LessonPageProps) {
               )
             )}
           </div>
+          {assessments?.map((item: { lessonType: string; data: unknown }) => {
+            if (item.lessonType === "arm_care") {
+              return (
+                <ArmCareViewer
+                  key={(item.data as any)?.id ?? Math.random()}
+                  data={item.data as any}
+                />
+              );
+            }
+            if (item.lessonType === "smfa") {
+              return (
+                <SmfaViewer
+                  key={(item.data as any)?.id ?? Math.random()}
+                  data={item.data as any}
+                />
+              );
+            }
+            if (item.lessonType === "force_plate") {
+              return (
+                <ForcePlateViewer
+                  key={(item.data as any)?.id ?? Math.random()}
+                  data={item.data as any}
+                />
+              );
+            }
+            if (item.lessonType === "true_strength") {
+              return (
+                <TrueStrengthViewer
+                  key={(item.data as any)?.id ?? Math.random()}
+                  data={item.data as any}
+                />
+              );
+            }
+            if (item.lessonType === "pitching_assessment") {
+              return (
+                <PitchingAssessmentViewer
+                  key={(item.data as any)?.id ?? Math.random()}
+                  data={item.data as any}
+                />
+              );
+            }
+            return null;
+          })}
         </div>
       </CardBody>
     </Card>

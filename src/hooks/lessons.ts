@@ -42,5 +42,7 @@ export function useAllLessons() {
  * @throws Error if there is an issue with the API request
  */
 export function useAssessmentsByLessonId(lessonId: string) {
-  return lessonId;
+  return useSWR(lessonId ? ["assessments", lessonId] : null, () =>
+    ApiService.fetchAssessmentsByLessonId(lessonId)
+  );
 }

@@ -25,7 +25,10 @@ const hittingAssessment = pgTable(
     load: text("load"),
     max_ev: real("max_ev"),
     line_drive_pct: real("line_drive_pct"),
-    createdOn: timestamp("created_on", { mode: "date" }).notNull().defaultNow(),
+    lessonDate: timestamp("lesson_date", { mode: "string" }).notNull(),
+    createdOn: timestamp("created_on", { mode: "string" })
+      .notNull()
+      .defaultNow(),
   },
   (table) => [index("hitting_assessment_lesson_idx").on(table.lessonId)]
 );
