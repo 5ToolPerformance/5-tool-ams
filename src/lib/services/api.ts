@@ -1,4 +1,5 @@
 import { MotorPreferencesForm } from "@/types/assessments";
+import { PlayerInsert } from "@/types/database";
 
 /**
  * ApiService is a class that provides static methods for interacting with the API.
@@ -106,6 +107,29 @@ export class ApiService {
       playerInfo: await playerInfo.json(),
       motorPreference: await motorPreference.json(),
     };
+  }
+
+  /**
+   * Updates a player's information by ID via the PATCH route.
+   * @param id - The playerInformation ID to update
+   * @param data - Partial player fields to update
+   * @returns The updated playerInformation record
+   * @throws Error if the API request fails
+   */
+  static async patchPlayerInformationById(
+    id: string,
+    data: Partial<PlayerInsert>
+  ) {
+    const response = await fetch(`/api/players/${id}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+    if (!response.ok) throw new Error("Failed to update player");
+    const result = await response.json();
+    return result.data;
   }
 
   /**

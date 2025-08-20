@@ -19,8 +19,11 @@ import { useForm } from "@tanstack/react-form";
 
 import { ApiResponse } from "@/types/api";
 import { PlayerInsert, PlayerSelect } from "@/types/database";
+import { ApiService } from "@/lib/services/api";
 
 interface PlayerCreateFormProps {
+  player?: PlayerSelect;
+  onPlayerUpdated?: (player: PlayerSelect) => void;
   onPlayerCreated?: (player: PlayerSelect) => void;
 }
 
@@ -34,50 +37,89 @@ const formatDateForDB = (calendarDate: CalendarDate) => {
   return calendarDate;
 };
 
+const toCalendarDate = (
+  value: string | Date | null | undefined
+): CalendarDate => {
+  if (!value) return parseDate(new Date().toISOString().split("T")[0]);
+  if (value instanceof Date) {
+    const iso = value.toISOString().split("T")[0];
+    return parseDate(iso);
+  }
+  // assume value is already YYYY-MM-DD
+  return parseDate(String(value));
+};
+
 export default function PlayerCreateForm({
+  player,
+  onPlayerUpdated,
   onPlayerCreated,
 }: PlayerCreateFormProps) {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const isEdit = !!player;
 
   const form = useForm({
-    defaultValues: {
-      firstName: "",
-      lastName: "",
-      height: 0,
-      weight: 0,
-      position: "",
-      throws: "",
-      hits: "",
-      prospect: false,
-      date_of_birth: parseDate(new Date().toISOString().split("T")[0]),
-    },
+    defaultValues: isEdit
+      ? {
+          firstName: player?.firstName ?? "",
+          lastName: player?.lastName ?? "",
+          height: Number(player?.height ?? 0),
+          weight: Number(player?.weight ?? 0),
+          position: player?.position ?? "",
+          throws: player?.throws ?? "",
+          hits: player?.hits ?? "",
+          prospect: Boolean(player?.prospect ?? false),
+          date_of_birth: toCalendarDate(player?.date_of_birth as any),
+        }
+      : {
+          firstName: "",
+          lastName: "",
+          height: 0,
+          weight: 0,
+          position: "",
+          throws: "",
+          hits: "",
+          prospect: false,
+          date_of_birth: parseDate(new Date().toISOString().split("T")[0]),
+        },
     onSubmit: async ({ value }) => {
       const formattedValue = {
         ...value,
         date_of_birth: formatDateForDB(value.date_of_birth),
       };
       try {
-        const response = await fetch("/api/players", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(formattedValue),
-        });
+        if (isEdit && player?.id) {
+          const updated = await ApiService.patchPlayerInformationById(
+            player.id,
+            formattedValue as Partial<PlayerInsert>
+          );
 
-        const result: ApiResponse<PlayerInsert> = await response.json();
+          if (onPlayerUpdated && updated) {
+            onPlayerUpdated(updated as PlayerSelect);
+            onOpenChange();
+          }
+        } else {
+          const response = await fetch("/api/players", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(formattedValue),
+          });
 
-        if (!result.success) {
-          throw new Error(result.error || "Failed to create player");
-        }
+          const result: ApiResponse<PlayerInsert> = await response.json();
 
-        if (onPlayerCreated && result.data) {
-          // The API should return the created player with all required fields
-          onPlayerCreated(result.data as PlayerSelect);
-          onOpenChange(); // Toggle the modal after successful submission
+          if (!result.success) {
+            throw new Error(result.error || "Failed to create player");
+          }
+
+          if (onPlayerCreated && result.data) {
+            // The API should return the created player with all required fields
+            onPlayerCreated(result.data as PlayerSelect);
+            onOpenChange(); // Toggle the modal after successful submission
+          }
         }
       } catch (error) {
-        console.error("Error creating player:", error);
+        console.error("Error saving player:", error);
       }
     },
   });
@@ -85,14 +127,14 @@ export default function PlayerCreateForm({
   return (
     <>
       <Button color="primary" onPress={onOpen}>
-        Create Player
+        {isEdit ? "Edit Player" : "Create Player"}
       </Button>
       <Modal isOpen={isOpen} placement="top-center" onOpenChange={onOpenChange}>
         <ModalContent>
           {(onClose) => (
             <>
               <ModalHeader className="flex flex-col gap-1">
-                Create Player
+                {isEdit ? "Edit Player" : "Create Player"}
               </ModalHeader>
               <ModalBody>
                 <form
@@ -238,7 +280,7 @@ export default function PlayerCreateForm({
                     )}
                   </form.Field>
                   <Button type="submit" color="primary" className="w-full">
-                    Save Player
+                    {isEdit ? "Update Player" : "Save Player"}
                   </Button>
                 </form>
               </ModalBody>

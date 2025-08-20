@@ -61,6 +61,45 @@ export class PlayerService {
   }
 
   /**
+   * Update an existing player's information
+   * @param playerId - The ID of the playerInformation row to update
+   * @param data - Partial set of fields to update
+   * @returns The updated playerInformation record
+   */
+  static async updatePlayerInformation(
+    playerId: string,
+    data: Partial<PlayerInsert>
+  ) {
+    try {
+      // Build an update payload without undefined values or immutable keys
+      const updatePayload: Record<string, unknown> = {};
+      for (const [key, value] of Object.entries(
+        data as Record<string, unknown>
+      )) {
+        if (key === "id") continue; // never allow updating the primary key
+        if (value !== undefined) updatePayload[key] = value;
+      }
+
+      if (Object.keys(updatePayload).length === 0) {
+        // Nothing to update; return the current record
+        const current = await this.getPlayerById(playerId);
+        return current;
+      }
+
+      const [updated] = await db
+        .update(playerInformation)
+        .set(updatePayload as Partial<PlayerInsert>)
+        .where(eq(playerInformation.id, playerId))
+        .returning();
+
+      return updated ?? null;
+    } catch (error) {
+      console.error("Error updating player information:", error);
+      throw new Error("Failed to update player information");
+    }
+  }
+
+  /**
    * Create a motor preference exam in the database
    * @param data - The form data for the Motor Preference Assessment
    * @returns the completed Motor Preference assessment type

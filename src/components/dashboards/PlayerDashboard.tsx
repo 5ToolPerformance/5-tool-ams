@@ -22,6 +22,7 @@ import OverviewSection from "../overviewSection";
 import PlansSection from "../plans/plansComponent";
 import PlayerCard from "../players/playerCard";
 import { MotorPreferenceCard } from "../ui/MotorPreferenceCard";
+import PlayerCreateForm from "../players/PlayerCreateForm";
 
 interface PlayerDashboardProps {
   player: PlayerSelect;
@@ -33,14 +34,20 @@ const PlayerDashboard: React.FC<PlayerDashboardProps> = ({
   coachId,
 }) => {
   const [selectedTab, setSelectedTab] = useState<string>("overview");
+  const [currentPlayer, setCurrentPlayer] = useState<PlayerSelect>(player);
   const [motorPreference, setMotorPreference] =
     useState<MotorPreferencesSelect>();
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
+  // Keep local player in sync if prop changes
+  useEffect(() => {
+    setCurrentPlayer(player);
+  }, [player]);
+
   useEffect(() => {
     const fetchPlayerData = async () => {
-      if (!player?.id) {
+      if (!currentPlayer?.id) {
         setError("Player ID is missing");
         setLoading(false);
         return;
@@ -48,7 +55,7 @@ const PlayerDashboard: React.FC<PlayerDashboardProps> = ({
       try {
         setLoading(true);
         // Example: Fetch player data by ID
-        const data = await ApiService.fetchMotorPreferenceById(player.id);
+        const data = await ApiService.fetchMotorPreferenceById(currentPlayer.id);
 
         setMotorPreference(data);
       } catch (err) {
@@ -60,7 +67,7 @@ const PlayerDashboard: React.FC<PlayerDashboardProps> = ({
     };
 
     fetchPlayerData();
-  }, [player.id]);
+  }, [currentPlayer.id]);
 
   const tabOptions = [
     { key: "overview", label: "Overview", icon: BarChart3 },
@@ -71,13 +78,13 @@ const PlayerDashboard: React.FC<PlayerDashboardProps> = ({
   const renderContent = () => {
     switch (selectedTab) {
       case "overview":
-        return <OverviewSection playerId={player.id} />;
+        return <OverviewSection playerId={currentPlayer.id} />;
       case "lessons":
-        return <LessonsSection playerId={player.id} />;
+        return <LessonsSection playerId={currentPlayer.id} />;
       case "plans":
         return <PlansSection />;
       default:
-        return <OverviewSection playerId={player.id} />;
+        return <OverviewSection playerId={currentPlayer.id} />;
     }
   };
 
@@ -98,12 +105,21 @@ const PlayerDashboard: React.FC<PlayerDashboardProps> = ({
       <div className="mx-auto max-w-6xl space-y-6">
         {/* Player Card and Motor Preference Side by Side */}
         <div className="flex flex-col items-start gap-6 md:flex-row">
-          <PlayerCard player={player} size="lg" />
+          <div className="flex w-full flex-col gap-3 md:w-auto">
+            <PlayerCreateForm
+              player={currentPlayer}
+              onPlayerUpdated={setCurrentPlayer}
+            />
+            <PlayerCard player={currentPlayer} size="lg" />
+          </div>
           <div>
             {motorPreference ? (
               <MotorPreferenceCard motorPreference={motorPreference} />
             ) : (
-              <MotorPreferencesModal playerId={player.id} coachId={coachId} />
+              <MotorPreferencesModal
+                playerId={currentPlayer.id}
+                coachId={coachId}
+              />
             )}
           </div>
         </div>
