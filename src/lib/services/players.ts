@@ -1,7 +1,11 @@
 import { eq } from "drizzle-orm";
 
 import db from "@/db";
-import { motorPreferences, playerInformation } from "@/db/schema";
+import {
+  motorPreferences,
+  playerInformation,
+  playerMeasurements,
+} from "@/db/schema";
 import { MotorPreferencesForm } from "@/types/assessments";
 import { PlayerInsert } from "@/types/database";
 
@@ -36,28 +40,37 @@ export class PlayerService {
    * @returns The completed playerInformation to be posted in the Db
    */
   static async createPlayerInformation(data: PlayerInsert) {
-    try {
-      const [newPlayerInfo] = await db
-        .insert(playerInformation)
-        .values({
-          userId: data.userId,
-          firstName: data.firstName,
-          lastName: data.lastName,
-          height: data.height,
-          weight: data.weight,
-          position: data.position,
-          throws: data.throws,
-          hits: data.hits,
-          prospect: data.prospect,
-          date_of_birth: data.date_of_birth,
-        })
-        .returning();
+    return await db.transaction(async (tx) => {
+      try {
+        const [newPlayerInfo] = await tx
+          .insert(playerInformation)
+          .values({
+            userId: data.userId,
+            firstName: data.firstName,
+            lastName: data.lastName,
+            height: data.height,
+            weight: data.weight,
+            position: data.position,
+            throws: data.throws,
+            hits: data.hits,
+            prospect: data.prospect,
+            date_of_birth: data.date_of_birth,
+          })
+          .returning();
 
-      return newPlayerInfo;
-    } catch (error) {
-      console.error("Error creating player information:", error);
-      throw new Error("Failed to create player information");
-    }
+        await tx.insert(playerMeasurements).values({
+          playerId: newPlayerInfo.id,
+          height: newPlayerInfo.height,
+          weight: newPlayerInfo.weight,
+        });
+
+        return newPlayerInfo;
+      } catch (error) {
+        tx.rollback();
+        console.error("Error creating player information:", error);
+        throw new Error("Failed to create player information");
+      }
+    });
   }
 
   /**
@@ -70,33 +83,60 @@ export class PlayerService {
     playerId: string,
     data: Partial<PlayerInsert>
   ) {
-    try {
-      // Build an update payload without undefined values or immutable keys
-      const updatePayload: Record<string, unknown> = {};
-      for (const [key, value] of Object.entries(
-        data as Record<string, unknown>
-      )) {
-        if (key === "id") continue; // never allow updating the primary key
-        if (value !== undefined) updatePayload[key] = value;
+    return await db.transaction(async (tx) => {
+      try {
+        const currentRows = await tx
+          .select()
+          .from(playerInformation)
+          .where(eq(playerInformation.id, playerId))
+          .limit(1);
+
+        const current = currentRows[0];
+
+        if (!current) {
+          // Nothing to update because the player does not exist
+          return null;
+        }
+
+        // Build an update payload without undefined values or immutable keys
+        const updatePayload: Record<string, unknown> = {};
+        for (const [key, value] of Object.entries(
+          data as Record<string, unknown>
+        )) {
+          if (key === "id") continue; // never allow updating the primary key
+          if (value !== undefined) updatePayload[key] = value;
+        }
+
+        if (Object.keys(updatePayload).length === 0) {
+          // Nothing to update; return the current record
+          return current;
+        }
+
+        const heightChanged =
+          updatePayload.height !== undefined && data.height !== current.height;
+        const weightChanged =
+          updatePayload.weight !== undefined && data.weight !== current.weight;
+
+        if (heightChanged || weightChanged) {
+          await tx.insert(playerMeasurements).values({
+            playerId: current.id,
+            height: data.height ?? current.height,
+            weight: data.weight ?? current.weight,
+          });
+        }
+
+        const [updated] = await tx
+          .update(playerInformation)
+          .set(updatePayload as Partial<PlayerInsert>)
+          .where(eq(playerInformation.id, playerId))
+          .returning();
+
+        return updated ?? null;
+      } catch (error) {
+        console.error("Error updating player information:", error);
+        throw new Error("Failed to update player information");
       }
-
-      if (Object.keys(updatePayload).length === 0) {
-        // Nothing to update; return the current record
-        const current = await this.getPlayerById(playerId);
-        return current;
-      }
-
-      const [updated] = await db
-        .update(playerInformation)
-        .set(updatePayload as Partial<PlayerInsert>)
-        .where(eq(playerInformation.id, playerId))
-        .returning();
-
-      return updated ?? null;
-    } catch (error) {
-      console.error("Error updating player information:", error);
-      throw new Error("Failed to update player information");
-    }
+    });
   }
 
   /**
