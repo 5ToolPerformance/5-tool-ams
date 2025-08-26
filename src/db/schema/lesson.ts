@@ -7,7 +7,7 @@ import {
   uuid,
 } from "drizzle-orm/pg-core";
 
-import playerInformation from "./playerInformation";
+import playerInformation from "./players/playerInformation";
 import users from "./users";
 
 export const lessonTypes = pgEnum("lesson_types", [

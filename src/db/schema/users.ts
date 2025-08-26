@@ -1,7 +1,7 @@
 import { relations } from "drizzle-orm";
 import { pgEnum, pgTable, timestamp, uuid, varchar } from "drizzle-orm/pg-core";
 
-import playerInformation from "./playerInformation";
+import playerInformation from "./players/playerInformation";
 
 export const rolesEnum = pgEnum("roles", ["player", "coach", "admin"]);
 

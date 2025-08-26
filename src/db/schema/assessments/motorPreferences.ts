@@ -1,6 +1,6 @@
 import { boolean, pgEnum, pgTable, timestamp, uuid } from "drizzle-orm/pg-core";
 
-import playerInformation from "../playerInformation";
+import playerInformation from "../players/playerInformation";
 
 export const leftRightEnum = pgEnum("left-right", ["left", "right", "switch"]);
 

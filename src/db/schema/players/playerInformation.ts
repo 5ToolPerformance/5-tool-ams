@@ -1,7 +1,15 @@
 import { relations } from "drizzle-orm";
-import { boolean, date, pgTable, real, text, uuid } from "drizzle-orm/pg-core";
+import {
+  boolean,
+  date,
+  pgTable,
+  real,
+  text,
+  timestamp,
+  uuid,
+} from "drizzle-orm/pg-core";
 
-import users from "./users";
+import users from "../users";
 
 export const playerInformation = pgTable("player_information", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -16,6 +24,12 @@ export const playerInformation = pgTable("player_information", {
   hits: text("hits").notNull(),
   prospect: boolean("prospect").notNull().default(false),
   date_of_birth: date("date_of_birth", { mode: "string" }).notNull(),
+  created_at: timestamp("created_at", { mode: "string" })
+    .notNull()
+    .defaultNow(),
+  updated_at: timestamp("updated_at", { mode: "string" })
+    .notNull()
+    .defaultNow(),
 });
 
 export default playerInformation;

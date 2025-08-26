@@ -17,7 +17,7 @@ export { default as notes } from "./notes";
 export {
   default as playerInformation,
   playerInformationRelations,
-} from "./playerInformation";
+} from "./players/playerInformation";
 export { default as sessions } from "./sessions";
 export { rolesEnum, default as users, usersRelations } from "./users";
 
@@ -26,3 +26,4 @@ export {
   dateRangeEnum,
   default as pitchingAssessment,
 } from "./assessments/pitchingAssessment";
+export { default as playerMeasurements } from "./players/playerMeasurements";
