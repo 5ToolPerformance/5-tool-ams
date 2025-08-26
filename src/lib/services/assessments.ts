@@ -130,54 +130,57 @@ export class AssessmentService {
         return [];
       }
 
-      const results: Array<{ lessonType: string; data: unknown | null }> = await Promise.all(
-        assessmentRelations.map(async (relation) => {
-          let rows: unknown[] | undefined;
+      const results: Array<{ lessonType: string; data: unknown | null }> =
+        await Promise.all(
+          assessmentRelations.map(async (relation) => {
+            let rows: unknown[] | undefined;
 
-          switch (relation.assessmentType) {
-            case "arm_care":
-            case "are_care": // handle enum typo
-              rows = await AssessmentService.getArmCareAssessmentById(
-                relation.assessmentId
-              );
-              break;
-            case "smfa":
-              rows = await AssessmentService.getSmfaAssessmentById(
-                relation.assessmentId
-              );
-              break;
-            case "force_plate":
-              rows = await AssessmentService.getForcePlateAssessmentById(
-                relation.assessmentId
-              );
-              break;
-            case "true_strength":
-              rows = await AssessmentService.getTrueStrengthAssessmentById(
-                relation.assessmentId
-              );
-              break;
-            case "hitting_assessment":
-              rows = await AssessmentService.getHittingAssessmentById(
-                relation.assessmentId
-              );
-              break;
-            case "pitching_assessment":
-              rows = await AssessmentService.getPitchingAssessmentById(
-                relation.assessmentId
-              );
-              break;
-            default:
-              rows = undefined;
-          }
+            switch (relation.assessmentType) {
+              case "arm_care":
+              case "are_care": // handle enum typo
+                rows = await AssessmentService.getArmCareAssessmentById(
+                  relation.assessmentId
+                );
+                break;
+              case "smfa":
+                rows = await AssessmentService.getSmfaAssessmentById(
+                  relation.assessmentId
+                );
+                break;
+              case "force_plate":
+                rows = await AssessmentService.getForcePlateAssessmentById(
+                  relation.assessmentId
+                );
+                break;
+              case "true_strength":
+                rows = await AssessmentService.getTrueStrengthAssessmentById(
+                  relation.assessmentId
+                );
+                break;
+              case "hitting_assessment":
+                rows = await AssessmentService.getHittingAssessmentById(
+                  relation.assessmentId
+                );
+                break;
+              case "pitching_assessment":
+                rows = await AssessmentService.getPitchingAssessmentById(
+                  relation.assessmentId
+                );
+                break;
+              default:
+                rows = undefined;
+            }
 
-          const data = Array.isArray(rows) ? (rows[0] as unknown) ?? null : null;
+            const data = Array.isArray(rows)
+              ? ((rows[0] as unknown) ?? null)
+              : null;
 
-          return {
-            lessonType: relation.assessmentType,
-            data,
-          };
-        })
-      );
+            return {
+              lessonType: relation.assessmentType,
+              data,
+            };
+          })
+        );
 
       return results;
     } catch (error) {
