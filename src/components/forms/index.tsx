@@ -3,26 +3,29 @@
 import { useRouter } from "next/navigation";
 import React from "react";
 
-import { Button, Input, Select, SelectItem, Textarea } from "@heroui/react";
+import {
+  Button,
+  DatePicker,
+  Select,
+  SelectItem,
+  Textarea,
+} from "@heroui/react";
+import { CalendarDate } from "@internationalized/date";
 import { useForm } from "@tanstack/react-form";
 
 import { getCompleteLessonDefaults } from "@/lib/form-defaults";
 import { ApiResponse } from "@/types/api";
 import { PlayerSelect } from "@/types/database";
-import {
-  LESSON_TYPES,
-  LessonCreateData,
-  LessonType,
-} from "@/types/lessons";
+import { LESSON_TYPES, LessonCreateData, LessonType } from "@/types/lessons";
 import { User } from "@/types/users";
 
 // Extracted assessment subforms
 import ArmCareAssessmentForm from "./ArmCareAssessmentForm";
-import SmfaForm from "./SmfaForm";
 import ForcePlateAssessmentForm from "./ForcePlateAssessmentForm";
-import TrueStrengthAssessmentForm from "./TrueStrengthAssessmentForm";
 import HittingAssessmentForm from "./HittingAssessmentForm";
 import PitchingAssessmentForm from "./PitchingAssessmentForm";
+import SmfaForm from "./SmfaForm";
+import TrueStrengthAssessmentForm from "./TrueStrengthAssessmentForm";
 
 interface ModularLessonFormProps {
   coachId: string | number | null | undefined;
@@ -147,11 +150,6 @@ const ModularLessonForm: React.FC<ModularLessonFormProps> = ({ coachId }) => {
     fetchData();
   }, []);
 
-  const handleDateChange = (dateString: string) => {
-    if (dateString) {
-      form.setFieldValue("lessonDate", dateString);
-    }
-  };
 
   return (
     <div className="mx-auto max-w-4xl p-6">
@@ -237,7 +235,9 @@ const ModularLessonForm: React.FC<ModularLessonFormProps> = ({ coachId }) => {
                 >
                   {coaches.map((coach) => (
                     <SelectItem key={coach.id}>
-                      {coach.name || coach.email || `Coach ${coach.id.slice(0, 8)}`}
+                      {coach.name ||
+                        coach.email ||
+                        `Coach ${coach.id.slice(0, 8)}`}
                     </SelectItem>
                   ))}
                 </Select>
@@ -281,14 +281,32 @@ const ModularLessonForm: React.FC<ModularLessonFormProps> = ({ coachId }) => {
               }}
             >
               {(field) => (
-                <Input
-                  type="date"
+                <DatePicker
                   label="Lesson Date"
-                  value={field.state.value}
-                  onChange={(e) => handleDateChange(e.target.value)}
-                  onBlur={field.handleBlur}
-                  isInvalid={!!field.state.meta.errors.length}
-                  errorMessage={field.state.meta.errors.join(", ")}
+                  showMonthAndYearPickers
+                  value={((): CalendarDate | undefined => {
+                    const v = field.state.value as string | undefined;
+                    if (!v) return undefined;
+                    // Expecting YYYY-MM-DD
+                    const match = /^\d{4}-\d{2}-\d{2}$/.test(v);
+                    if (!match) return undefined;
+                    const [y, m, d] = v.split("-").map(Number);
+                    try {
+                      return new CalendarDate(y, m, d);
+                    } catch {
+                      return undefined;
+                    }
+                  })()}
+                  onChange={(value) => {
+                    if (value) {
+                      const yyyy = String(value.year).padStart(4, "0");
+                      const mm = String(value.month).padStart(2, "0");
+                      const dd = String(value.day).padStart(2, "0");
+                      field.handleChange(`${yyyy}-${mm}-${dd}`);
+                    } else {
+                      field.handleChange("");
+                    }
+                  }}
                   isRequired
                 />
               )}
