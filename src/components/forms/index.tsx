@@ -4,6 +4,8 @@ import { useRouter } from "next/navigation";
 import React from "react";
 
 import {
+  Autocomplete,
+  AutocompleteItem,
   Button,
   DatePicker,
   Select,
@@ -150,7 +152,6 @@ const ModularLessonForm: React.FC<ModularLessonFormProps> = ({ coachId }) => {
     fetchData();
   }, []);
 
-
   return (
     <div className="mx-auto max-w-4xl p-6">
       <div className="mb-8">
@@ -185,12 +186,13 @@ const ModularLessonForm: React.FC<ModularLessonFormProps> = ({ coachId }) => {
               }}
             >
               {(field) => (
-                <Select
+                <Autocomplete
                   label="Player"
                   placeholder="Select a player"
-                  selectedKeys={field.state.value ? [field.state.value] : []}
-                  onSelectionChange={(keys) => {
-                    const selectedKey = Array.from(keys)[0] as string;
+                  defaultItems={players}
+                  selectedKey={field.state.value || undefined}
+                  onSelectionChange={(key) => {
+                    const selectedKey = key ? String(key) : "";
                     field.handleChange(selectedKey);
                   }}
                   isInvalid={!!field.state.meta.errors.length}
@@ -203,12 +205,12 @@ const ModularLessonForm: React.FC<ModularLessonFormProps> = ({ coachId }) => {
                       player.lastName
                     );
                     return (
-                      <SelectItem key={player.id}>
+                      <AutocompleteItem key={player.id}>
                         {playerFullName || `Player ${player.id.slice(0, 8)}`}
-                      </SelectItem>
+                      </AutocompleteItem>
                     );
                   })}
-                </Select>
+                </Autocomplete>
               )}
             </form.Field>
 
