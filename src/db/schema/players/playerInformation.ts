@@ -2,6 +2,7 @@ import { relations } from "drizzle-orm";
 import {
   boolean,
   date,
+  pgEnum,
   pgTable,
   real,
   text,
@@ -10,6 +11,8 @@ import {
 } from "drizzle-orm/pg-core";
 
 import users from "../users";
+
+export const sportsEnum = pgEnum("sports", ["baseball", "softball"]);
 
 export const playerInformation = pgTable("player_information", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -24,6 +27,7 @@ export const playerInformation = pgTable("player_information", {
   hits: text("hits").notNull(),
   prospect: boolean("prospect").notNull().default(false),
   date_of_birth: date("date_of_birth", { mode: "string" }).notNull(),
+  sport: sportsEnum("sport").notNull().default("baseball"),
   created_at: timestamp("created_at", { mode: "string" })
     .notNull()
     .defaultNow(),

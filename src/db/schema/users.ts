@@ -4,6 +4,11 @@ import { pgEnum, pgTable, timestamp, uuid, varchar } from "drizzle-orm/pg-core";
 import playerInformation from "./players/playerInformation";
 
 export const rolesEnum = pgEnum("roles", ["player", "coach", "admin"]);
+export const accessEnum = pgEnum("access", [
+  "read/write",
+  "read-only",
+  "write-only",
+]);
 
 const users = pgTable("user", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -11,8 +16,9 @@ const users = pgTable("user", {
   email: varchar("email", { length: 320 }).notNull().unique(),
   emailVerified: timestamp("emailVerified", { mode: "date" }),
   image: varchar("image", { length: 2048 }),
-  role: rolesEnum("role").default("player"),
+  role: rolesEnum("role").default("coach"),
   username: varchar("username", { length: 25 }).unique(),
+  access: accessEnum("access").default("read/write"),
 });
 
 export default users;

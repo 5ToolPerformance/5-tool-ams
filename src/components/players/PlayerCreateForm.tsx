@@ -17,9 +17,9 @@ import {
 import { CalendarDate, parseDate } from "@internationalized/date";
 import { useForm } from "@tanstack/react-form";
 
+import { ApiService } from "@/lib/services/api";
 import { ApiResponse } from "@/types/api";
 import { PlayerInsert, PlayerSelect } from "@/types/database";
-import { ApiService } from "@/lib/services/api";
 
 interface PlayerCreateFormProps {
   player?: PlayerSelect;
@@ -69,6 +69,7 @@ export default function PlayerCreateForm({
           hits: player?.hits ?? "",
           prospect: Boolean(player?.prospect ?? false),
           date_of_birth: toCalendarDate(player?.date_of_birth as any),
+          sport: player?.sport ?? "baseball",
         }
       : {
           firstName: "",
@@ -80,6 +81,7 @@ export default function PlayerCreateForm({
           hits: "",
           prospect: false,
           date_of_birth: parseDate(new Date().toISOString().split("T")[0]),
+          sport: "baseball",
         },
     onSubmit: async ({ value }) => {
       const formattedValue = {
@@ -277,6 +279,28 @@ export default function PlayerCreateForm({
                       >
                         Prospect
                       </Checkbox>
+                    )}
+                  </form.Field>
+                  <form.Field name="sport">
+                    {(field) => (
+                      <Select
+                        className="w-full"
+                        label="Sport"
+                        placeholder="sport"
+                        selectedKeys={
+                          field.state.value ? [field.state.value] : []
+                        }
+                        onSelectionChange={(keys) => {
+                          const selectedKey = Array.from(keys)[0] as string;
+                          field.handleChange(selectedKey);
+                        }}
+                        isInvalid={!!field.state.meta.errors.length}
+                        errorMessage={field.state.meta.errors.join(", ")}
+                        isRequired
+                      >
+                        <SelectItem key="baseball">Baseball</SelectItem>
+                        <SelectItem key="softball">Softball</SelectItem>
+                      </Select>
                     )}
                   </form.Field>
                   <Button type="submit" color="primary" className="w-full">

@@ -55,6 +55,7 @@ export class PlayerService {
             hits: data.hits,
             prospect: data.prospect,
             date_of_birth: data.date_of_birth,
+            sport: data.sport,
           })
           .returning();
 
