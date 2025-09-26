@@ -14,10 +14,11 @@ import { DateTimeService } from "@/lib/services/date-time";
 import { StringService } from "@/lib/services/strings";
 
 import ArmCareViewer from "../assessments/ArmCareViewer";
-import SmfaViewer from "../assessments/SmfaViewer";
 import ForcePlateViewer from "../assessments/ForcePlateViewer";
-import TrueStrengthViewer from "../assessments/TrueStrengthViewer";
 import PitchingAssessmentViewer from "../assessments/PitchingAssessmentViewer";
+import SmfaViewer from "../assessments/SmfaViewer";
+import TrueStrengthViewer from "../assessments/TrueStrengthViewer";
+import FormattedText from "../ui/formattedText";
 
 type LessonPageProps = {
   lessonId: string;
@@ -75,7 +76,7 @@ export function LessonPageComponent({ lessonId }: LessonPageProps) {
         <div className="space-y-4">
           <p>{StringService.formatLessonType(lesson.lessonType)}</p>
           <p>{DateTimeService.formatLessonDate(lesson.lessonDate)}</p>
-          <p>{lesson.notes}</p>
+          <FormattedText text={lesson.notes} />
           <div className="flex flex-wrap gap-2">
             {lesson.assessments.map(
               (assessment: { assessmentType: string }, index: number) => (

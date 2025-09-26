@@ -3,6 +3,8 @@ import { Button, Card, CardBody, Chip } from "@heroui/react";
 import { DateTimeService } from "@/lib/services/date-time";
 import { StringService } from "@/lib/services/strings";
 
+import FormattedText from "../ui/formattedText";
+
 export interface LessonData {
   lesson: {
     id: string;
@@ -43,7 +45,7 @@ const LessonCard: React.FC<LessonCardProps> = ({ lesson }) => {
               </span>
             </div>
 
-            <p className="mb-4 text-default-700">{lesson.lesson.notes}</p>
+            <FormattedText text={lesson.lesson.notes} isShort />
             <div className="flex flex-wrap gap-2">
               <Chip size="sm" variant="flat" color="secondary">
                 {lesson.lesson.lessonType}
