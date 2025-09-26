@@ -1,11 +1,12 @@
 import { JSX } from "react";
 
 interface FormattedTextProps {
-  text: string;
+  text: string | null | undefined;
   isShort?: boolean;
 }
 
 function FormattedText({ text, isShort = false }: FormattedTextProps) {
+  if (!text) return null;
   const processText = (text: string): JSX.Element[] => {
     const lines = text.split("\n");
     const result: JSX.Element[] = [];
