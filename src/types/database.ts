@@ -1,6 +1,7 @@
 import {
   armCare,
   hawkinsForcePlate,
+  hitTraxAssessment,
   hittingAssessment,
   lesson,
   motorPreferences,
@@ -9,6 +10,7 @@ import {
   smfaBoolean,
   trueStrength,
   users,
+  veloAssessment,
 } from "@/db/schema";
 
 // User Db schema types
@@ -50,3 +52,11 @@ export type HittingAssessmentInsert = typeof hittingAssessment.$inferInsert;
 // Pitching Assessment Db schema types
 export type PitchingAssessmentSelect = typeof pitchingAssessment.$inferSelect;
 export type PitchingAssessmentInsert = typeof pitchingAssessment.$inferInsert;
+
+// Velo Assessment Db schema types
+export type VeloAssessmentSelect = typeof veloAssessment.$inferSelect;
+export type VeloAssessmentInsert = typeof veloAssessment.$inferInsert;
+
+// HitTrax Assessment Db schema types
+export type HitTraxAssessmentSelect = typeof hitTraxAssessment.$inferSelect;
+export type HitTraxAssessmentInsert = typeof hitTraxAssessment.$inferInsert;

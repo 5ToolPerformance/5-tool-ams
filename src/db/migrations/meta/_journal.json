@@ -176,6 +176,13 @@
       "when": 1756830910871,
       "tag": "0024_steady_zeigeist",
       "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "7",
+      "when": 1758906368705,
+      "tag": "0025_loose_dexter_bennett",
+      "breakpoints": true
     }
   ]
 }

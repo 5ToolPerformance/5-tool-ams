@@ -22,8 +22,10 @@ export { default as sessions } from "./sessions";
 export { rolesEnum, default as users, usersRelations } from "./users";
 
 export { default as hittingAssessment } from "./assessments/hittingAssessment";
+export { default as hitTraxAssessment } from "./assessments/hitTraxAssessment";
 export {
   dateRangeEnum,
   default as pitchingAssessment,
 } from "./assessments/pitchingAssessment";
+export { default as veloAssessment } from "./assessments/veloAssessment";
 export { default as playerMeasurements } from "./players/playerMeasurements";
