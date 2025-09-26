@@ -1,10 +1,12 @@
 import {
   NewArmCare,
   NewForcePlate,
+  NewHitTraxAssessment,
   NewHittingAssessment,
   NewPitchingAssessment,
   NewSMFA,
   NewTrueStrength,
+  NewVeloAssessment,
 } from "./assessments";
 import {
   ArmCareSelect,
@@ -47,6 +49,7 @@ export type LessonType =
  * Base Data for a Lesson
  */
 export interface BaseLessonData {
+  lessonId: string;
   playerId: string; // Player ID
   coachId: string;
   type: LessonType;
@@ -64,6 +67,8 @@ export interface LessonCreateData extends BaseLessonData {
   trueStrength?: NewTrueStrength;
   hittingAssessment?: NewHittingAssessment;
   pitchingAssessment?: NewPitchingAssessment;
+  hitTraxAssessment?: NewHitTraxAssessment;
+  veloAssessment?: NewVeloAssessment;
 }
 
 /**

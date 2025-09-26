@@ -24,10 +24,12 @@ import { User } from "@/types/users";
 // Extracted assessment subforms
 import ArmCareAssessmentForm from "./ArmCareAssessmentForm";
 import ForcePlateAssessmentForm from "./ForcePlateAssessmentForm";
+import HitTraxAssessmentForm from "./HitTraxAssessmentForm";
 import HittingAssessmentForm from "./HittingAssessmentForm";
 import PitchingAssessmentForm from "./PitchingAssessmentForm";
 import SmfaForm from "./SmfaForm";
 import TrueStrengthAssessmentForm from "./TrueStrengthAssessmentForm";
+import VeloAssessmentForm from "./VeloAssessmentForm";
 
 interface ModularLessonFormProps {
   coachId: string | number | null | undefined;
@@ -39,7 +41,9 @@ type AssessmentKey =
   | "forcePlate"
   | "trueStrength"
   | "hittingAssessment"
-  | "pitchingAssessment";
+  | "pitchingAssessment"
+  | "hitTraxAssessment"
+  | "veloAssessment";
 
 const ALL_ASSESSMENTS: { key: AssessmentKey; label: string }[] = [
   { key: "armCare", label: "ArmCare" },
@@ -48,6 +52,8 @@ const ALL_ASSESSMENTS: { key: AssessmentKey; label: string }[] = [
   { key: "trueStrength", label: "True Strength" },
   { key: "hittingAssessment", label: "Hitting" },
   { key: "pitchingAssessment", label: "Pitching" },
+  { key: "hitTraxAssessment", label: "HitTrax" },
+  { key: "veloAssessment", label: "Velo" },
 ];
 
 const ModularLessonForm: React.FC<ModularLessonFormProps> = ({ coachId }) => {
@@ -76,6 +82,13 @@ const ModularLessonForm: React.FC<ModularLessonFormProps> = ({ coachId }) => {
         pitchingAssessment: selectedAssessments.has("pitchingAssessment")
           ? completeData.pitchingAssessment
           : undefined,
+        hitTraxAssessment: selectedAssessments.has("hitTraxAssessment")
+          ? completeData.hitTraxAssessment
+          : undefined,
+        veloAssessment: selectedAssessments.has("veloAssessment")
+          ? completeData.veloAssessment
+          : undefined,
+        lessonId: completeData.lessonId,
       } as LessonCreateData;
 
       try {
@@ -91,10 +104,9 @@ const ModularLessonForm: React.FC<ModularLessonFormProps> = ({ coachId }) => {
 
         if (!result.success) {
           throw new Error(result.error || "Failed to create lesson");
+        } else {
+          router.push("/");
         }
-
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        router.push("/" as any);
       } catch (error) {
         console.error("Error creating lesson:", error);
       }
@@ -379,6 +391,14 @@ const ModularLessonForm: React.FC<ModularLessonFormProps> = ({ coachId }) => {
 
           {selectedAssessments.has("hittingAssessment") && (
             <HittingAssessmentForm form={form} />
+          )}
+
+          {selectedAssessments.has("hitTraxAssessment") && (
+            <HitTraxAssessmentForm form={form} />
+          )}
+
+          {selectedAssessments.has("veloAssessment") && (
+            <VeloAssessmentForm form={form} />
           )}
         </div>
 

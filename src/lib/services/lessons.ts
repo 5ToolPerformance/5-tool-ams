@@ -4,6 +4,7 @@ import db from "@/db";
 import {
   armCare,
   hawkinsForcePlate,
+  hitTraxAssessment,
   lesson,
   lessonAssessments,
   pitchingAssessment,
@@ -11,14 +12,17 @@ import {
   smfaBoolean,
   trueStrength,
   users,
+  veloAssessment,
 } from "@/db/schema";
 import { AssessmentType } from "@/types/assessments";
 import {
   ArmCareInsert,
   ForcePlateInsert,
+  HitTraxAssessmentInsert,
   PitchingAssessmentInsert,
   SmfaInsert,
   TrueStrengthInsert,
+  VeloAssessmentInsert,
 } from "@/types/database";
 import { LessonCreateData, LessonType } from "@/types/lessons";
 
@@ -203,6 +207,51 @@ export class LessonService {
           assessmentIds.push({
             type: "pitching_assessment",
             id: pitchingAssessmentForm.id,
+          });
+        }
+
+        if (data.hitTraxAssessment) {
+          const [hitTraxAssessmentForm] = await tx
+            .insert(hitTraxAssessment)
+            .values({
+              lessonId,
+              playerId: data.playerId,
+              coachId: data.coachId,
+              pitchType: data.hitTraxAssessment.pitchType,
+              avgExitVelo: data.hitTraxAssessment.avgExitVelo,
+              avgHardHit: data.hitTraxAssessment.avgHardHit,
+              maxVelo: data.hitTraxAssessment.maxVelo,
+              maxDist: data.hitTraxAssessment.maxDist,
+              fbAndGbPct: data.hitTraxAssessment.fbAndGbPct,
+              lineDrivePct: data.hitTraxAssessment.lineDrivePct,
+              lessonDate: new Date(data.lessonDate),
+            } as HitTraxAssessmentInsert)
+            .returning({ id: hitTraxAssessment.id });
+
+          assessmentIds.push({
+            type: "hit_trax_assessment",
+            id: hitTraxAssessmentForm.id,
+          });
+        }
+
+        if (data.veloAssessment) {
+          const [veloAssessmentForm] = await tx
+            .insert(veloAssessment)
+            .values({
+              lessonId,
+              playerId: data.playerId,
+              coachId: data.coachId,
+              intent: data.veloAssessment.intent,
+              avgVelo: data.veloAssessment.avgVelo,
+              topVelo: data.veloAssessment.topVelo,
+              strikePct: data.veloAssessment.strikePct,
+              lessonDate: new Date(data.lessonDate),
+            } as VeloAssessmentInsert)
+            .returning({ id: veloAssessment.id });
+
+          assessmentIds.push({
+            type: "velo_assessment",
+            id: veloAssessmentForm.id,
           });
         }
 

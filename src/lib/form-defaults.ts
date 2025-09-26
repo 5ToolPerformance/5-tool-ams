@@ -114,5 +114,22 @@ export const getCompleteLessonDefaults = (
     concerns: "",
   },
 
-  // Add other assessment defaults as needed...
+  // HitTrax Assessment defaults
+  hitTraxAssessment: {
+    pitchType: "",
+    avgExitVelo: undefined,
+    avgHardHit: undefined,
+    maxVelo: undefined,
+    maxDist: undefined,
+    fbAndGbPct: undefined,
+    lineDrivePct: undefined,
+  },
+
+  // Velo Assessment defaults
+  veloAssessment: {
+    intent: undefined,
+    avgVelo: undefined,
+    topVelo: undefined,
+    strikePct: undefined,
+  },
 });

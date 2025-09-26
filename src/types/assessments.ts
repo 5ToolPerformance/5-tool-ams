@@ -1,4 +1,9 @@
-import { HittingAssessmentInsert, PitchingAssessmentInsert } from "./database";
+import {
+  HitTraxAssessmentInsert,
+  HittingAssessmentInsert,
+  PitchingAssessmentInsert,
+  VeloAssessmentInsert,
+} from "./database";
 
 export interface ArmCare {
   id: string;
@@ -136,7 +141,11 @@ export type AssessmentType =
   | "arm_care"
   | "smfa"
   | "force_plate"
-  | "true_strength";
+  | "true_strength"
+  | "hitting_assessment"
+  | "pitching_assessment"
+  | "hit_trax_assessment"
+  | "velo_assessment";
 
 export type Archetype = "aerial" | "terrestrial";
 export type leftRight = "left" | "right" | "switch";
@@ -163,6 +172,14 @@ export type NewHittingAssessment = Omit<
 >;
 export type NewPitchingAssessment = Omit<
   PitchingAssessmentInsert,
+  "coachId" | "playerId" | "lessonId"
+>;
+export type NewHitTraxAssessment = Omit<
+  HitTraxAssessmentInsert,
+  "coachId" | "playerId" | "lessonId"
+>;
+export type NewVeloAssessment = Omit<
+  VeloAssessmentInsert,
   "coachId" | "playerId" | "lessonId"
 >;
 

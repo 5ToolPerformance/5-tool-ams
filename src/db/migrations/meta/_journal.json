@@ -183,6 +183,13 @@
       "when": 1758906368705,
       "tag": "0025_loose_dexter_bennett",
       "breakpoints": true
+    },
+    {
+      "idx": 26,
+      "version": "7",
+      "when": 1758908578689,
+      "tag": "0026_square_vector",
+      "breakpoints": true
     }
   ]
 }
