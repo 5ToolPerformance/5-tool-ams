@@ -3,6 +3,7 @@ import { LessonCreateData } from "@/types/lessons";
 export const getCompleteLessonDefaults = (
   coachId: string
 ): LessonCreateData => ({
+  lessonId: "",
   coachId,
   playerId: "",
   type: "strength",
