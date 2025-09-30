@@ -15,9 +15,11 @@ import { StringService } from "@/lib/services/strings";
 
 import ArmCareViewer from "../assessments/ArmCareViewer";
 import ForcePlateViewer from "../assessments/ForcePlateViewer";
+import HitTraxViewer from "../assessments/HitTraxViewer";
 import PitchingAssessmentViewer from "../assessments/PitchingAssessmentViewer";
 import SmfaViewer from "../assessments/SmfaViewer";
 import TrueStrengthViewer from "../assessments/TrueStrengthViewer";
+import VeloViewer from "../assessments/VeloViewer";
 import FormattedText from "../ui/formattedText";
 
 type LessonPageProps = {
@@ -122,6 +124,22 @@ export function LessonPageComponent({ lessonId }: LessonPageProps) {
             if (item.lessonType === "pitching_assessment") {
               return (
                 <PitchingAssessmentViewer
+                  key={(item.data as any)?.id ?? Math.random()}
+                  data={item.data as any}
+                />
+              );
+            }
+            if (item.lessonType === "velo_assessment") {
+              return (
+                <VeloViewer
+                  key={(item.data as any)?.id ?? Math.random()}
+                  data={item.data as any}
+                />
+              );
+            }
+            if (item.lessonType === "hit_trax_assessment") {
+              return (
+                <HitTraxViewer
                   key={(item.data as any)?.id ?? Math.random()}
                   data={item.data as any}
                 />
