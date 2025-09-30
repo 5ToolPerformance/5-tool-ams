@@ -8,7 +8,7 @@ interface FormattedTextProps {
 function FormattedText({ text, isShort = false }: FormattedTextProps) {
   const processText = (text: string): JSX.Element[] => {
     const lines = text.split("\n");
-    let result: JSX.Element[] = [];
+    const result: JSX.Element[] = [];
     let i = 0;
 
     while (i < lines.length) {
