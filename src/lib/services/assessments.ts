@@ -4,11 +4,13 @@ import db from "@/db";
 import {
   armCare,
   hawkinsForcePlate,
+  hitTraxAssessment,
   hittingAssessment,
   lessonAssessments,
   pitchingAssessment,
   smfaBoolean,
   trueStrength,
+  veloAssessment,
 } from "@/db/schema";
 
 /**
@@ -117,6 +119,42 @@ export class AssessmentService {
     }
   }
 
+  /**
+   * Fetch a velo assessment by its unique ID in the database.
+   * @param id - The ID of the velo assessment to fetch
+   * @returns The velo assessment object, or null if not found
+   * @throws Error if there is an error with the database query
+   */
+  static async getVeloAssessmentById(id: string) {
+    try {
+      return await db
+        .select()
+        .from(veloAssessment)
+        .where(eq(veloAssessment.id, id));
+    } catch (error) {
+      console.error("Error fetching pitching assessment by ID:", error);
+      throw new Error("Failed to fetch pitching assessment");
+    }
+  }
+
+  static async getHittraxAssessmentById(id: string) {
+    try {
+      return await db
+        .select()
+        .from(hitTraxAssessment)
+        .where(eq(hitTraxAssessment.id, id));
+    } catch (error) {
+      console.error("Error fetching hittrax assessment by ID:", error);
+      throw new Error("Failed to fetch hittrax assessment");
+    }
+  }
+
+  /**
+   * Fetch assessments for a specific lesson from the database.
+   * @param lessonId - The ID of the lesson to fetch assessments for
+   * @returns the assessments for the specified lesson
+   * @throws Error if there is an error with the database query
+   */
   static async getAssessmentsByLessonId(
     lessonId: string
   ): Promise<Array<{ lessonType: string; data: unknown | null }>> {
@@ -164,6 +202,16 @@ export class AssessmentService {
                 break;
               case "pitching_assessment":
                 rows = await AssessmentService.getPitchingAssessmentById(
+                  relation.assessmentId
+                );
+                break;
+              case "velo_assessment":
+                rows = await AssessmentService.getVeloAssessmentById(
+                  relation.assessmentId
+                );
+                break;
+              case "hit_trax_assessment":
+                rows = await AssessmentService.getHittraxAssessmentById(
                   relation.assessmentId
                 );
                 break;
