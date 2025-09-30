@@ -133,5 +133,4 @@ export const getCompleteLessonDefaults = (
     topVelo: undefined,
     strikePct: undefined,
   },
-  lessonId: "",
 });
