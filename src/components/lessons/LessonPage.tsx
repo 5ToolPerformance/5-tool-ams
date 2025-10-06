@@ -78,6 +78,7 @@ export function LessonPageComponent({ lessonId }: LessonPageProps) {
         <div className="space-y-4">
           <p>{StringService.formatLessonType(lesson.lessonType)}</p>
           <p>{DateTimeService.formatLessonDate(lesson.lessonDate)}</p>
+          <p>{lesson.coach.name}</p>
           <FormattedText text={lesson.notes} />
           <div className="flex flex-wrap gap-2">
             {lesson.assessments.map(

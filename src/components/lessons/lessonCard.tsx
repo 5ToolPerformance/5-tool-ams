@@ -50,6 +50,9 @@ const LessonCard: React.FC<LessonCardProps> = ({ lesson }) => {
               <Chip size="sm" variant="flat" color="secondary">
                 {lesson.lesson.lessonType}
               </Chip>
+              <Chip size="sm" variant="flat" color="default">
+                {lesson.coach.name || "Unknown Coach"}
+              </Chip>
             </div>
             <a href={`/lessons/${lesson.lesson.id}`}>
               <Button size="sm" variant="light">
