@@ -1,4 +1,6 @@
 import {
+  CatchingAssessmentInsert,
+  FieldingAssessmentInsert,
   HitTraxAssessmentInsert,
   HittingAssessmentInsert,
   PitchingAssessmentInsert,
@@ -128,15 +130,6 @@ export interface GeneralAssessment {
   createdOn: Date;
 }
 
-export interface PitchingAssessment extends GeneralAssessment {
-  core?: string;
-  stride?: string;
-}
-
-export interface CatchingAssessment extends GeneralAssessment {
-  arm?: string;
-}
-
 export type AssessmentType =
   | "arm_care"
   | "smfa"
@@ -145,7 +138,9 @@ export type AssessmentType =
   | "hitting_assessment"
   | "pitching_assessment"
   | "hit_trax_assessment"
-  | "velo_assessment";
+  | "velo_assessment"
+  | "fielding_assessment"
+  | "catching_assessment";
 
 export type Archetype = "aerial" | "terrestrial";
 export type leftRight = "left" | "right" | "switch";
@@ -180,6 +175,16 @@ export type NewHitTraxAssessment = Omit<
 >;
 export type NewVeloAssessment = Omit<
   VeloAssessmentInsert,
+  "coachId" | "playerId" | "lessonId"
+>;
+
+export type NewFieldingAssessment = Omit<
+  FieldingAssessmentInsert,
+  "coachId" | "playerId" | "lessonId"
+>;
+
+export type NewCatchingAssessment = Omit<
+  CatchingAssessmentInsert,
   "coachId" | "playerId" | "lessonId"
 >;
 

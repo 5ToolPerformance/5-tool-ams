@@ -21,6 +21,8 @@ export {
 export { default as sessions } from "./sessions";
 export { rolesEnum, default as users, usersRelations } from "./users";
 
+export { default as catchingAssessment } from "./assessments/catchingAssessment";
+export { default as fieldingAssessment } from "./assessments/fieldingAssessment";
 export { default as hittingAssessment } from "./assessments/hittingAssessment";
 export { default as hitTraxAssessment } from "./assessments/hitTraxAssessment";
 export {

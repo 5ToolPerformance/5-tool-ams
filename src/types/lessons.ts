@@ -1,5 +1,7 @@
 import {
   NewArmCare,
+  NewCatchingAssessment,
+  NewFieldingAssessment,
   NewForcePlate,
   NewHitTraxAssessment,
   NewHittingAssessment,
@@ -26,6 +28,7 @@ export const LESSON_TYPES = [
   { value: "hitting", label: "Hitting" },
   { value: "pitching", label: "Pitching" },
   { value: "fielding", label: "Fielding" },
+  { value: "catching", label: "Catching" },
 ] as const;
 
 export const DATE_RANGE_ENUM = [
@@ -69,6 +72,8 @@ export interface LessonCreateData extends BaseLessonData {
   pitchingAssessment?: NewPitchingAssessment;
   hitTraxAssessment?: NewHitTraxAssessment;
   veloAssessment?: NewVeloAssessment;
+  fieldingAssessment?: NewFieldingAssessment;
+  catchingAssessment?: NewCatchingAssessment;
 }
 
 /**

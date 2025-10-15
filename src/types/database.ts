@@ -1,5 +1,7 @@
 import {
   armCare,
+  catchingAssessment,
+  fieldingAssessment,
   hawkinsForcePlate,
   hitTraxAssessment,
   hittingAssessment,
@@ -60,3 +62,11 @@ export type VeloAssessmentInsert = typeof veloAssessment.$inferInsert;
 // HitTrax Assessment Db schema types
 export type HitTraxAssessmentSelect = typeof hitTraxAssessment.$inferSelect;
 export type HitTraxAssessmentInsert = typeof hitTraxAssessment.$inferInsert;
+
+// Fielding Assessment Db schema types
+export type FieldingAssessmentSelect = typeof fieldingAssessment.$inferSelect;
+export type FieldingAssessmentInsert = typeof fieldingAssessment.$inferInsert;
+
+// Catching Assessment Db schema types
+export type CatchingAssessmentSelect = typeof catchingAssessment.$inferSelect;
+export type CatchingAssessmentInsert = typeof catchingAssessment.$inferInsert;

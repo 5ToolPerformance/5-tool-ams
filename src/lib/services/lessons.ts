@@ -3,6 +3,8 @@ import { desc, eq } from "drizzle-orm";
 import db from "@/db";
 import {
   armCare,
+  catchingAssessment,
+  fieldingAssessment,
   hawkinsForcePlate,
   hitTraxAssessment,
   lesson,
@@ -17,6 +19,8 @@ import {
 import { AssessmentType } from "@/types/assessments";
 import {
   ArmCareInsert,
+  CatchingAssessmentInsert,
+  FieldingAssessmentInsert,
   ForcePlateInsert,
   HitTraxAssessmentInsert,
   PitchingAssessmentInsert,
@@ -253,6 +257,56 @@ export class LessonService {
           });
         }
 
+        if (data.fieldingAssessment) {
+          const [fieldingAssessmentForm] = await tx
+            .insert(fieldingAssessment)
+            .values({
+              lessonId,
+              playerId: data.playerId,
+              coachId: data.coachId,
+              glovework: data.fieldingAssessment.glovework,
+              footwork: data.fieldingAssessment.footwork,
+              throwing: data.fieldingAssessment.throwing,
+              throwdown_counter: data.fieldingAssessment.throwdown_counter,
+              live: data.fieldingAssessment.live,
+              consistency: data.fieldingAssessment.consistency,
+              situational: data.fieldingAssessment.situational,
+              lessonDate: data.lessonDate,
+            } as FieldingAssessmentInsert)
+            .returning({ id: fieldingAssessment.id });
+
+          assessmentIds.push({
+            type: "fielding_assessment",
+            id: fieldingAssessmentForm.id,
+          });
+        }
+
+        if (data.catchingAssessment) {
+          const [catchingAssessmentForm] = await tx
+            .insert(catchingAssessment)
+            .values({
+              lessonId,
+              playerId: data.playerId,
+              coachId: data.coachId,
+              feel: data.catchingAssessment.feel,
+              last4: data.catchingAssessment.last4,
+              readyBy: data.catchingAssessment.readyBy,
+              catchThrow: data.catchingAssessment.catchThrow,
+              receiving: data.catchingAssessment.receiving,
+              blocking: data.catchingAssessment.blocking,
+              iq: data.catchingAssessment.iq,
+              mobility: data.catchingAssessment.mobility,
+              numThrows: data.catchingAssessment.numThrows,
+              lessonDate: data.lessonDate,
+            } as CatchingAssessmentInsert)
+            .returning({ id: catchingAssessment.id });
+
+          assessmentIds.push({
+            type: "catching_assessment",
+            id: catchingAssessmentForm.id,
+          });
+        }
+
         if (assessmentIds.length > 0) {
           await tx.insert(lessonAssessments).values(
             assessmentIds.map(({ type, id }) => ({
@@ -414,6 +468,7 @@ export class LessonService {
       "hitting",
       "pitching",
       "fielding",
+      "catching",
     ];
     if (data.type && !validTypes.includes(data.type)) {
       errors.push("Invalid lesson type");

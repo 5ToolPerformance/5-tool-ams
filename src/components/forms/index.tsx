@@ -23,6 +23,8 @@ import { User } from "@/types/users";
 
 // Extracted assessment subforms
 import ArmCareAssessmentForm from "./ArmCareAssessmentForm";
+import CatchingAssessmentForm from "./CatchingAssessmentForm";
+import FieldingAssessmentForm from "./FieldingAssessmentForm";
 import ForcePlateAssessmentForm from "./ForcePlateAssessmentForm";
 import HitTraxAssessmentForm from "./HitTraxAssessmentForm";
 import HittingAssessmentForm from "./HittingAssessmentForm";
@@ -43,7 +45,9 @@ type AssessmentKey =
   | "hittingAssessment"
   | "pitchingAssessment"
   | "hitTraxAssessment"
-  | "veloAssessment";
+  | "veloAssessment"
+  | "fieldingAssessment"
+  | "catchingAssessment";
 
 const ALL_ASSESSMENTS: { key: AssessmentKey; label: string }[] = [
   { key: "armCare", label: "ArmCare" },
@@ -54,6 +58,8 @@ const ALL_ASSESSMENTS: { key: AssessmentKey; label: string }[] = [
   { key: "pitchingAssessment", label: "Pitching" },
   { key: "hitTraxAssessment", label: "HitTrax" },
   { key: "veloAssessment", label: "Velo" },
+  { key: "fieldingAssessment", label: "Fielding" },
+  { key: "catchingAssessment", label: "Catching" },
 ];
 
 const ModularLessonForm: React.FC<ModularLessonFormProps> = ({ coachId }) => {
@@ -87,6 +93,12 @@ const ModularLessonForm: React.FC<ModularLessonFormProps> = ({ coachId }) => {
           : undefined,
         veloAssessment: selectedAssessments.has("veloAssessment")
           ? completeData.veloAssessment
+          : undefined,
+        fieldingAssessment: selectedAssessments.has("fieldingAssessment")
+          ? completeData.fieldingAssessment
+          : undefined,
+        catchingAssessment: selectedAssessments.has("catchingAssessment")
+          ? completeData.catchingAssessment
           : undefined,
         lessonId: completeData.lessonId,
       } as LessonCreateData;
@@ -399,6 +411,14 @@ const ModularLessonForm: React.FC<ModularLessonFormProps> = ({ coachId }) => {
 
           {selectedAssessments.has("veloAssessment") && (
             <VeloAssessmentForm form={form} />
+          )}
+
+          {selectedAssessments.has("fieldingAssessment") && (
+            <FieldingAssessmentForm form={form} />
+          )}
+
+          {selectedAssessments.has("catchingAssessment") && (
+            <CatchingAssessmentForm form={form} />
           )}
         </div>
 
