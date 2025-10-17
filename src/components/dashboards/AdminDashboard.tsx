@@ -155,14 +155,16 @@ export default function AdminDashboard({ adminId }: Props) {
                     <TableRow key={c.id}>
                       <TableCell>
                         <div className="flex items-center gap-3">
-                          <HeroUser
-                            name={c.name || "Unknown Coach"}
-                            description={c.id}
-                            avatarProps={{
-                              showFallback: !c.image,
-                              src: c.image || undefined,
-                            }}
-                          />
+                          <a href={`/coaches/${c.id}`}>
+                            <HeroUser
+                              name={c.name || "Unknown Coach"}
+                              description={c.id}
+                              avatarProps={{
+                                showFallback: !c.image,
+                                src: c.image || undefined,
+                              }}
+                            />
+                          </a>
                         </div>
                       </TableCell>
                       <TableCell className="text-right font-semibold">
