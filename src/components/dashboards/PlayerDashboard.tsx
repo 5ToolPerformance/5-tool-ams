@@ -13,61 +13,38 @@ import {
 } from "@heroui/react";
 import { BarChart3, BookOpen, ChevronDown, Dumbbell } from "lucide-react";
 
-import { ApiService } from "@/lib/services/api";
-import { MotorPreferencesSelect, PlayerSelect } from "@/types/database";
+import { useMotorPreferences } from "@/hooks";
+import { PlayerSelect } from "@/types/database";
 
 import MotorPreferencesModal from "../assessments/motorPreferencesAssessment";
 import LessonsSection from "../lessonsComponent";
 import OverviewSection from "../overviewSection";
 import PlansSection from "../plans/plansComponent";
+import PlayerCreateForm from "../players/PlayerCreateForm";
 import PlayerCard from "../players/playerCard";
 import { MotorPreferenceCard } from "../ui/MotorPreferenceCard";
-import PlayerCreateForm from "../players/PlayerCreateForm";
 
 interface PlayerDashboardProps {
   player: PlayerSelect;
   coachId: string | undefined;
 }
 
-const PlayerDashboard: React.FC<PlayerDashboardProps> = ({
+export default function PlayerDashboard({
   player,
   coachId,
-}) => {
+}: PlayerDashboardProps) {
   const [selectedTab, setSelectedTab] = useState<string>("overview");
   const [currentPlayer, setCurrentPlayer] = useState<PlayerSelect>(player);
-  const [motorPreference, setMotorPreference] =
-    useState<MotorPreferencesSelect>();
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+  const {
+    data: motorPreferences,
+    isLoading: motorPreferencesLoading,
+    error: motorPreferencesError,
+  } = useMotorPreferences(currentPlayer.id);
 
   // Keep local player in sync if prop changes
   useEffect(() => {
     setCurrentPlayer(player);
   }, [player]);
-
-  useEffect(() => {
-    const fetchPlayerData = async () => {
-      if (!currentPlayer?.id) {
-        setError("Player ID is missing");
-        setLoading(false);
-        return;
-      }
-      try {
-        setLoading(true);
-        // Example: Fetch player data by ID
-        const data = await ApiService.fetchMotorPreferenceById(currentPlayer.id);
-
-        setMotorPreference(data);
-      } catch (err) {
-        setError("Failed to fetch player data");
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchPlayerData();
-  }, [currentPlayer.id]);
 
   const tabOptions = [
     { key: "overview", label: "Overview", icon: BarChart3 },
@@ -92,12 +69,12 @@ const PlayerDashboard: React.FC<PlayerDashboardProps> = ({
     (option) => option.key === selectedTab
   );
 
-  if (loading) {
+  if (motorPreferencesLoading) {
     return <div>Loading...</div>;
   }
 
-  if (error) {
-    return <div>Error: {error}</div>;
+  if (motorPreferencesError) {
+    return <div>Error: {motorPreferencesError}</div>;
   }
 
   return (
@@ -113,8 +90,8 @@ const PlayerDashboard: React.FC<PlayerDashboardProps> = ({
             <PlayerCard player={currentPlayer} size="lg" />
           </div>
           <div>
-            {motorPreference ? (
-              <MotorPreferenceCard motorPreference={motorPreference} />
+            {motorPreferences ? (
+              <MotorPreferenceCard motorPreference={motorPreferences} />
             ) : (
               <MotorPreferencesModal
                 playerId={currentPlayer.id}
@@ -207,6 +184,4 @@ const PlayerDashboard: React.FC<PlayerDashboardProps> = ({
       </div>
     </div>
   );
-};
-
-export default PlayerDashboard;
+}

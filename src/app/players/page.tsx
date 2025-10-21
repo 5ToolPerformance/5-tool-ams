@@ -1,51 +1,35 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 
 import { Input } from "@heroui/react";
 import { Search } from "lucide-react";
 
 import PlayerCreateForm from "@/components/players/PlayerCreateForm";
 import PlayerProfileCard from "@/components/players/playerCard";
-import { ApiService } from "@/lib/services/api";
-import { PlayerSelect } from "@/types/database";
+import { useAllPlayers } from "@/hooks";
 
 export default function PlayersPage() {
-  const [players, setPlayers] = useState<PlayerSelect[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const {
+    data: playersData,
+    isLoading: playersLoading,
+    error: playersError,
+    mutate,
+  } = useAllPlayers();
 
-  useEffect(() => {
-    const fetchPlayers = async () => {
-      try {
-        setIsLoading(true);
-        const playerData = await ApiService.fetchAllPlayers();
-        setPlayers(playerData);
-      } catch (err) {
-        console.error("Failed to fetch players:", err);
-        setError("Failed to load players. Please try again later.");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchPlayers();
-  }, []);
-
-  console.log(players);
   const [searchTerm, setSearchTerm] = useState("");
 
   const filteredPlayers = useMemo(() => {
-    if (isLoading) return [];
-    if (!searchTerm) return players;
+    if (playersLoading) return [];
+    if (!searchTerm) return playersData;
     const term = searchTerm.toLowerCase();
-    return players.filter(
+    return playersData.filter(
       (player) =>
         player.firstName?.toLowerCase().includes(term) ||
         player.lastName?.toLowerCase().includes(term)
     );
-  }, [players, searchTerm, isLoading]);
+  }, [playersData, searchTerm]);
 
   return (
     <div className="container mx-auto px-4 py-6">
@@ -63,20 +47,20 @@ export default function PlayersPage() {
         </div>
         <PlayerCreateForm
           onPlayerCreated={(newPlayer) => {
-            setPlayers((prev) => [newPlayer, ...prev]);
+            mutate([newPlayer, ...(playersData || [])], { revalidate: true });
           }}
         />
       </div>
 
-      {isLoading && (
+      {playersLoading && (
         <div className="flex justify-center py-8">
           <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
         </div>
       )}
 
-      {error && (
+      {playersError && (
         <div className="rounded-md bg-red-50 p-4">
-          <p className="text-sm text-red-700">{error}</p>
+          <p className="text-sm text-red-700">{playersError}</p>
         </div>
       )}
 
