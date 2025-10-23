@@ -23,3 +23,55 @@ export function usePlayerWithInformationById(id: string) {
     ApiService.fetchPlayerWithInformationById(id)
   );
 }
+
+const fetcher = (url: string) => fetch(url).then((res) => res.json());
+
+/**
+ * Fetches all players from the API.
+ * @returns An array of Player objects.
+ */
+export function usePlayers() {
+  const { data, error, isLoading } = useSWR("/api/players", fetcher);
+
+  return {
+    players: data?.data ?? [],
+    isLoading,
+    error,
+  };
+}
+
+/**
+ * Fetches a player by ID from the API.
+ * @param id The ID of the player to fetch.
+ * @returns The Player object if found, otherwise null.
+ */
+export function usePlayerById(id: string) {
+  const { data, error, isLoading } = useSWR(
+    id ? `/api/players/${id}` : null,
+    fetcher
+  );
+
+  return {
+    player: data?.data ?? null,
+    isLoading,
+    error,
+  };
+}
+
+/**
+ * Fetches a player's motor preferences by player ID from the API.
+ * @param id The ID of the player to fetch.
+ * @returns The MotorPreferences object if found, otherwise null.
+ */
+export function useMotorPreferences2(id: string) {
+  const { data, error, isLoading } = useSWR(
+    id ? `/api/players/${id}/motor-preferences` : null,
+    fetcher
+  );
+
+  return {
+    motorPreferences: data?.data ?? null,
+    isLoading,
+    error,
+  };
+}
