@@ -1,5 +1,7 @@
 "use client";
 
+import { useState } from "react";
+
 import {
   Avatar,
   Button,
@@ -9,6 +11,14 @@ import {
   Chip,
   CircularProgress,
   Divider,
+  Tab,
+  Table,
+  TableBody,
+  TableCell,
+  TableColumn,
+  TableHeader,
+  TableRow,
+  Tabs,
 } from "@heroui/react";
 import { Bar, BarChart, XAxis, YAxis } from "recharts";
 
@@ -18,6 +28,7 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 import { useLessonsByCoachId, useUserById } from "@/hooks";
+import { useCoachPlayerLessonCounts } from "@/hooks/coaches";
 import { CoachesService } from "@/lib/services/coaches";
 import { DateTimeService } from "@/lib/services/date-time";
 import { StringService } from "@/lib/services/strings";
@@ -40,7 +51,15 @@ export default function CoachDashboard({ coachId }: Props) {
     error: lessonsError,
   } = useLessonsByCoachId(coachId);
 
-  if (coachLoading || lessonsLoading) {
+  const {
+    lessonCounts,
+    isLoading: lessonCountsLoading,
+    error: lessonCountsError,
+  } = useCoachPlayerLessonCounts(coachId);
+
+  const [selectedTab, setSelectedTab] = useState("weekly");
+
+  if (coachLoading || lessonsLoading || lessonCountsLoading) {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <CircularProgress size="lg" />
@@ -48,7 +67,7 @@ export default function CoachDashboard({ coachId }: Props) {
     );
   }
 
-  if (coachError || lessonsError) {
+  if (coachError || lessonsError || lessonCountsError) {
     return (
       <Card className="mx-auto mt-8 max-w-4xl">
         <CardBody>
@@ -141,19 +160,70 @@ export default function CoachDashboard({ coachId }: Props) {
             <div className="w-2/3">
               {/* Chart Display */}
               <div className="rounded-lg border p-4">
-                <h3 className="mb-4 text-lg font-semibold">Weekly Lessons</h3>
-                <ChartContainer config={chartConfig} className="h-[300px]">
-                  <BarChart data={weeklyLessonsData}>
-                    <XAxis dataKey="day" />
-                    <YAxis />
-                    <ChartTooltip content={<ChartTooltipContent />} />
-                    <Bar
-                      dataKey="lessons"
-                      fill="var(--color-lessons)"
-                      radius={[4, 4, 0, 0]}
-                    />
-                  </BarChart>
-                </ChartContainer>
+                <Tabs
+                  selectedKey={selectedTab}
+                  onSelectionChange={(key) => setSelectedTab(key as string)}
+                  aria-label="Dashboard views"
+                  className="mb-4"
+                >
+                  <Tab key="weekly" title="Weekly Lessons">
+                    <div className="mt-4">
+                      <ChartContainer
+                        config={chartConfig}
+                        className="h-[300px]"
+                      >
+                        <BarChart data={weeklyLessonsData}>
+                          <XAxis dataKey="day" />
+                          <YAxis />
+                          <ChartTooltip content={<ChartTooltipContent />} />
+                          <Bar
+                            dataKey="lessons"
+                            fill="var(--color-lessons)"
+                            radius={[4, 4, 0, 0]}
+                          />
+                        </BarChart>
+                      </ChartContainer>
+                    </div>
+                  </Tab>
+
+                  <Tab key="player-counts" title="Lessons by Player">
+                    <div className="mt-4 h-[300px] overflow-y-auto">
+                      {lessonCountsLoading ? (
+                        <div className="flex h-full items-center justify-center">
+                          <p className="text-gray-500">Loading...</p>
+                        </div>
+                      ) : lessonCountsError ? (
+                        <div className="flex h-full items-center justify-center">
+                          <p className="text-red-500">
+                            Error loading lesson counts
+                          </p>
+                        </div>
+                      ) : lessonCounts && lessonCounts.length > 0 ? (
+                        <Table
+                          aria-label="Lesson counts by player"
+                          removeWrapper
+                        >
+                          <TableHeader>
+                            <TableColumn>PLAYER</TableColumn>
+                            <TableColumn>LESSONS COMPLETED</TableColumn>
+                          </TableHeader>
+                          <TableBody>
+                            {lessonCounts.map((stat) => (
+                              <TableRow key={stat.playerId}>
+                                <TableCell>{stat.playerName}</TableCell>
+                                <TableCell>{stat.lessonCount}</TableCell>
+                              </TableRow>
+                            ))}
+                          </TableBody>
+                        </Table>
+                      ) : (
+                        <div className="flex h-full items-center justify-center">
+                          <p className="text-gray-500">No lessons found</p>
+                        </div>
+                      )}
+                    </div>
+                  </Tab>
+                </Tabs>
               </div>
             </div>
           </div>

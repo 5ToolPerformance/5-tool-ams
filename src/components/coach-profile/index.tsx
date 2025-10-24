@@ -1,7 +1,21 @@
 "use client";
 
-import { Card, CardBody, CardHeader, Chip, Divider, User } from "@heroui/react";
+import {
+  Card,
+  CardBody,
+  CardHeader,
+  Chip,
+  Divider,
+  Table,
+  TableBody,
+  TableCell,
+  TableColumn,
+  TableHeader,
+  TableRow,
+  User,
+} from "@heroui/react";
 
+import { useCoachPlayerLessonCounts } from "@/hooks/coaches";
 import { useLessonsByCoachId } from "@/hooks/lessons";
 import { useUserById } from "@/hooks/players";
 
@@ -18,8 +32,13 @@ export default function CoachProfile({ coachId }: { coachId: string }) {
     isLoading: lessonsLoading,
     error: lessonsError,
   } = useLessonsByCoachId(coachId);
+  const {
+    lessonCounts,
+    isLoading: lessonCountsLoading,
+    error: lessonCountsError,
+  } = useCoachPlayerLessonCounts(coachId);
 
-  if (coachLoading || lessonsLoading) {
+  if (coachLoading || lessonsLoading || lessonCountsLoading) {
     return (
       <div className="flex min-h-[400px] items-center justify-center">
         <div className="text-default-500">Loading...</div>
@@ -27,11 +46,14 @@ export default function CoachProfile({ coachId }: { coachId: string }) {
     );
   }
 
-  if (coachError || lessonsError) {
+  if (coachError || lessonsError || lessonCountsError) {
     return (
       <div className="flex min-h-[400px] items-center justify-center">
         <div className="text-red-500">
-          Error: {coachError?.message || lessonsError?.message}
+          Error:{" "}
+          {coachError?.message ||
+            lessonsError?.message ||
+            lessonCountsError?.message}
         </div>
       </div>
     );
@@ -90,9 +112,41 @@ export default function CoachProfile({ coachId }: { coachId: string }) {
               </div>
             </div>
             <div className="rounded-lg bg-default-50 p-4 text-center">
-              <div className="text-2xl font-bold text-success">XX</div>
+              <div className="text-2xl font-bold text-success">
+                {lessonCounts?.length || 0}
+              </div>
               <div className="text-sm text-default-600">Clients</div>
             </div>
+          </div>
+        </CardBody>
+      </Card>
+
+      <Card className="shadow-sm">
+        <CardHeader className="pb-4">
+          <h2 className="text-lg font-semibold">Insights</h2>
+        </CardHeader>
+        <CardBody className="pt-0">
+          <div className="w-[1/2]">
+            <Table
+              aria-label="Lesson counts by player"
+              removeWrapper
+              classNames={{
+                base: "max-h-[300px] overflow-auto",
+              }}
+            >
+              <TableHeader>
+                <TableColumn>PLAYER</TableColumn>
+                <TableColumn>LESSONS</TableColumn>
+              </TableHeader>
+              <TableBody>
+                {lessonCounts.map((stat) => (
+                  <TableRow key={stat.playerId}>
+                    <TableCell>{stat.playerName}</TableCell>
+                    <TableCell>{stat.lessonCount}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
           </div>
         </CardBody>
       </Card>
