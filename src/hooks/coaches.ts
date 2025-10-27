@@ -14,3 +14,13 @@ export function useCoachPlayerLessonCounts(id: string) {
     error,
   };
 }
+
+export function useCoaches() {
+  const { data, error, isLoading } = useSWR("/api/coaches", fetcher);
+
+  return {
+    coaches: data?.data ?? [],
+    isLoading,
+    error,
+  };
+}

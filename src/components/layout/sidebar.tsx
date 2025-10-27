@@ -8,6 +8,7 @@ import {
   IconBallBaseball,
   IconHome,
   IconPackage,
+  IconPencil,
   IconUser,
   IconUsers,
   IconX,
@@ -53,6 +54,12 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
         label: "Create Lesson",
         href: "/create-lesson",
         icon: IconBallBaseball,
+        target: "_self",
+      },
+      {
+        label: "Player Writeups",
+        href: "/player-writeups",
+        icon: IconPencil,
         target: "_self",
       },
       {
