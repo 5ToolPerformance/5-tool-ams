@@ -1,6 +1,12 @@
 "use client";
 
-import { Autocomplete, AutocompleteItem, Input, Textarea, Button } from "@heroui/react";
+import {
+  Autocomplete,
+  AutocompleteItem,
+  Button,
+  Input,
+  Textarea,
+} from "@heroui/react";
 import { useForm } from "@tanstack/react-form";
 
 import { useCoaches, usePlayers } from "@/hooks";
@@ -69,7 +75,7 @@ export default function PlayerWriteupForm({
         e.stopPropagation();
         form.handleSubmit();
       }}
-      className="space-y-6 max-w-3xl mx-auto p-4"
+      className="mx-auto max-w-3xl space-y-6 p-4"
     >
       <form.Field
         name="player_id"
@@ -142,7 +148,10 @@ export default function PlayerWriteupForm({
           <div className="space-y-4">
             {field.state.value.map((_, i) => {
               return (
-                <div key={i} className="rounded-medium border border-default-200 p-4 bg-content1">
+                <div
+                  key={i}
+                  className="rounded-medium border border-default-200 bg-content1 p-4"
+                >
                   <form.Field name={`skillset_writeups.skillset[${i}].title`}>
                     {(field) => (
                       <Input
@@ -179,6 +188,65 @@ export default function PlayerWriteupForm({
               className="mt-1"
             >
               Add skillset
+            </Button>
+          </div>
+        )}
+      </form.Field>
+      <form.Field name="goal_writeups.goal" mode="array">
+        {(field) => (
+          <div className="space-y-4">
+            {field.state.value.map((_, i) => {
+              return (
+                <div
+                  key={i}
+                  className="rounded-medium border border-default-200 bg-content1 p-4"
+                >
+                  <form.Field name={`goal_writeups.goal[${i}].title`}>
+                    {(field) => (
+                      <Input
+                        label="Title"
+                        value={field.state.value || ""}
+                        onValueChange={field.handleChange}
+                        isInvalid={!!field.state.meta.errors.length}
+                        errorMessage={field.state.meta.errors.join(", ")}
+                        isRequired
+                        className="mb-3"
+                      />
+                    )}
+                  </form.Field>
+                  <form.Field name={`goal_writeups.goal[${i}].description`}>
+                    {(field) => (
+                      <Textarea
+                        label="Description"
+                        value={field.state.value || ""}
+                        onValueChange={field.handleChange}
+                        minRows={3}
+                        className="mb-1"
+                      />
+                    )}
+                  </form.Field>
+                  <Button
+                    onPress={() => field.removeValue(i)}
+                    type="button"
+                    color="danger"
+                    variant="flat"
+                    size="sm"
+                    className="mt-1"
+                  >
+                    Remove goal
+                  </Button>
+                </div>
+              );
+            })}
+            <Button
+              onPress={() => field.pushValue({ title: "", description: "" })}
+              type="button"
+              color="primary"
+              variant="flat"
+              size="sm"
+              className="mt-1"
+            >
+              Add goal
             </Button>
           </div>
         )}

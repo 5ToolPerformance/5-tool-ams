@@ -31,3 +31,4 @@ export {
 } from "./assessments/pitchingAssessment";
 export { default as veloAssessment } from "./assessments/veloAssessment";
 export { default as playerMeasurements } from "./players/playerMeasurements";
+export { default as writeups } from "./writeups";

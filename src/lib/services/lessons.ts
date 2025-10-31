@@ -582,6 +582,20 @@ export class LessonService {
     }
   }
 
+  static async getLastLessonsByPlayer(playerId: string, count: number) {
+    try {
+      return await db
+        .select()
+        .from(lesson)
+        .where(eq(lesson.playerId, playerId))
+        .orderBy(desc(lesson.lessonDate))
+        .limit(count);
+    } catch (error) {
+      console.error("Error fetching lessons by user with join:", error);
+      throw new Error("Failed to fetch lessons");
+    }
+  }
+
   /**
    * Fetch the number of lessons that a player has completed
    * @param userId - The ID of the player to get lesson count for

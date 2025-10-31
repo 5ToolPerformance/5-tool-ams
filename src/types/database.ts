@@ -13,6 +13,7 @@ import {
   trueStrength,
   users,
   veloAssessment,
+  writeups,
 } from "@/db/schema";
 
 // User Db schema types
@@ -70,3 +71,7 @@ export type FieldingAssessmentInsert = typeof fieldingAssessment.$inferInsert;
 // Catching Assessment Db schema types
 export type CatchingAssessmentSelect = typeof catchingAssessment.$inferSelect;
 export type CatchingAssessmentInsert = typeof catchingAssessment.$inferInsert;
+
+// Writeup Db schema types
+export type WriteupSelect = typeof writeups.$inferSelect;
+export type WriteupInsert = typeof writeups.$inferInsert;
