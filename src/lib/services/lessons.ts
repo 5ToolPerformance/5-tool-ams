@@ -15,6 +15,7 @@ import {
   trueStrength,
   users,
   veloAssessment,
+  writeups,
 } from "@/db/schema";
 import { AssessmentType } from "@/types/assessments";
 import {
@@ -593,6 +594,18 @@ export class LessonService {
     } catch (error) {
       console.error("Error fetching lessons by user with join:", error);
       throw new Error("Failed to fetch lessons");
+    }
+  }
+
+  static async getWriteupsByPlayer(playerId: string) {
+    try {
+      return await db
+        .select()
+        .from(writeups)
+        .where(eq(writeups.playerId, playerId));
+    } catch (error) {
+      console.error("Error fetching writeups by player:", error);
+      throw new Error("Failed to fetch writeups");
     }
   }
 
