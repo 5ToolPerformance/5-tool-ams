@@ -4,40 +4,45 @@ import {
   Autocomplete,
   AutocompleteItem,
   Button,
+  CircularProgress,
   Input,
+  Select,
+  SelectItem,
   Textarea,
 } from "@heroui/react";
 import { useForm } from "@tanstack/react-form";
 
 import { useCoaches, usePlayers } from "@/hooks";
+import { LESSON_TYPES, LessonType } from "@/types/lessons";
 
 interface PlayerWriteupFormProps {
   coachId: string | number | null | undefined;
   playerId?: string | number | null | undefined;
 }
 
-interface SkillsetWriteup {
+interface Section {
   title: string;
   notes: string;
 }
 
-interface GoalWriteup {
+interface Goal {
   title: string;
   description: string;
 }
 
-interface PlayerWriteupData {
+export interface PlayerWriteupData {
   coach_id: string | number | null | undefined;
   player_id: string | number | null | undefined;
-  skillset_writeups: SkillsetWriteup[];
-  goal_writeups: GoalWriteup[];
+  type: LessonType;
+  sections: Section[];
+  goals: Goal[];
   notes: string;
 }
 
-const defaultSkillsetWriteup: { skillset: Array<SkillsetWriteup> } = {
-  skillset: [],
+const defaultSection: { section: Array<Section> } = {
+  section: [],
 };
-const defaultGoalWriteup: { goal: Array<GoalWriteup> } = { goal: [] };
+const defaultGoal: { goal: Array<Goal> } = { goal: [] };
 
 export default function PlayerWriteupForm({
   coachId,
@@ -59,14 +64,36 @@ export default function PlayerWriteupForm({
     defaultValues: {
       coach_id: coachId,
       player_id: playerId || null,
-      skillset_writeups: defaultSkillsetWriteup,
-      goal_writeups: defaultGoalWriteup,
+      type: "hitting",
+      sections: defaultSection,
+      goals: defaultGoal,
       notes: "",
     },
     onSubmit: ({ value }) => {
-      alert(JSON.stringify(value));
+      fetch("/api/writeups", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(value),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          console.log("Success:", data);
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+        });
     },
   });
+
+  if (playersLoading || coachesLoading) {
+    return <CircularProgress />;
+  }
+
+  if (playersError || coachesError) {
+    return <div>Error: {playersError || coachesError}</div>;
+  }
 
   return (
     <form
@@ -143,7 +170,33 @@ export default function PlayerWriteupForm({
           </Autocomplete>
         )}
       </form.Field>
-      <form.Field name="skillset_writeups.skillset" mode="array">
+      <form.Field
+        name="type"
+        validators={{
+          onChange: ({ value }) =>
+            !value ? "Please select a lesson type" : undefined,
+        }}
+      >
+        {(field) => (
+          <Select
+            label="Lesson Type"
+            placeholder="Select lesson type"
+            selectedKeys={[field.state.value]}
+            onSelectionChange={(keys) => {
+              const selectedKey = Array.from(keys)[0] as LessonType;
+              field.handleChange(selectedKey);
+            }}
+            isInvalid={!!field.state.meta.errors.length}
+            errorMessage={field.state.meta.errors.join(", ")}
+            isRequired
+          >
+            {LESSON_TYPES.map((type) => (
+              <SelectItem key={type.value}>{type.label}</SelectItem>
+            ))}
+          </Select>
+        )}
+      </form.Field>
+      <form.Field name="sections.section" mode="array">
         {(field) => (
           <div className="space-y-4">
             {field.state.value.map((_, i) => {
@@ -152,7 +205,7 @@ export default function PlayerWriteupForm({
                   key={i}
                   className="rounded-medium border border-default-200 bg-content1 p-4"
                 >
-                  <form.Field name={`skillset_writeups.skillset[${i}].title`}>
+                  <form.Field name={`sections.section[${i}].title`}>
                     {(field) => (
                       <Input
                         label="Title"
@@ -165,7 +218,7 @@ export default function PlayerWriteupForm({
                       />
                     )}
                   </form.Field>
-                  <form.Field name={`skillset_writeups.skillset[${i}].notes`}>
+                  <form.Field name={`sections.section[${i}].notes`}>
                     {(field) => (
                       <Textarea
                         label="Notes"
@@ -176,6 +229,16 @@ export default function PlayerWriteupForm({
                       />
                     )}
                   </form.Field>
+                  <Button
+                    onPress={() => field.removeValue(i)}
+                    type="button"
+                    color="danger"
+                    variant="flat"
+                    size="sm"
+                    className="mt-1"
+                  >
+                    Remove section
+                  </Button>
                 </div>
               );
             })}
@@ -187,12 +250,12 @@ export default function PlayerWriteupForm({
               size="sm"
               className="mt-1"
             >
-              Add skillset
+              Add section
             </Button>
           </div>
         )}
       </form.Field>
-      <form.Field name="goal_writeups.goal" mode="array">
+      <form.Field name="goals.goal" mode="array">
         {(field) => (
           <div className="space-y-4">
             {field.state.value.map((_, i) => {
@@ -201,7 +264,7 @@ export default function PlayerWriteupForm({
                   key={i}
                   className="rounded-medium border border-default-200 bg-content1 p-4"
                 >
-                  <form.Field name={`goal_writeups.goal[${i}].title`}>
+                  <form.Field name={`goals.goal[${i}].title`}>
                     {(field) => (
                       <Input
                         label="Title"
@@ -214,7 +277,7 @@ export default function PlayerWriteupForm({
                       />
                     )}
                   </form.Field>
-                  <form.Field name={`goal_writeups.goal[${i}].description`}>
+                  <form.Field name={`goals.goal[${i}].description`}>
                     {(field) => (
                       <Textarea
                         label="Description"
@@ -249,6 +312,16 @@ export default function PlayerWriteupForm({
               Add goal
             </Button>
           </div>
+        )}
+      </form.Field>
+      <form.Field name="notes">
+        {(field) => (
+          <Textarea
+            label="Notes"
+            value={field.state.value || ""}
+            onValueChange={field.handleChange}
+            minRows={3}
+          />
         )}
       </form.Field>
       <form.Subscribe

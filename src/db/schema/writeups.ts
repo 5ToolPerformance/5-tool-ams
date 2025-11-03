@@ -11,6 +11,7 @@ const writeups = pgTable("writeups", {
     .notNull()
     .references(() => playerInformation.id),
   writeupType: text("writeup_type").notNull(),
+  notes: text("notes"),
   content: jsonb("content").notNull(),
   createdOn: timestamp("created_on", { mode: "string" }).defaultNow(),
 });

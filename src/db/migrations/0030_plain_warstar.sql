@@ -1,0 +1,1 @@
+ALTER TABLE "writeups" ADD COLUMN "notes" text;
