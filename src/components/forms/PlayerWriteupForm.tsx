@@ -326,14 +326,15 @@ export default function PlayerWriteupForm({
       </form.Field>
       <form.Subscribe
         selector={(state) => [state.canSubmit, state.isSubmitting]}
-        children={([canSubmit, isSubmitting]) => (
+      >
+        {([canSubmit, isSubmitting]) => (
           <div className="flex justify-end">
             <Button color="primary" type="submit" disabled={!canSubmit}>
               {isSubmitting ? "..." : "Submit"}
             </Button>
           </div>
         )}
-      />
+      </form.Subscribe>
     </form>
   );
 }

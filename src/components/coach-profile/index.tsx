@@ -21,7 +21,13 @@ import { useUserById } from "@/hooks/players";
 
 import LessonCard from "../lessons/lessonCard";
 
-export default function CoachProfile({ coachId }: { coachId: string }) {
+export default function CoachProfile({
+  coachId,
+  avgTime,
+}: {
+  coachId: string;
+  avgTime: number;
+}) {
   const {
     data: coach,
     isLoading: coachLoading,
@@ -106,9 +112,11 @@ export default function CoachProfile({ coachId }: { coachId: string }) {
               <div className="text-sm text-default-600">Total Lessons</div>
             </div>
             <div className="rounded-lg bg-default-50 p-4 text-center">
-              <div className="text-2xl font-bold text-secondary">XX</div>
+              <div className="text-2xl font-bold text-secondary">
+                {avgTime || 0}
+              </div>
               <div className="text-sm text-default-600">
-                Assessments Completed
+                Average Submission Time
               </div>
             </div>
             <div className="rounded-lg bg-default-50 p-4 text-center">

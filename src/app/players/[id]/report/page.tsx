@@ -19,10 +19,6 @@ export default async function PlayerReportPage({
   const session = await auth();
   if (!session) return notFound();
 
-  let coachId: string | undefined = undefined;
-  if (session.user.role === "coach") {
-    coachId = session.user.id;
-  }
   const { id } = await params;
 
   const sp = await searchParams;

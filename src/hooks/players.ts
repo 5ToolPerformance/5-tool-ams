@@ -75,3 +75,18 @@ export function useMotorPreferences2(id: string) {
     error,
   };
 }
+
+export function useCoachSubmissionMetrics() {
+  const { data, error, isLoading } = useSWR(
+    "/api/coaches/submission-metrics",
+    fetcher
+  );
+
+  return {
+    avgDaysToSubmit: data?.data?.avgDaysToSubmit ?? null,
+    minDaysToSubmit: data?.data?.minDaysToSubmit ?? null,
+    maxDaysToSubmit: data?.data?.maxDaysToSubmit ?? null,
+    isLoading,
+    error,
+  };
+}

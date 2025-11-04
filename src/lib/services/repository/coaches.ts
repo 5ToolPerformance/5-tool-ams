@@ -1,4 +1,4 @@
-import { desc, eq, sql } from "drizzle-orm";
+import { and, desc, eq, gte, sql } from "drizzle-orm";
 
 import db from "@/db";
 import { lesson, playerInformation } from "@/db/schema";
@@ -25,6 +25,57 @@ export const coachRepository = {
         error
       );
       throw new Error("Failed to fetch lesson counts from the database");
+    }
+  },
+  getAvgSubmissionTime: async (coachId: string) => {
+    try {
+      const sixtyDaysAgo = new Date();
+      sixtyDaysAgo.setDate(sixtyDaysAgo.getDate() - 60);
+
+      const metrics = await db
+        .select({
+          coachId: lesson.coachId,
+          totalLessons: sql<number>`count(${lesson.id})::int`,
+          averageDaysToSubmit: sql<number>`avg(extract(epoch from (${lesson.createdOn} - ${lesson.lessonDate})) / 86400)::numeric(10,2)`,
+        })
+        .from(lesson)
+        .where(
+          and(
+            eq(lesson.coachId, coachId),
+            gte(lesson.lessonDate, sixtyDaysAgo.toLocaleDateString())
+          )
+        )
+        .groupBy(lesson.coachId);
+
+      return metrics[0]?.averageDaysToSubmit || 0;
+    } catch (error) {
+      console.error(
+        "[CoachRepo] getAvgSubmissionTime - Database error: ",
+        error
+      );
+      throw new Error("Failed to fetch submission metrics from the database");
+    }
+  },
+  getAllCoachesSubmissionMetrics: async () => {
+    try {
+      const metrics = await db
+        .select({
+          coachId: lesson.coachId,
+          totalLessons: sql<number>`count(${lesson.id})::int`,
+          averageDaysToSubmit: sql<number>`avg(extract(epoch from (${lesson.createdOn} - ${lesson.lessonDate})) / 86400)::numeric(10,2)`,
+          minDaysToSubmit: sql<number>`min(extract(epoch from (${lesson.createdOn} - ${lesson.lessonDate})) / 86400)::numeric(10,2)`,
+          maxDaysToSubmit: sql<number>`max(extract(epoch from (${lesson.createdOn} - ${lesson.lessonDate})) / 86400)::numeric(10,2)`,
+        })
+        .from(lesson)
+        .groupBy(lesson.coachId);
+
+      return metrics;
+    } catch (error) {
+      console.error(
+        "[CoachRepo] getAllCoachesSubmissionMetrics - Database error: ",
+        error
+      );
+      throw new Error("Failed to fetch submission metrics from the database");
     }
   },
 };
