@@ -1,7 +1,9 @@
 import { Card, CardBody } from "@heroui/react";
 import { Target } from "lucide-react";
 
-import { useLessonsByPlayerId, usePlayerDashboardStats } from "@/hooks";
+import { usePlayerDashboardStats } from "@/hooks";
+
+import { LessonTypesPieChart } from "./charts/lessonTypesChart";
 
 interface OverviewSectionProps {
   playerId: string | null;
@@ -22,16 +24,14 @@ const OverviewSection: React.FC<OverviewSectionProps> = ({ playerId }) => {
   }
 
   const {
-    lessons,
-    lessonCount,
-    isLoading,
-    error: lessonsError,
-  } = useLessonsByPlayerId(playerId);
+    totalLessons,
+    lessonsLastMonth,
+    lessonTypes,
+    isLoading: statsLoading,
+    error: statsError,
+  } = usePlayerDashboardStats(playerId);
 
-  const { totalLessons, lessonsLastMonth, lessonTypes } =
-    usePlayerDashboardStats(playerId);
-
-  if (isLoading) {
+  if (statsLoading) {
     return (
       <div className="space-y-4">
         <div className="flex items-center justify-between">
@@ -44,14 +44,14 @@ const OverviewSection: React.FC<OverviewSectionProps> = ({ playerId }) => {
     );
   }
 
-  if (lessonsError) {
+  if (statsError) {
     return (
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <h2 className="text-xl font-semibold">Player Overview</h2>
         </div>
         <div className="flex items-center justify-center py-8">
-          <p className="text-danger">Error loading overview: {lessonsError}</p>
+          <p className="text-danger">Error loading overview: {statsError}</p>
         </div>
       </div>
     );
@@ -82,7 +82,9 @@ const OverviewSection: React.FC<OverviewSectionProps> = ({ playerId }) => {
                 <Target className="h-5 w-5 text-primary" />
               </div>
               <div>
-                <p className="text-sm text-default-600">Lessons Last Month</p>
+                <p className="text-sm text-default-600">
+                  Lessons (Last 30 Days)
+                </p>
                 <p className="text-xl font-semibold">
                   {lessonsLastMonth} Lessons
                 </p>
@@ -95,18 +97,16 @@ const OverviewSection: React.FC<OverviewSectionProps> = ({ playerId }) => {
       {/* Stats */}
       <Card>
         <CardBody className="p-6">
-          <div className="flex items-center justify-between">
-            <h2 className="text-xl font-semibold">Lesson Types</h2>
-          </div>
-          <div className="mt-4">
-            <ul>
-              {Object.entries(lessonTypes).map(([lessonType, typeCount]) => (
-                <li key={lessonType}>
-                  {lessonType}: {typeCount || 0}
-                </li>
-              ))}
-            </ul>
-          </div>
+          <Card className="w-1/2">
+            <CardBody className="p-4">
+              <div className="flex items-center justify-between">
+                <h2 className="text-xl font-semibold">Lessons (By Type)</h2>
+              </div>
+              <div className="mt-4">
+                <LessonTypesPieChart lessonTypes={lessonTypes} />
+              </div>
+            </CardBody>
+          </Card>
         </CardBody>
       </Card>
     </div>
