@@ -3,7 +3,16 @@ import { and, desc, eq, gte, sql } from "drizzle-orm";
 import db from "@/db";
 import { lesson, playerInformation } from "@/db/schema";
 
+/**
+ * Coach repository for database operations related to coaches.
+ */
 export const coachRepository = {
+  /**
+   * Finds the lesson counts for a specific coach.
+   * @param coachId - The ID of the coach to find lesson counts for
+   * @returns An array of lesson counts for the coach
+   * @throws Error if there is an error with the database query
+   */
   findCoachPlayerLessonCounts: async (coachId: string) => {
     try {
       const counts = await db
@@ -27,6 +36,13 @@ export const coachRepository = {
       throw new Error("Failed to fetch lesson counts from the database");
     }
   },
+
+  /**
+   * Gets the average submission time for a specific coach.
+   * @param coachId - The ID of the coach to get the average submission time for
+   * @returns The average submission time for the coach
+   * @throws Error if there is an error with the database query
+   */
   getAvgSubmissionTime: async (coachId: string) => {
     try {
       const sixtyDaysAgo = new Date();
@@ -56,6 +72,12 @@ export const coachRepository = {
       throw new Error("Failed to fetch submission metrics from the database");
     }
   },
+
+  /**
+   * Gets the submission metrics for all coaches.
+   * @returns An array of submission metrics for all coaches
+   * @throws Error if there is an error with the database query
+   */
   getAllCoachesSubmissionMetrics: async () => {
     try {
       const metrics = await db
