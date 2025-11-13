@@ -359,9 +359,9 @@ const ModularLessonForm: React.FC<ModularLessonFormProps> = ({ coachId }) => {
 
         {/* Assessment Selection */}
         <div className="rounded-lg bg-default p-6">
-          <h2 className="mb-4 text-xl font-semibold">Assessments</h2>
+          <h2 className="mb-4 text-xl font-semibold">Focus Areas</h2>
           <p className="mb-3 text-sm text-default-500">
-            Use the buttons below to add or remove assessments for this lesson.
+            Use the buttons below to add or remove focus areas for this lesson.
           </p>
           <div className="flex flex-wrap gap-2">
             {ALL_ASSESSMENTS.map(({ key, label }) => {
