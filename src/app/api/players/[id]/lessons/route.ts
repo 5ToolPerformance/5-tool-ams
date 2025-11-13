@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { LessonService } from "@/lib/services/lessons";
+import { lessonRepository } from "@/lib/services/repository/lessons";
 import { RouteParams } from "@/types/api";
 
 export async function GET(
@@ -19,7 +19,7 @@ export async function GET(
     }
 
     // Get lessons for the player
-    const lessons = await LessonService.getLessonsByPlayerWithJoin(id);
+    const lessons = await lessonRepository.getLessonsByPlayerId(id);
 
     return NextResponse.json({ lessons });
   } catch (error) {

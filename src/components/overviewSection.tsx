@@ -1,48 +1,37 @@
-import { useEffect, useState } from "react";
+import { Card, CardBody } from "@heroui/react";
+import { Target } from "lucide-react";
 
-import { Calendar, Card, CardBody } from "@heroui/react";
-import { Target, TrendingUp } from "lucide-react";
-
-import { GrowthChart } from "./charts/growth";
+import { useLessonsByPlayerId, usePlayerDashboardStats } from "@/hooks";
 
 interface OverviewSectionProps {
-  playerId: string | number | null;
+  playerId: string | null;
 }
 
 const OverviewSection: React.FC<OverviewSectionProps> = ({ playerId }) => {
-  const [lessonCount, setLessonCount] = useState(0);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  if (!playerId) {
+    return (
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <h2 className="text-xl font-semibold">Player Overview</h2>
+        </div>
+        <div className="flex items-center justify-center py-8">
+          <p className="text-default-500">No player selected</p>
+        </div>
+      </div>
+    );
+  }
 
-  useEffect(() => {
-    const fetchLessons = async () => {
-      try {
-        setLoading(true);
-        setError(null);
+  const {
+    lessons,
+    lessonCount,
+    isLoading,
+    error: lessonsError,
+  } = useLessonsByPlayerId(playerId);
 
-        const response = await fetch(`/api/players/${playerId}/count`);
+  const { totalLessons, lessonsLastMonth, lessonTypes } =
+    usePlayerDashboardStats(playerId);
 
-        if (!response.ok) {
-          throw new Error(`Failed to fetch lessons: ${response.statusText}`);
-        }
-
-        const data = await response.json();
-        // Extract the lessons array from the response object
-        setLessonCount(data.count || 0);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "An error occurred");
-        console.error("Error fetching lessons:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (playerId) {
-      fetchLessons();
-    }
-  }, [playerId]);
-
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="space-y-4">
         <div className="flex items-center justify-between">
@@ -55,14 +44,14 @@ const OverviewSection: React.FC<OverviewSectionProps> = ({ playerId }) => {
     );
   }
 
-  if (error) {
+  if (lessonsError) {
     return (
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <h2 className="text-xl font-semibold">Player Overview</h2>
         </div>
         <div className="flex items-center justify-center py-8">
-          <p className="text-danger">Error loading overview: {error}</p>
+          <p className="text-danger">Error loading overview: {lessonsError}</p>
         </div>
       </div>
     );
@@ -79,8 +68,8 @@ const OverviewSection: React.FC<OverviewSectionProps> = ({ playerId }) => {
                 <Target className="h-5 w-5 text-primary" />
               </div>
               <div>
-                <p className="text-sm text-default-600">This Month</p>
-                <p className="text-xl font-semibold">{lessonCount} Sessions</p>
+                <p className="text-sm text-default-600">Total Lessons</p>
+                <p className="text-xl font-semibold">{totalLessons} Lessons</p>
               </div>
             </div>
           </CardBody>
@@ -89,37 +78,34 @@ const OverviewSection: React.FC<OverviewSectionProps> = ({ playerId }) => {
         <Card>
           <CardBody className="p-4">
             <div className="flex items-center gap-3">
-              <div className="rounded-lg bg-success/10 p-2">
-                <TrendingUp className="h-5 w-5 text-success" />
+              <div className="rounded-lg bg-primary/10 p-2">
+                <Target className="h-5 w-5 text-primary" />
               </div>
               <div>
-                <p className="text-sm text-default-600">Progress</p>
-                <p className="text-xl font-semibold">+15%</p>
-              </div>
-            </div>
-          </CardBody>
-        </Card>
-
-        <Card>
-          <CardBody className="p-4">
-            <div className="flex items-center gap-3">
-              <div className="rounded-lg bg-warning/10 p-2">
-                <Calendar className="h-5 w-5 text-warning" />
-              </div>
-              <div>
-                <p className="text-sm text-default-600">Next Session</p>
-                <p className="text-xl font-semibold">Tomorrow</p>
+                <p className="text-sm text-default-600">Lessons Last Month</p>
+                <p className="text-xl font-semibold">
+                  {lessonsLastMonth} Lessons
+                </p>
               </div>
             </div>
           </CardBody>
         </Card>
       </div>
 
-      {/* Recent Activity */}
+      {/* Stats */}
       <Card>
         <CardBody className="p-6">
-          <div className="md:w-full lg:w-1/2">
-            <GrowthChart />
+          <div className="flex items-center justify-between">
+            <h2 className="text-xl font-semibold">Lesson Types</h2>
+          </div>
+          <div className="mt-4">
+            <ul>
+              {Object.entries(lessonTypes).map(([lessonType, typeCount]) => (
+                <li key={lessonType}>
+                  {lessonType}: {typeCount || 0}
+                </li>
+              ))}
+            </ul>
           </div>
         </CardBody>
       </Card>

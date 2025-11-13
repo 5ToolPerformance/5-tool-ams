@@ -569,11 +569,9 @@ export class LessonService {
       return await db
         .select({
           lesson: lesson,
-          coach: users,
           player: playerInformation,
         })
         .from(lesson)
-        .innerJoin(users, eq(lesson.coachId, users.id))
         .innerJoin(playerInformation, eq(lesson.playerId, playerInformation.id))
         .where(eq(lesson.playerId, playerId))
         .orderBy(desc(lesson.lessonDate));

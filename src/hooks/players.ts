@@ -1,3 +1,5 @@
+import { useMemo } from "react";
+
 import useSWR from "swr";
 
 import { ApiService } from "@/lib/services/api";
@@ -86,6 +88,73 @@ export function useCoachSubmissionMetrics() {
     avgDaysToSubmit: data?.data?.avgDaysToSubmit ?? null,
     minDaysToSubmit: data?.data?.minDaysToSubmit ?? null,
     maxDaysToSubmit: data?.data?.maxDaysToSubmit ?? null,
+    isLoading,
+    error,
+  };
+}
+
+export function useLessonsByPlayerId(id: string) {
+  const { data, error, isLoading } = useSWR(
+    id ? `/api/players/${id}/lessons` : null,
+    fetcher
+  );
+
+  return {
+    lessons: data?.lessons ?? null,
+    lessonCount: data?.lessons?.length ?? 0,
+    isLoading,
+    error,
+  };
+}
+
+export function usePlayerDashboardStats(playerId: string) {
+  const { data, error, isLoading } = useSWR(
+    playerId ? `/api/players/${playerId}/lessons` : null,
+    fetcher
+  );
+
+  // Calculate stats from the lessons
+  const stats = useMemo(() => {
+    const lessons = data?.lessons ?? [];
+    if (!lessons.length) {
+      return {
+        totalLessons: 0,
+        lessonsLastMonth: 0,
+        lessonTypes: {},
+      };
+    }
+
+    const now = new Date();
+    const oneMonthAgo = new Date(
+      now.getFullYear(),
+      now.getMonth() - 1,
+      now.getDate()
+    );
+
+    const lessonsLastMonth = lessons.filter(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (item: any) => new Date(item.lesson.lessonDate) >= oneMonthAgo
+    ).length;
+
+    const lessonTypes: Record<string, number> = lessons.reduce(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (acc: Record<string, number>, item: any) => {
+        const type = item.lesson.lessonType;
+        acc[type] = (acc[type] || 0) + 1;
+        return acc;
+      },
+      {}
+    );
+
+    return {
+      totalLessons: lessons.length,
+      lessonsLastMonth,
+      lessonTypes,
+    };
+  }, [data?.lessons]);
+
+  return {
+    ...stats,
     isLoading,
     error,
   };
