@@ -6,23 +6,10 @@ import { usePlayerDashboardStats } from "@/hooks";
 import { LessonTypesPieChart } from "./charts/lessonTypesChart";
 
 interface OverviewSectionProps {
-  playerId: string | null;
+  playerId: string;
 }
 
 const OverviewSection: React.FC<OverviewSectionProps> = ({ playerId }) => {
-  if (!playerId) {
-    return (
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <h2 className="text-xl font-semibold">Player Overview</h2>
-        </div>
-        <div className="flex items-center justify-center py-8">
-          <p className="text-default-500">No player selected</p>
-        </div>
-      </div>
-    );
-  }
-
   const {
     totalLessons,
     lessonsLastMonth,
