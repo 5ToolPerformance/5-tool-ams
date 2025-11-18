@@ -14,6 +14,7 @@ export function PlayerInjuryViewer({ playerId }: PlayerInjuryViewerProps) {
   }
 
   if (error) {
+    console.error("Error loading injuries:", error);
     return <p className="text-danger">Error loading injuries</p>;
   }
 

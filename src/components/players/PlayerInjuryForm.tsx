@@ -82,7 +82,8 @@ export default function PlayerInjuryModal({
                       onClose();
                       alert("Injury saved");
                     } catch (error) {
-                      // Submission failed; keep modal open and do not show success alert
+                      alert("Failed to save injury");
+                      console.error("Error saving injury:", error);
                     }
                   }}
                 >

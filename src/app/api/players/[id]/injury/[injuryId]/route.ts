@@ -1,15 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import { playerRepository } from "@/lib/services/repository/players";
+import { RouteParams } from "@/types/api";
 import { PlayerInjuryInsert } from "@/types/database";
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string; injuryId: string } }
+  { params }: RouteParams<{ id: string; injuryId: string }>
 ) {
   try {
-    const body: PlayerInjuryInsert = await request.json();
-    const injuryId = params.injuryId;
+    const body: Partial<PlayerInjuryInsert> = await request.json();
+    const { injuryId } = await params;
     const injury = await playerRepository.updatePlayerInjury(injuryId, body);
 
     return NextResponse.json({

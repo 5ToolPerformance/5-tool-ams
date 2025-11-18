@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import { playerRepository } from "@/lib/services/repository/players";
+import { RouteParams } from "@/types/api";
 import { PlayerInjuryInsert } from "@/types/database";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: RouteParams<{ id: string }>
 ) {
   try {
     const { id } = await params;
