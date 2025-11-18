@@ -159,3 +159,22 @@ export function usePlayerDashboardStats(playerId: string) {
     error,
   };
 }
+
+/**
+ * Fetches a player's injuries by player ID from the API.
+ * @param id The ID of the player to fetch.
+ * @returns The Injury object if found, otherwise null.
+ */
+export function usePlayerInjuries(playerId: string) {
+  const { data, error, isLoading } = useSWR(
+    playerId ? `/api/players/${playerId}/injury` : null,
+    fetcher
+  );
+
+  return {
+    injuries: data?.data ?? null,
+    injuryCount: data?.data?.length ?? 0,
+    isLoading,
+    error,
+  };
+}

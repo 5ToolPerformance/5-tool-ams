@@ -4,6 +4,7 @@ import { Target } from "lucide-react";
 import { usePlayerDashboardStats } from "@/hooks";
 
 import { LessonTypesPieChart } from "./charts/lessonTypesChart";
+import { PlayerInjuryViewer } from "./players/PlayerInjuryViewer";
 
 interface OverviewSectionProps {
   playerId: string;
@@ -84,16 +85,28 @@ const OverviewSection: React.FC<OverviewSectionProps> = ({ playerId }) => {
       {/* Stats */}
       <Card>
         <CardBody className="p-6">
-          <Card className="w-1/2">
-            <CardBody className="p-4">
-              <div className="flex items-center justify-between">
-                <h2 className="text-xl font-semibold">Lessons (By Type)</h2>
-              </div>
-              <div className="mt-4">
-                <LessonTypesPieChart lessonTypes={lessonTypes} />
-              </div>
-            </CardBody>
-          </Card>
+          <div className="flex flex-col gap-4 md:flex-row">
+            <Card className="w-full md:w-1/2">
+              <CardBody className="p-4">
+                <div className="flex items-center justify-between">
+                  <h2 className="text-xl font-semibold">Lessons (By Type)</h2>
+                </div>
+                <div className="mt-4">
+                  <LessonTypesPieChart lessonTypes={lessonTypes} />
+                </div>
+              </CardBody>
+            </Card>
+            <Card className="w-full md:w-1/2">
+              <CardBody className="p-4">
+                <div className="flex items-center justify-between">
+                  <h2 className="text-xl font-semibold">Injuries</h2>
+                </div>
+                <div className="mt-4">
+                  <PlayerInjuryViewer playerId={playerId} />
+                </div>
+              </CardBody>
+            </Card>
+          </div>
         </CardBody>
       </Card>
     </div>
