@@ -218,6 +218,13 @@
       "when": 1762187190587,
       "tag": "0030_plain_warstar",
       "breakpoints": true
+    },
+    {
+      "idx": 31,
+      "version": "7",
+      "when": 1763485101166,
+      "tag": "0031_flimsy_lady_ursula",
+      "breakpoints": true
     }
   ]
 }
