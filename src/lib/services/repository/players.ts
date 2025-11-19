@@ -1,7 +1,8 @@
 import { eq } from "drizzle-orm";
 
 import db from "@/db";
-import { playerInformation } from "@/db/schema";
+import { playerInformation, playerInjuries } from "@/db/schema";
+import { PlayerInjuryInsert } from "@/types/database";
 
 /**
  * PlayerRepository is a service that provides access to player data
@@ -39,6 +40,76 @@ export const playerRepository = {
     } catch (error) {
       console.error("[PlayerRepo] findById - Database error: ", error);
       throw new Error(`Failed to fetch player ${playerId}`);
+    }
+  },
+  /**
+   * Retrieve a player injury by their ID
+   * @param playerId - The ID of the player to retrieve
+   * @returns The PlayerInjury object if found, otherwise null
+   */
+  findPlayerInjuryByPlayerId: async (playerId: string) => {
+    try {
+      const injury = await db
+        .select()
+        .from(playerInjuries)
+        .where(eq(playerInjuries.playerId, playerId));
+
+      return injury;
+    } catch (error) {
+      console.error(
+        "[PlayerRepo] findPlayerInjuryByPlayerId - Database error: ",
+        error
+      );
+      throw new Error(`Failed to fetch injury for player ${playerId}`);
+    }
+  },
+  /**
+   * Create a new player injury
+   * @param data - The PlayerInjuryInsert object to create
+   * @returns The created PlayerInjury object
+   */
+  createPlayerInjury: async (data: PlayerInjuryInsert) => {
+    if (!data.playerId) {
+      throw new Error("Player ID required");
+    }
+    try {
+      const [injury] = await db.insert(playerInjuries).values(data).returning();
+      return injury;
+    } catch (error) {
+      console.error(
+        "[PlayerRepo] createPlayerInjury - Database error: ",
+        error
+      );
+      throw new Error(`Failed to create injury for player ${data.playerId}`);
+    }
+  },
+  /**
+   * Update a player injury
+   * @param data - The PlayerInjuryInsert object to update
+   * @returns The updated PlayerInjury object
+   */
+  updatePlayerInjury: async (id: string, data: Partial<PlayerInjuryInsert>) => {
+    if (!id) {
+      throw new Error("Injury ID required");
+    }
+    try {
+      const [injury] = await db
+        .update(playerInjuries)
+        .set(data)
+        .where(eq(playerInjuries.id, id))
+        .returning();
+
+      if (!injury) {
+        throw new Error(`Injury with ID ${id} not found`);
+      }
+
+      return injury;
+    } catch (error) {
+      console.error(
+        "[PlayerRepo] updatePlayerInjury - Database error: ",
+        error
+      );
+      throw new Error(`Failed to update injury ${id}`);
     }
   },
 };

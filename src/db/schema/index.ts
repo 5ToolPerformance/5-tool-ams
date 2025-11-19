@@ -30,5 +30,6 @@ export {
   default as pitchingAssessment,
 } from "./assessments/pitchingAssessment";
 export { default as veloAssessment } from "./assessments/veloAssessment";
+export { default as playerInjuries } from "./players/playerInjuries";
 export { default as playerMeasurements } from "./players/playerMeasurements";
 export { default as writeups } from "./writeups";

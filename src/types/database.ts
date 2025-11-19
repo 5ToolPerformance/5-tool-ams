@@ -9,6 +9,7 @@ import {
   motorPreferences,
   pitchingAssessment,
   playerInformation,
+  playerInjuries,
   smfaBoolean,
   trueStrength,
   users,
@@ -75,3 +76,7 @@ export type CatchingAssessmentInsert = typeof catchingAssessment.$inferInsert;
 // Writeup Db schema types
 export type WriteupSelect = typeof writeups.$inferSelect;
 export type WriteupInsert = typeof writeups.$inferInsert;
+
+// PlayerInjurt Db Schema types
+export type PlayerInjurySelect = typeof playerInjuries.$inferSelect;
+export type PlayerInjuryInsert = typeof playerInjuries.$inferInsert;

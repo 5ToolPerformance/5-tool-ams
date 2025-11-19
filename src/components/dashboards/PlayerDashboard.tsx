@@ -21,6 +21,7 @@ import LessonsSection from "../lessonsComponent";
 import OverviewSection from "../overviewSection";
 import PlansSection from "../plans/plansComponent";
 import PlayerCreateForm from "../players/PlayerCreateForm";
+import PlayerInjuryForm from "../players/PlayerInjuryForm";
 import PlayerCard from "../players/playerCard";
 import { MotorPreferenceCard } from "../ui/MotorPreferenceCard";
 
@@ -83,11 +84,11 @@ export default function PlayerDashboard({
         {/* Player Card and Motor Preference Side by Side */}
         <div className="flex flex-col items-start gap-6 md:flex-row">
           <div className="flex w-full flex-col gap-3 md:w-auto">
+            <PlayerCard player={currentPlayer} size="lg" />
             <PlayerCreateForm
               player={currentPlayer}
               onPlayerUpdated={setCurrentPlayer}
             />
-            <PlayerCard player={currentPlayer} size="lg" />
           </div>
           <div>
             {motorPreferences ? (
@@ -98,6 +99,9 @@ export default function PlayerDashboard({
                 coachId={coachId}
               />
             )}
+          </div>
+          <div>
+            <PlayerInjuryForm playerId={currentPlayer.id} />
           </div>
         </div>
 
