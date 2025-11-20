@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 import {
   Card,
   CardBody,
@@ -149,7 +151,11 @@ export default function CoachProfile({
               <TableBody>
                 {lessonCounts.map((stat) => (
                   <TableRow key={stat.playerId}>
-                    <TableCell>{stat.playerName}</TableCell>
+                    <TableCell>
+                      <Link href={`/players/${stat.playerId}`}>
+                        {stat.playerName}
+                      </Link>
+                    </TableCell>
                     <TableCell>{stat.lessonCount}</TableCell>
                   </TableRow>
                 ))}

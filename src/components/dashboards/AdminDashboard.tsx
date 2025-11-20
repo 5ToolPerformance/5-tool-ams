@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 import {
   Button,
   Card,
@@ -202,7 +204,9 @@ export default function AdminDashboard({ adminId }: Props) {
                 >
                   {playerLeaderboard.map((p) => (
                     <TableRow key={p.id}>
-                      <TableCell>{p.name}</TableCell>
+                      <TableCell>
+                        <Link href={`/players/${p.id}`}>{p.name}</Link>
+                      </TableCell>
                       <TableCell className="text-right font-semibold">
                         {p.count}
                       </TableCell>
