@@ -1,7 +1,7 @@
-import { MultiStepFormType } from "./index";
+import { LessonFormType } from "@/lib/lesson-form";
 
-function PitchingStepForm({ form }: { form: MultiStepFormType }) {
-  return <div>PitchingStepForm</div>;
+function PitchingStepForm({ form }: { form: LessonFormType }) {
+  return <div>Step 1 - Pitching</div>;
 }
 
 export default PitchingStepForm;

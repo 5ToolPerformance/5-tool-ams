@@ -1,38 +1,78 @@
-import { useRouter } from "next/navigation";
+"use client";
 
-import { useForm } from "@tanstack/react-form";
+import { useState } from "react";
 
-import { getCompleteLessonDefaults } from "@/lib/form-defaults";
-import { ApiResponse } from "@/types/api";
-import { LessonCreateData } from "@/types/lessons";
+import { Button, Input, Select, SelectItem } from "@heroui/react";
 
-const router = useRouter();
+import { useLessonForm } from "@/lib/lesson-form";
 
-const form = useForm({
-  defaultValues: getCompleteLessonDefaults(""),
-  onSubmit: async ({ value }) => {
-    const completeData = value as LessonCreateData;
-    try {
-      const response = await fetch("/api/lessons", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(completeData),
-      });
+import { MechanicPicker } from "./MechanicPicker";
 
-      const result: ApiResponse<LessonCreateData> = await response.json();
+export default function MultiStepForm() {
+  const [step, setStep] = useState(0);
+  const form = useLessonForm();
 
-      if (!result.success) {
-        throw new Error(result.error || "Failed to create lesson");
-      } else {
-        router.push("/");
-      }
-    } catch (error) {
-      console.error("Error creating lesson:", error);
-    }
-    alert("Lesson created successfully! Check console for data.");
-  },
-});
-
-export type MultiStepFormType = typeof form;
+  return (
+    <div className="flex w-[400px] flex-col gap-4 p-4">
+      <form onSubmit={form.handleSubmit}>
+        {step === 0 ? (
+          <div>
+            {" "}
+            <form.Field name="basicInfo.playerId">
+              {(field) => (
+                <Input
+                  type="text"
+                  label="Player ID"
+                  value={field.state.value ?? ""}
+                  onChange={(e) => field.handleChange(e.target.value)}
+                  onBlur={field.handleBlur}
+                />
+              )}
+            </form.Field>
+            <form.Field name="basicInfo.coachId">
+              {(field) => (
+                <Input
+                  type="text"
+                  label="Coach ID"
+                  value={field.state.value ?? ""}
+                  onChange={(e) => field.handleChange(e.target.value)}
+                  onBlur={field.handleBlur}
+                />
+              )}
+            </form.Field>
+            <form.Field name="basicInfo.lessonDate">
+              {(field) => (
+                <Input
+                  type="date"
+                  label="Lesson Date"
+                  value={field.state.value ?? ""}
+                  onChange={(e) => field.handleChange(e.target.value)}
+                  onBlur={field.handleBlur}
+                />
+              )}
+            </form.Field>
+            <form.Field name="basicInfo.lessonType">
+              {(field) => (
+                <Select
+                  label="Lesson Type"
+                  value={field.state.value ?? ""}
+                  onChange={(e) => field.handleChange(e.target.value)}
+                  onBlur={field.handleBlur}
+                >
+                  <SelectItem key="pitching">Pitching</SelectItem>
+                  <SelectItem key="fielding">Fielding</SelectItem>
+                  <SelectItem key="hitting">Hitting</SelectItem>
+                </Select>
+              )}
+            </form.Field>
+          </div>
+        ) : null}
+        {step === 1 ? (
+          <MechanicPicker discipline={form.state.values.basicInfo.lessonType} />
+        ) : null}
+        <Button onPress={() => setStep(step + 1)}>Next</Button>
+        <Button onPress={() => setStep(step - 1)}>Previous</Button>
+      </form>
+    </div>
+  );
+}

@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 
 import { auth } from "@/auth";
-import ModularLessonForm from "@/components/forms";
+import MultiStepForm from "@/components/multistep-form";
 import requireAuth from "@/utils/require-auth";
 
 export default async function TestPage() {
@@ -17,5 +17,5 @@ export default async function TestPage() {
   }
   const userId = session.user.id;
 
-  return <ModularLessonForm coachId={userId} />;
+  return <MultiStepForm />;
 }
