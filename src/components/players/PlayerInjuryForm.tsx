@@ -1,6 +1,5 @@
 import {
   Button,
-  CalendarDate,
   DatePicker,
   Input,
   Modal,
@@ -12,6 +11,7 @@ import {
   SelectItem,
   useDisclosure,
 } from "@heroui/react";
+import { CalendarDate } from "@internationalized/date";
 import { useForm } from "@tanstack/react-form";
 
 import { ApiResponse } from "@/types/api";
