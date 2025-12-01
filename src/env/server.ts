@@ -22,7 +22,7 @@ export const env = createEnv({
     ARMCARE_PASSWORD: z.string(),
     ARMCARE_AUTH_URL_STAGING: z.string().url(),
     ARMCARE_API_URL_STAGING: z.string().url(),
-    AMRCARE_AUTH_URL_PROD: z.string().url(),
+    ARMCARE_AUTH_URL_PROD: z.string().url(),
     ARMCARE_API_URL_PROD: z.string().url(),
   },
   onValidationError: (error) => {
