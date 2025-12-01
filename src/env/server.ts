@@ -16,6 +16,14 @@ export const env = createEnv({
     AUTH_MICROSOFT_ENTRA_ID_SECRET: z.string(),
     AUTH_MICROSOFT_ENTRA_ID_ISSUER: z.string(),
     DATABASE_URL: z.string().url(),
+    //Armcare
+    ARMCARE_STATUS: z.string(),
+    ARMCARE_USERNAME: z.string(),
+    ARMCARE_PASSWORD: z.string(),
+    ARMCARE_AUTH_URL_STAGING: z.string().url(),
+    ARMCARE_API_URL_STAGING: z.string().url(),
+    AMRCARE_AUTH_URL_PROD: z.string().url(),
+    ARMCARE_API_URL_PROD: z.string().url(),
   },
   onValidationError: (error) => {
     console.error("❌ Invalid environment variables:", error);

@@ -54,31 +54,31 @@ export const syncStatusEnum = pgEnum("sync_status", [
   "failed",
 ]);
 
-export const externalSyncLogs = pgTable("external_sync_logs", {
-  id: uuid("id").primaryKey().defaultRandom(),
+export const externalSyncLogs = pgTable(
+  "external_sync_logs",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
 
-  system: externalSystemEnum("system").notNull().unique(),
-  status: syncStatusEnum("status").notNull(),
+    system: externalSystemEnum("system").notNull().unique(),
+    status: syncStatusEnum("status").notNull(),
 
-  recordsCreated: integer("records_created").default(0),
-  recordsUpdated: integer("records_updated").default(0),
-  recordsSkipped: integer("records_skipped").default(0),
-  recordsFailed: integer("records_failed").default(0),
+    recordsCreated: integer("records_created").default(0),
+    recordsUpdated: integer("records_updated").default(0),
+    recordsSkipped: integer("records_skipped").default(0),
+    recordsFailed: integer("records_failed").default(0),
 
-  playersMatched: integer("players_matched").default(0),
-  playersUnmatched: integer("players_unmatched").default(0),
-  newMatchSuggestions: integer("new_match_suggestions").default(0),
+    playersMatched: integer("players_matched").default(0),
+    playersUnmatched: integer("players_unmatched").default(0),
+    newMatchSuggestions: integer("new_match_suggestions").default(0),
 
-  startedAt: timestamp("started_at", { mode: "string" }).notNull(),
-  completedAt: timestamp("completed_at", { mode: "string" }),
-  duration: integer("duration"),
+    startedAt: timestamp("started_at", { mode: "string" }).notNull(),
+    completedAt: timestamp("completed_at", { mode: "string" }),
+    duration: integer("duration"),
 
-  errors: jsonb("errors"),
+    errors: jsonb("errors"),
 
-  triggeredBy: text("triggered_by"),
-  triggeredByUserId: uuid("triggered_by_user_id").references(() => users.id),
-});
-
-export const syncLogsSystemIdx = index("sync_logs_system_idx").on(
-  externalSyncLogs.system
+    triggeredBy: text("triggered_by"),
+    triggeredByUserId: uuid("triggered_by_user_id").references(() => users.id),
+  },
+  (table) => [index("sync_logs_system_idx").on(table.system)]
 );

@@ -28,37 +28,43 @@ export const linkingStatusEnum = pgEnum("linking_status", [
   "failed",
 ]);
 
-export const externalAthleteIds = pgTable("external_athlete_ids", {
-  id: uuid("id").primaryKey().defaultRandom(),
+export const externalAthleteIds = pgTable(
+  "external_athlete_ids",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
 
-  playerId: uuid("player_id")
-    .notNull()
-    .references(() => playerInformation.id),
+    playerId: uuid("player_id")
+      .notNull()
+      .references(() => playerInformation.id),
 
-  externalSystem: externalSystemEnum("external_system").notNull(),
-  externalId: text("external_id").notNull(),
-  externalEmail: text("external_email"),
+    externalSystem: externalSystemEnum("external_system").notNull(),
+    externalId: text("external_id").notNull(),
+    externalEmail: text("external_email"),
 
-  linkingMethod: linkingMethodEnum("linking_method").notNull(),
-  linkingStatus: linkingStatusEnum("linking_status")
-    .notNull()
-    .default("active"),
-  confidence: numeric("confidence"),
+    linkingMethod: linkingMethodEnum("linking_method").notNull(),
+    linkingStatus: linkingStatusEnum("linking_status")
+      .notNull()
+      .default("active"),
+    confidence: numeric("confidence"),
 
-  externalMetadata: jsonb("external_metadata"),
+    externalMetadata: jsonb("external_metadata"),
 
-  linkedBy: uuid("linked_by").references(() => users.id),
-  linkedAt: timestamp("linked_at", { mode: "string" }).notNull().defaultNow(),
-  verifiedAt: timestamp("verified_at", { mode: "string" }),
+    linkedBy: uuid("linked_by").references(() => users.id),
+    linkedAt: timestamp("linked_at", { mode: "string" }).notNull().defaultNow(),
+    verifiedAt: timestamp("verified_at", { mode: "string" }),
 
-  createdAt: timestamp("created_at", { mode: "string" }).notNull().defaultNow(),
-  updatedAt: timestamp("updated_at", { mode: "string" }).notNull().defaultNow(),
-});
-
-export const externalAthletesIdsUnique = uniqueIndex(
-  "external_athlete_ids_unique_idx"
-).on(externalAthleteIds.externalSystem, externalAthleteIds.externalId);
-
-export const externalAthleteIdsPlayerIdx = index(
-  "external_athlete_ids_player_idx"
-).on(externalAthleteIds.playerId);
+    createdAt: timestamp("created_at", { mode: "string" })
+      .notNull()
+      .defaultNow(),
+    updatedAt: timestamp("updated_at", { mode: "string" })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    uniqueIndex("external_athlete_ids_unique_idx").on(
+      table.externalSystem,
+      table.externalId
+    ),
+    index("external_athlete_ids_player_idx").on(table.playerId),
+  ]
+);
