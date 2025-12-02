@@ -19,6 +19,7 @@ export const linkingMethodEnum = pgEnum("linking_method", [
   "phone",
   "manual",
   "name_match",
+  "external_id",
 ]);
 
 export const linkingStatusEnum = pgEnum("linking_status", [
