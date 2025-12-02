@@ -1,5 +1,7 @@
 // lib/services/external/armcare/armcare-service.ts
 import { and, eq } from "drizzle-orm";
+import fs from "fs/promises";
+import path from "path";
 
 import db from "@/db";
 import {
@@ -111,10 +113,37 @@ export class ArmCareService extends BaseExternalService<
 
     const rawData: unknown = await response.json();
 
-    // Validate with Zod (runtime validation + type safety)
+    // BACKUP: Save raw response immediately
+    await this.saveBackup(rawData);
+
+    // Validate with Zod
     const validatedData = ArmCareAPIResponseSchema.parse(rawData);
 
     return validatedData;
+  }
+
+  /**
+   * Save raw API response to backup file
+   */
+  private async saveBackup(data: unknown): Promise<void> {
+    try {
+      const backupDir = path.join(process.cwd(), "data", "armcare-backups");
+      await fs.mkdir(backupDir, { recursive: true });
+
+      const timestamp = new Date()
+        .toISOString()
+        .replace(/:/g, "-")
+        .split(".")[0];
+      const filename = `armcare_${timestamp}.json`;
+      const filepath = path.join(backupDir, filename);
+
+      await fs.writeFile(filepath, JSON.stringify(data, null, 2), "utf-8");
+
+      console.log(`✓ Saved backup to: ${filepath}`);
+    } catch (error) {
+      console.error("⚠️ Failed to save backup:", error);
+      // Don't throw - continue with sync even if backup fails
+    }
   }
 
   protected transformData(rawData: ArmCareAPIResponse): ArmCareExamRecord[] {
