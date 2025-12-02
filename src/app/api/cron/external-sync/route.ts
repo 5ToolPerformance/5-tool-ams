@@ -1,8 +1,6 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 
-export async function GET(request: NextRequest) {
-  // TODO: Verify Cron Secre
-
+export async function GET() {
   // TODO: Get Search params and system
 
   try {

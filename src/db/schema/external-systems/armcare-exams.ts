@@ -34,7 +34,7 @@ export const armcareExams = pgTable(
     // Normalized Key Metrics
     armScore: numeric("arm_score"),
     totalStrength: numeric("total_strength"),
-    shoulder_balance: numeric("shoulder_balance"),
+    shoulderBalance: numeric("shoulder_balance"),
     velo: numeric("velo"),
     svr: numeric("svr"),
     totalStrengthPost: numeric("total_strength_post"),
@@ -80,7 +80,7 @@ export const armcareExamsUnmatched = pgTable(
     // Normalized Key Metrics
     armScore: numeric("arm_score"),
     totalStrength: numeric("total_strength"),
-    shoulder_balance: numeric("shoulder_balance"),
+    shoulderBalance: numeric("shoulder_balance"),
     velo: numeric("velo"),
     svr: numeric("svr"),
     totalStrengthPost: numeric("total_strength_post"),
