@@ -33,7 +33,10 @@ export async function GET() {
     orderBy: desc(armcareExamsUnmatched.createdAt),
   });
 
-  return NextResponse.json({ unmatched });
+  return NextResponse.json({
+    success: true,
+    unmatched,
+  });
 }
 
 // Manually resolve an unmatched exam
