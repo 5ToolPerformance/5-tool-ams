@@ -92,7 +92,7 @@ export const armcareExamsUnmatched = pgTable(
 
     // Matching metadata
     matchAttempts: integer("match_attempts").default(0),
-    lastMatchAttempt: timestamp("last_match_attempt"),
+    lastMatchAttempt: timestamp("last_match_attempt", { mode: "string" }),
     matchErrors: jsonb("match_errors"),
 
     syncedAt: timestamp("synced_at", { mode: "string" }).notNull().defaultNow(),

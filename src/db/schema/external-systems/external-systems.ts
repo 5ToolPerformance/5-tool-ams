@@ -59,7 +59,7 @@ export const externalSyncLogs = pgTable(
   {
     id: uuid("id").primaryKey().defaultRandom(),
 
-    system: externalSystemEnum("system").notNull().unique(),
+    system: externalSystemEnum("system").notNull(),
     status: syncStatusEnum("status").notNull(),
 
     recordsCreated: integer("records_created").default(0),

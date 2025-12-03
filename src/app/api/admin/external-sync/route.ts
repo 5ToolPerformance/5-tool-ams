@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
     switch (system) {
       case "armcare":
         const armcare = new ArmCareService();
-        result = await armcare.sync();
+        result = await armcare.sync("manual");
         break;
       default:
         return NextResponse.json(

@@ -141,7 +141,7 @@ export abstract class BaseExternalService<
   /**
    * Main sync orchestration
    */
-  async sync(): Promise<SyncResult> {
+  async sync(triggeredBy: "cron" | "manual"): Promise<SyncResult> {
     const startTime = Date.now();
     const result: SyncResult = {
       success: false,
@@ -163,7 +163,7 @@ export abstract class BaseExternalService<
         system: this.systemName,
         status: "running",
         startedAt: new Date().toISOString(),
-        triggeredBy: "cron",
+        triggeredBy,
       })
       .returning();
 
