@@ -1,13 +1,16 @@
 "use client";
 
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 
 import { Button, Link } from "@heroui/react";
 import {
   Icon3dCubeSphereOff,
   IconBallBaseball,
+  IconChevronDown,
   IconHome,
   IconPackage,
+  IconShieldLock,
   IconUser,
   IconUsers,
   IconX,
@@ -23,8 +26,11 @@ interface SidebarProps {
 }
 
 export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
-  const { status } = useSession();
+  const { status, data: session } = useSession();
   const pathname = usePathname();
+  const isActiveLink = (href: string) => {
+    return pathname === href;
+  };
 
   const menuItems = [
     {
@@ -64,9 +70,30 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
     );
   }
 
-  const isActiveLink = (href: string) => {
-    return pathname === href;
-  };
+  const adminLinks = [
+    {
+      label: "External Sync",
+      href: "/admin/external-sync",
+    },
+    {
+      label: "Unmatched Exams",
+      href: "/admin/unmatched-exams",
+    },
+  ];
+
+  const adminHasActiveChild = adminLinks.some((link) =>
+    isActiveLink(link.href)
+  );
+  const [adminExpanded, setAdminExpanded] = useState(adminHasActiveChild);
+
+  useEffect(() => {
+    if (adminHasActiveChild) {
+      setAdminExpanded(true);
+    }
+  }, [adminHasActiveChild]);
+
+  const showAdminSection =
+    status === "authenticated" && session?.user?.role === "admin";
 
   return (
     <>
@@ -125,6 +152,50 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
                 </li>
               );
             })}
+            {showAdminSection && (
+              <li>
+                <button
+                  type="button"
+                  onClick={() => setAdminExpanded((prev) => !prev)}
+                  className={`flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left transition-colors duration-200 ${
+                    adminExpanded || adminHasActiveChild
+                      ? "border-l-2 border-primary bg-primary/10 text-primary"
+                      : "text-foreground-600 hover:bg-default-100 hover:text-foreground"
+                  }`}
+                >
+                  <IconShieldLock size={20} />
+                  <span className="flex-1">Admin</span>
+                  <IconChevronDown
+                    size={16}
+                    className={`transition-transform ${
+                      adminExpanded ? "rotate-180" : "rotate-0"
+                    }`}
+                  />
+                </button>
+                {adminExpanded && (
+                  <ul className="mt-1 space-y-1">
+                    {adminLinks.map((link) => {
+                      const childActive = isActiveLink(link.href);
+
+                      return (
+                        <li key={link.href}>
+                          <Link
+                            href={link.href}
+                            className={`flex w-full items-center gap-2 rounded-lg px-3 py-1.5 text-sm transition-colors duration-200 ${
+                              childActive
+                                ? "border-l-2 border-primary bg-primary/10 text-primary"
+                                : "text-foreground-600 hover:bg-default-100 hover:text-foreground"
+                            }`}
+                          >
+                            {link.label}
+                          </Link>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                )}
+              </li>
+            )}
           </ul>
         </nav>
 
