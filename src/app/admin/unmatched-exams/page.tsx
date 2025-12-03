@@ -19,14 +19,25 @@ import {
 } from "@heroui/react";
 import { AlertCircle, FileText, Search, TrendingUp, Users } from "lucide-react";
 
+import { LinkPlayerDialog } from "@/components/admin/LinkPlayerDialog";
 import { useUnmatchedPlayers } from "@/hooks";
 
 export default function UnmatchedPlayersPage() {
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedPlayer, setSelectedPlayer] = useState<any>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const { players, error, isLoading } = useUnmatchedPlayers();
 
-  console.log(players);
+  const handleLinkClick = (player: any) => {
+    setSelectedPlayer(player);
+    setIsDialogOpen(true);
+  };
+
+  const handleLinkSuccess = () => {
+    // Show success message
+    alert("Player linked successfully!");
+  };
 
   // Filter players based on search
   const filteredPlayers = players?.filter((player: any) => {
@@ -234,7 +245,12 @@ export default function UnmatchedPlayersPage() {
                       </TableCell>
                       <TableCell>
                         <div className="flex justify-end">
-                          <Button size="sm" variant="flat" color="primary">
+                          <Button
+                            size="sm"
+                            variant="flat"
+                            color="primary"
+                            onPress={() => handleLinkClick(player)}
+                          >
                             Link Player
                           </Button>
                         </div>
@@ -245,6 +261,13 @@ export default function UnmatchedPlayersPage() {
               </Table>
             </CardBody>
           </Card>
+
+          <LinkPlayerDialog
+            isOpen={isDialogOpen}
+            onClose={() => setIsDialogOpen(false)}
+            armcarePlayer={selectedPlayer}
+            onSuccess={handleLinkSuccess}
+          />
         </>
       )}
     </div>
