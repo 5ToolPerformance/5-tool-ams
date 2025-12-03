@@ -136,6 +136,7 @@ export function LinkPlayerDialog({
                 <label className="mb-2 block text-sm font-medium">
                   Select PATH Player
                 </label>
+                {error && <p className="text-red-500">{error}</p>}
                 <Autocomplete
                   placeholder="Search for a player..."
                   isLoading={isLoading}
@@ -160,7 +161,7 @@ export function LinkPlayerDialog({
                   {playersData?.map((player: any) => (
                     <AutocompleteItem
                       key={player.id}
-                      textValue={player.firstName + " " + player.lastName}
+                      textValue={`${player.firstName} ${player.lastName}`}
                     >
                       <div className="flex flex-col">
                         <span className="font-medium">
