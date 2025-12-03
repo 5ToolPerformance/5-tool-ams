@@ -1,11 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { getSession } from "next-auth/react";
-
+import { auth } from "@/auth";
 import { ArmCareService } from "@/lib/services/external-systems/armcare/armcare-service";
 
 export async function POST(request: NextRequest) {
-  const session = await getSession();
+  const session = await auth();
 
   if (session?.user.role !== "admin") {
     return NextResponse.json(
