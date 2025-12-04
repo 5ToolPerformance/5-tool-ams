@@ -231,4 +231,65 @@ export const armcareExamsRepository = {
       throw new Error("Failed to link ArmCare player to Path player");
     }
   },
+  /**
+   * Gets all exams for a player.
+   * @param playerId
+   * @returns An array of exams
+   * @throws Error if there is an error with the database query
+   */
+  getPlayerExams: async (playerId: string) => {
+    try {
+      const exams = await db.query.armcareExams.findMany({
+        where: eq(armcareExams.playerId, playerId),
+        orderBy: desc(armcareExams.examDate),
+      });
+
+      return exams;
+    } catch (error) {
+      console.error("[ArmCareRepo] getPlayerExams - Database error: ", error);
+      throw new Error("Failed to fetch player exams from the database");
+    }
+  },
+
+  /**
+   * Gets a single exam by ID.
+   * @param id The ID of the exam
+   * @returns The exam
+   * @throws Error if there is an error with the database query
+   */
+  getExamById: async (id: string) => {
+    try {
+      const exam = await db.query.armcareExams.findFirst({
+        where: eq(armcareExams.id, id),
+      });
+
+      return exam;
+    } catch (error) {
+      console.error("[ArmCareRepo] getExamById - Database error: ", error);
+      throw new Error("Failed to fetch exam from the database");
+    }
+  },
+
+  /**
+   * Gets the latest exam for a player.
+   * @param playerId The ID of the player
+   * @returns The latest exam
+   * @throws Error if there is an error with the database query
+   */
+  getLatestPlayerExam: async (playerId: string) => {
+    try {
+      const exam = await db.query.armcareExams.findFirst({
+        where: eq(armcareExams.playerId, playerId),
+        orderBy: desc(armcareExams.examDate),
+      });
+
+      return exam;
+    } catch (error) {
+      console.error(
+        "[ArmCareRepo] getLatestPlayerExam - Database error: ",
+        error
+      );
+      throw new Error("Failed to fetch latest player exam from the database");
+    }
+  },
 };
