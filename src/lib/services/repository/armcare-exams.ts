@@ -1,4 +1,4 @@
-import { and, desc, eq } from "drizzle-orm";
+import { and, asc, desc, eq } from "drizzle-orm";
 
 import db from "@/db";
 import {
@@ -231,6 +231,7 @@ export const armcareExamsRepository = {
       throw new Error("Failed to link ArmCare player to Path player");
     }
   },
+
   /**
    * Gets all exams for a player.
    * @param playerId
@@ -290,6 +291,148 @@ export const armcareExamsRepository = {
         error
       );
       throw new Error("Failed to fetch latest player exam from the database");
+    }
+  },
+
+  /**
+   * Gets the ArmCare summary for a player with all normalized metrics from their exam history.
+   * Returns arrays of values suitable for charting and trend analysis.
+   * @param playerId The ID of the player
+   * @returns The summary with latest exam, historical data arrays, and statistics
+   * @throws Error if there is an error with the database query
+   */
+  getPlayerSummary: async (playerId: string) => {
+    try {
+      // Get all exams for the player, ordered by date (oldest first for chart display)
+      const exams = await db.query.armcareExams.findMany({
+        where: eq(armcareExams.playerId, playerId),
+        orderBy: asc(armcareExams.examDate),
+      });
+
+      if (exams.length === 0) {
+        return {
+          latestExam: null,
+          history: {
+            armScore: [],
+            totalStrength: [],
+            shoulderBalance: [],
+            velo: [],
+            svr: [],
+            totalStrengthPost: [],
+            postStrengthLoss: [],
+            totalPercentFresh: [],
+          },
+          stats: {
+            totalExams: 0,
+            avgArmScore: null,
+            avgTotalStrength: null,
+            avgShoulderBalance: null,
+            firstExamDate: null,
+            lastExamDate: null,
+          },
+        };
+      }
+
+      // Get latest exam (last in the ordered array)
+      const latestExam = exams[exams.length - 1];
+
+      // Build history arrays for charting
+      const history = {
+        armScore: exams.map((exam) => ({
+          date: exam.examDate,
+          value: exam.armScore ? parseFloat(exam.armScore) : null,
+          examType: exam.examType,
+          examId: exam.id,
+        })),
+        totalStrength: exams.map((exam) => ({
+          date: exam.examDate,
+          value: exam.totalStrength ? parseFloat(exam.totalStrength) : null,
+          examType: exam.examType,
+          examId: exam.id,
+        })),
+        shoulderBalance: exams.map((exam) => ({
+          date: exam.examDate,
+          value: exam.shoulderBalance ? parseFloat(exam.shoulderBalance) : null,
+          examType: exam.examType,
+          examId: exam.id,
+        })),
+        velo: exams.map((exam) => ({
+          date: exam.examDate,
+          value: exam.velo ? parseFloat(exam.velo) : null,
+          examType: exam.examType,
+          examId: exam.id,
+        })),
+        svr: exams.map((exam) => ({
+          date: exam.examDate,
+          value: exam.svr ? parseFloat(exam.svr) : null,
+          examType: exam.examType,
+          examId: exam.id,
+        })),
+        totalStrengthPost: exams.map((exam) => ({
+          date: exam.examDate,
+          value: exam.totalStrengthPost
+            ? parseFloat(exam.totalStrengthPost)
+            : null,
+          examType: exam.examType,
+          examId: exam.id,
+        })),
+        postStrengthLoss: exams.map((exam) => ({
+          date: exam.examDate,
+          value: exam.postStrengthLoss
+            ? parseFloat(exam.postStrengthLoss)
+            : null,
+          examType: exam.examType,
+          examId: exam.id,
+        })),
+        totalPercentFresh: exams.map((exam) => ({
+          date: exam.examDate,
+          value: exam.totalPercentFresh
+            ? parseFloat(exam.totalPercentFresh)
+            : null,
+          examType: exam.examType,
+          examId: exam.id,
+        })),
+      };
+
+      // Calculate statistics (filtering out null values)
+      const armScores = history.armScore
+        .map((d) => d.value)
+        .filter((v): v is number => v !== null);
+      const totalStrengths = history.totalStrength
+        .map((d) => d.value)
+        .filter((v): v is number => v !== null);
+      const shoulderBalances = history.shoulderBalance
+        .map((d) => d.value)
+        .filter((v): v is number => v !== null);
+
+      const stats = {
+        totalExams: exams.length,
+        avgArmScore:
+          armScores.length > 0
+            ? armScores.reduce((sum, val) => sum + val, 0) / armScores.length
+            : null,
+        avgTotalStrength:
+          totalStrengths.length > 0
+            ? totalStrengths.reduce((sum, val) => sum + val, 0) /
+              totalStrengths.length
+            : null,
+        avgShoulderBalance:
+          shoulderBalances.length > 0
+            ? shoulderBalances.reduce((sum, val) => sum + val, 0) /
+              shoulderBalances.length
+            : null,
+        firstExamDate: exams[0].examDate,
+        lastExamDate: latestExam.examDate,
+      };
+
+      return {
+        latestExam,
+        history,
+        stats,
+      };
+    } catch (error) {
+      console.error("[ArmCareRepo] getPlayerSummary - Database error: ", error);
+      throw new Error("Failed to fetch player summary from the database");
     }
   },
 };
