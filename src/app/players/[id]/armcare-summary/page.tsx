@@ -7,7 +7,7 @@ import { armcareExamsRepository } from "@/lib/services/repository/armcare-exams"
 export default async function PlayerArmCareSummaryPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
   try {
     const { id } = await params;
