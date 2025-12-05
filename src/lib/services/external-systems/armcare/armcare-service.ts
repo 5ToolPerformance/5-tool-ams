@@ -245,18 +245,66 @@ export class ArmCareService extends BaseExternalService<
     syncLogId: string,
     result: SyncResult
   ): Promise<void> {
-    // Match player
+    // 1. FIRST: Check if exam already exists in main table (takes precedence)
+    const existingMatched = await db.query.armcareExams.findFirst({
+      where: eq(armcareExams.externalExamId, record.externalId),
+    });
+
+    if (existingMatched) {
+      // Exam already in main table - update if changed
+      const hasChanges =
+        JSON.stringify(existingMatched.rawData) !==
+        JSON.stringify(record.rawData);
+
+      if (hasChanges) {
+        const examData = {
+          playerId: existingMatched.playerId, // Keep existing player link
+          externalExamId: record.externalId,
+          examDate: record.date,
+          examTime: record.examTime,
+          examType: record.examType,
+          timezone: record.timezone,
+          armScore: this.toNumericString(record.armScore),
+          totalStrength: this.toNumericString(record.totalStrength),
+          shoulderBalance: this.toNumericString(record.shoulderBalance),
+          velo: this.toNumericString(record.velo),
+          svr: this.toNumericString(record.svr),
+          totalStrengthPost: this.toNumericString(record.totalStrengthPost),
+          postStrengthLoss: this.toNumericString(record.postStrengthLoss),
+          totalPercentFresh: this.toNumericString(record.totalPercentFresh),
+          rawData: record.rawData,
+          syncLogId,
+          syncedAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        };
+
+        await db
+          .update(armcareExams)
+          .set(examData)
+          .where(eq(armcareExams.id, existingMatched.id));
+
+        result.recordsUpdated++;
+      } else {
+        result.recordsSkipped++;
+      }
+
+      result.playersMatched++;
+      return;
+    }
+
+    // 2. Not in main table - attempt to match player
     const playerData = this.extractPlayerData(record);
     const match = await this.matchPlayer(playerData);
 
     if (!match.playerId) {
-      // Store in unmatched staging table
+      // No player match - store in unmatched staging table
       await this.storeUnmatchedExam(record, syncLogId, match);
       result.playersUnmatched++;
       result.recordsCreated++;
       return;
     }
 
+    // 3. Player matched and exam not in main table - insert new exam
     result.playersMatched++;
 
     // Ensure mapping exists
@@ -268,11 +316,7 @@ export class ArmCareService extends BaseExternalService<
       match.confidence
     );
 
-    // Check if exam already exists
-    const existing = await db.query.armcareExams.findFirst({
-      where: eq(armcareExams.externalExamId, record.externalId),
-    });
-
+    // Insert into main table
     const examData = {
       playerId: match.playerId,
       externalExamId: record.externalId,
@@ -288,29 +332,13 @@ export class ArmCareService extends BaseExternalService<
       totalStrengthPost: this.toNumericString(record.totalStrengthPost),
       postStrengthLoss: this.toNumericString(record.postStrengthLoss),
       totalPercentFresh: this.toNumericString(record.totalPercentFresh),
-
       rawData: record.rawData,
       syncLogId,
       syncedAt: new Date().toISOString(),
     };
 
-    if (existing) {
-      const hasChanges =
-        JSON.stringify(existing.rawData) !== JSON.stringify(record.rawData);
-
-      if (hasChanges) {
-        await db
-          .update(armcareExams)
-          .set({ ...examData, updatedAt: new Date().toISOString() })
-          .where(eq(armcareExams.id, existing.id));
-        result.recordsUpdated++;
-      } else {
-        result.recordsSkipped++;
-      }
-    } else {
-      await db.insert(armcareExams).values(examData);
-      result.recordsCreated++;
-    }
+    await db.insert(armcareExams).values(examData);
+    result.recordsCreated++;
   }
 
   private async storeUnmatchedExam(
@@ -318,8 +346,12 @@ export class ArmCareService extends BaseExternalService<
     syncLogId: string,
     match: PlayerMatchResult
   ): Promise<void> {
+    // Only look for PENDING unmatched exams (not resolved)
     const existing = await db.query.armcareExamsUnmatched.findFirst({
-      where: eq(armcareExamsUnmatched.externalExamId, record.externalId),
+      where: and(
+        eq(armcareExamsUnmatched.externalExamId, record.externalId),
+        eq(armcareExamsUnmatched.status, "pending")
+      ),
     });
 
     const unmatchedData = {
@@ -359,12 +391,22 @@ export class ArmCareService extends BaseExternalService<
     };
 
     if (existing) {
+      // Update existing pending record
       await db
         .update(armcareExamsUnmatched)
         .set({ ...unmatchedData, updatedAt: new Date().toISOString() })
         .where(eq(armcareExamsUnmatched.id, existing.id));
     } else {
-      await db.insert(armcareExamsUnmatched).values(unmatchedData);
+      // Double-check it's not resolved before inserting
+      const resolved = await db.query.armcareExamsUnmatched.findFirst({
+        where: eq(armcareExamsUnmatched.externalExamId, record.externalId),
+      });
+
+      if (!resolved) {
+        // Truly new unmatched exam
+        await db.insert(armcareExamsUnmatched).values(unmatchedData);
+      }
+      // If resolved exists, silently skip (already processed and moved)
     }
   }
 
