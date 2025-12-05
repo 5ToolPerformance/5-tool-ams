@@ -435,6 +435,12 @@ export const armcareExamsRepository = {
       throw new Error("Failed to fetch player summary from the database");
     }
   },
+
+  /**
+   * Gets latest arm score from player ArmCare Exams with date
+   * @param playerId id of player
+   * @returns the Arm Score value and the date it was recorded
+   */
   getLatestPlayerArmScore: async (playerId: string) => {
     try {
       const exam = await db.query.armcareExams.findFirst({
