@@ -1,11 +1,36 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
-export async function GET() {
+import { ArmCareService } from "@/lib/services/external-systems/armcare/armcare-service";
+
+export async function GET(request: NextRequest) {
   // TODO: Get Search params and system
+  const system = await request.json();
 
   try {
-    // TODO: Get services
-    // TODO: Return Response
+    let result;
+
+    switch (system) {
+      case "armcare":
+        const armcare = new ArmCareService();
+        result = await armcare.sync("cron");
+        break;
+      default:
+        return NextResponse.json(
+          {
+            error: "Invalid system",
+            details: "Invalid system parameter",
+            timestamp: new Date().toISOString(),
+          },
+          {
+            status: 400,
+          }
+        );
+    }
+    return NextResponse.json({
+      success: true,
+      result,
+      timestamp: new Date().toISOString(),
+    });
   } catch (error) {
     console.error("Sync error:", error);
     return NextResponse.json(

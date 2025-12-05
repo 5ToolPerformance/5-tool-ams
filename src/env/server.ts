@@ -16,6 +16,8 @@ export const env = createEnv({
     AUTH_MICROSOFT_ENTRA_ID_SECRET: z.string(),
     AUTH_MICROSOFT_ENTRA_ID_ISSUER: z.string(),
     DATABASE_URL: z.string().url(),
+    //Cron
+    CRON_SECRET: z.string(),
     //Armcare
     ARMCARE_STATUS: z.string(),
     ARMCARE_USERNAME: z.string(),
