@@ -83,6 +83,8 @@ export default function PlayerDashboard({
     return <div>Error: {motorPreferencesError}</div>;
   }
 
+  const recentExamDate = new Date(recentScore.examDate).toLocaleDateString();
+
   return (
     <div className="min-h-screen p-4 md:p-6 lg:p-8">
       <div className="mx-auto max-w-6xl space-y-6">
@@ -120,7 +122,7 @@ export default function PlayerDashboard({
               <ArmCareProfileCard
                 playerId={currentPlayer.id}
                 score={parseFloat(recentScore.armScore)}
-                date={recentScore.examDate}
+                date={recentExamDate}
               />
             ) : (
               <div>No recent ArmScore found</div>
