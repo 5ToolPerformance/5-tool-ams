@@ -1,4 +1,4 @@
-import { and, asc, desc, eq } from "drizzle-orm";
+import { and, asc, desc, eq, isNotNull } from "drizzle-orm";
 
 import db from "@/db";
 import {
@@ -433,6 +433,29 @@ export const armcareExamsRepository = {
     } catch (error) {
       console.error("[ArmCareRepo] getPlayerSummary - Database error: ", error);
       throw new Error("Failed to fetch player summary from the database");
+    }
+  },
+  getLatestPlayerArmScore: async (playerId: string) => {
+    try {
+      const exam = await db.query.armcareExams.findFirst({
+        where: and(
+          eq(armcareExams.playerId, playerId),
+          isNotNull(armcareExams.armScore)
+        ),
+        orderBy: desc(armcareExams.examDate),
+        columns: {
+          armScore: true,
+          examDate: true,
+        },
+      });
+
+      return exam;
+    } catch (error) {
+      console.error(
+        "[ArmCareRepo] getLatestPlayerExam - Database error: ",
+        error
+      );
+      throw new Error("Failed to fetch latest player exam from the database");
     }
   },
 };

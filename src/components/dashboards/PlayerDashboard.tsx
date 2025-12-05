@@ -14,12 +14,14 @@ import {
 import { BarChart3, BookOpen, ChevronDown, Dumbbell } from "lucide-react";
 
 import { useMotorPreferences } from "@/hooks";
+import { useRecentArmScore } from "@/hooks/armcare-exams";
 import { PlayerSelect } from "@/types/database";
 
 import MotorPreferencesModal from "../assessments/motorPreferencesAssessment";
 import LessonsSection from "../lessonsComponent";
 import OverviewSection from "../overviewSection";
 import PlansSection from "../plans/plansComponent";
+import { ArmCareProfileCard } from "../players/ArmCareProfileCard";
 import PlayerCreateForm from "../players/PlayerCreateForm";
 import PlayerInjuryForm from "../players/PlayerInjuryForm";
 import PlayerCard from "../players/playerCard";
@@ -41,6 +43,9 @@ export default function PlayerDashboard({
     isLoading: motorPreferencesLoading,
     error: motorPreferencesError,
   } = useMotorPreferences(currentPlayer.id);
+  const { recentScore, isLoading: recentScoreLoading } = useRecentArmScore(
+    currentPlayer.id
+  );
 
   // Keep local player in sync if prop changes
   useEffect(() => {
@@ -82,26 +87,44 @@ export default function PlayerDashboard({
     <div className="min-h-screen p-4 md:p-6 lg:p-8">
       <div className="mx-auto max-w-6xl space-y-6">
         {/* Player Card and Motor Preference Side by Side */}
-        <div className="flex flex-col items-start gap-6 md:flex-row">
-          <div className="flex w-full flex-col gap-3 md:w-auto">
+        <div className="flex flex-col gap-6 md:flex-row md:justify-between">
+          <div className="flex flex-col gap-3">
             <PlayerCard player={currentPlayer} size="lg" />
             <PlayerCreateForm
               player={currentPlayer}
               onPlayerUpdated={setCurrentPlayer}
             />
           </div>
-          <div>
-            {motorPreferences ? (
-              <MotorPreferenceCard motorPreference={motorPreferences} />
-            ) : (
-              <MotorPreferencesModal
-                playerId={currentPlayer.id}
-                coachId={coachId}
-              />
-            )}
+
+          <div className="flex flex-col gap-6 md:flex-row md:gap-6">
+            <div>
+              {motorPreferences ? (
+                <MotorPreferenceCard motorPreference={motorPreferences} />
+              ) : (
+                <MotorPreferencesModal
+                  playerId={currentPlayer.id}
+                  coachId={coachId}
+                />
+              )}
+            </div>
+
+            <div>
+              <PlayerInjuryForm playerId={currentPlayer.id} />
+            </div>
           </div>
-          <div>
-            <PlayerInjuryForm playerId={currentPlayer.id} />
+
+          <div className="flex flex-col gap-3 md:ml-auto">
+            {recentScoreLoading ? (
+              <div>Loading...</div>
+            ) : recentScore && recentScore.armScore && recentScore.examDate ? (
+              <ArmCareProfileCard
+                playerId={currentPlayer.id}
+                score={parseFloat(recentScore.armScore)}
+                date={recentScore.examDate}
+              />
+            ) : (
+              <div>No recent ArmScore found</div>
+            )}
           </div>
         </div>
 
