@@ -48,4 +48,5 @@ export {
 } from "./external-systems/external-systems";
 export { default as playerInjuries } from "./players/playerInjuries";
 export { default as playerMeasurements } from "./players/playerMeasurements";
+export { writeupLog } from "./writeupLog";
 export { default as writeups } from "./writeups";

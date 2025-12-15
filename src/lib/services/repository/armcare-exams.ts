@@ -258,10 +258,13 @@ export const armcareExamsRepository = {
    * @returns The exam
    * @throws Error if there is an error with the database query
    */
-  getExamById: async (id: string) => {
+  getExamById: async (examId: string) => {
     try {
       const exam = await db.query.armcareExams.findFirst({
-        where: eq(armcareExams.id, id),
+        where: eq(armcareExams.id, examId),
+        with: {
+          player: true,
+        },
       });
 
       return exam;
