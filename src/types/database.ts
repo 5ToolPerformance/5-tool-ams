@@ -14,6 +14,7 @@ import {
   trueStrength,
   users,
   veloAssessment,
+  writeupLog,
   writeups,
 } from "@/db/schema";
 
@@ -77,6 +78,10 @@ export type CatchingAssessmentInsert = typeof catchingAssessment.$inferInsert;
 export type WriteupSelect = typeof writeups.$inferSelect;
 export type WriteupInsert = typeof writeups.$inferInsert;
 
-// PlayerInjurt Db Schema types
+// PlayerInjury Db Schema types
 export type PlayerInjurySelect = typeof playerInjuries.$inferSelect;
 export type PlayerInjuryInsert = typeof playerInjuries.$inferInsert;
+
+// Writeup Log Db Schema types
+export type WriteupLogSelect = typeof writeupLog.$inferSelect;
+export type WriteupLogInsert = typeof writeupLog.$inferInsert;
