@@ -23,7 +23,9 @@ export async function GET(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const writeups = await writeupRepository.getPlayerWriteupLog(params.id);
+    const { id } = await params;
+
+    const writeups = await writeupRepository.getPlayerWriteupLog(id);
     return NextResponse.json(writeups);
   } catch (error) {
     console.error("Error fetching writeups:", error);
@@ -48,8 +50,10 @@ export async function POST(
     const body = await request.json();
     const validated = createWriteupSchema.parse(body);
 
+    const { id } = await params;
+
     const writeup = await writeupRepository.createWriteupLog({
-      playerId: params.id,
+      playerId: id,
       coachId: session.user.id,
       ...validated,
     });
