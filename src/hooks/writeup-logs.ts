@@ -27,10 +27,18 @@ export function usePlayerWriteups(playerId: string) {
     return response.json();
   };
 
+  const getLatestWriteupDate = (): string | null => {
+    if (!data || data.length === 0) return null;
+
+    // Data is already sorted by date DESC from repository
+    return data[0].writeupDate;
+  };
+
   return {
     writeups: data?.data || [],
     isLoading,
     error,
     addWriteup,
+    getLatestWriteupDate,
   };
 }

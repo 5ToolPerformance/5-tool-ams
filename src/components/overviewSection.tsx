@@ -1,7 +1,7 @@
 import { Card, CardBody } from "@heroui/react";
 import { Target } from "lucide-react";
 
-import { usePlayerDashboardStats } from "@/hooks";
+import { usePlayerDashboardStats, usePlayerWriteups } from "@/hooks";
 
 import { LessonTypesPieChart } from "./charts/lessonTypesChart";
 import { PlayerInjuryViewer } from "./players/PlayerInjuryViewer";
@@ -18,6 +18,8 @@ const OverviewSection: React.FC<OverviewSectionProps> = ({ playerId }) => {
     isLoading: statsLoading,
     error: statsError,
   } = usePlayerDashboardStats(playerId);
+
+  const { getLatestWriteupDate, isLoading } = usePlayerWriteups(playerId);
 
   if (statsLoading) {
     return (
@@ -76,6 +78,28 @@ const OverviewSection: React.FC<OverviewSectionProps> = ({ playerId }) => {
                 <p className="text-xl font-semibold">
                   {lessonsLastMonth} Lessons
                 </p>
+              </div>
+            </div>
+          </CardBody>
+        </Card>
+
+        <Card>
+          <CardBody className="p-4">
+            <div className="flex items-center gap-3">
+              <div className="rounded-lg bg-primary/10 p-2">
+                <Target className="h-5 w-5 text-primary" />
+              </div>
+              <div>
+                <p className="text-sm text-default-600">Last Writeup</p>
+                {isLoading ? (
+                  <span>Loading...</span>
+                ) : getLatestWriteupDate ? (
+                  <span>
+                    Last writeup: {getLatestWriteupDate() || "No writeups yet"}
+                  </span>
+                ) : (
+                  <span>No writeups yet</span>
+                )}
               </div>
             </div>
           </CardBody>

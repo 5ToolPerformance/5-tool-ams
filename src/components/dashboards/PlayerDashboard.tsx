@@ -21,6 +21,7 @@ import MotorPreferencesModal from "../assessments/motorPreferencesAssessment";
 import LessonsSection from "../lessonsComponent";
 import OverviewSection from "../overviewSection";
 import PlansSection from "../plans/plansComponent";
+import { AddWriteupLogForm } from "../players/AddWriteupLogForm";
 import { ArmCareProfileCard } from "../players/ArmCareProfileCard";
 import PlayerCreateForm from "../players/PlayerCreateForm";
 import PlayerInjuryForm from "../players/PlayerInjuryForm";
@@ -112,6 +113,9 @@ export default function PlayerDashboard({
 
             <div>
               <PlayerInjuryForm playerId={currentPlayer.id} />
+            </div>
+            <div>
+              <AddWriteupLogForm playerId={currentPlayer.id} />
             </div>
           </div>
 

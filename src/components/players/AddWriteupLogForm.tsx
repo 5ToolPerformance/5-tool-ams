@@ -23,7 +23,10 @@ interface WriteupFormData {
   notes: string;
 }
 
-export function AddWriteupForm({ playerId, onSuccess }: AddWriteupFormProps) {
+export function AddWriteupLogForm({
+  playerId,
+  onSuccess,
+}: AddWriteupFormProps) {
   const { addWriteup } = usePlayerWriteups(playerId);
 
   const form = useForm({
