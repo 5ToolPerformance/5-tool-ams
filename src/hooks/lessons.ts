@@ -2,6 +2,8 @@ import { default as useSWR } from "swr";
 
 import { ApiService } from "@/lib/services/api";
 
+const fetcher = (url: string) => fetch(url).then((res) => res.json());
+
 /**
  * Fetches a specific lesson from the API.
  * @param id - The ID of the lesson to fetch
@@ -45,4 +47,29 @@ export function useAssessmentsByLessonId(lessonId: string) {
   return useSWR(lessonId ? ["assessments", lessonId] : null, () =>
     ApiService.fetchAssessmentsByLessonId(lessonId)
   );
+}
+
+/**
+ * Fetches a lesson report for a specific player from the API.
+ * @param playerId - The ID of the player to fetch the report for
+ * @param lessonCount - The number of lessons to include in the report
+ * @returns the lesson report for the specified player
+ * @throws Error if there is an issue with the API request
+ */
+export function useLessonReportByPlayerId(
+  playerId: string,
+  lessonCount: number
+) {
+  const { data, error, isLoading } = useSWR(
+    playerId
+      ? `/api/reports/retrieve-data?playerId=${playerId}&lessonCount=${lessonCount}`
+      : null,
+    fetcher
+  );
+
+  return {
+    reportData: data?.data || [],
+    error,
+    isLoading,
+  };
 }

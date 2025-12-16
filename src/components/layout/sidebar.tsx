@@ -68,6 +68,12 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
         target: "_self",
       },
       {
+        label: "Lesson Reports",
+        href: "/reports/generate-report",
+        icon: IconShieldLock,
+        target: "_self",
+      },
+      {
         label: "Feedback",
         href: "https://forms.office.com/r/parLxEE76t",
         icon: Icon3dCubeSphereOff,
