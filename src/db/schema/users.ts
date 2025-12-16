@@ -1,5 +1,12 @@
 import { relations } from "drizzle-orm";
-import { pgEnum, pgTable, timestamp, uuid, varchar } from "drizzle-orm/pg-core";
+import {
+  boolean,
+  pgEnum,
+  pgTable,
+  timestamp,
+  uuid,
+  varchar,
+} from "drizzle-orm/pg-core";
 
 import playerInformation from "./players/playerInformation";
 
@@ -19,6 +26,7 @@ const users = pgTable("user", {
   role: rolesEnum("role").default("coach"),
   username: varchar("username", { length: 25 }).unique(),
   access: accessEnum("access").default("read/write"),
+  isActive: boolean("is_active").default(true),
 });
 
 export default users;
