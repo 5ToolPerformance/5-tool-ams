@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { LLMService } from "@/lib/services/llm";
+import { lessonRepository } from "@/lib/services/repository/lessons";
 
 export async function GET(request: NextRequest) {
   try {
@@ -15,7 +15,10 @@ export async function GET(request: NextRequest) {
       });
     }
 
-    const data = await LLMService.retrieveDataForReport(playerId, lessonCount);
+    const data = await lessonRepository.getLessonReportByPlayerId(
+      playerId,
+      lessonCount
+    );
 
     return NextResponse.json({
       success: true,

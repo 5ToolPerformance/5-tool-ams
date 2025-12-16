@@ -253,6 +253,13 @@
       "when": 1765908429918,
       "tag": "0035_wandering_galactus",
       "breakpoints": true
+    },
+    {
+      "idx": 36,
+      "version": "7",
+      "when": 1765913878098,
+      "tag": "0036_lame_franklin_richards",
+      "breakpoints": true
     }
   ]
 }

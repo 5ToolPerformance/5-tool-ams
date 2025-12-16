@@ -229,6 +229,7 @@ export class LessonService {
               maxDist: data.hitTraxAssessment.maxDist,
               fbAndGbPct: data.hitTraxAssessment.fbAndGbPct,
               lineDrivePct: data.hitTraxAssessment.lineDrivePct,
+              lessonDate: data.lessonDate,
             } as HitTraxAssessmentInsert)
             .returning({ id: hitTraxAssessment.id });
 
@@ -249,6 +250,7 @@ export class LessonService {
               avgVelo: data.veloAssessment.avgVelo,
               topVelo: data.veloAssessment.topVelo,
               strikePct: data.veloAssessment.strikePct,
+              lessonDate: data.lessonDate,
             } as VeloAssessmentInsert)
             .returning({ id: veloAssessment.id });
 

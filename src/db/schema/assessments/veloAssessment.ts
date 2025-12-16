@@ -15,6 +15,7 @@ const veloAssessment = pgTable(
     avgVelo: real("avg_velo"),
     topVelo: real("top_velo"),
     strikePct: real("strike_pct"),
+    lessonDate: date("lesson_date", { mode: "string" }),
     createdOn: date("created_on", { mode: "string" }).notNull().defaultNow(),
   },
   (table) => [index("velo_assessment_lesson_idx").on(table.lessonId)]

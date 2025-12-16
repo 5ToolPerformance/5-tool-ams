@@ -45,6 +45,7 @@ const pitchingAssessment = pgTable(
     next_time_pitched: dateRangeEnum("next_time_pitched"),
     feel: real("feel"),
     concerns: text("concerns"),
+    lessonDate: timestamp("lesson_date", { mode: "date" }),
     createdOn: timestamp("created_on", { mode: "date" }).notNull().defaultNow(),
   },
   (table) => [index("pitching_assessment_lesson_idx").on(table.lessonId)]

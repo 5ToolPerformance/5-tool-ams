@@ -85,3 +85,13 @@ export type PlayerInjuryInsert = typeof playerInjuries.$inferInsert;
 // Writeup Log Db Schema types
 export type WriteupLogSelect = typeof writeupLog.$inferSelect;
 export type WriteupLogInsert = typeof writeupLog.$inferInsert;
+
+export type AssessmentDataSelect =
+  | ArmCareSelect
+  | SmfaSelect
+  | ForcePlateSelect
+  | TrueStrengthSelect
+  | PitchingAssessmentSelect
+  | VeloAssessmentSelect
+  | HitTraxAssessmentSelect
+  | FieldingAssessmentSelect;

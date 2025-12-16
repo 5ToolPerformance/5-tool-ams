@@ -18,6 +18,7 @@ const hitTraxAssessment = pgTable(
     maxDist: real("max_dist"),
     fbAndGbPct: real("fb_and_gb_pct"),
     lineDrivePct: real("line_drive_pct"),
+    lessonDate: date("lesson_date", { mode: "string" }),
     createdOn: date("created_on", { mode: "string" }).notNull().defaultNow(),
   },
   (table) => [index("hittrax_assessment_lesson_idx").on(table.lessonId)]
