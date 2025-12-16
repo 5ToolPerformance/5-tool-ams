@@ -62,6 +62,12 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
         target: "_self",
       },
       {
+        label: "Log Writeup",
+        href: "/player-writeups",
+        icon: IconBallBaseball,
+        target: "_self",
+      },
+      {
         label: "Feedback",
         href: "https://forms.office.com/r/parLxEE76t",
         icon: Icon3dCubeSphereOff,
