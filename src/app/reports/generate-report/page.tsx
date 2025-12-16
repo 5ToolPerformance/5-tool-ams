@@ -11,6 +11,7 @@ import {
   SelectItem,
 } from "@heroui/react";
 
+import { FormattedReport } from "@/components/reports/FormattedReports";
 import { PlayerSelector } from "@/components/ui/PlayerSelector";
 import { useLessonReportByPlayerId } from "@/hooks";
 
@@ -43,6 +44,10 @@ export default function PlayerSummaryReportPage() {
     setShouldFetch(false);
     setSelectedPlayerId("");
     setLessonCount(10);
+  };
+
+  const handlePrint = () => {
+    window.print();
   };
 
   return (
@@ -103,6 +108,13 @@ export default function PlayerSummaryReportPage() {
             <Button variant="flat" onPress={handleReset}>
               ← Back to Configuration
             </Button>
+            <Button
+              color="primary"
+              onPress={handlePrint}
+              isDisabled={isLoading || !!error}
+            >
+              Print / Save as PDF
+            </Button>
           </div>
 
           {isLoading && (
@@ -128,16 +140,7 @@ export default function PlayerSummaryReportPage() {
           )}
 
           {!isLoading && !error && reportData && (
-            <Card>
-              <CardHeader>
-                <h2 className="text-xl font-semibold">Report Data (JSON)</h2>
-              </CardHeader>
-              <CardBody>
-                <pre className="max-h-[600px] overflow-auto rounded-lg bg-default-100 p-4 text-xs">
-                  {JSON.stringify(reportData, null, 2)}
-                </pre>
-              </CardBody>
-            </Card>
+            <FormattedReport data={reportData} />
           )}
         </div>
       )}

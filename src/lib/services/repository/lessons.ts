@@ -113,6 +113,8 @@ export const lessonRepository = {
       ...cleanData
     } = data;
 
+    void (id && playerId && coachId && lessonId && createdOn && lessonDate);
+
     return cleanData;
   },
 };

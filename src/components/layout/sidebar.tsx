@@ -8,8 +8,10 @@ import {
   Icon3dCubeSphereOff,
   IconBallBaseball,
   IconChevronDown,
+  IconClipboardData,
   IconHome,
   IconPackage,
+  IconPencil,
   IconShieldLock,
   IconUser,
   IconUsers,
@@ -64,13 +66,13 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
       {
         label: "Log Writeup",
         href: "/player-writeups",
-        icon: IconBallBaseball,
+        icon: IconPencil,
         target: "_self",
       },
       {
         label: "Lesson Reports",
         href: "/reports/generate-report",
-        icon: IconShieldLock,
+        icon: IconClipboardData,
         target: "_self",
       },
       {
