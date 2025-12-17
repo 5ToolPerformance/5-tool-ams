@@ -298,9 +298,15 @@ export class ArmCareService extends BaseExternalService<
 
     if (!match.playerId) {
       // No player match - store in unmatched staging table
-      await this.storeUnmatchedExam(record, syncLogId, match);
+      const action = await this.storeUnmatchedExam(record, syncLogId, match);
       result.playersUnmatched++;
-      result.recordsCreated++;
+      if (action === "created") {
+        result.recordsCreated++;
+      } else if (action === "updated") {
+        result.recordsUpdated++;
+      } else {
+        result.recordsSkipped++;
+      }
       return;
     }
 
@@ -345,7 +351,7 @@ export class ArmCareService extends BaseExternalService<
     record: ArmCareExamRecord,
     syncLogId: string,
     match: PlayerMatchResult
-  ): Promise<void> {
+  ): Promise<"created" | "updated" | "skipped"> {
     // Only look for PENDING unmatched exams (not resolved)
     const existing = await db.query.armcareExamsUnmatched.findFirst({
       where: and(
@@ -396,6 +402,8 @@ export class ArmCareService extends BaseExternalService<
         .update(armcareExamsUnmatched)
         .set({ ...unmatchedData, updatedAt: new Date().toISOString() })
         .where(eq(armcareExamsUnmatched.id, existing.id));
+
+      return "updated";
     } else {
       // Double-check it's not resolved before inserting
       const resolved = await db.query.armcareExamsUnmatched.findFirst({
@@ -405,8 +413,11 @@ export class ArmCareService extends BaseExternalService<
       if (!resolved) {
         // Truly new unmatched exam
         await db.insert(armcareExamsUnmatched).values(unmatchedData);
+        return "created";
+      } else {
+        // If resolved exists, silently skip (already processed and moved)
+        return "skipped";
       }
-      // If resolved exists, silently skip (already processed and moved)
     }
   }
 
