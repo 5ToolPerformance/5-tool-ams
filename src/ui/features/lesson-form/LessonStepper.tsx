@@ -1,3 +1,5 @@
+"use client";
+
 import { useLessonFormContext } from "./LessonFormProvider";
 import { StepConfirm } from "./steps/StepConfirm";
 import { StepPlayerNotes } from "./steps/StepPlayerNotes";

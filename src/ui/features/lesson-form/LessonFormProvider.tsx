@@ -1,4 +1,5 @@
-// STILL NEEDS DESIGN SYSTEM
+"use client";
+
 import { createContext, useContext } from "react";
 
 import { useLessonForm } from "@/hooks/lessons/useLessonForm";
@@ -9,26 +10,27 @@ const LessonFormContext = createContext<LessonFormContextValue | null>(null);
 
 export function useLessonFormContext() {
   const context = useContext(LessonFormContext);
-
   if (!context) {
     throw new Error(
-      "[useLessonFormContext] must be used within a <LessonFormProvider />"
+      "useLessonFormContext must be used within LessonFormProvider"
     );
   }
-
   return context;
 }
 
-type LessonFormProviderProps = {
+export function LessonFormProvider({
+  children,
+}: {
   children: React.ReactNode;
-};
-
-export function LessonFormProvider({ children }: LessonFormProviderProps) {
+}) {
   const lessonForm = useLessonForm();
+  const { form } = lessonForm;
 
   return (
     <LessonFormContext.Provider value={lessonForm}>
-      {children}
+      <form.Subscribe selector={(state) => state.values}>
+        {() => children}
+      </form.Subscribe>
     </LessonFormContext.Provider>
   );
 }
