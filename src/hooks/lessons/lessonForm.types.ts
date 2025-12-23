@@ -5,9 +5,13 @@ export type LessonType =
   | "strength"
   | "catching";
 
+export type PlayerMechanicEntry = {
+  notes?: string;
+};
+
 export type PlayerLessonData = {
   notes?: string;
-  mechanics?: string[];
+  mechanics?: Record<string, PlayerMechanicEntry>;
   lessonSpecific?: {
     pitching?: PitchingLessonData;
   };
