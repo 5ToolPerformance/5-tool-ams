@@ -28,26 +28,30 @@ export function LessonStepper() {
 }
 
 function StepNavigation() {
-  const { step } = useLessonFormContext();
+  const { form, step } = useLessonFormContext();
 
   return (
-    <div className="mt-6">
-      <button
-        type="button"
-        disabled={step.current === "select-players"}
-        onClick={step.prev}
-      >
-        Back
-      </button>
+    <form.Subscribe selector={(state) => state.values}>
+      {() => (
+        <div style={{ marginTop: 24 }}>
+          <button
+            type="button"
+            onClick={step.prev}
+            disabled={step.current === "select-players"}
+          >
+            Back
+          </button>
 
-      <button
-        className="ml-2"
-        type="button"
-        disabled={!step.isValid(step.current)}
-        onClick={step.next}
-      >
-        Next
-      </button>
-    </div>
+          <button
+            type="button"
+            onClick={step.next}
+            disabled={!step.isValid(step.current)}
+            style={{ marginLeft: 8 }}
+          >
+            Next
+          </button>
+        </div>
+      )}
+    </form.Subscribe>
   );
 }

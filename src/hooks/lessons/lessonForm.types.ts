@@ -9,6 +9,7 @@ export type PlayerLessonData = {
   notes?: string;
   mechanics?: string[];
   lessonSpecific?: Record<string, unknown>;
+  videoAssetId?: string;
 };
 
 export type LessonFormValues = {
