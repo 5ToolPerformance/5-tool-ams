@@ -1,6 +1,7 @@
 "use client";
 
 import { useLessonFormContext } from "../LessonFormProvider";
+import { LESSON_TYPE_REGISTRY } from "../lessonTypes";
 
 const MECHANICS = [
   { id: "m1", label: "Hip-Shoulder Separation" },
@@ -14,11 +15,13 @@ export function StepPlayerNotes() {
   return (
     <form.Subscribe selector={(state) => state.values}>
       {(values) => {
-        const { selectedPlayerIds, players } = values;
+        const { selectedPlayerIds, players, lessonType } = values;
 
         if (selectedPlayerIds.length === 0) {
           return <p>No players selected.</p>;
         }
+
+        const lessonImpl = lessonType && LESSON_TYPE_REGISTRY[lessonType];
 
         return (
           <div>
@@ -54,6 +57,8 @@ export function StepPlayerNotes() {
                   }}
                 >
                   <h3>Player {playerId}</h3>
+
+                  {lessonImpl && <lessonImpl.PlayerNotes playerId={playerId} />}
 
                   {/* Notes */}
                   <div style={{ marginBottom: 12 }}>

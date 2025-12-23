@@ -8,7 +8,9 @@ export type LessonType =
 export type PlayerLessonData = {
   notes?: string;
   mechanics?: string[];
-  lessonSpecific?: Record<string, unknown>;
+  lessonSpecific?: {
+    pitching?: PitchingLessonData;
+  };
   videoAssetId?: string;
 };
 
@@ -36,3 +38,11 @@ export const LESSON_STEPS: LessonStep[] = [
   "shared-notes",
   "confirm",
 ];
+
+export type PitchingPhase = "1" | "2" | "3" | "4";
+
+export type PitchingLessonData = {
+  phase?: PitchingPhase;
+  pitchCount?: number;
+  intentPercent?: number;
+};
