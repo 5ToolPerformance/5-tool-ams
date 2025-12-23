@@ -43,7 +43,11 @@ export function useLessonForm() {
 
     switch (step) {
       case "select-players":
-        return !!values.lessonType && values.selectedPlayerIds.length > 0;
+        return (
+          !!values.lessonType &&
+          !!values.lessonDate &&
+          values.selectedPlayerIds.length > 0
+        );
 
       case "player-notes":
         return values.selectedPlayerIds.every(

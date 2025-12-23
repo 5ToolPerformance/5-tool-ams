@@ -14,6 +14,7 @@ export type PlayerLessonData = {
 
 export type LessonFormValues = {
   lessonType?: LessonType;
+  lessonDate?: string;
   selectedPlayerIds: string[];
 
   players: Record<string, PlayerLessonData>;

@@ -27,7 +27,7 @@ export function StepSelectPlayers() {
   return (
     <form.Subscribe selector={(state) => state.values}>
       {(values) => {
-        const { lessonType, selectedPlayerIds } = values;
+        const { lessonDate, lessonType, selectedPlayerIds } = values;
 
         function isLessonType(value: string): value is LessonType {
           return LESSON_TYPES.some((type) => type.value === value);
@@ -50,6 +50,11 @@ export function StepSelectPlayers() {
 
           form.setFieldValue("selectedPlayerIds", nextIds);
           ensurePlayers(nextIds);
+        }
+
+        function updateDate(event: React.ChangeEvent<HTMLInputElement>) {
+          const { value } = event.target;
+          form.setFieldValue("lessonDate", value);
         }
 
         return (
@@ -85,6 +90,16 @@ export function StepSelectPlayers() {
                   Player {id}
                 </label>
               ))}
+            </div>
+            <div>
+              <label>
+                Lesson Date
+                <input
+                  type="date"
+                  value={lessonDate ?? ""}
+                  onChange={updateDate}
+                />
+              </label>
             </div>
           </div>
         );
