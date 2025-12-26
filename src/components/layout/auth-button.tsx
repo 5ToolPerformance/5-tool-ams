@@ -58,13 +58,29 @@ export default function AuthButton({ minimal = true }: { minimal?: boolean }) {
   }
 
   return (
-    <Button
-      onPress={() => signIn("microsoft-entra-id", { callbackUrl: "/profile" })}
-      color="danger"
-      variant="ghost"
-    >
-      <IconBrandMinecraft />
-      Sign In
-    </Button>
+    <Dropdown placement="bottom-end">
+      <DropdownTrigger>
+        <Button color="danger" variant="ghost">
+          <IconBrandMinecraft />
+          Sign In
+        </Button>
+      </DropdownTrigger>
+      <DropdownMenu aria-label="Sign in options" variant="flat">
+        <DropdownItem
+          key="entra"
+          onPress={() =>
+            signIn("microsoft-entra-id", { callbackUrl: "/profile" })
+          }
+        >
+          Sign in with Microsoft
+        </DropdownItem>
+        <DropdownItem
+          key="google"
+          onPress={() => signIn("google", { callbackUrl: "/profile" })}
+        >
+          Sign in with Google
+        </DropdownItem>
+      </DropdownMenu>
+    </Dropdown>
   );
 }

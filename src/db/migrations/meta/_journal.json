@@ -260,6 +260,13 @@
       "when": 1765913878098,
       "tag": "0036_lame_franklin_richards",
       "breakpoints": true
+    },
+    {
+      "idx": 37,
+      "version": "7",
+      "when": 1766757102480,
+      "tag": "0037_busy_eternals",
+      "breakpoints": true
     }
   ]
 }

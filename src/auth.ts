@@ -1,12 +1,14 @@
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import MicrosoftEntraID from "next-auth/providers/microsoft-entra-id";
 
 import db from "@/db";
-import { users } from "@/db/schema";
+import { allowedUsers, users } from "@/db/schema";
 import { env } from "@/env/server";
+
+import { DEFAULT_ORGANIZATION_ID } from "./lib/constants";
 
 export const { auth, handlers, signIn, signOut } = NextAuth({
   adapter: DrizzleAdapter(db),
@@ -25,6 +27,43 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
     strategy: "jwt",
   },
   callbacks: {
+    async signIn({ user, account }) {
+      if (!account) return false;
+
+      // Normalize email for comparisons
+      const email = user?.email?.toLowerCase();
+      if (!email) return false;
+
+      // Entra remains implicitly allowed (org boundary is the gate)
+      if (account.provider === "microsoft-entra-id") {
+        return true;
+      }
+
+      // Google must be explicitly allowed
+      if (account.provider === "google") {
+        // TODO: set your org id source of truth
+        // For now, you can hardcode or read from env until you have orgs in DB.
+        const organizationId = DEFAULT_ORGANIZATION_ID;
+
+        const [allowed] = await db
+          .select({ id: allowedUsers.id })
+          .from(allowedUsers)
+          .where(
+            and(
+              eq(allowedUsers.email, email),
+              eq(allowedUsers.provider, "google"),
+              eq(allowedUsers.status, "active"),
+              eq(allowedUsers.organizationId, organizationId)
+            )
+          )
+          .limit(1);
+
+        return !!allowed;
+      }
+
+      // Any other provider: deny by default
+      return false;
+    },
     async jwt({ token, user }) {
       if (user) {
         token.role = user.role;
