@@ -21,6 +21,11 @@ export {
 export { default as sessions } from "./sessions";
 export { rolesEnum, default as users, usersRelations } from "./users";
 
+export {
+  allowedUsers,
+  allowedUserStatusEnum,
+  authProviderEnum,
+} from "./allowedUsers";
 export { default as catchingAssessment } from "./assessments/catchingAssessment";
 export { default as fieldingAssessment } from "./assessments/fieldingAssessment";
 export { default as hittingAssessment } from "./assessments/hittingAssessment";

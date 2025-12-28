@@ -93,6 +93,10 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
       label: "Unmatched Exams",
       href: "/admin/unmatched-exams",
     },
+    {
+      label: "Allowed Users",
+      href: "/admin/allowed-users",
+    },
   ];
 
   const adminHasActiveChild = adminLinks.some((link) =>
