@@ -13,14 +13,24 @@ const STEP_COMPONENTS = {
   confirm: StepConfirm,
 } as const;
 
-export function LessonStepper() {
+export type LessonFormPlayer = {
+  id: string;
+  firstName: string;
+  lastName: string;
+};
+
+interface LessonStepperProps {
+  players: LessonFormPlayer[];
+}
+
+export function LessonStepper({ players }: LessonStepperProps) {
   const { step } = useLessonFormContext();
 
   const StepComponent = STEP_COMPONENTS[step.current];
 
   return (
     <div>
-      <StepComponent />
+      <StepComponent players={players} />
 
       <StepNavigation />
     </div>

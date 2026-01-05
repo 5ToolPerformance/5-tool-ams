@@ -28,6 +28,18 @@ export function usePlayerWithInformationById(id: string) {
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
+export function usePlayersForLessonForm() {
+  const { data, error, isLoading } = useSWR(
+    "/api/lesson-form/players",
+    fetcher
+  );
+  return {
+    players: data ?? [],
+    isLoading,
+    error,
+  };
+}
+
 /**
  * Fetches all players from the API.
  * @returns An array of Player objects.

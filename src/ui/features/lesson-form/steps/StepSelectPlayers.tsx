@@ -7,6 +7,7 @@ import { Autocomplete, AutocompleteItem, Chip } from "@heroui/react";
 import { LessonType } from "@/hooks/lessons/lessonForm.types";
 
 import { useLessonFormContext } from "../LessonFormProvider";
+import { LessonFormPlayer } from "../LessonStepper";
 
 const LESSON_TYPES = [
   { value: "pitching", label: "Pitching" },
@@ -19,14 +20,11 @@ const LESSON_TYPES = [
   label: string;
 }>;
 
-// PLACEHOLDER — later this comes from real data
-const PLAYERS = [
-  { id: "p1", name: "Player 1" },
-  { id: "p2", name: "Player 2" },
-  { id: "p3", name: "Player 3" },
-];
-
-export function StepSelectPlayers() {
+export function StepSelectPlayers({
+  players,
+}: {
+  players: LessonFormPlayer[];
+}) {
   const { form, ensurePlayers } = useLessonFormContext();
 
   // Local UI-only state to reset autocomplete after selection
@@ -70,13 +68,12 @@ export function StepSelectPlayers() {
         function updateDate(event: React.ChangeEvent<HTMLInputElement>) {
           form.setFieldValue("lessonDate", event.target.value);
         }
-
-        const selectedPlayers = PLAYERS.filter((p) =>
-          selectedPlayerIds.includes(p.id)
+        const availablePlayers = players.filter(
+          (p) => !selectedPlayerIds.includes(p.id)
         );
 
-        const availablePlayers = PLAYERS.filter(
-          (p) => !selectedPlayerIds.includes(p.id)
+        const selectedPlayers = players.filter((p) =>
+          selectedPlayerIds.includes(p.id)
         );
 
         return (
@@ -116,8 +113,11 @@ export function StepSelectPlayers() {
                 }}
               >
                 {availablePlayers.map((player) => (
-                  <AutocompleteItem key={player.id} textValue={player.name}>
-                    {player.name}
+                  <AutocompleteItem
+                    key={player.id}
+                    textValue={`${player.firstName} ${player.lastName}`}
+                  >
+                    {player.firstName} {player.lastName}
                   </AutocompleteItem>
                 ))}
               </Autocomplete>
@@ -132,12 +132,8 @@ export function StepSelectPlayers() {
                 }}
               >
                 {selectedPlayers.map((player) => (
-                  <Chip
-                    key={player.id}
-                    onClose={() => removePlayer(player.id)}
-                    variant="flat"
-                  >
-                    {player.name}
+                  <Chip onClose={() => removePlayer(player.id)} key={player.id}>
+                    {player.firstName} {player.lastName}
                   </Chip>
                 ))}
               </div>

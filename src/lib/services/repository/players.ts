@@ -15,7 +15,10 @@ export const playerRepository = {
    */
   findAll: async () => {
     try {
-      const players = await db.select().from(playerInformation);
+      const players = await db
+        .select()
+        .from(playerInformation)
+        .orderBy(playerInformation.lastName);
 
       return players;
     } catch (error) {
@@ -110,6 +113,30 @@ export const playerRepository = {
         error
       );
       throw new Error(`Failed to update injury ${id}`);
+    }
+  },
+  /**
+   * Find players for lesson form selection
+   * @returns Array of players with id, firstName, and lastName
+   */
+  findPlayersForLessonForm: async () => {
+    try {
+      const players = await db
+        .select({
+          id: playerInformation.id,
+          firstName: playerInformation.firstName,
+          lastName: playerInformation.lastName,
+        })
+        .from(playerInformation)
+        .orderBy(playerInformation.lastName, playerInformation.firstName);
+
+      return players;
+    } catch (error) {
+      console.error(
+        "[PlayerRepo] findPlayersForLessonForm - Database error: ",
+        error
+      );
+      throw new Error("Failed to fetch players for lesson form");
     }
   },
 };
