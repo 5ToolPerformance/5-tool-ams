@@ -23,7 +23,7 @@ const MECHANICS: Mechanic[] = [
 ];
 
 export function StepPlayerNotes() {
-  const { form, ensurePlayer } = useLessonFormContext();
+  const { form, ensurePlayer, playerById } = useLessonFormContext();
 
   /**
    * Ensure player nodes exist when this step mounts.
@@ -64,6 +64,8 @@ export function StepPlayerNotes() {
               const player = players[playerId] ?? {};
               const mechanicMap = player.mechanics ?? {};
 
+              const playerName = playerById[playerId] || `Player ${playerId}`;
+
               /**
                * Toggle mechanic selection
                */
@@ -91,7 +93,7 @@ export function StepPlayerNotes() {
                     marginBottom: 16,
                   }}
                 >
-                  <h3>Player {playerId}</h3>
+                  <h3>{playerName}</h3>
 
                   {/* Base Notes */}
                   <div style={{ marginBottom: 12 }}>

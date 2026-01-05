@@ -7,7 +7,7 @@ export default async function NewLessonPage() {
   const players = await playerRepository.findPlayersForLessonForm();
 
   return (
-    <LessonFormProvider>
+    <LessonFormProvider players={players}>
       <LessonStepper players={players} />
       <DebugFormState />
     </LessonFormProvider>
