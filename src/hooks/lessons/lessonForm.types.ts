@@ -26,7 +26,6 @@ export type LessonFormValues = {
   players: Record<string, PlayerLessonData>;
   sharedNotes?: {
     general?: string;
-    drills?: string;
   };
 };
 

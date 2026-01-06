@@ -16,14 +16,9 @@ export function StepSharedNotes() {
     <form.Subscribe selector={(state) => state.values.sharedNotes}>
       {(sharedNotes) => {
         const general = sharedNotes?.general ?? "";
-        const drills = sharedNotes?.drills ?? "";
 
         function updateGeneral(e: React.ChangeEvent<HTMLTextAreaElement>) {
           form.setFieldValue("sharedNotes.general", e.target.value);
-        }
-
-        function updateDrills(e: React.ChangeEvent<HTMLTextAreaElement>) {
-          form.setFieldValue("sharedNotes.drills", e.target.value);
         }
 
         return (
@@ -36,18 +31,6 @@ export function StepSharedNotes() {
                 <textarea
                   value={general}
                   onChange={updateGeneral}
-                  rows={4}
-                  style={{ width: "100%" }}
-                />
-              </label>
-            </div>
-
-            <div>
-              <label>
-                Drills / Focus
-                <textarea
-                  value={drills}
-                  onChange={updateDrills}
                   rows={4}
                   style={{ width: "100%" }}
                 />

@@ -1,6 +1,6 @@
 import { LessonFormValues, LessonType } from "@/hooks/lessons/lessonForm.types";
 
-type LessonWritePayload = {
+export type LessonWritePayload = {
   lesson: {
     date: string;
     type: LessonType;

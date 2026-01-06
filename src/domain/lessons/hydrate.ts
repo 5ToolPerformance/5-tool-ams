@@ -1,6 +1,6 @@
 import { LessonFormValues, LessonType } from "@/hooks/lessons/lessonForm.types";
 
-type LessonReadModel = {
+export type LessonReadModel = {
   lesson: {
     id: string;
     date: string;
