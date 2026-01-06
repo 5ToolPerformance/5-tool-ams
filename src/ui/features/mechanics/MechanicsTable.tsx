@@ -20,6 +20,7 @@ import {
 import useSWR from "swr";
 
 import { MechanicForm } from "./MechanicForm";
+import { MechanicsImportModal } from "./MechanicsImportModal";
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json());
 
@@ -28,6 +29,7 @@ export function MechanicsTable() {
 
   const [isOpen, setIsOpen] = useState(false);
   const [editing, setEditing] = useState<any | null>(null);
+  const [importOpen, setImportOpen] = useState(false);
 
   function openCreate() {
     setEditing(null);
@@ -50,9 +52,16 @@ export function MechanicsTable() {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h2 className="text-xl font-semibold">Mechanics</h2>
-        <Button color="primary" onPress={openCreate}>
-          Add Mechanic
-        </Button>
+
+        <div className="flex gap-2">
+          <Button color="primary" onPress={openCreate}>
+            Add Mechanic
+          </Button>
+
+          <Button variant="flat" onPress={() => setImportOpen(true)}>
+            Import CSV
+          </Button>
+        </div>
       </div>
 
       <Table aria-label="Mechanics table">
@@ -131,6 +140,12 @@ export function MechanicsTable() {
           )}
         </ModalContent>
       </Modal>
+
+      <MechanicsImportModal
+        isOpen={importOpen}
+        onClose={() => setImportOpen(false)}
+        onImported={() => mutate()}
+      />
     </div>
   );
 }
