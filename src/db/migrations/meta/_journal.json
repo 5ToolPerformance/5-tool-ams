@@ -267,6 +267,13 @@
       "when": 1766757102480,
       "tag": "0037_busy_eternals",
       "breakpoints": true
+    },
+    {
+      "idx": 38,
+      "version": "7",
+      "when": 1767642868563,
+      "tag": "0038_stale_maggott",
+      "breakpoints": true
     }
   ]
 }

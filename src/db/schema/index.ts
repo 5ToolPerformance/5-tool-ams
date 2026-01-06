@@ -51,6 +51,7 @@ export {
   externalSystemsTokens,
   syncStatusEnum,
 } from "./external-systems/external-systems";
+export { mechanics, mechanicTypeEnum } from "./lesson-logging-v2/mechanics";
 export { default as playerInjuries } from "./players/playerInjuries";
 export { default as playerMeasurements } from "./players/playerMeasurements";
 export { writeupLog } from "./writeupLog";
