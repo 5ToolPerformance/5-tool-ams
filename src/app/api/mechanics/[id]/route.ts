@@ -17,10 +17,11 @@ export async function PUT(
   req: Request,
   { params }: { params: { id: string } }
 ) {
+  const { id } = await params;
   const body = await req.json();
   const parsed = updateSchema.parse(body);
 
-  const mechanic = await mechanicsRepository.update(params.id, parsed);
+  const mechanic = await mechanicsRepository.update(id, parsed);
   return NextResponse.json(mechanic);
 }
 
@@ -28,6 +29,7 @@ export async function DELETE(
   _req: Request,
   { params }: { params: { id: string } }
 ) {
-  await mechanicsRepository.delete(params.id);
+  const { id } = await params;
+  await mechanicsRepository.delete(id);
   return NextResponse.json({ success: true });
 }
