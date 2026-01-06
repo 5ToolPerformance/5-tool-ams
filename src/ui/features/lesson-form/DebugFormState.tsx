@@ -3,7 +3,7 @@
 import { useLessonFormContext } from "./LessonFormProvider";
 
 export function DebugFormState() {
-  const { form, step } = useLessonFormContext();
+  const { form, step, mechanics } = useLessonFormContext();
 
   return (
     <form.Subscribe selector={(state) => state.values}>
@@ -22,6 +22,7 @@ export function DebugFormState() {
             {
               step: step.current,
               values,
+              mechanics,
             },
             null,
             2

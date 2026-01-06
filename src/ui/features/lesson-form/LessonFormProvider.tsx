@@ -4,13 +4,26 @@ import { createContext, useContext, useMemo } from "react";
 
 import { useLessonForm } from "@/hooks/lessons/useLessonForm";
 
+export type LessonFormPlayer = {
+  id: string;
+  firstName: string;
+  lastName: string;
+};
+
+export type LessonFormMechanic = {
+  id: string;
+  name: string;
+  description: string | null;
+  type: string | null;
+  tags: string[] | null;
+};
+
 type LessonFormContextValue = ReturnType<typeof useLessonForm> & {
-  players: {
-    id: string;
-    firstName: string;
-    lastName: string;
-  }[];
+  players: LessonFormPlayer[];
   playerById: Record<string, string>;
+
+  mechanics: LessonFormMechanic[];
+  mechanicById: Record<string, LessonFormMechanic>;
 };
 
 const LessonFormContext = createContext<LessonFormContextValue | null>(null);
@@ -26,16 +39,14 @@ export function useLessonFormContext() {
 }
 
 type LessonFormProviderProps = {
-  players: {
-    id: string;
-    firstName: string;
-    lastName: string;
-  }[];
+  players: LessonFormPlayer[];
+  mechanics: LessonFormMechanic[];
   children: React.ReactNode;
 };
 
 export function LessonFormProvider({
   players = [],
+  mechanics = [],
   children,
 }: LessonFormProviderProps) {
   const lessonForm = useLessonForm();
@@ -47,12 +58,19 @@ export function LessonFormProvider({
     );
   }, [players]);
 
+  const mechanicById = useMemo(() => {
+    return Object.fromEntries(mechanics.map((m) => [m.id, m]));
+  }, [mechanics]);
+
   return (
     <LessonFormContext.Provider
       value={{
         ...lessonForm,
         players,
         playerById,
+
+        mechanics,
+        mechanicById,
       }}
     >
       <form.Subscribe selector={(state) => state.values}>

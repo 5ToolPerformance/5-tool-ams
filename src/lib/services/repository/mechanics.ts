@@ -81,4 +81,24 @@ export const mechanicsRepository = {
       throw new Error("Failed to delete mechanic");
     }
   },
+  findAllForLessonForm: async () => {
+    try {
+      const res = await db
+        .select({
+          id: mechanics.id,
+          name: mechanics.name,
+          description: mechanics.description,
+          type: mechanics.type,
+          tags: mechanics.tags,
+        })
+        .from(mechanics);
+      return res;
+    } catch (error) {
+      console.error(
+        "[mechanicsRepository.findAllForLessonForm] Error finding all mechanics for lesson form:",
+        error
+      );
+      throw new Error("Failed to find all mechanics for lesson form");
+    }
+  },
 };

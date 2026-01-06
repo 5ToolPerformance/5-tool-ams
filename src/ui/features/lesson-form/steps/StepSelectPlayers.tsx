@@ -7,7 +7,6 @@ import { Autocomplete, AutocompleteItem, Chip } from "@heroui/react";
 import { LessonType } from "@/hooks/lessons/lessonForm.types";
 
 import { useLessonFormContext } from "../LessonFormProvider";
-import { LessonFormPlayer } from "../LessonStepper";
 
 const LESSON_TYPES = [
   { value: "pitching", label: "Pitching" },
@@ -20,12 +19,8 @@ const LESSON_TYPES = [
   label: string;
 }>;
 
-export function StepSelectPlayers({
-  players,
-}: {
-  players: LessonFormPlayer[];
-}) {
-  const { form, ensurePlayers } = useLessonFormContext();
+export function StepSelectPlayers() {
+  const { form, ensurePlayers, players } = useLessonFormContext();
 
   // Local UI-only state to reset autocomplete after selection
   const [autocompleteKey, setAutocompleteKey] = useState(0);
