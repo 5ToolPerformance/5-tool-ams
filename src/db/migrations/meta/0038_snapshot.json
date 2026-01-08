@@ -1,5 +1,5 @@
 {
-  "id": "8fc22ac6-a544-4486-8551-2e06a6ec7a24",
+  "id": "d5dcfe5e-7047-4357-b73a-fc6fe6fa88c5",
   "prevId": "710f7031-e340-4b09-8079-9b0d63e42e53",
   "version": "7",
   "dialect": "postgresql",
@@ -81,12 +81,8 @@
           "name": "account_userId_user_id_fk",
           "tableFrom": "account",
           "tableTo": "user",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -365,12 +361,8 @@
           "name": "arm_care_lesson_id_lesson_id_fk",
           "tableFrom": "arm_care",
           "tableTo": "lesson",
-          "columnsFrom": [
-            "lesson_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["lesson_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -547,12 +539,8 @@
           "name": "armcare_exams_player_id_player_information_id_fk",
           "tableFrom": "armcare_exams",
           "tableTo": "player_information",
-          "columnsFrom": [
-            "player_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["player_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -560,12 +548,8 @@
           "name": "armcare_exams_sync_log_id_external_sync_logs_id_fk",
           "tableFrom": "armcare_exams",
           "tableTo": "external_sync_logs",
-          "columnsFrom": [
-            "sync_log_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["sync_log_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -575,9 +559,7 @@
         "armcare_exams_external_exam_id_unique": {
           "name": "armcare_exams_external_exam_id_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "external_exam_id"
-          ]
+          "columns": ["external_exam_id"]
         }
       },
       "policies": {},
@@ -806,12 +788,8 @@
           "name": "armcare_exams_unmatched_sync_log_id_external_sync_logs_id_fk",
           "tableFrom": "armcare_exams_unmatched",
           "tableTo": "external_sync_logs",
-          "columnsFrom": [
-            "sync_log_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["sync_log_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -819,12 +797,8 @@
           "name": "armcare_exams_unmatched_resolved_by_user_id_fk",
           "tableFrom": "armcare_exams_unmatched",
           "tableTo": "user",
-          "columnsFrom": [
-            "resolved_by"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["resolved_by"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -834,9 +808,7 @@
         "armcare_exams_unmatched_external_exam_id_unique": {
           "name": "armcare_exams_unmatched_external_exam_id_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "external_exam_id"
-          ]
+          "columns": ["external_exam_id"]
         }
       },
       "policies": {},
@@ -949,12 +921,8 @@
           "name": "catching_assessment_lesson_id_lesson_id_fk",
           "tableFrom": "catching_assessment",
           "tableTo": "lesson",
-          "columnsFrom": [
-            "lesson_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["lesson_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -1105,12 +1073,8 @@
           "name": "external_athlete_ids_player_id_player_information_id_fk",
           "tableFrom": "external_athlete_ids",
           "tableTo": "player_information",
-          "columnsFrom": [
-            "player_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["player_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -1118,12 +1082,8 @@
           "name": "external_athlete_ids_linked_by_user_id_fk",
           "tableFrom": "external_athlete_ids",
           "tableTo": "user",
-          "columnsFrom": [
-            "linked_by"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["linked_by"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -1267,12 +1227,8 @@
           "name": "external_sync_logs_triggered_by_user_id_user_id_fk",
           "tableFrom": "external_sync_logs",
           "tableTo": "user",
-          "columnsFrom": [
-            "triggered_by_user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["triggered_by_user_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -1349,9 +1305,7 @@
         "external_systems_config_system_unique": {
           "name": "external_systems_config_system_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "system"
-          ]
+          "columns": ["system"]
         }
       },
       "policies": {},
@@ -1416,9 +1370,7 @@
         "external_systems_tokens_system_unique": {
           "name": "external_systems_tokens_system_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "system"
-          ]
+          "columns": ["system"]
         }
       },
       "policies": {},
@@ -1532,16 +1484,313 @@
           "name": "fielding_assessment_lesson_id_lesson_id_fk",
           "tableFrom": "fielding_assessment",
           "tableTo": "lesson",
-          "columnsFrom": [
-            "lesson_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["lesson_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.mechanics": {
+      "name": "mechanics",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "name": "description",
+          "type": "varchar(1000)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "type": {
+          "name": "type",
+          "type": "mechanic_type",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "tags": {
+          "name": "tags",
+          "type": "varchar(255)[]",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.hawkins_cmj": {
+      "name": "hawkins_cmj",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "timestamp": {
+          "name": "timestamp",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "external_uniqueId": {
+          "name": "external_uniqueId",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "athlete_id": {
+          "name": "athlete_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "athlete_name": {
+          "name": "athlete_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "testType_name": {
+          "name": "testType_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "testType_canonicalId": {
+          "name": "testType_canonicalId",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "rawData": {
+          "name": "rawData",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "ingested_at": {
+          "name": "ingested_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "jump_height_m": {
+          "name": "jump_height_m",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "peak_propulsive_power_w": {
+          "name": "peak_propulsive_power_w",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "avg_propulsive_velocity_m_s": {
+          "name": "avg_propulsive_velocity_m_s",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "propulsive_impulse_n_s": {
+          "name": "propulsive_impulse_n_s",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "p1_propulsive_impulse_n_s": {
+          "name": "p1_propulsive_impulse_n_s",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "p2_propulsive_impulse_n_s": {
+          "name": "p2_propulsive_impulse_n_s",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "p1p2_propulsive_impulse_index": {
+          "name": "p1p2_propulsive_impulse_index",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {
+        "hawkins_cmj_unique_attempt": {
+          "name": "hawkins_cmj_unique_attempt",
+          "columns": [
+            {
+              "expression": "athlete_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "timestamp",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "external_uniqueId",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.hawkins_drop_jump": {
+      "name": "hawkins_drop_jump",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "timestamp": {
+          "name": "timestamp",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "external_uniqueId": {
+          "name": "external_uniqueId",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "athlete_id": {
+          "name": "athlete_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "athlete_name": {
+          "name": "athlete_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "testType_name": {
+          "name": "testType_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "testType_canonicalId": {
+          "name": "testType_canonicalId",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "rawData": {
+          "name": "rawData",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "ingested_at": {
+          "name": "ingested_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "mrsi": {
+          "name": "mrsi",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {
+        "hawkins_drop_jump_unique_attempt": {
+          "name": "hawkins_drop_jump_unique_attempt",
+          "columns": [
+            {
+              "expression": "athlete_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "timestamp",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "external_uniqueId",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "policies": {},
@@ -1673,16 +1922,333 @@
           "name": "hawkins_force_plate_lesson_id_lesson_id_fk",
           "tableFrom": "hawkins_force_plate",
           "tableTo": "lesson",
-          "columnsFrom": [
-            "lesson_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["lesson_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.hawkins_iso": {
+      "name": "hawkins_iso",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "timestamp": {
+          "name": "timestamp",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "external_uniqueId": {
+          "name": "external_uniqueId",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "athlete_id": {
+          "name": "athlete_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "athlete_name": {
+          "name": "athlete_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "testType_name": {
+          "name": "testType_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "testType_canonicalId": {
+          "name": "testType_canonicalId",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "rawData": {
+          "name": "rawData",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "ingested_at": {
+          "name": "ingested_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "length_of_pull_s": {
+          "name": "length_of_pull_s",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "time_to_peak_force_s": {
+          "name": "time_to_peak_force_s",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "peak_force_n": {
+          "name": "peak_force_n",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {
+        "hawkins_iso_unique_attempt": {
+          "name": "hawkins_iso_unique_attempt",
+          "columns": [
+            {
+              "expression": "athlete_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "timestamp",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "external_uniqueId",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.hawkins_multi": {
+      "name": "hawkins_multi",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "timestamp": {
+          "name": "timestamp",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "external_uniqueId": {
+          "name": "external_uniqueId",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "athlete_id": {
+          "name": "athlete_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "athlete_name": {
+          "name": "athlete_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "testType_name": {
+          "name": "testType_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "testType_canonicalId": {
+          "name": "testType_canonicalId",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "rawData": {
+          "name": "rawData",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "ingested_at": {
+          "name": "ingested_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "avg_mrsi": {
+          "name": "avg_mrsi",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {
+        "hawkins_multi_unique_attempt": {
+          "name": "hawkins_multi_unique_attempt",
+          "columns": [
+            {
+              "expression": "athlete_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "timestamp",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "external_uniqueId",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.hawkins_ts_iso": {
+      "name": "hawkins_ts_iso",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "timestamp": {
+          "name": "timestamp",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "external_uniqueId": {
+          "name": "external_uniqueId",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "athlete_id": {
+          "name": "athlete_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "athlete_name": {
+          "name": "athlete_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "testType_name": {
+          "name": "testType_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "testType_canonicalId": {
+          "name": "testType_canonicalId",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "rawData": {
+          "name": "rawData",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "ingested_at": {
+          "name": "ingested_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "peak_force_n": {
+          "name": "peak_force_n",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {
+        "hawkins_ts_iso_unique_attempt": {
+          "name": "hawkins_ts_iso_unique_attempt",
+          "columns": [
+            {
+              "expression": "athlete_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "timestamp",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "external_uniqueId",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "policies": {},
@@ -1796,12 +2362,8 @@
           "name": "hittrax_assessment_lesson_id_lesson_id_fk",
           "tableFrom": "hittrax_assessment",
           "tableTo": "lesson",
-          "columnsFrom": [
-            "lesson_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["lesson_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -1913,12 +2475,8 @@
           "name": "hitting_assessment_lesson_id_lesson_id_fk",
           "tableFrom": "hitting_assessment",
           "tableTo": "lesson",
-          "columnsFrom": [
-            "lesson_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["lesson_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -2046,12 +2604,8 @@
           "name": "lesson_player_id_player_information_id_fk",
           "tableFrom": "lesson",
           "tableTo": "player_information",
-          "columnsFrom": [
-            "player_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["player_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -2059,12 +2613,8 @@
           "name": "lesson_coach_id_user_id_fk",
           "tableFrom": "lesson",
           "tableTo": "user",
-          "columnsFrom": [
-            "coach_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["coach_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -2171,75 +2721,12 @@
           "name": "lesson_assessments_lesson_id_lesson_id_fk",
           "tableFrom": "lesson_assessments",
           "tableTo": "lesson",
-          "columnsFrom": [
-            "lesson_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["lesson_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "public.mechanics": {
-      "name": "mechanics",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "uuid",
-          "primaryKey": true,
-          "notNull": true,
-          "default": "gen_random_uuid()"
-        },
-        "name": {
-          "name": "name",
-          "type": "varchar(255)",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "description": {
-          "name": "description",
-          "type": "varchar(1000)",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "type": {
-          "name": "type",
-          "type": "mechanic_type",
-          "typeSchema": "public",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "tags": {
-          "name": "tags",
-          "type": "varchar(255)[]",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        },
-        "updated_at": {
-          "name": "updated_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "policies": {},
@@ -2316,12 +2803,8 @@
           "name": "motor_preferences_player_id_player_information_id_fk",
           "tableFrom": "motor_preferences",
           "tableTo": "player_information",
-          "columnsFrom": [
-            "player_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["player_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -2381,12 +2864,8 @@
           "name": "notes_userId_user_id_fk",
           "tableFrom": "notes",
           "tableTo": "user",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -2394,12 +2873,8 @@
           "name": "notes_coachId_user_id_fk",
           "tableFrom": "notes",
           "tableTo": "user",
-          "columnsFrom": [
-            "coachId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["coachId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -2585,12 +3060,8 @@
           "name": "pitching_assessment_lesson_id_lesson_id_fk",
           "tableFrom": "pitching_assessment",
           "tableTo": "lesson",
-          "columnsFrom": [
-            "lesson_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["lesson_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -2708,12 +3179,8 @@
           "name": "player_information_userId_user_id_fk",
           "tableFrom": "player_information",
           "tableTo": "user",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -2802,12 +3269,8 @@
           "name": "player_injuries_player_id_player_information_id_fk",
           "tableFrom": "player_injuries",
           "tableTo": "player_information",
-          "columnsFrom": [
-            "player_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["player_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -2861,12 +3324,8 @@
           "name": "player_measurements_player_id_player_information_id_fk",
           "tableFrom": "player_measurements",
           "tableTo": "player_information",
-          "columnsFrom": [
-            "player_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["player_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -2906,12 +3365,8 @@
           "name": "session_userId_user_id_fk",
           "tableFrom": "session",
           "tableTo": "user",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -3143,12 +3598,8 @@
           "name": "smfa_lesson_id_lesson_id_fk",
           "tableFrom": "smfa",
           "tableTo": "lesson",
-          "columnsFrom": [
-            "lesson_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["lesson_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -3380,12 +3831,8 @@
           "name": "smfa_boolean_lesson_id_lesson_id_fk",
           "tableFrom": "smfa_boolean",
           "tableTo": "lesson",
-          "columnsFrom": [
-            "lesson_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["lesson_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -3569,12 +4016,8 @@
           "name": "true_strength_lesson_id_lesson_id_fk",
           "tableFrom": "true_strength",
           "tableTo": "lesson",
-          "columnsFrom": [
-            "lesson_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["lesson_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -3657,16 +4100,12 @@
         "user_email_unique": {
           "name": "user_email_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "email"
-          ]
+          "columns": ["email"]
         },
         "user_username_unique": {
           "name": "user_username_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "username"
-          ]
+          "columns": ["username"]
         }
       },
       "policies": {},
@@ -3762,12 +4201,8 @@
           "name": "velo_assessment_lesson_id_lesson_id_fk",
           "tableFrom": "velo_assessment",
           "tableTo": "lesson",
-          "columnsFrom": [
-            "lesson_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["lesson_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -3878,12 +4313,8 @@
           "name": "writeup_log_player_id_player_information_id_fk",
           "tableFrom": "writeup_log",
           "tableTo": "player_information",
-          "columnsFrom": [
-            "player_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["player_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -3891,12 +4322,8 @@
           "name": "writeup_log_coach_id_user_id_fk",
           "tableFrom": "writeup_log",
           "tableTo": "user",
-          "columnsFrom": [
-            "coach_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["coach_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -3962,12 +4389,8 @@
           "name": "writeups_coach_id_user_id_fk",
           "tableFrom": "writeups",
           "tableTo": "user",
-          "columnsFrom": [
-            "coach_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["coach_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -3975,12 +4398,8 @@
           "name": "writeups_player_id_player_information_id_fk",
           "tableFrom": "writeups",
           "tableTo": "player_information",
-          "columnsFrom": [
-            "player_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["player_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -3996,19 +4415,12 @@
     "public.allowed_user_status": {
       "name": "allowed_user_status",
       "schema": "public",
-      "values": [
-        "invited",
-        "active",
-        "revoked"
-      ]
+      "values": ["invited", "active", "revoked"]
     },
     "public.archetypes": {
       "name": "archetypes",
       "schema": "public",
-      "values": [
-        "aerial",
-        "terrestrial"
-      ]
+      "values": ["aerial", "terrestrial"]
     },
     "public.assessment_type": {
       "name": "assessment_type",
@@ -4030,102 +4442,52 @@
     "public.auth_provider": {
       "name": "auth_provider",
       "schema": "public",
-      "values": [
-        "google",
-        "entra"
-      ]
+      "values": ["google", "entra"]
     },
     "public.date_range": {
       "name": "date_range",
       "schema": "public",
-      "values": [
-        "1-2",
-        "3-4",
-        "5-6",
-        "7+",
-        "na"
-      ]
+      "values": ["1-2", "3-4", "5-6", "7+", "na"]
     },
     "public.external_system": {
       "name": "external_system",
       "schema": "public",
-      "values": [
-        "armcare",
-        "trackman",
-        "hittrax",
-        "hawkin"
-      ]
+      "values": ["armcare", "trackman", "hittrax", "hawkin"]
     },
     "public.left-right": {
       "name": "left-right",
       "schema": "public",
-      "values": [
-        "left",
-        "right",
-        "switch"
-      ]
+      "values": ["left", "right", "switch"]
     },
     "public.lesson_types": {
       "name": "lesson_types",
       "schema": "public",
-      "values": [
-        "strength",
-        "hitting",
-        "pitching",
-        "fielding",
-        "catching"
-      ]
+      "values": ["strength", "hitting", "pitching", "fielding", "catching"]
     },
     "public.linking_method": {
       "name": "linking_method",
       "schema": "public",
-      "values": [
-        "email_match",
-        "phone",
-        "manual",
-        "name_match",
-        "external_id"
-      ]
+      "values": ["email_match", "phone", "manual", "name_match", "external_id"]
     },
     "public.linking_status": {
       "name": "linking_status",
       "schema": "public",
-      "values": [
-        "active",
-        "pending",
-        "inactive",
-        "failed"
-      ]
+      "values": ["active", "pending", "inactive", "failed"]
     },
     "public.mechanic_type": {
       "name": "mechanic_type",
       "schema": "public",
-      "values": [
-        "pitching",
-        "hitting",
-        "fielding",
-        "catching",
-        "strength"
-      ]
+      "values": ["pitching", "hitting", "fielding", "catching", "strength"]
     },
     "public.roles": {
       "name": "roles",
       "schema": "public",
-      "values": [
-        "player",
-        "coach",
-        "admin"
-      ]
+      "values": ["player", "coach", "admin"]
     },
     "public.sync_status": {
       "name": "sync_status",
       "schema": "public",
-      "values": [
-        "running",
-        "success",
-        "partial_success",
-        "failed"
-      ]
+      "values": ["running", "success", "partial_success", "failed"]
     }
   },
   "schemas": {},
