@@ -51,6 +51,11 @@ export {
   externalSystemsTokens,
   syncStatusEnum,
 } from "./external-systems/external-systems";
+export { hawkinsCmj } from "./hawkin/hawkinCmj";
+export { hawkinsDropJump } from "./hawkin/hawkinDropJump";
+export { hawkinsIso } from "./hawkin/hawkinIso";
+export { hawkinsMulti } from "./hawkin/hawkinMulti";
+export { hawkinsTsIso } from "./hawkin/hawkinTsIso";
 export { default as playerInjuries } from "./players/playerInjuries";
 export { default as playerMeasurements } from "./players/playerMeasurements";
 export { writeupLog } from "./writeupLog";
