@@ -12,7 +12,7 @@ export const hawkinsMulti = pgTable(
     uniqueIndex("hawkins_multi_unique_attempt").on(
       t.athleteId,
       t.timestamp,
-      t.externalUniqueId
+      t.attemptKey
     ),
   ]
 );

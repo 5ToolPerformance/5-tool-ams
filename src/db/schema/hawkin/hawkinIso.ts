@@ -15,7 +15,7 @@ export const hawkinsIso = pgTable(
     uniqueIndex("hawkins_iso_unique_attempt").on(
       t.athleteId,
       t.timestamp,
-      t.externalUniqueId
+      t.attemptKey
     ),
   ]
 );

@@ -12,4 +12,5 @@ export const baseHawkinsColumns = {
   ingestedAt: timestamp("ingested_at", { withTimezone: true })
     .defaultNow()
     .notNull(),
+  attemptKey: text("attempt_key"),
 };

@@ -19,7 +19,7 @@ export const hawkinsCmj = pgTable(
     uniqueIndex("hawkins_cmj_unique_attempt").on(
       t.athleteId,
       t.timestamp,
-      t.externalUniqueId
+      t.attemptKey
     ),
   ]
 );

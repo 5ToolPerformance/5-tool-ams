@@ -12,7 +12,7 @@ export const hawkinsDropJump = pgTable(
     uniqueIndex("hawkins_drop_jump_unique_attempt").on(
       t.athleteId,
       t.timestamp,
-      t.externalUniqueId
+      t.attemptKey
     ),
   ]
 );
