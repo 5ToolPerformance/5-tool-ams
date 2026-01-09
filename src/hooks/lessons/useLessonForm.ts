@@ -2,7 +2,7 @@ import { useState } from "react";
 
 import { useForm } from "@tanstack/react-form";
 
-import { submitLesson } from "@/app/actions/lessons";
+import { submitLesson, updateLessonAction } from "@/app/actions/lessons";
 
 import { LESSON_STEPS, LessonFormValues, LessonStep } from "./lessonForm.types";
 
@@ -11,11 +11,21 @@ const INITIAL_VALUES: LessonFormValues = {
   players: {},
 };
 
-export function useLessonForm() {
+type UseLessonFormOptions = {
+  mode: "create" | "edit";
+  lessonId?: string;
+  defaultValues?: LessonFormValues;
+};
+
+export function useLessonForm({
+  mode,
+  lessonId,
+  defaultValues,
+}: UseLessonFormOptions) {
   const [currentStep, setCurrentStep] = useState<LessonStep>("select-players");
 
   const form = useForm({
-    defaultValues: INITIAL_VALUES,
+    defaultValues: defaultValues ?? INITIAL_VALUES,
   });
 
   function ensurePlayers(playerIds: string[]) {
@@ -83,7 +93,19 @@ export function useLessonForm() {
   async function submit() {
     if (!isStepValid("confirm")) return;
     try {
-      await submitLesson(form.state.values);
+      const values = form.state.values;
+
+      if (mode === "edit") {
+        if (!lessonId) {
+          throw new Error("Missing lessonId for edit mode");
+        }
+
+        await updateLessonAction(lessonId, values);
+        console.log("Lesson updated successfully");
+      } else {
+        await submitLesson(values);
+        console.log("Lesson submitted successfully");
+      }
     } catch (error) {
       console.error("Failed to submit lesson:", error);
       throw new Error("Failed to submit lesson");
@@ -109,5 +131,8 @@ export function useLessonForm() {
     ensureSharedNotes,
 
     submit,
+
+    mode,
+    lessonId,
   };
 }

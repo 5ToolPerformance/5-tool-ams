@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useMemo } from "react";
 
+import { LessonFormValues } from "@/hooks/lessons/lessonForm.types";
 import { useLessonForm } from "@/hooks/lessons/useLessonForm";
 
 export type LessonFormPlayer = {
@@ -39,17 +40,23 @@ export function useLessonFormContext() {
 }
 
 type LessonFormProviderProps = {
+  mode?: "create" | "edit";
+  lessonId?: string;
+  defaultValues?: LessonFormValues;
   players: LessonFormPlayer[];
   mechanics: LessonFormMechanic[];
   children: React.ReactNode;
 };
 
 export function LessonFormProvider({
+  mode = "create",
+  lessonId,
+  defaultValues,
   players = [],
   mechanics = [],
   children,
 }: LessonFormProviderProps) {
-  const lessonForm = useLessonForm();
+  const lessonForm = useLessonForm({ mode, lessonId, defaultValues });
   const { form } = lessonForm;
 
   const playerById = useMemo(() => {
