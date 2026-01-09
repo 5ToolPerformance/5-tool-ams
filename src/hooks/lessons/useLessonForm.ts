@@ -1,3 +1,4 @@
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 import { useForm } from "@tanstack/react-form";
@@ -23,6 +24,9 @@ export function useLessonForm({
   defaultValues,
 }: UseLessonFormOptions) {
   const [currentStep, setCurrentStep] = useState<LessonStep>("select-players");
+  const router = useRouter();
+
+  const [showSuccess, setShowSuccess] = useState(false);
 
   const form = useForm({
     defaultValues: defaultValues ?? INITIAL_VALUES,
@@ -101,15 +105,23 @@ export function useLessonForm({
         }
 
         await updateLessonAction(lessonId, values);
-        console.log("Lesson updated successfully");
+        setShowSuccess(true);
       } else {
         await submitLesson(values);
-        console.log("Lesson submitted successfully");
+        setShowSuccess(true);
       }
     } catch (error) {
       console.error("Failed to submit lesson:", error);
       throw new Error("Failed to submit lesson");
     }
+  }
+
+  function handleSuccessClose() {
+    setShowSuccess(false);
+
+    // choose ONE:
+    router.push("/");
+    // or: router.push(`/lessons/${createdLessonId}`);
   }
 
   return {
@@ -131,6 +143,8 @@ export function useLessonForm({
     ensureSharedNotes,
 
     submit,
+    showSuccess,
+    handleSuccessClose,
 
     mode,
     lessonId,
