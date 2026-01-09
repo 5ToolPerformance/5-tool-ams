@@ -73,7 +73,7 @@ export function MechanicSelector({
 
   function toggleMechanic(mechanicId: string) {
     if (mechanicMap[mechanicId]) {
-      const { [mechanicId]: _, ...rest } = mechanicMap;
+      const { [mechanicId]: _, ...rest } = mechanicMap; // eslint-disable-line @typescript-eslint/no-unused-vars
       form.setFieldValue(`players.${playerId}.mechanics`, rest);
     } else {
       form.setFieldValue(`players.${playerId}.mechanics.${mechanicId}`, {});
