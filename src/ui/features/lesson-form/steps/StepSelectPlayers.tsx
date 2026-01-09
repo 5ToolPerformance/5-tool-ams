@@ -1,8 +1,17 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 
-import { Autocomplete, AutocompleteItem, Chip } from "@heroui/react";
+import {
+  Autocomplete,
+  AutocompleteItem,
+  Card,
+  CardBody,
+  Chip,
+  Input,
+  Select,
+  SelectItem,
+} from "@heroui/react";
 
 import { LessonType } from "@/hooks/lessons/lessonForm.types";
 
@@ -22,27 +31,13 @@ const LESSON_TYPES = [
 export function StepSelectPlayers() {
   const { form, ensurePlayers, players } = useLessonFormContext();
 
-  // Local UI-only state to reset autocomplete after selection
+  // UI-only state to reset autocomplete input
   const [autocompleteKey, setAutocompleteKey] = useState(0);
 
   return (
     <form.Subscribe selector={(state) => state.values}>
       {(values) => {
         const { lessonDate, lessonType, selectedPlayerIds } = values;
-
-        function isLessonType(value: string): value is LessonType {
-          return LESSON_TYPES.some((type) => type.value === value);
-        }
-
-        function handleLessonTypeChange(
-          event: React.ChangeEvent<HTMLSelectElement>
-        ) {
-          const { value } = event.target;
-          form.setFieldValue(
-            "lessonType",
-            isLessonType(value) ? value : undefined
-          );
-        }
 
         function addPlayer(playerId: string) {
           if (selectedPlayerIds.includes(playerId)) return;
@@ -51,18 +46,16 @@ export function StepSelectPlayers() {
           form.setFieldValue("selectedPlayerIds", next);
           ensurePlayers(next);
 
-          // Reset autocomplete input
           setAutocompleteKey((k) => k + 1);
         }
 
         function removePlayer(playerId: string) {
-          const next = selectedPlayerIds.filter((id) => id !== playerId);
-          form.setFieldValue("selectedPlayerIds", next);
+          form.setFieldValue(
+            "selectedPlayerIds",
+            selectedPlayerIds.filter((id) => id !== playerId)
+          );
         }
 
-        function updateDate(event: React.ChangeEvent<HTMLInputElement>) {
-          form.setFieldValue("lessonDate", event.target.value);
-        }
         const availablePlayers = players.filter(
           (p) => !selectedPlayerIds.includes(p.id)
         );
@@ -72,80 +65,84 @@ export function StepSelectPlayers() {
         );
 
         return (
-          <div>
-            <h2>Select Lesson Details</h2>
-
-            {/* Lesson Type */}
-            <label>
-              Lesson Type
-              <select
-                value={lessonType ?? ""}
-                onChange={handleLessonTypeChange}
-              >
-                <option value="" disabled>
-                  Select a lesson type
-                </option>
-                {LESSON_TYPES.map((type) => (
-                  <option key={type.value} value={type.value}>
-                    {type.label}
-                  </option>
-                ))}
-              </select>
-            </label>
-
-            {/* Player Selector */}
-            <div style={{ marginTop: 16 }}>
-              <p>Select Players</p>
-
-              <Autocomplete
-                key={autocompleteKey}
-                aria-label="Select player"
-                placeholder="Search players…"
-                onSelectionChange={(key) => {
-                  if (typeof key === "string") {
-                    addPlayer(key);
-                  }
-                }}
-              >
-                {availablePlayers.map((player) => (
-                  <AutocompleteItem
-                    key={player.id}
-                    textValue={`${player.firstName} ${player.lastName}`}
-                  >
-                    {player.firstName} {player.lastName}
-                  </AutocompleteItem>
-                ))}
-              </Autocomplete>
-
-              {/* Selected player chips */}
-              <div
-                style={{
-                  marginTop: 8,
-                  display: "flex",
-                  gap: 8,
-                  flexWrap: "wrap",
-                }}
-              >
-                {selectedPlayers.map((player) => (
-                  <Chip onClose={() => removePlayer(player.id)} key={player.id}>
-                    {player.firstName} {player.lastName}
-                  </Chip>
-                ))}
+          <Card shadow="sm">
+            <CardBody className="space-y-6">
+              {/* Title */}
+              <div>
+                <h2 className="text-lg font-semibold">Lesson Details</h2>
+                <p className="text-sm text-foreground-500">
+                  Select the lesson type, players, and date.
+                </p>
               </div>
-            </div>
 
-            {/* Lesson Date */}
-            <div style={{ marginTop: 16 }}>
-              <label>
-                Lesson Date
-                <input
-                  type="date"
-                  value={lessonDate ?? ""}
-                  onChange={updateDate}
-                />
-              </label>
-            </div>
-          </div>
+              {/* Lesson Type */}
+              <Select
+                label="Lesson Type"
+                placeholder="Select a lesson type"
+                selectedKeys={lessonType ? [lessonType] : []}
+                onSelectionChange={(keys) => {
+                  const value = Array.from(keys)[0];
+                  form.setFieldValue("lessonType", value as LessonType);
+                }}
+                isRequired
+              >
+                {LESSON_TYPES.map((type) => (
+                  <SelectItem key={type.value} textValue={type.label}>
+                    {type.label}
+                  </SelectItem>
+                ))}
+              </Select>
+
+              {/* Player Selector */}
+              <div className="space-y-2">
+                <Autocomplete
+                  key={autocompleteKey}
+                  label="Add Players"
+                  placeholder="Search players…"
+                  onSelectionChange={(key) => {
+                    if (typeof key === "string") {
+                      addPlayer(key);
+                    }
+                  }}
+                >
+                  {availablePlayers.map((player) => (
+                    <AutocompleteItem
+                      key={player.id}
+                      textValue={`${player.firstName} ${player.lastName}`}
+                    >
+                      {player.firstName} {player.lastName}
+                    </AutocompleteItem>
+                  ))}
+                </Autocomplete>
+
+                {/* Selected Players */}
+                {selectedPlayers.length > 0 && (
+                  <div className="flex flex-wrap gap-2">
+                    {selectedPlayers.map((player) => (
+                      <Chip
+                        key={player.id}
+                        onClose={() => removePlayer(player.id)}
+                        variant="flat"
+                      >
+                        {player.firstName} {player.lastName}
+                      </Chip>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Lesson Date */}
+              <Input
+                type="date"
+                label="Lesson Date"
+                value={lessonDate ?? ""}
+                onChange={(e) =>
+                  form.setFieldValue("lessonDate", e.target.value)
+                }
+                isRequired
+              />
+            </CardBody>
+          </Card>
         );
       }}
     </form.Subscribe>
