@@ -56,6 +56,16 @@ export function StepSelectPlayers() {
           );
         }
 
+        function toDateInputValue(value?: string) {
+          if (!value) return "";
+          return value.slice(0, 10); // YYYY-MM-DD
+        }
+
+        function fromDateInputValue(value: string) {
+          if (!value) return undefined;
+          return value; // keep as YYYY-MM-DD for now
+        }
+
         const availablePlayers = players.filter(
           (p) => !selectedPlayerIds.includes(p.id)
         );
@@ -135,9 +145,12 @@ export function StepSelectPlayers() {
               <Input
                 type="date"
                 label="Lesson Date"
-                value={lessonDate ?? ""}
+                value={toDateInputValue(lessonDate) ?? ""}
                 onChange={(e) =>
-                  form.setFieldValue("lessonDate", e.target.value)
+                  form.setFieldValue(
+                    "lessonDate",
+                    fromDateInputValue(e.target.value)
+                  )
                 }
                 isRequired
               />
