@@ -1,25 +1,6 @@
-import { LessonFormValues, LessonType } from "@/hooks/lessons/lessonForm.types";
+import { LessonFormValues } from "@/hooks/lessons/lessonForm.types";
 
-export type LessonReadModel = {
-  lesson: {
-    id: string;
-    date: string;
-    type: LessonType;
-    sharedNotes?: string;
-  };
-
-  participants: {
-    playerId: string;
-    notes?: string;
-    lessonSpecific?: unknown;
-  }[];
-
-  mechanics: {
-    playerId: string;
-    mechanicId: string;
-    notes?: string;
-  }[];
-};
+import type { LessonReadModel } from "./types";
 
 export function hydrateLessonForm(read: LessonReadModel): LessonFormValues {
   const values: LessonFormValues = {

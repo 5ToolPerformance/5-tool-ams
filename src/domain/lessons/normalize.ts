@@ -1,24 +1,5 @@
-import { LessonFormValues, LessonType } from "@/hooks/lessons/lessonForm.types";
-
-export type LessonWritePayload = {
-  lesson: {
-    date: string;
-    type: LessonType;
-    sharedNotes?: string;
-  };
-
-  participants: {
-    playerId: string;
-    notes?: string;
-    lessonSpecific?: unknown;
-  }[];
-
-  mechanics: {
-    playerId: string;
-    mechanicId: string;
-    notes?: string;
-  }[];
-};
+import { LessonWritePayload } from "@/domain/lessons/types";
+import { LessonFormValues } from "@/hooks/lessons/lessonForm.types";
 
 export function normalizeLessonForCreate(
   values: LessonFormValues
