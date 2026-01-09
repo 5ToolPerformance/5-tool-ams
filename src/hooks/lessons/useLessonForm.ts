@@ -2,6 +2,8 @@ import { useState } from "react";
 
 import { useForm } from "@tanstack/react-form";
 
+import { submitLesson } from "@/app/actions/lessons";
+
 import { LESSON_STEPS, LessonFormValues, LessonStep } from "./lessonForm.types";
 
 const INITIAL_VALUES: LessonFormValues = {
@@ -80,13 +82,12 @@ export function useLessonForm() {
 
   async function submit() {
     if (!isStepValid("confirm")) return;
-
-    const values = form.state.values;
-
-    // normalization + orchestrator call goes here
-    // submitLesson(values)
-
-    console.log("Submitting lesson", values);
+    try {
+      await submitLesson(form.state.values);
+    } catch (error) {
+      console.error("Failed to submit lesson:", error);
+      throw new Error("Failed to submit lesson");
+    }
   }
 
   return {
