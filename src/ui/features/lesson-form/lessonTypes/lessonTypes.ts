@@ -1,4 +1,7 @@
-import { LessonType } from "@/hooks/lessons/lessonForm.types";
+import {
+  LessonType,
+  PitchingLessonData,
+} from "@/hooks/lessons/lessonForm.types";
 
 export type LessonTypeImplementation = {
   type: LessonType;
@@ -16,4 +19,7 @@ export type LessonTypeImplementation = {
    * Returns allowed mechanic types for filtering
    */
   allowedMechanicTypes: string[];
+  Review?: React.ComponentType<{
+    data: PitchingLessonData;
+  }>;
 };

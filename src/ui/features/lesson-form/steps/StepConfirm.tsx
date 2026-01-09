@@ -1,89 +1,146 @@
 "use client";
 
+import { Button, Card, CardBody } from "@heroui/react";
+
+import { PitchingLessonData } from "@/hooks/lessons/lessonForm.types";
+
 import { useLessonFormContext } from "../LessonFormProvider";
+import { LESSON_TYPE_REGISTRY } from "../lessonTypes";
 
 export function StepConfirm() {
-  const { form, submit, isSubmitting } = useLessonFormContext();
+  const { form, submit, isSubmitting, playerById, mechanicById } =
+    useLessonFormContext();
 
   return (
     <form.Subscribe selector={(state) => state.values}>
       {(values) => {
-        const { lessonType, selectedPlayerIds, players, sharedNotes } = values;
+        const {
+          lessonType,
+          lessonDate,
+          selectedPlayerIds,
+          players,
+          sharedNotes,
+        } = values;
+
+        const lessonImpl = lessonType ? LESSON_TYPE_REGISTRY[lessonType] : null;
 
         return (
-          <div>
-            <h2>Confirm Lesson</h2>
+          <div className="space-y-8">
+            {/* Header */}
+            <div>
+              <h2 className="text-lg font-semibold">Review & Confirm Lesson</h2>
+              <p className="text-sm text-foreground-500">
+                Review the lesson details below before saving.
+              </p>
+            </div>
 
             {/* Lesson Overview */}
-            <section style={{ marginBottom: 24 }}>
-              <h3>Lesson Details</h3>
-              <p>
-                <strong>Lesson Type:</strong> {lessonType ?? "—"}
-              </p>
-              <p>
-                <strong>Players:</strong> {selectedPlayerIds.join(", ") || "—"}
-              </p>
-            </section>
+            <Card shadow="sm">
+              <CardBody className="space-y-3">
+                <h3 className="text-base font-semibold">Lesson Details</h3>
 
-            {/* Per-player Summary */}
-            <section style={{ marginBottom: 24 }}>
-              <h3>Player Notes</h3>
+                <p>
+                  <strong>Lesson Type:</strong> {lessonType ?? "—"}
+                </p>
+
+                <p>
+                  <strong>Date:</strong> {lessonDate ?? "—"}
+                </p>
+
+                <p>
+                  <strong>Players:</strong>{" "}
+                  {selectedPlayerIds
+                    .map((id) => playerById[id] ?? id)
+                    .join(", ") || "—"}
+                </p>
+              </CardBody>
+            </Card>
+
+            {/* Player Summaries */}
+            <div className="space-y-6">
+              <h3 className="text-base font-semibold">Player Summaries</h3>
 
               {selectedPlayerIds.map((playerId) => {
                 const player = players[playerId];
-
                 if (!player) return null;
 
+                const playerName = playerById[playerId] ?? `Player ${playerId}`;
+
+                const mechanics = player.mechanics ?? {};
+
                 return (
-                  <div
-                    key={playerId}
-                    style={{
-                      border: "1px solid #333",
-                      padding: 12,
-                      marginBottom: 12,
-                    }}
-                  >
-                    <h4>Player {playerId}</h4>
+                  <Card key={playerId} shadow="sm">
+                    <CardBody className="space-y-4">
+                      <h4 className="font-semibold">{playerName}</h4>
 
-                    <p>
-                      <strong>Notes:</strong> {player.notes || "—"}
-                    </p>
+                      {/* General Notes */}
+                      <div>
+                        <p className="text-sm font-medium">Notes</p>
+                        <p className="text-sm text-foreground-600">
+                          {player.notes || "—"}
+                        </p>
+                      </div>
 
-                    <p>
-                      <strong>Mechanics:</strong>{" "}
-                      {player.mechanics?.length
-                        ? player.mechanics.join(", ")
-                        : "—"}
-                    </p>
+                      {/* Lesson-type–specific */}
+                      {lessonImpl?.Review && player.lessonSpecific && (
+                        <div>
+                          <p className="text-sm font-medium">
+                            {lessonImpl.label} Details
+                          </p>
+                          <lessonImpl.Review
+                            data={player.lessonSpecific as PitchingLessonData}
+                          />
+                        </div>
+                      )}
 
-                    {player.videoAssetId && (
-                      <p>
-                        <strong>Video:</strong> {player.videoAssetId}
-                      </p>
-                    )}
-                  </div>
+                      {/* Mechanics */}
+                      <div>
+                        <p className="text-sm font-medium">Mechanics Worked</p>
+
+                        {Object.keys(mechanics).length === 0 && (
+                          <p className="text-sm text-foreground-500">—</p>
+                        )}
+
+                        <ul className="space-y-2">
+                          {Object.entries(mechanics).map(
+                            ([mechanicId, entry]) => (
+                              <li key={mechanicId} className="text-sm">
+                                <strong>
+                                  {mechanicById[mechanicId]?.name ?? mechanicId}
+                                </strong>
+
+                                {entry.notes && (
+                                  <div className="ml-3 text-foreground-500">
+                                    {entry.notes}
+                                  </div>
+                                )}
+                              </li>
+                            )
+                          )}
+                        </ul>
+                      </div>
+                    </CardBody>
+                  </Card>
                 );
               })}
-            </section>
+            </div>
 
             {/* Shared Notes */}
-            <section style={{ marginBottom: 24 }}>
-              <h3>Shared Notes</h3>
+            <Card shadow="sm">
+              <CardBody className="space-y-3">
+                <h3 className="text-base font-semibold">Shared Notes</h3>
 
-              <p>
-                <strong>General:</strong> {sharedNotes?.general || "—"}
-              </p>
+                <p className="text-sm text-foreground-600">
+                  {sharedNotes?.general || "—"}
+                </p>
+              </CardBody>
+            </Card>
 
-              <p>
-                <strong>Drills:</strong> {sharedNotes?.drills || "—"}
-              </p>
-            </section>
-
-            {/* Actions */}
-            <div>
-              <button type="button" onClick={submit} disabled={isSubmitting}>
+            {/* Action */}
+            <div className="flex justify-end pt-4">
+              <Button color="primary" onPress={submit} isLoading={isSubmitting}>
                 {isSubmitting ? "Saving..." : "Confirm & Save"}
-              </button>
+              </Button>
             </div>
           </div>
         );

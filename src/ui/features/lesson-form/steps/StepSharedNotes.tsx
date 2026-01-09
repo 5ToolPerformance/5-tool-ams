@@ -2,6 +2,8 @@
 
 import { useEffect } from "react";
 
+import { Card, CardBody, Textarea } from "@heroui/react";
+
 import { useLessonFormContext } from "../LessonFormProvider";
 
 export function StepSharedNotes() {
@@ -17,26 +19,30 @@ export function StepSharedNotes() {
       {(sharedNotes) => {
         const general = sharedNotes?.general ?? "";
 
-        function updateGeneral(e: React.ChangeEvent<HTMLTextAreaElement>) {
-          form.setFieldValue("sharedNotes.general", e.target.value);
-        }
-
         return (
-          <div>
-            <h2>Shared Lesson Notes</h2>
+          <Card shadow="sm">
+            <CardBody className="space-y-6">
+              {/* Title */}
+              <div>
+                <h2 className="text-lg font-semibold">Shared Lesson Notes</h2>
+                <p className="text-sm text-foreground-500">
+                  These notes apply to the lesson as a whole and are shared
+                  across all players.
+                </p>
+              </div>
 
-            <div style={{ marginBottom: 16 }}>
-              <label>
-                General Notes
-                <textarea
-                  value={general}
-                  onChange={updateGeneral}
-                  rows={4}
-                  style={{ width: "100%" }}
-                />
-              </label>
-            </div>
-          </div>
+              {/* Notes */}
+              <Textarea
+                label="General Notes"
+                placeholder="Notes that apply to the entire lesson…"
+                minRows={4}
+                value={general}
+                onChange={(e) =>
+                  form.setFieldValue("sharedNotes.general", e.target.value)
+                }
+              />
+            </CardBody>
+          </Card>
         );
       }}
     </form.Subscribe>

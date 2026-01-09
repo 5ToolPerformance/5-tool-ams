@@ -2,6 +2,8 @@
 
 import { useEffect } from "react";
 
+import { Card, CardBody, Textarea } from "@heroui/react";
+
 import { useLessonFormContext } from "../LessonFormProvider";
 import { MechanicSelector } from "../components/MechanicSelector";
 import { LESSON_TYPE_REGISTRY } from "../lessonTypes";
@@ -26,7 +28,11 @@ export function StepPlayerNotes() {
         const { lessonType, selectedPlayerIds, players } = values;
 
         if (!lessonType) {
-          return <p>Please select a lesson type.</p>;
+          return (
+            <p className="text-sm text-foreground-500">
+              Please select a lesson type.
+            </p>
+          );
         }
 
         const lessonImpl = LESSON_TYPE_REGISTRY[lessonType] ?? null;
@@ -37,64 +43,68 @@ export function StepPlayerNotes() {
         const availableMechanics = mechanics.filter((m) => {
           if (m.type === null) return true;
 
-          // If there's a registry override, respect it
           if (lessonImpl?.allowedMechanicTypes) {
             return lessonImpl.allowedMechanicTypes.includes(m.type);
           }
 
-          // Default behavior: match lesson type
           return m.type === lessonType;
         });
 
         return (
-          <div>
-            <h2>Player Notes</h2>
+          <div className="space-y-6">
+            {/* Step Header */}
+            <div>
+              <h2 className="text-lg font-semibold">Player Notes</h2>
+              <p className="text-sm text-foreground-500">
+                Add notes and mechanics for each player.
+              </p>
+            </div>
 
+            {/* Player Cards */}
             {selectedPlayerIds.map((playerId) => {
               const player = players[playerId] ?? {};
-
-              const playerName = playerById[playerId] || `Player ${playerId}`;
+              const playerName = playerById[playerId] ?? `Player ${playerId}`;
 
               return (
-                <div
-                  key={playerId}
-                  style={{
-                    border: "1px solid #333",
-                    padding: 12,
-                    marginBottom: 16,
-                  }}
-                >
-                  <h3>{playerName}</h3>
+                <Card key={playerId} shadow="sm">
+                  <CardBody className="space-y-6">
+                    {/* Player Name */}
+                    <h3 className="text-base font-semibold">{playerName}</h3>
 
-                  {/* Base Notes */}
-                  <div style={{ marginBottom: 12 }}>
-                    <label>
-                      Notes
-                      <textarea
-                        rows={3}
-                        style={{ width: "100%" }}
-                        value={player.notes ?? ""}
-                        onChange={(e) =>
-                          form.setFieldValue(
-                            `players.${playerId}.notes`,
-                            e.target.value
-                          )
-                        }
+                    {/* Base Notes */}
+                    <Textarea
+                      label="General Notes"
+                      placeholder="Notes for this player…"
+                      minRows={3}
+                      value={player.notes ?? ""}
+                      onChange={(e) =>
+                        form.setFieldValue(
+                          `players.${playerId}.notes`,
+                          e.target.value
+                        )
+                      }
+                    />
+
+                    {/* Lesson-type–specific notes */}
+                    {lessonImpl?.PlayerNotes && (
+                      <div className="space-y-2">
+                        <p className="text-sm font-medium">
+                          {lessonImpl.label} Details
+                        </p>
+                        <lessonImpl.PlayerNotes playerId={playerId} />
+                      </div>
+                    )}
+
+                    {/* Mechanics */}
+                    <div className="space-y-2">
+                      <p className="text-sm font-medium">Mechanics Worked</p>
+                      <MechanicSelector
+                        playerId={playerId}
+                        mechanics={availableMechanics}
                       />
-                    </label>
-                  </div>
-
-                  {/* Lesson-type–specific notes */}
-                  {lessonImpl?.PlayerNotes && (
-                    <lessonImpl.PlayerNotes playerId={playerId} />
-                  )}
-
-                  {/* Mechanics */}
-                  <MechanicSelector
-                    playerId={playerId}
-                    mechanics={availableMechanics}
-                  />
-                </div>
+                    </div>
+                  </CardBody>
+                </Card>
               );
             })}
           </div>
