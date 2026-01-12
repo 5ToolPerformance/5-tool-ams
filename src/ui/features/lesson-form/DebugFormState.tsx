@@ -1,10 +1,8 @@
 "use client";
 
 import { hydrateLessonForm } from "@/domain/lessons/hydrate";
-import {
-  LessonWritePayload,
-  normalizeLessonForCreate,
-} from "@/domain/lessons/normalize";
+import { normalizeLessonForCreate } from "@/domain/lessons/normalize";
+import { LessonWritePayload } from "@/domain/lessons/types";
 import { LessonFormValues } from "@/hooks/lessons/lessonForm.types";
 
 import { useLessonFormContext } from "./LessonFormProvider";

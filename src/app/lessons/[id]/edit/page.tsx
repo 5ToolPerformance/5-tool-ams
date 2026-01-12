@@ -9,7 +9,7 @@ import { LessonStepper } from "@/ui/features/lesson-form/LessonStepper";
 export default async function EditLessonPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
   const players = await playerRepository.findPlayersForLessonForm();
   const mechanics = await mechanicsRepository.findAllForLessonForm();
