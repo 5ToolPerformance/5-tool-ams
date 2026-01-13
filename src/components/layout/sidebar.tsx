@@ -59,7 +59,7 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
       },
       {
         label: "Create Lesson",
-        href: "/create-lesson",
+        href: "/lessons/new",
         icon: IconBallBaseball,
         target: "_self",
       },
