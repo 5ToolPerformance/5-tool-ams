@@ -24,11 +24,15 @@ export default async function TestPage() {
   );
 
   return (
-    <InteractiveLessonList
-      lessons={allForPlayer}
-      viewContext="player"
-      baseHref="/lessons"
-      emptyMessage="No lessons found for this player"
-    />
+    <div>
+      <h1 className="mb-4 text-2xl font-bold">Test Page</h1>
+      <div className="mb-6 text-lg">{userId}</div>
+      <InteractiveLessonList
+        lessons={allForPlayer}
+        viewContext="player"
+        baseHref="/lessons"
+        emptyMessage="No lessons found for this player"
+      />
+    </div>
   );
 }
