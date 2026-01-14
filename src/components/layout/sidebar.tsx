@@ -90,8 +90,12 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
       href: "/admin/external-sync",
     },
     {
-      label: "Unmatched Exams",
+      label: "Unmatched ArmCare",
       href: "/admin/unmatched-exams",
+    },
+    {
+      label: "Unmatched Hawkin Athletes",
+      href: "/admin/external-accounts/hawkin",
     },
     {
       label: "Allowed Users",
