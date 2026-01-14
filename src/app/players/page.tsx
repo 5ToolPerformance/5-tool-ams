@@ -50,6 +50,8 @@ export default function PlayersPage() {
     mutate,
   } = useAllPlayers();
 
+  const playersArray = Array.isArray(playersData) ? playersData : [];
+
   const [searchTerm, setSearchTerm] = useState("");
   const [ageFilter, setAgeFilter] = useState<string>("");
   const [sortBy, setSortBy] = useState<SortKey>("lastName");
@@ -58,27 +60,27 @@ export default function PlayersPage() {
 
   // Enhance players data with calculated age
   const playersWithAge = useMemo(() => {
-    if (!playersData) return [];
-    return playersData.map((player) => ({
+    return playersArray.map((player) => ({
       ...player,
       calculatedAge: calculateAge(player.date_of_birth),
     }));
-  }, [playersData]);
+  }, [playersArray]);
 
   // Get unique age groups for filtering
   const ageGroups = useMemo(() => {
     const ages: number[] = playersWithAge
       .map((p) => p.calculatedAge)
       .filter((age): age is number => age != null);
-    const uniqueAges = [...new Set(ages)].sort((a, b) => a - b);
-    return uniqueAges;
+
+    return Array.from(new Set(ages)).sort((a, b) => a - b);
   }, [playersWithAge]);
 
   const filteredAndSortedPlayers = useMemo(() => {
     if (playersLoading) return [];
+
     let filtered = playersWithAge;
 
-    // Search filter
+    // Search
     if (searchTerm) {
       const term = searchTerm.toLowerCase();
       filtered = filtered.filter(
@@ -95,8 +97,8 @@ export default function PlayersPage() {
       );
     }
 
-    // Sorting
-    filtered = [...filtered].sort((a, b) => {
+    // Sort
+    return [...filtered].sort((a, b) => {
       let aVal: string | number = "";
       let bVal: string | number = "";
 
@@ -112,8 +114,6 @@ export default function PlayersPage() {
       if (aVal > bVal) return sortOrder === "asc" ? 1 : -1;
       return 0;
     });
-
-    return filtered;
   }, [
     playersWithAge,
     searchTerm,
@@ -140,9 +140,13 @@ export default function PlayersPage() {
           </h1>
           <PlayerCreateForm
             onPlayerCreated={(newPlayer) => {
-              mutate([newPlayer, ...(playersData || [])], {
-                revalidate: true,
-              });
+              mutate(
+                (current) =>
+                  Array.isArray(current)
+                    ? [newPlayer, ...current]
+                    : [newPlayer],
+                { revalidate: true }
+              );
             }}
           />
         </div>
@@ -196,7 +200,7 @@ export default function PlayersPage() {
               <Select
                 label="Age"
                 placeholder="All ages"
-                selectedKeys={ageFilter ? [ageFilter] : []}
+                selectedKeys={ageFilter ? new Set([ageFilter]) : new Set()}
                 onChange={(e) => setAgeFilter(e.target.value)}
               >
                 {ageGroups.map((age) => (
@@ -206,7 +210,7 @@ export default function PlayersPage() {
 
               <Select
                 label="Sort by"
-                selectedKeys={[sortBy]}
+                selectedKeys={new Set([sortBy])}
                 onChange={(e) => setSortBy(e.target.value as SortKey)}
               >
                 <SelectItem key="firstName">First Name</SelectItem>
@@ -216,7 +220,7 @@ export default function PlayersPage() {
 
               <Select
                 label="Order"
-                selectedKeys={[sortOrder]}
+                selectedKeys={new Set([sortOrder])}
                 onChange={(e) => setSortOrder(e.target.value as SortOrder)}
               >
                 <SelectItem key="asc">Ascending</SelectItem>
@@ -244,8 +248,8 @@ export default function PlayersPage() {
       {!playersLoading && !playersError && (
         <>
           <div className="mb-3 text-sm text-gray-600 dark:text-gray-400">
-            Showing {filteredAndSortedPlayers.length} of{" "}
-            {playersData?.length || 0} players
+            Showing {filteredAndSortedPlayers.length} of {playersArray.length}{" "}
+            players
           </div>
 
           {/* Players Table */}
