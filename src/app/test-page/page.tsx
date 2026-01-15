@@ -1,38 +1,25 @@
-import { redirect } from "next/navigation";
+import { AthleteHeaderMeta } from "@/ui/core/athletes/AthleteHeaderMeta";
+import { AthletePageShell } from "@/ui/core/athletes/AthletePageShell";
+import { AthleteQuickActions } from "@/ui/core/athletes/AthleteQuickActions";
+import { AthleteStatusBadges } from "@/ui/core/athletes/AthleteStatusBadge";
+import { AthleteTabsController } from "@/ui/core/athletes/AthleteTabsController";
+import { TabContentShell } from "@/ui/core/athletes/TabContentShell";
 
-import { auth } from "@/auth";
-import { getAllLessonsForPlayer } from "@/db/queries/lessons/lessonQueries";
-import { InteractiveLessonList } from "@/ui/features/lessons/lessonCard";
-import requireAuth from "@/utils/require-auth";
-
-export default async function TestPage() {
-  await requireAuth();
-  const session = await auth();
-
-  if (!session?.user) {
-    redirect("/");
-  }
-
-  if (session.user.role === "player") {
-    redirect("/");
-  }
-  const userId = session.user.id;
-
-  // All lessons a player participated in (including group lessons)
-  const allForPlayer = await getAllLessonsForPlayer(
-    "88d8c6a6-5b7d-493f-b39c-14f9f26e4dea"
-  );
-
+export default function TestPage() {
   return (
-    <div>
-      <h1 className="mb-4 text-2xl font-bold">Test Page</h1>
-      <div className="mb-6 text-lg">{userId}</div>
-      <InteractiveLessonList
-        lessons={allForPlayer}
-        viewContext="player"
-        baseHref="/lessons"
-        emptyMessage="No lessons found for this player"
+    <AthletePageShell>
+      <AthleteHeaderMeta
+        name="John Doe"
+        age={16}
+        handedness="R/R"
+        roles="OF / RHP"
       />
-    </div>
+      <AthleteStatusBadges statuses={["Active"]} />
+      <AthleteQuickActions canEdit />
+
+      <AthleteTabsController />
+
+      <TabContentShell>Test Page Content</TabContentShell>
+    </AthletePageShell>
   );
 }
