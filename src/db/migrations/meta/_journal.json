@@ -302,6 +302,13 @@
       "when": 1767979371366,
       "tag": "0042_minor_sersi",
       "breakpoints": true
+    },
+    {
+      "idx": 43,
+      "version": "7",
+      "when": 1768589002691,
+      "tag": "0043_classy_morlun",
+      "breakpoints": true
     }
   ]
 }
