@@ -10,10 +10,16 @@ export function AthleteTabsController() {
   const router = useRouter();
   const pathname = usePathname();
 
-  const activeKey =
-    TAB_KEYS.find((key) => pathname.endsWith(key)) ?? "overview";
+  const pathSegments = pathname.split("/").filter(Boolean);
+  const isPerformanceRoute = pathSegments.includes("performance");
+  const lastSegment = pathSegments[pathSegments.length - 1];
+  const activeKey = isPerformanceRoute
+    ? "performance"
+    : TAB_KEYS.includes(lastSegment ?? "")
+      ? lastSegment
+      : "overview";
 
-  const playerId = pathname.split("/")[2];
+  const playerId = pathSegments[1];
 
   function handleChange(key: string) {
     router.push(`/players/${playerId}/${key}`);

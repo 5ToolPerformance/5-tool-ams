@@ -1,6 +1,5 @@
 // app/players/[playerId]/performance/layout.tsx
 import { PerformanceHeader } from "@/ui/features/athlete-performance/shared/PerformanceHeader";
-import { PerformanceSectionShell } from "@/ui/features/athlete-performance/shared/PerformanceSectionShell";
 import type { ReactNode } from "react";
 
 export default function PerformanceLayout({
@@ -14,9 +13,7 @@ export default function PerformanceLayout({
       <PerformanceHeader />
 
       {/* Discipline-specific analytics */}
-      <PerformanceSectionShell title="Discipline Analytics">
-        {children}
-      </PerformanceSectionShell>
+      {children}
     </div>
   );
 }

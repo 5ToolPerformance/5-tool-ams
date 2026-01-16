@@ -1,7 +1,7 @@
 "use client";
 
 import { Tab, Tabs } from "@heroui/react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 export type DisciplineOption = {
   key: string;
@@ -26,19 +26,24 @@ interface DisciplineSelectorProps {
 export function DisciplineSelector({
   disciplines = DEFAULT_DISCIPLINES,
   selectedKey,
-  queryKey = "discipline",
   onChange,
 }: DisciplineSelectorProps) {
   const router = useRouter();
   const pathname = usePathname();
-  const searchParams = useSearchParams();
+  const pathSegments = pathname.split("/").filter(Boolean);
 
   if (disciplines.length === 0) {
     return null;
   }
 
+  const lastSegment = pathSegments[pathSegments.length - 1];
+  const availableKeys = new Set(disciplines.map((discipline) => discipline.key));
   const activeKey =
-    selectedKey ?? searchParams.get(queryKey) ?? disciplines[0]?.key;
+    (selectedKey && availableKeys.has(selectedKey)
+      ? selectedKey
+      : availableKeys.has(lastSegment ?? "")
+        ? lastSegment
+        : disciplines[0]?.key) ?? "";
 
   function handleSelection(key: string) {
     if (onChange) {
@@ -46,9 +51,11 @@ export function DisciplineSelector({
       return;
     }
 
-    const params = new URLSearchParams(searchParams);
-    params.set(queryKey, key);
-    router.push(`${pathname}?${params.toString()}`);
+    const playerId = pathSegments[1];
+    if (!playerId) {
+      return;
+    }
+    router.push(`/players/${playerId}/performance/${key}`);
   }
 
   return (
