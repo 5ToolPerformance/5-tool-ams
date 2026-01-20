@@ -8,22 +8,7 @@ import { AthleteQuickActions } from "@/ui/core/athletes/AthleteQuickActions";
 import { AthleteStatusBadges } from "@/ui/core/athletes/AthleteStatusBadge";
 import { AthleteTabsController } from "@/ui/core/athletes/AthleteTabsController";
 import { TabContentShell } from "@/ui/core/athletes/TabContentShell";
-
-// -----------------------------------------------------------------------------
-// Fake data (replace later with real loaders)
-// -----------------------------------------------------------------------------
-
-async function getFakePlayer(id: string) {
-  return {
-    id: id,
-    name: "John Doe",
-    age: 16,
-    handedness: "R/R",
-    roles: "OF / RHP",
-    statuses: ["Active"],
-    canEdit: true,
-  };
-}
+import { getPlayerHeader } from "@/db/queries/players/PlayerHeader";
 
 // -----------------------------------------------------------------------------
 // Page
@@ -31,7 +16,7 @@ async function getFakePlayer(id: string) {
 
 interface PlayerLayoutProps {
   params: {
-    id: string;
+    playerId: string;
   };
   children: ReactNode;
 }
@@ -40,7 +25,10 @@ export default async function PlayerLayout({
   params,
   children,
 }: PlayerLayoutProps) {
-  const player = await getFakePlayer(params.id);
+  const player = await getPlayerHeader(params.playerId);
+  const handedness = `${player.handedness.bat ?? "?"}/${player.handedness.throw ?? "?"}`;
+  const roles = player.positions.length > 0 ? player.positions.join(" / ") : undefined;
+  const statuses = [player.status.injuryFlag ? "Injured" : "Active"];
 
   return (
     <AthletePageShell>
@@ -53,13 +41,13 @@ export default async function PlayerLayout({
             <AthleteHeaderMeta
               name={player.name}
               age={player.age}
-              handedness={player.handedness}
-              roles={player.roles}
+              handedness={handedness}
+              roles={roles}
             />
-            <AthleteStatusBadges statuses={player.statuses} />
+            <AthleteStatusBadges statuses={statuses} />
           </div>
 
-          <AthleteQuickActions canEdit={player.canEdit} />
+          <AthleteQuickActions canEdit />
         </div>
       </AthleteHeader>
 
