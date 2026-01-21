@@ -96,13 +96,18 @@ export function StepPlayerNotes() {
                     )}
 
                     {/* Mechanics */}
-                    <div className="space-y-2">
-                      <p className="text-sm font-medium">Mechanics Worked</p>
-                      <MechanicSelector
-                        playerId={playerId}
-                        mechanics={availableMechanics}
-                      />
-                    </div>
+                    {lessonImpl?.allowedMechanicTypes &&
+                      lessonImpl.allowedMechanicTypes.length > 0 && (
+                        <div className="space-y-2">
+                          <p className="text-sm font-medium">
+                            Mechanics Worked
+                          </p>
+                          <MechanicSelector
+                            playerId={playerId}
+                            mechanics={availableMechanics}
+                          />
+                        </div>
+                      )}
                   </CardBody>
                 </Card>
               );

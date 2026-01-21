@@ -14,6 +14,7 @@ export type PlayerLessonData = {
   mechanics?: Record<string, PlayerMechanicEntry>;
   lessonSpecific?: {
     pitching?: PitchingLessonData;
+    strength?: StrengthLessonSpecific;
   };
   videoAssetId?: string;
 };
@@ -48,4 +49,27 @@ export type PitchingLessonData = {
   phase?: PitchingPhase;
   pitchCount?: number;
   intentPercent?: number;
+};
+
+export type TsIsoData = {
+  shoulderErL?: number;
+  shoulderErR?: number;
+  shoulderErTtpfL?: number;
+  shoulderErTtpfR?: number;
+  shoulderIrL?: number;
+  shoulderIrR?: number;
+  shoulderIrTtpfL?: number;
+  shoulderIrTtpfR?: number;
+  shoulderRotL?: number;
+  shoulderRotR?: number;
+  shoulderRotRfdL?: number;
+  shoulderRotRfdR?: number;
+  hipRotL?: number;
+  hipRotR?: number;
+  hipRotRfdL?: number;
+  hipRotRfdR?: number;
+};
+
+export type StrengthLessonSpecific = {
+  tsIso?: TsIsoData;
 };
