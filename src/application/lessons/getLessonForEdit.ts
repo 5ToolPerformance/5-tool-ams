@@ -108,23 +108,25 @@ export async function getLessonForEdit(
       if (!tsIso) continue;
 
       p.lessonSpecific = {
-        tsIso: {
-          shoulderErL: tsIso.shoulderErL ?? undefined,
-          shoulderErR: tsIso.shoulderErR ?? undefined,
-          shoulderErTtpfL: tsIso.shoulderErTtpfL ?? undefined,
-          shoulderErTtpfR: tsIso.shoulderErTtpfR ?? undefined,
-          shoulderIrL: tsIso.shoulderIrL ?? undefined,
-          shoulderIrR: tsIso.shoulderIrR ?? undefined,
-          shoulderIrTtpfL: tsIso.shoulderIrTtpfL ?? undefined,
-          shoulderIrTtpfR: tsIso.shoulderIrTtpfR ?? undefined,
-          shoulderRotL: tsIso.shoulderRotL ?? undefined,
-          shoulderRotR: tsIso.shoulderRotR ?? undefined,
-          shoulderRotRfdL: tsIso.shoulderRotRfdL ?? undefined,
-          shoulderRotRfdR: tsIso.shoulderRotRfdR ?? undefined,
-          hipRotL: tsIso.hipRotL ?? undefined,
-          hipRotR: tsIso.hipRotR ?? undefined,
-          hipRotRfdL: tsIso.hipRotRfdL ?? undefined,
-          hipRotRfdR: tsIso.hipRotRfdR ?? undefined,
+        strength: {
+          tsIso: {
+            shoulderErL: tsIso.shoulderErL ?? undefined,
+            shoulderErR: tsIso.shoulderErR ?? undefined,
+            shoulderErTtpfL: tsIso.shoulderErTtpfL ?? undefined,
+            shoulderErTtpfR: tsIso.shoulderErTtpfR ?? undefined,
+            shoulderIrL: tsIso.shoulderIrL ?? undefined,
+            shoulderIrR: tsIso.shoulderIrR ?? undefined,
+            shoulderIrTtpfL: tsIso.shoulderIrTtpfL ?? undefined,
+            shoulderIrTtpfR: tsIso.shoulderIrTtpfR ?? undefined,
+            shoulderRotL: tsIso.shoulderRotL ?? undefined,
+            shoulderRotR: tsIso.shoulderRotR ?? undefined,
+            shoulderRotRfdL: tsIso.shoulderRotRfdL ?? undefined,
+            shoulderRotRfdR: tsIso.shoulderRotRfdR ?? undefined,
+            hipRotL: tsIso.hipRotL ?? undefined,
+            hipRotR: tsIso.hipRotR ?? undefined,
+            hipRotRfdL: tsIso.hipRotRfdL ?? undefined,
+            hipRotRfdR: tsIso.hipRotRfdR ?? undefined,
+          },
         },
       };
     }

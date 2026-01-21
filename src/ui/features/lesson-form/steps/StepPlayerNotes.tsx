@@ -17,8 +17,12 @@ export function StepPlayerNotes() {
    */
   useEffect(() => {
     const values = form.state.values;
+
     values.selectedPlayerIds.forEach((id) => {
-      ensurePlayer(id);
+      // ✅ Only initialize if the player does NOT already exist
+      if (!values.players?.[id]) {
+        ensurePlayer(id);
+      }
     });
   }, [form, ensurePlayer]);
 
@@ -91,7 +95,15 @@ export function StepPlayerNotes() {
                         <p className="text-sm font-medium">
                           {lessonImpl.label} Details
                         </p>
-                        <lessonImpl.PlayerNotes playerId={playerId} />
+                        {lessonType === "strength" && (
+                          <lessonImpl.PlayerNotes
+                            playerId={playerId}
+                            data={player.lessonSpecific?.strength?.tsIso ?? {}}
+                          />
+                        )}
+                        {lessonType !== "strength" && (
+                          <lessonImpl.PlayerNotes playerId={playerId} />
+                        )}
                       </div>
                     )}
 

@@ -1,6 +1,7 @@
 import {
   LessonType,
   PitchingLessonData,
+  TsIsoData,
 } from "@/hooks/lessons/lessonForm.types";
 
 export type LessonTypeImplementation = {
@@ -13,6 +14,7 @@ export type LessonTypeImplementation = {
    */
   PlayerNotes: React.ComponentType<{
     playerId: string;
+    data?: TsIsoData;
   }>;
 
   /**
