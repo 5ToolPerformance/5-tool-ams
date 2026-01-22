@@ -1,10 +1,6 @@
-import {
-  LessonType,
-  PitchingLessonData,
-  TsIsoData,
-} from "@/hooks/lessons/lessonForm.types";
+import { LessonType, TsIsoData } from "@/hooks/lessons/lessonForm.types";
 
-export type LessonTypeImplementation = {
+export type LessonTypeImplementation<TLessonSpecific> = {
   type: LessonType;
 
   label: string;
@@ -22,6 +18,6 @@ export type LessonTypeImplementation = {
    */
   allowedMechanicTypes: string[];
   Review?: React.ComponentType<{
-    data: PitchingLessonData;
+    data: TLessonSpecific;
   }>;
 };

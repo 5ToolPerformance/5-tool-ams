@@ -2,7 +2,10 @@
 
 import { Input, Select, SelectItem } from "@heroui/react";
 
-import { PitchingPhase } from "@/hooks/lessons/lessonForm.types";
+import {
+  PitchingLessonData,
+  PitchingPhase,
+} from "@/hooks/lessons/lessonForm.types";
 
 import { useLessonFormContext } from "../LessonFormProvider";
 import { LessonTypeImplementation } from "./lessonTypes";
@@ -17,7 +20,7 @@ const PITCHING_PHASES: {
   { value: "4", label: "Phase 4" },
 ];
 
-export const PitchingLesson: LessonTypeImplementation = {
+export const PitchingLesson: LessonTypeImplementation<PitchingLessonData> = {
   type: "pitching",
   label: "Pitching",
 

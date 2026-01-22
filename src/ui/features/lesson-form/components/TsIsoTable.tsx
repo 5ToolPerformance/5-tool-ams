@@ -21,7 +21,7 @@ type Row = {
   rightKey: keyof TsIsoData;
 };
 
-const ROWS: Row[] = [
+export const TS_ISO_ROWS: Row[] = [
   {
     key: "shoulderEr",
     label: "Shoulder ER",
@@ -110,7 +110,7 @@ export function TsIsoTable({
         </TableHeader>
 
         <TableBody>
-          {ROWS.map((row) => (
+          {TS_ISO_ROWS.map((row) => (
             <TableRow key={row.key}>
               <TableCell>
                 <span className="text-sm font-medium text-foreground">
