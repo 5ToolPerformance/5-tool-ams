@@ -85,7 +85,6 @@ export function StepConfirm() {
                           <p className="text-sm font-medium">
                             {lessonImpl.label} Details
                           </p>
-                          <lessonImpl.Review data={player.lessonSpecific} />
                         </div>
                       )}
 

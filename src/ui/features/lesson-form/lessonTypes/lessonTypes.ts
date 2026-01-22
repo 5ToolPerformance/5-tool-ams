@@ -1,3 +1,7 @@
+import type {
+  PitchingLessonData,
+  StrengthLessonSpecific,
+} from "@/hooks/lessons/lessonForm.types";
 import { LessonType, TsIsoData } from "@/hooks/lessons/lessonForm.types";
 
 export type LessonTypeImplementation<TLessonSpecific> = {
@@ -20,4 +24,12 @@ export type LessonTypeImplementation<TLessonSpecific> = {
   Review?: React.ComponentType<{
     data: TLessonSpecific;
   }>;
+};
+
+export type LessonSpecificByType = {
+  pitching: PitchingLessonData;
+  strength: StrengthLessonSpecific;
+  hitting: never;
+  fielding: never;
+  catching: never;
 };
