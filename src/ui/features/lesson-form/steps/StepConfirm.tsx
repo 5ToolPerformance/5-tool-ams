@@ -2,8 +2,6 @@
 
 import { Button, Card, CardBody } from "@heroui/react";
 
-import { PitchingLessonData } from "@/hooks/lessons/lessonForm.types";
-
 import { useLessonFormContext } from "../LessonFormProvider";
 import { LESSON_TYPE_REGISTRY } from "../lessonTypes";
 
@@ -87,9 +85,6 @@ export function StepConfirm() {
                           <p className="text-sm font-medium">
                             {lessonImpl.label} Details
                           </p>
-                          <lessonImpl.Review
-                            data={player.lessonSpecific as PitchingLessonData}
-                          />
                         </div>
                       )}
 

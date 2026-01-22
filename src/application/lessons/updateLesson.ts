@@ -1,14 +1,16 @@
-import { InferInsertModel, eq } from "drizzle-orm";
+import { InferInsertModel, eq, inArray } from "drizzle-orm";
 
 import db from "@/db";
 import {
   lesson,
   lessonMechanics,
   lessonPlayers,
+  manualTsIso,
   pitchingLessonPlayers,
 } from "@/db/schema";
-import type { LessonWritePayload } from "@/domain/lessons/types";
+import type { LessonWritePayload, TsIsoInsert } from "@/domain/lessons/types";
 import { isPitchingLessonSpecific } from "@/domain/lessons/types";
+import { StrengthLessonSpecific } from "@/hooks/lessons/lessonForm.types";
 
 type PitchingLessonPlayerInsert = InferInsertModel<
   typeof pitchingLessonPlayers
@@ -21,12 +23,21 @@ export async function updateLesson(
 ) {
   return db.transaction(async (tx) => {
     /**
+     * 0️⃣ Fetch existing lesson_players FIRST
+     */
+    const existingLessonPlayers = await tx.query.lessonPlayers.findMany({
+      where: eq(lessonPlayers.lessonId, lessonId),
+    });
+
+    const existingLessonPlayerIds = existingLessonPlayers.map((lp) => lp.id);
+
+    /**
      * 1️⃣ Update lesson row (legacy-compatible)
      */
     await tx
       .update(lesson)
       .set({
-        coachId: coachId,
+        coachId,
         lessonType: payload.lesson.type,
         lessonDate: payload.lesson.date,
         notes: payload.lesson.sharedNotes,
@@ -35,7 +46,29 @@ export async function updateLesson(
       .where(eq(lesson.id, lessonId));
 
     /**
-     * 2️⃣ Delete existing child rows
+     * 2️⃣ Delete lesson-type–specific child rows (USING OLD IDs)
+     */
+    if (existingLessonPlayerIds.length > 0) {
+      if (payload.lesson.type === "pitching") {
+        await tx
+          .delete(pitchingLessonPlayers)
+          .where(
+            inArray(
+              pitchingLessonPlayers.lessonPlayerId,
+              existingLessonPlayerIds
+            )
+          );
+      }
+
+      if (payload.lesson.type === "strength") {
+        await tx
+          .delete(manualTsIso)
+          .where(inArray(manualTsIso.lessonPlayerId, existingLessonPlayerIds));
+      }
+    }
+
+    /**
+     * 3️⃣ Delete generic child rows
      */
     await tx.delete(lessonPlayers).where(eq(lessonPlayers.lessonId, lessonId));
 
@@ -43,18 +76,8 @@ export async function updateLesson(
       .delete(lessonMechanics)
       .where(eq(lessonMechanics.lessonId, lessonId));
 
-    // lesson-type–specific deletes
-    if (payload.lesson.type === "pitching") {
-      await tx.delete(pitchingLessonPlayers).where(
-        eq(
-          pitchingLessonPlayers.lessonPlayerId,
-          lessonId // explained below
-        )
-      );
-    }
-
     /**
-     * 3️⃣ Reinsert lesson_players
+     * 4️⃣ Reinsert lesson_players
      */
     const insertedLessonPlayers = await tx
       .insert(lessonPlayers)
@@ -72,7 +95,7 @@ export async function updateLesson(
     );
 
     /**
-     * 4️⃣ Reinsert lesson_mechanics
+     * 5️⃣ Reinsert lesson_mechanics
      */
     if (payload.mechanics.length > 0) {
       await tx.insert(lessonMechanics).values(
@@ -86,15 +109,13 @@ export async function updateLesson(
     }
 
     /**
-     * 5️⃣ Reinsert lesson-type–specific data
+     * 6️⃣ Reinsert lesson-type–specific data
      */
     if (payload.lesson.type === "pitching") {
       const pitchingRows: PitchingLessonPlayerInsert[] = [];
 
       for (const p of payload.participants) {
-        if (!isPitchingLessonSpecific(p.lessonSpecific)) {
-          continue;
-        }
+        if (!isPitchingLessonSpecific(p.lessonSpecific)) continue;
 
         const ls = p.lessonSpecific;
 
@@ -108,6 +129,28 @@ export async function updateLesson(
 
       if (pitchingRows.length > 0) {
         await tx.insert(pitchingLessonPlayers).values(pitchingRows);
+      }
+    }
+
+    if (payload.lesson.type === "strength") {
+      const tsIsoRows: TsIsoInsert[] = [];
+
+      for (const p of payload.participants) {
+        const lessonSpecific = p.lessonSpecific as
+          | { strength?: StrengthLessonSpecific }
+          | undefined;
+
+        const tsIso = lessonSpecific?.strength?.tsIso;
+        if (!tsIso) continue;
+
+        tsIsoRows.push({
+          lessonPlayerId: lessonPlayerByPlayerId[p.playerId],
+          ...tsIso,
+        });
+      }
+
+      if (tsIsoRows.length > 0) {
+        await tx.insert(manualTsIso).values(tsIsoRows);
       }
     }
   });

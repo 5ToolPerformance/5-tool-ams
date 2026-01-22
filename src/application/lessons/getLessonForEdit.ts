@@ -87,6 +87,51 @@ export async function getLessonForEdit(
     }
   }
 
+  if (lessonRow.lessonType === "strength") {
+    const tsIsoRows = await db.query.manualTsIso.findMany({
+      where: (t, { inArray }) =>
+        inArray(
+          t.lessonPlayerId,
+          lessonPlayerRows.map((lp) => lp.id)
+        ),
+    });
+
+    const tsIsoByLessonPlayerId = Object.fromEntries(
+      tsIsoRows.map((row) => [row.lessonPlayerId, row])
+    );
+
+    for (const p of participants) {
+      const lp = lessonPlayerRows.find((row) => row.playerId === p.playerId);
+      if (!lp) continue;
+
+      const tsIso = tsIsoByLessonPlayerId[lp.id];
+      if (!tsIso) continue;
+
+      p.lessonSpecific = {
+        strength: {
+          tsIso: {
+            shoulderErL: tsIso.shoulderErL ?? undefined,
+            shoulderErR: tsIso.shoulderErR ?? undefined,
+            shoulderErTtpfL: tsIso.shoulderErTtpfL ?? undefined,
+            shoulderErTtpfR: tsIso.shoulderErTtpfR ?? undefined,
+            shoulderIrL: tsIso.shoulderIrL ?? undefined,
+            shoulderIrR: tsIso.shoulderIrR ?? undefined,
+            shoulderIrTtpfL: tsIso.shoulderIrTtpfL ?? undefined,
+            shoulderIrTtpfR: tsIso.shoulderIrTtpfR ?? undefined,
+            shoulderRotL: tsIso.shoulderRotL ?? undefined,
+            shoulderRotR: tsIso.shoulderRotR ?? undefined,
+            shoulderRotRfdL: tsIso.shoulderRotRfdL ?? undefined,
+            shoulderRotRfdR: tsIso.shoulderRotRfdR ?? undefined,
+            hipRotL: tsIso.hipRotL ?? undefined,
+            hipRotR: tsIso.hipRotR ?? undefined,
+            hipRotRfdL: tsIso.hipRotRfdL ?? undefined,
+            hipRotRfdR: tsIso.hipRotRfdR ?? undefined,
+          },
+        },
+      };
+    }
+  }
+
   /**
    * Return unified read model
    */

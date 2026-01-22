@@ -66,6 +66,7 @@ export { hawkinsDropJump } from "./hawkin/hawkinDropJump";
 export { hawkinsIso } from "./hawkin/hawkinIso";
 export { hawkinsMulti } from "./hawkin/hawkinMulti";
 export { hawkinsTsIso } from "./hawkin/hawkinTsIso";
+export { manualTsIso } from "./hawkin/manualTsIso";
 export { lessonMechanics } from "./lesson-logging-v2/lessonMechanics";
 export { lessonPlayers } from "./lesson-logging-v2/lessonPlayers";
 export { pitchingLessonPlayers } from "./lesson-logging-v2/lessonTypes/pitching";
