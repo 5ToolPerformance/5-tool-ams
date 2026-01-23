@@ -19,9 +19,9 @@ const PlayerProfileCard: React.FC<PlayerProfileCardProps> = ({
 }) => {
   const positionsArray = player.position
     ? player.position
-        .split(",")
-        .map((pos) => pos.trim())
-        .filter((pos) => pos.length > 0)
+      .split(",")
+      .map((pos) => pos.trim())
+      .filter((pos) => pos.length > 0)
     : [];
   const sizeClasses = {
     sm: {
@@ -76,12 +76,24 @@ const PlayerProfileCard: React.FC<PlayerProfileCardProps> = ({
             {playerName}
           </h3>
           {player.prospect && <Chip color="success">Prospect</Chip>}
+          {player.primaryCoachId ? (
+            <div className="inline-flex items-center rounded-full bg-primary/10 px-3 py-1 text-sm text-primary">
+              {/*TODO Replace with coach name via join*/}
+              Primary Coach: {player.primaryCoachId}
+            </div>
+          ) : (
+            <div className="inline-flex items-center rounded-full bg-default-100 px-3 py-1 text-sm text-default-500">
+              No Primary Coach Assigned
+            </div>
+          )}
 
           {player.date_of_birth && (
             <p className={`text-default-500 ${currentSize.details}`}>
               Age: {DateTimeService.getAge(player.date_of_birth)}
             </p>
           )}
+
+
 
           <div className={`flex flex-wrap gap-1 ${currentSize.details}`}>
             {player.hits && (

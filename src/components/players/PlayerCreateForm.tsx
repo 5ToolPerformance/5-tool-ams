@@ -186,7 +186,7 @@ export default function PlayerCreateForm({
                       >
                         {coaches?.map((coach) => (
                           <SelectItem key={coach.id}>
-                            {coach.firstName} {coach.lastName}
+                            {coach.name}
                           </SelectItem>
                         ))}
                       </Select>
