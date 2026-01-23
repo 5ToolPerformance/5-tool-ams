@@ -1,7 +1,9 @@
 "use client";
 
+import Link from "next/link";
+
 import { Chip } from "@heroui/react";
-import { CalendarDays, Clock } from "lucide-react";
+import { CalendarDays, Clock, Pencil } from "lucide-react";
 
 import { LessonCardData } from "@/db/queries/lessons/lessonQueries.types";
 
@@ -51,6 +53,14 @@ export function LessonViewerHeader({ lesson }: Props) {
             </p>
           </div>
         </div>
+
+        <Link
+          href={`/lessons/${lesson.id}/edit`}
+          aria-label="Edit lesson"
+          className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-zinc-200 bg-white text-zinc-600 shadow-sm transition-colors hover:text-zinc-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:text-white dark:focus-visible:ring-blue-400 dark:focus-visible:ring-offset-zinc-950"
+        >
+          <Pencil className="h-4 w-4" />
+        </Link>
       </div>
 
       <div className="flex flex-wrap gap-4 text-sm text-zinc-600 dark:text-zinc-400">

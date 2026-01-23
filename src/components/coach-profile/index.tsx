@@ -21,14 +21,17 @@ import { useCoachPlayerLessonCounts } from "@/hooks/coaches";
 import { useLessonsByCoachId } from "@/hooks/lessons";
 import { useUserById } from "@/hooks/players";
 
-import LessonCard from "../lessons/lessonCard";
+import { LessonCardData } from "@/db/queries/lessons/lessonQueries.types";
+import { InteractiveLessonList } from "@/ui/features/lessons/lessonCard";
 
 export default function CoachProfile({
   coachId,
   avgTime,
+  lessonData
 }: {
   coachId: string;
   avgTime: number;
+  lessonData: LessonCardData[];
 }) {
   const {
     data: coach,
@@ -188,9 +191,12 @@ export default function CoachProfile({
             </div>
           ) : (
             <div className="max-h-[600px] space-y-4 overflow-y-auto p-6">
-              {lessons.map((lessonItem) => (
-                <LessonCard key={lessonItem.lesson.id} lesson={lessonItem} />
-              ))}
+              <InteractiveLessonList
+        lessons={lessonData}
+        viewContext="coach"
+        baseHref="/lessons"
+        emptyMessage="No lessons found for this coach"
+      />
             </div>
           )}
         </CardBody>

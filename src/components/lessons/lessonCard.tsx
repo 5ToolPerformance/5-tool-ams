@@ -59,6 +59,11 @@ const LessonCard: React.FC<LessonCardProps> = ({ lesson }) => {
                 View Details
               </Button>
             </a>
+            <a href={`/lessons/${lesson.lesson.id}/edit`}>
+              <Button size="sm" variant="light">
+                Edit Lesson
+              </Button>
+            </a>
           </div>
         </div>
       </CardBody>

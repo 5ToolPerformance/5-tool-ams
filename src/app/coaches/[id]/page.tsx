@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 
 import { auth } from "@/auth";
 import CoachProfile from "@/components/coach-profile";
+import { getLessonsByCoachId } from "@/db/queries/lessons/lessonQueries";
 import { coachRepository } from "@/lib/services/repository/coaches";
 import { UserService } from "@/lib/services/users";
 import { PageProps } from "@/types/page";
@@ -18,5 +19,7 @@ export default async function CoachPage({ params }: CoachPageProps) {
 
   const avgTime = await coachRepository.getAvgSubmissionTime(id);
 
-  return <CoachProfile coachId={coach.id} avgTime={avgTime} />;
+  const coachLessons = await getLessonsByCoachId(id);
+
+  return <CoachProfile coachId={coach.id} avgTime={avgTime} lessonData={coachLessons} />;
 }
