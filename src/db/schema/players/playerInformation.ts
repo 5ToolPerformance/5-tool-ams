@@ -28,6 +28,7 @@ export const playerInformation = pgTable("player_information", {
   prospect: boolean("prospect").notNull().default(false),
   date_of_birth: date("date_of_birth", { mode: "string" }).notNull(),
   sport: sportsEnum("sport").notNull().default("baseball"),
+  primaryCoachId: uuid("primary_coach_id").references(() => users.id),
   created_at: timestamp("created_at", { mode: "string" })
     .notNull()
     .defaultNow(),
