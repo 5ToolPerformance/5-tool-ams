@@ -190,3 +190,17 @@ export function usePlayerInjuries(playerId: string) {
     error,
   };
 }
+
+export function usePlayerNotes(playerId: string) {
+  const { data, isLoading, mutate } = useSWR(
+    `/api/player-notes?playerId=${playerId}`,
+    fetcher
+  );
+
+  return {
+    notes: data?.data ?? [],
+    isLoading,
+    refresh: mutate,
+  };
+}
+

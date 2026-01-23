@@ -1,4 +1,4 @@
-import { pgTable, text, uuid } from "drizzle-orm/pg-core";
+import { pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import { playerInformation, users } from "..";
 
 export const playerNotes = pgTable("player_notes", {
@@ -7,5 +7,5 @@ export const playerNotes = pgTable("player_notes", {
     authorId: uuid("author_id").references(() => users.id),
     content: text("content").notNull(),
     visibility: text("visibility").notNull().default("private"),
-    createdAt: text("created_at").notNull(),
+    createdAt: timestamp("created_at", { mode: "string" }).notNull().defaultNow(),
 });

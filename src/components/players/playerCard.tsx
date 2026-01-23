@@ -2,6 +2,7 @@ import React from "react";
 
 import { Avatar, Card, CardBody, Chip } from "@heroui/react";
 
+import { useCoachById } from "@/hooks";
 import { DateTimeService } from "@/lib/services/date-time";
 import { StringService } from "@/lib/services/strings";
 import { PlayerSelect } from "@/types/database";
@@ -12,6 +13,34 @@ interface PlayerProfileCardProps {
   size?: "sm" | "md" | "lg";
 }
 
+
+function PrimaryCoachBadge({ coachId }: { coachId?: string | null }) {
+  const { coach, isLoading } = useCoachById(coachId);
+
+  if (!coachId) {
+    return (
+      <div className="inline-flex rounded-full bg-default-100 px-3 py-1 text-sm text-default-500">
+        No Primary Coach
+      </div>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <div className="inline-flex rounded-full bg-default-100 px-3 py-1 text-sm">
+        Loading coach…
+      </div>
+    );
+  }
+
+  return (
+    <div className="inline-flex rounded-full bg-primary/10 px-3 py-1 text-sm text-primary">
+      Primary Coach: {coach.name}
+    </div>
+  );
+}
+
+
 const PlayerProfileCard: React.FC<PlayerProfileCardProps> = ({
   player,
   className = "",
@@ -19,9 +48,9 @@ const PlayerProfileCard: React.FC<PlayerProfileCardProps> = ({
 }) => {
   const positionsArray = player.position
     ? player.position
-        .split(",")
-        .map((pos) => pos.trim())
-        .filter((pos) => pos.length > 0)
+      .split(",")
+      .map((pos) => pos.trim())
+      .filter((pos) => pos.length > 0)
     : [];
   const sizeClasses = {
     sm: {
@@ -53,6 +82,9 @@ const PlayerProfileCard: React.FC<PlayerProfileCardProps> = ({
   const currentSize = sizeClasses[size] || sizeClasses.md;
 
   const playerName = `${player.firstName} ${player.lastName}`;
+  if (player.primaryCoachId) {
+    const { coach } = useCoachById(player.primaryCoachId);
+  }
 
   return (
     <Card className={`w-full max-w-md ${className}`} shadow="sm">
@@ -76,12 +108,17 @@ const PlayerProfileCard: React.FC<PlayerProfileCardProps> = ({
             {playerName}
           </h3>
           {player.prospect && <Chip color="success">Prospect</Chip>}
+          <div>
+            <PrimaryCoachBadge coachId={player.primaryCoachId} />
+          </div>
 
           {player.date_of_birth && (
             <p className={`text-default-500 ${currentSize.details}`}>
               Age: {DateTimeService.getAge(player.date_of_birth)}
             </p>
           )}
+
+
 
           <div className={`flex flex-wrap gap-1 ${currentSize.details}`}>
             {player.hits && (

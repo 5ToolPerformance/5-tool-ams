@@ -24,3 +24,15 @@ export function useCoaches() {
     error,
   };
 }
+
+export function useCoachById(coachId?: string | null) {
+  const { data, isLoading } = useSWR(
+    coachId ? `/api/users/${coachId}` : null,
+    fetcher
+  );
+
+  return {
+    coach: data?.data ?? null,
+    isLoading,
+  };
+}
