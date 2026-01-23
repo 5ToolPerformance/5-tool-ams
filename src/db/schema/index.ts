@@ -73,7 +73,7 @@ export { pitchingLessonPlayers } from "./lesson-logging-v2/lessonTypes/pitching"
 export { mechanics, mechanicTypeEnum } from "./lesson-logging-v2/mechanics";
 export { default as playerInjuries } from "./players/playerInjuries";
 export { default as playerMeasurements } from "./players/playerMeasurements";
-export { playerNotes } from "./players/playerNotes";
+export { playerNotes, playerNotesRelations } from "./players/playerNotes";
 export { playerPositions } from "./players/playerPositions";
 export { positions } from "./positions";
 export { writeupLog } from "./writeupLog";

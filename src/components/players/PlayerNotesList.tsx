@@ -19,7 +19,7 @@ export function PlayerNotesList({ playerId }: { playerId: string }) {
                     <CardBody className="p-3 space-y-1">
                         <div className="flex justify-between text-xs text-default-500">
                             <span>
-                                {note.author?.firstName} {note.author?.lastName}
+                                {note.author?.name}
                             </span>
                             <span>
                                 {new Date(note.createdAt).toLocaleDateString()}

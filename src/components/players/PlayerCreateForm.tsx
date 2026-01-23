@@ -56,7 +56,7 @@ export default function PlayerCreateForm({
   onPlayerCreated,
 }: PlayerCreateFormProps) {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
-  const { coaches, isLoading: coachesLoading, error: coachesError } = useCoaches()
+  const { coaches, isLoading: coachesLoading } = useCoaches();
   const isEdit = !!player;
 
   const form = useForm({

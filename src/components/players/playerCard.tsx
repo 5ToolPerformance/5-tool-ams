@@ -82,9 +82,6 @@ const PlayerProfileCard: React.FC<PlayerProfileCardProps> = ({
   const currentSize = sizeClasses[size] || sizeClasses.md;
 
   const playerName = `${player.firstName} ${player.lastName}`;
-  if (player.primaryCoachId) {
-    const { coach } = useCoachById(player.primaryCoachId);
-  }
 
   return (
     <Card className={`w-full max-w-md ${className}`} shadow="sm">
