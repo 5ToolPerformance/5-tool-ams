@@ -17,6 +17,7 @@ import {
 import { CalendarDate, parseDate } from "@internationalized/date";
 import { useForm } from "@tanstack/react-form";
 
+import { useCoaches } from "@/hooks";
 import { ApiService } from "@/lib/services/api";
 import { ApiResponse } from "@/types/api";
 import { PlayerInsert, PlayerSelect } from "@/types/database";
@@ -55,34 +56,37 @@ export default function PlayerCreateForm({
   onPlayerCreated,
 }: PlayerCreateFormProps) {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const { coaches, isLoading: coachesLoading, error: coachesError } = useCoaches()
   const isEdit = !!player;
 
   const form = useForm({
     defaultValues: isEdit
       ? {
-          firstName: player?.firstName ?? "",
-          lastName: player?.lastName ?? "",
-          height: Number(player?.height ?? 0),
-          weight: Number(player?.weight ?? 0),
-          position: player?.position ?? "",
-          throws: player?.throws ?? "",
-          hits: player?.hits ?? "",
-          prospect: Boolean(player?.prospect ?? false),
-          date_of_birth: toCalendarDate(player?.date_of_birth as any),
-          sport: player?.sport ?? "baseball",
-        }
+        firstName: player?.firstName ?? "",
+        lastName: player?.lastName ?? "",
+        height: Number(player?.height ?? 0),
+        weight: Number(player?.weight ?? 0),
+        position: player?.position ?? "",
+        throws: player?.throws ?? "",
+        hits: player?.hits ?? "",
+        prospect: Boolean(player?.prospect ?? false),
+        date_of_birth: toCalendarDate(player?.date_of_birth as any),
+        sport: player?.sport ?? "baseball",
+        primaryCoachId: player?.primaryCoachId ?? "",
+      }
       : {
-          firstName: "",
-          lastName: "",
-          height: 0,
-          weight: 0,
-          position: "",
-          throws: "",
-          hits: "",
-          prospect: false,
-          date_of_birth: parseDate(new Date().toISOString().split("T")[0]),
-          sport: "baseball",
-        },
+        firstName: "",
+        lastName: "",
+        height: 0,
+        weight: 0,
+        position: "",
+        throws: "",
+        hits: "",
+        prospect: false,
+        date_of_birth: parseDate(new Date().toISOString().split("T")[0]),
+        sport: "baseball",
+        primaryCoachId: "",
+      },
     onSubmit: async ({ value }) => {
       const formattedValue = {
         ...value,
@@ -165,6 +169,27 @@ export default function PlayerCreateForm({
                         value={field.state.value}
                         onChange={(e) => field.handleChange(e.target.value)}
                       />
+                    )}
+                  </form.Field>
+                  <form.Field name="primaryCoachId">
+                    {(field) => (
+                      <Select
+                        className="w-full"
+                        label="Primary Coach"
+                        placeholder="Assign a coach"
+                        selectedKeys={field.state.value ? [field.state.value] : []}
+                        onSelectionChange={(keys) => {
+                          const selectedKey = Array.from(keys)[0] as string | undefined;
+                          field.handleChange(selectedKey ?? "");
+                        }}
+                        isDisabled={coachesLoading}
+                      >
+                        {coaches?.map((coach) => (
+                          <SelectItem key={coach.id}>
+                            {coach.firstName} {coach.lastName}
+                          </SelectItem>
+                        ))}
+                      </Select>
                     )}
                   </form.Field>
                   <form.Field name="height">
