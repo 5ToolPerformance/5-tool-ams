@@ -5,6 +5,7 @@ import { usePlayerDashboardStats, usePlayerWriteups } from "@/hooks";
 
 import { LessonTypesPieChart } from "./charts/lessonTypesChart";
 import { PlayerInjuryViewer } from "./players/PlayerInjuryViewer";
+import { PlayerNotesPanel } from "./players/PlayerNotesPanel";
 
 interface OverviewSectionProps {
   playerId: string;
@@ -133,6 +134,8 @@ const OverviewSection: React.FC<OverviewSectionProps> = ({ playerId }) => {
           </div>
         </CardBody>
       </Card>
+      <PlayerNotesPanel playerId={playerId} />
+
     </div>
   );
 };
