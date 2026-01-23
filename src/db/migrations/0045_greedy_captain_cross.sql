@@ -1,1 +1,0 @@
-ALTER TABLE "positions" ADD COLUMN "is_resolvable" boolean DEFAULT true NOT NULL;

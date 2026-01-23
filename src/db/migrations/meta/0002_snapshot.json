@@ -1,6 +1,6 @@
 {
-  "id": "5e85d638-21f6-4f72-928f-5087da6791a6",
-  "prevId": "00000000-0000-0000-0000-000000000000",
+  "id": "762fafe2-c1a4-4a06-adf7-5fc5cd38ef69",
+  "prevId": "70186414-b8a0-4d37-9ff0-d8a7e946fa9f",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -93,6 +93,78 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
+    "public.player_information": {
+      "name": "player_information",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "userId": {
+          "name": "userId",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "height": {
+          "name": "height",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "weight": {
+          "name": "weight",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "position": {
+          "name": "position",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "throws": {
+          "name": "throws",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "hits": {
+          "name": "hits",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "expires": {
+          "name": "expires",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "player_information_userId_user_id_fk": {
+          "name": "player_information_userId_user_id_fk",
+          "tableFrom": "player_information",
+          "tableTo": "user",
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
     "public.session": {
       "name": "session",
       "schema": "",
@@ -168,6 +240,14 @@
           "type": "varchar(2048)",
           "primaryKey": false,
           "notNull": true
+        },
+        "role": {
+          "name": "role",
+          "type": "roles",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'player'"
         }
       },
       "indexes": {},
@@ -185,7 +265,13 @@
       "isRLSEnabled": false
     }
   },
-  "enums": {},
+  "enums": {
+    "public.roles": {
+      "name": "roles",
+      "schema": "public",
+      "values": ["player", "coach", "admin"]
+    }
+  },
   "schemas": {},
   "sequences": {},
   "roles": {},
