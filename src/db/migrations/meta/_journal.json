@@ -309,6 +309,13 @@
       "when": 1769023439185,
       "tag": "0043_lyrical_lizard",
       "breakpoints": true
+    },
+    {
+      "idx": 44,
+      "version": "7",
+      "when": 1769176304814,
+      "tag": "0044_cute_black_widow",
+      "breakpoints": true
     }
   ]
 }

@@ -26,6 +26,16 @@ export {
   allowedUserStatusEnum,
   authProviderEnum,
 } from "./allowedUsers";
+export { athleteCohorts } from "./analytics/athleteCohorts";
+export { athleteContextFlags } from "./analytics/athleteContextFlags";
+export { athleteEvents } from "./analytics/athleteEvents";
+export { athleteMetricSnapshots } from "./analytics/athleteMetricSnapshots";
+export { cohortDefinitions } from "./analytics/cohortDefinitions";
+export { cohortMetricStats } from "./analytics/cohortMetricStats";
+export { computedScores } from "./analytics/computedScores";
+export { metricDefinitions } from "./analytics/metricDefinitions";
+export { metricSources } from "./analytics/metricSources";
+export { metricWeights } from "./analytics/metricWeights";
 export { default as catchingAssessment } from "./assessments/catchingAssessment";
 export { default as fieldingAssessment } from "./assessments/fieldingAssessment";
 export { default as hittingAssessment } from "./assessments/hittingAssessment";
@@ -63,5 +73,7 @@ export { pitchingLessonPlayers } from "./lesson-logging-v2/lessonTypes/pitching"
 export { mechanics, mechanicTypeEnum } from "./lesson-logging-v2/mechanics";
 export { default as playerInjuries } from "./players/playerInjuries";
 export { default as playerMeasurements } from "./players/playerMeasurements";
+export { playerPositions } from "./players/playerPositions";
+export { positions } from "./positions";
 export { writeupLog } from "./writeupLog";
 export { default as writeups } from "./writeups";
