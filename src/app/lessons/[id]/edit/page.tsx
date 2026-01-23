@@ -1,5 +1,6 @@
 import { getLessonForEdit } from "@/application/lessons/getLessonForEdit";
 import { hydrateLessonForm } from "@/domain/lessons/hydrate";
+import { env } from "@/env/server";
 import { mechanicsRepository } from "@/lib/services/repository/mechanics";
 import { playerRepository } from "@/lib/services/repository/players";
 import { DebugFormState } from "@/ui/features/lesson-form/DebugFormState";
@@ -26,7 +27,7 @@ export default async function EditLessonPage({
       defaultValues={defaultValues}
     >
       <LessonStepper />
-      <DebugFormState />
+      {env.NODE_ENV === "development" && <DebugFormState />}
     </LessonFormProvider>
   );
 }
