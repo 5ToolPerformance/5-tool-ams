@@ -35,6 +35,10 @@ export default async function PlayerLayout({
       : undefined;
   const statuses = [player.status.injuryFlag ? "Injured" : "Active"];
 
+  if (!player) {
+    return null;
+  }
+
   return (
     <AthletePageShell>
       {/* ------------------------------------------------------------------ */}
@@ -52,7 +56,7 @@ export default async function PlayerLayout({
             <AthleteStatusBadges statuses={statuses} />
           </div>
 
-          <AthleteQuickActions canEdit playerId={player.id} />
+          <AthleteQuickActions canEdit player={player} />
         </div>
       </AthleteHeader>
 
