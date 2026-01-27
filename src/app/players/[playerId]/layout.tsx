@@ -16,9 +16,9 @@ import { TabContentShell } from "@/ui/core/athletes/TabContentShell";
 // -----------------------------------------------------------------------------
 
 interface PlayerLayoutProps {
-  params: {
+  params: Promise<{
     playerId: string;
-  };
+  }>;
   children: ReactNode;
 }
 

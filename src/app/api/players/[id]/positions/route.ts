@@ -5,6 +5,7 @@ import { and, eq, inArray } from "drizzle-orm";
 import { auth } from "@/auth";
 import db from "@/db";
 import { playerPositions, positions } from "@/db/schema";
+import { RouteParams } from "@/types/api";
 
 interface PatchPlayerPositionsPayload {
   primaryPositionId: string;
@@ -13,7 +14,7 @@ interface PatchPlayerPositionsPayload {
 
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: RouteParams<{ playerId: string }>
 ) {
   try {
     const session = await auth();
@@ -21,7 +22,7 @@ export async function PATCH(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const playerId = params.id;
+    const { playerId } = await params;
 
     const body = (await req.json()) as PatchPlayerPositionsPayload;
     const { primaryPositionId, secondaryPositionIds } = body;
