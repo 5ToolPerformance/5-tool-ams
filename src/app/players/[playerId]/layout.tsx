@@ -25,10 +25,14 @@ export default async function PlayerLayout({
   params,
   children,
 }: PlayerLayoutProps) {
-  const { playerId } = await params
+  const { playerId } = await params;
   const player = await getPlayerHeader(playerId);
+  const name = `${player.firstName} ${player.lastName}`;
   const handedness = `${player.handedness.bat ?? "?"}/${player.handedness.throw ?? "?"}`;
-  const roles = player.positions.length > 0 ? player.positions.join(" / ") : undefined;
+  const roles =
+    player.positions.length > 0
+      ? player.positions.map((p) => p.name).join(" / ")
+      : undefined;
   const statuses = [player.status.injuryFlag ? "Injured" : "Active"];
 
   return (
@@ -40,7 +44,7 @@ export default async function PlayerLayout({
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div className="space-y-2">
             <AthleteHeaderMeta
-              name={player.name}
+              name={name}
               age={player.age}
               handedness={handedness}
               roles={roles}

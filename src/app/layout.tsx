@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 
+import { Toaster } from "sonner";
+
 import Providers from "@/components/layout/providers";
 import SidebarLayout from "@/components/layout/sidebar-layout";
 
@@ -29,6 +31,8 @@ export default function RootLayout({
           <SidebarLayout>
             <Suspense>{children}</Suspense>
           </SidebarLayout>
+
+          <Toaster richColors position="bottom-right" closeButton />
         </Providers>
       </body>
     </html>

@@ -22,6 +22,9 @@ export async function getPlayerCore(playerId: string) {
       throwHand: playerInformation.throws,
       height: playerInformation.height,
       weight: playerInformation.weight,
+      sport: playerInformation.sport,
+      primaryCoachId: playerInformation.primaryCoachId,
+      prospect: playerInformation.prospect,
     })
     .from(playerInformation)
     .where(eq(playerInformation.id, playerId));
@@ -29,15 +32,16 @@ export async function getPlayerCore(playerId: string) {
 }
 
 export async function getPlayerPositions(playerId: string) {
-  const rows = await db
+  return db
     .select({
+      id: positions.id,
+      code: positions.code,
       name: positions.name,
+      isPrimary: playerPositions.isPrimary,
     })
     .from(playerPositions)
     .innerJoin(positions, eq(playerPositions.positionId, positions.id))
     .where(eq(playerPositions.playerId, playerId));
-
-  return rows.map((r) => r.name);
 }
 
 export async function getPlayerStatus(playerId: string) {
@@ -91,7 +95,8 @@ export async function getPlayerHeader(playerId: string) {
 
   return {
     id: core.id,
-    name: `${core.firstName} ${core.lastName}`,
+    firstName: core.firstName,
+    lastName: core.lastName,
     dob: core.dob,
     age: calculateAge(core.dob),
     handedness: {
@@ -99,9 +104,12 @@ export async function getPlayerHeader(playerId: string) {
       throw: toHandednessAbbrev(core.throwHand),
     },
     positions,
+    sport: core.sport,
     height: core.height,
     weight: core.weight,
     status,
     systems,
+    primaryCoachId: core.primaryCoachId,
+    prospect: core.prospect,
   };
 }
