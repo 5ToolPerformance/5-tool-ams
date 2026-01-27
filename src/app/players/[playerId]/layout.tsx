@@ -1,6 +1,7 @@
 // app/players/[playerId]/overview/page.tsx
 import { ReactNode } from "react";
 
+import { getPlayerHeader } from "@/db/queries/players/PlayerHeader";
 import { AthleteHeader } from "@/ui/core/athletes/AthleteHeader";
 import { AthleteHeaderMeta } from "@/ui/core/athletes/AthleteHeaderMeta";
 import { AthletePageShell } from "@/ui/core/athletes/AthletePageShell";
@@ -8,7 +9,6 @@ import { AthleteQuickActions } from "@/ui/core/athletes/AthleteQuickActions";
 import { AthleteStatusBadges } from "@/ui/core/athletes/AthleteStatusBadge";
 import { AthleteTabsController } from "@/ui/core/athletes/AthleteTabsController";
 import { TabContentShell } from "@/ui/core/athletes/TabContentShell";
-import { getPlayerHeader } from "@/db/queries/players/PlayerHeader";
 
 // -----------------------------------------------------------------------------
 // Page
@@ -25,7 +25,8 @@ export default async function PlayerLayout({
   params,
   children,
 }: PlayerLayoutProps) {
-  const player = await getPlayerHeader(params.playerId);
+  const { playerId } = await params
+  const player = await getPlayerHeader(playerId);
   const handedness = `${player.handedness.bat ?? "?"}/${player.handedness.throw ?? "?"}`;
   const roles = player.positions.length > 0 ? player.positions.join(" / ") : undefined;
   const statuses = [player.status.injuryFlag ? "Injured" : "Active"];
@@ -47,7 +48,7 @@ export default async function PlayerLayout({
             <AthleteStatusBadges statuses={statuses} />
           </div>
 
-          <AthleteQuickActions canEdit />
+          <AthleteQuickActions canEdit playerId={player.id} />
         </div>
       </AthleteHeader>
 
