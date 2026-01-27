@@ -3,10 +3,11 @@
 import { Button } from "@heroui/react";
 import { Pencil, Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { AddPlayerNoteModal } from "./AddPlayerNoteModal";
 
 interface AthleteQuickActionsProps {
   canEdit?: boolean;
-  playerId?: string;
+  playerId: string;
 }
 
 export function AthleteQuickActions({ canEdit, playerId }: AthleteQuickActionsProps) {
@@ -17,9 +18,16 @@ export function AthleteQuickActions({ canEdit, playerId }: AthleteQuickActionsPr
         Add Lesson
       </Button>
 
-      <Button size="sm" color="primary" startContent={<Plus size={16} />}>
-        Add Note
-      </Button>
+      <AddPlayerNoteModal
+        playerId={playerId}
+        trigger={
+          <Button size="sm" color="primary" startContent={<Plus size={16} />}>
+            Add Note
+          </Button>
+        }
+      />
+
+
 
       {canEdit && (
         <Button size="sm" variant="flat" startContent={<Pencil size={16} />}>
