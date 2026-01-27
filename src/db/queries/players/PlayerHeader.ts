@@ -8,8 +8,15 @@ import {
   playerPositions,
   positions,
 } from "@/db/schema";
+import { Handedness } from "@/domain/player/header/types";
 import { calculateAge } from "@/lib/dates";
-import { toHandednessAbbrev } from "@/lib/utils/handedness";
+
+function assertHandedness(value: string): Handedness {
+  if (value === "right" || value === "left" || value === "switch") {
+    return value;
+  }
+  throw new Error(`Invalid handedness value: ${value}`);
+}
 
 export async function getPlayerCore(playerId: string) {
   const [player] = await db
@@ -100,8 +107,8 @@ export async function getPlayerHeader(playerId: string) {
     dob: core.dob,
     age: calculateAge(core.dob),
     handedness: {
-      bat: toHandednessAbbrev(core.batHand),
-      throw: toHandednessAbbrev(core.throwHand),
+      bat: assertHandedness(core.batHand),
+      throw: assertHandedness(core.throwHand),
     },
     positions,
     sport: core.sport,

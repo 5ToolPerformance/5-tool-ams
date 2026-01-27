@@ -2,6 +2,7 @@
 import { ReactNode } from "react";
 
 import { getPlayerHeader } from "@/db/queries/players/PlayerHeader";
+import { toHandednessAbbrev } from "@/lib/utils/handedness";
 import { AthleteHeader } from "@/ui/core/athletes/AthleteHeader";
 import { AthleteHeaderMeta } from "@/ui/core/athletes/AthleteHeaderMeta";
 import { AthletePageShell } from "@/ui/core/athletes/AthletePageShell";
@@ -28,7 +29,7 @@ export default async function PlayerLayout({
   const { playerId } = await params;
   const player = await getPlayerHeader(playerId);
   const name = `${player.firstName} ${player.lastName}`;
-  const handedness = `${player.handedness.bat ?? "?"}/${player.handedness.throw ?? "?"}`;
+  const handedness = `${toHandednessAbbrev(player.handedness.bat) ?? "?"}/${toHandednessAbbrev(player.handedness.throw) ?? "?"}`;
   const roles =
     player.positions.length > 0
       ? player.positions.map((p) => p.name).join(" / ")
