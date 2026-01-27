@@ -58,7 +58,7 @@ export function InteractiveLessonList({
 
   return (
     <ScrollShadow hideScrollBar className={`${maxHeight} ${className}`}>
-      <div className="flex flex-col gap-3 pb-4 sm:gap-4">
+      <div className="flex flex-col gap-3 p-4 pb-4 sm:gap-4">
         {lessons.map((lesson) => (
           <ClickableLessonCard
             key={lesson.id}
