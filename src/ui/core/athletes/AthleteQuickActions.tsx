@@ -6,6 +6,7 @@ import { Button } from "@heroui/react";
 import { Pencil, Plus } from "lucide-react";
 
 import { PlayerHeaderModel } from "@/domain/player/header/types";
+import { usePlayerHeaderRefetch } from "@/hooks/usePlayerHeaderRefetch";
 import { EditPlayerConfigModal } from "@/ui/core/athletes/EditPlayerConfigModal";
 
 import { AddPlayerNoteModal } from "./AddPlayerNoteModal";
@@ -22,6 +23,7 @@ export function AthleteQuickActions({
   onPlayerUpdated,
 }: AthleteQuickActionsProps) {
   const router = useRouter();
+  const refetchHeader = usePlayerHeaderRefetch();
   const playerId = player.id;
   return (
     <div className="flex gap-2">
@@ -46,7 +48,10 @@ export function AthleteQuickActions({
       {canEdit && (
         <EditPlayerConfigModal
           player={player}
-          onSuccess={onPlayerUpdated}
+          onSuccess={() => {
+            refetchHeader();
+            onPlayerUpdated?.();
+          }}
           trigger={
             <Button
               size="sm"
