@@ -330,6 +330,13 @@
       "when": 1769195257407,
       "tag": "0046_right_paper_doll",
       "breakpoints": true
+    },
+    {
+      "idx": 47,
+      "version": "7",
+      "when": 1769527072267,
+      "tag": "0047_certain_starjammers",
+      "breakpoints": true
     }
   ]
 }
