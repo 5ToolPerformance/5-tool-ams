@@ -13,6 +13,7 @@ import type { ViewContext } from "./types";
 interface ClickableLessonCardProps {
   lesson: LessonCardData;
   viewContext: ViewContext;
+  playerId?: string;
   /** URL to navigate to when clicked. Defaults to /lessons/[id] */
   href?: string;
   /** Custom click handler. If provided, href is ignored */
@@ -23,6 +24,7 @@ interface ClickableLessonCardProps {
 export function ClickableLessonCard({
   lesson,
   viewContext,
+  playerId,
   href,
   onClick,
   className = "",
@@ -45,7 +47,11 @@ export function ClickableLessonCard({
         className="group w-full rounded-xl text-left transition-all duration-200 hover:scale-[1.01] hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 dark:hover:shadow-zinc-900/30 dark:focus-visible:ring-blue-400 dark:focus-visible:ring-offset-zinc-950"
       >
         <div className="relative">
-          <LessonCard lesson={lesson} viewContext={viewContext} />
+          <LessonCard
+            lesson={lesson}
+            viewContext={viewContext}
+            playerId={playerId}
+          />
 
           {/* Hover indicator */}
           <div className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 opacity-0 transition-opacity duration-200 group-hover:opacity-100">

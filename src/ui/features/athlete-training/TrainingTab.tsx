@@ -11,9 +11,14 @@ import { TrainingSummary } from "./TrainingSummary";
 interface TrainingTabProps {
   lessons: LessonCardData[];
   summary: TrainingSummaryData;
+  playerId: string;
 }
 
-export async function TrainingTab({ lessons, summary }: TrainingTabProps) {
+export async function TrainingTab({
+  lessons,
+  summary,
+  playerId,
+}: TrainingTabProps) {
   return (
     <div className="space-y-6">
       <Suspense fallback={<SectionSkeleton />}>
@@ -21,7 +26,11 @@ export async function TrainingTab({ lessons, summary }: TrainingTabProps) {
       </Suspense>
 
       <Suspense fallback={<SectionSkeleton />}>
-        <InteractiveLessonList lessons={lessons} viewContext="player" />
+        <InteractiveLessonList
+          lessons={lessons}
+          viewContext="player"
+          playerId={playerId}
+        />
       </Suspense>
     </div>
   );

@@ -11,6 +11,7 @@ import type { ViewContext } from "./types";
 interface InteractiveLessonListProps {
   lessons: LessonCardData[];
   viewContext: ViewContext;
+  playerId?: string;
   /** Base URL for lesson links. Lesson ID will be appended. */
   baseHref?: string;
   /** Custom click handler for lessons */
@@ -23,6 +24,7 @@ interface InteractiveLessonListProps {
 export function InteractiveLessonList({
   lessons,
   viewContext,
+  playerId,
   baseHref = "/lessons",
   onLessonClick,
   emptyMessage = "No lessons found",
@@ -64,6 +66,7 @@ export function InteractiveLessonList({
             key={lesson.id}
             lesson={lesson}
             viewContext={viewContext}
+            playerId={playerId}
             href={`${baseHref}/${lesson.id}`}
             onClick={onLessonClick}
           />

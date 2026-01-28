@@ -17,9 +17,20 @@ import type { LessonCardProps } from "./types";
 export function LessonCard({
   lesson,
   viewContext,
+  playerId,
   className = "",
 }: LessonCardProps) {
   const cfg = LESSON_TYPE_CONFIG[lesson.lessonType];
+  const playerNoteTarget =
+    viewContext === "player"
+      ? lesson.players.find((player) =>
+          playerId ? player.id === playerId : lesson.players.length === 1
+        )
+      : undefined;
+  const notesToShow =
+    viewContext === "player"
+      ? playerNoteTarget?.notes ?? lesson.notes
+      : lesson.notes;
 
   return (
     <div
@@ -81,9 +92,9 @@ export function LessonCard({
           </span>
         </div>
 
-        {lesson.notes && (
+        {notesToShow && (
           <p className="line-clamp-2 text-sm text-zinc-700 dark:text-zinc-300">
-            {lesson.notes}
+            {notesToShow}
           </p>
         )}
 

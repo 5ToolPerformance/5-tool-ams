@@ -13,7 +13,7 @@ export default async function TrainingPage({
   const { lessons, summary } = await getTrainingTabData(playerId);
   return (
     <Suspense fallback={<TrainingSkeleton />}>
-      <TrainingTab lessons={lessons} summary={summary} />
+      <TrainingTab lessons={lessons} summary={summary} playerId={playerId} />
     </Suspense>
   );
 }
