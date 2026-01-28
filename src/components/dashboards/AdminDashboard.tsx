@@ -205,7 +205,7 @@ export default function AdminDashboard({ adminId }: Props) {
                   {playerLeaderboard.map((p) => (
                     <TableRow key={p.id}>
                       <TableCell>
-                        <Link href={`/players/${p.id}`}>{p.name}</Link>
+                        <Link href={`/players/${p.id}/training`}>{p.name}</Link>
                       </TableCell>
                       <TableCell className="text-right font-semibold">
                         {p.count}

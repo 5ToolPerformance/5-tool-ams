@@ -272,7 +272,7 @@ export default function PlayersPage() {
                   <TableRow
                     key={player.id}
                     as={Link}
-                    href={`/players/${player.id}`}
+                    href={`/players/${player.id}/training`}
                     className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800"
                   >
                     <TableCell className="font-medium">

@@ -169,3 +169,26 @@ export function isThisWeek(timestamp: string | Date | number): boolean {
 
   return date >= startOfWeek && date <= endOfWeek;
 }
+
+/**
+ * Calculate age in years from a date of birth.
+ * Safe for server + client usage.
+ */
+export function calculateAge(dob: string | Date): number {
+  const birthDate = typeof dob === "string" ? new Date(dob) : dob;
+
+  const today = new Date();
+
+  let age = today.getFullYear() - birthDate.getFullYear();
+
+  const hasHadBirthdayThisYear =
+    today.getMonth() > birthDate.getMonth() ||
+    (today.getMonth() === birthDate.getMonth() &&
+      today.getDate() >= birthDate.getDate());
+
+  if (!hasHadBirthdayThisYear) {
+    age -= 1;
+  }
+
+  return age;
+}

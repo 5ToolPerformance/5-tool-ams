@@ -9,6 +9,7 @@ import type { ViewContext } from "./types";
 interface LessonCardListProps {
   lessons: LessonCardData[];
   viewContext: ViewContext;
+  playerId?: string;
   emptyMessage?: string;
   /** Maximum height of the scrollable container */
   maxHeight?: string;
@@ -19,6 +20,7 @@ interface LessonCardListProps {
 export function LessonCardList({
   lessons,
   viewContext,
+  playerId,
   emptyMessage = "No lessons found",
   maxHeight = "max-h-[calc(100vh-200px)]",
   className = "",
@@ -46,6 +48,7 @@ export function LessonCardList({
             key={lesson.id}
             lesson={lesson}
             viewContext={viewContext}
+            playerId={playerId}
           />
         ))}
       </div>

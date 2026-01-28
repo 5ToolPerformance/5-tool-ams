@@ -7,11 +7,11 @@ import { armcareExamsRepository } from "@/lib/services/repository/armcare-exams"
 export default async function PlayerArmCareSummaryPage({
   params,
 }: {
-  params: Promise<{ id: string }>;
+  params: Promise<{ playerId: string }>;
 }) {
   try {
-    const { id } = await params;
-    const summary = await armcareExamsRepository.getPlayerSummary(id);
+    const { playerId } = await params;
+    const summary = await armcareExamsRepository.getPlayerSummary(playerId);
 
     if (!summary.latestExam) {
       return (
@@ -26,7 +26,7 @@ export default async function PlayerArmCareSummaryPage({
       );
     }
 
-    return <ArmCareSummaryView playerId={id} data={summary} />;
+    return <ArmCareSummaryView playerId={playerId} data={summary} />;
   } catch (error) {
     console.error("Error loading ArmCare summary:", error);
     notFound();

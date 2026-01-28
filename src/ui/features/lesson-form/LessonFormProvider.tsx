@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useMemo } from "react";
+import { createContext, useContext, useEffect, useMemo } from "react";
 
 import { LessonFormValues } from "@/hooks/lessons/lessonForm.types";
 import { useLessonForm } from "@/hooks/lessons/useLessonForm";
@@ -46,6 +46,7 @@ type LessonFormProviderProps = {
   players: LessonFormPlayer[];
   mechanics: LessonFormMechanic[];
   children: React.ReactNode;
+  initialPlayerId?: string;
 };
 
 export function LessonFormProvider({
@@ -55,9 +56,21 @@ export function LessonFormProvider({
   players = [],
   mechanics = [],
   children,
+  initialPlayerId,
 }: LessonFormProviderProps) {
   const lessonForm = useLessonForm({ mode, lessonId, defaultValues });
-  const { form } = lessonForm;
+  const { form, ensurePlayers } = lessonForm;
+
+  useEffect(() => {
+    if (!initialPlayerId) return;
+
+    form.setFieldValue("selectedPlayerIds", [
+      initialPlayerId,
+    ]);
+
+    ensurePlayers([initialPlayerId]);
+  }, [initialPlayerId]);
+
 
   const playerById = useMemo(() => {
     return Object.fromEntries(

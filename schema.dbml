@@ -1,0 +1,930 @@
+Enum "access" {
+  "read/write"
+  "read-only"
+  "write-only"
+}
+
+Enum "allowed_user_status" {
+  "invited"
+  "active"
+  "revoked"
+}
+
+Enum "archetypes" {
+  "aerial"
+  "terrestrial"
+}
+
+Enum "assessment_type" {
+  "are_care"
+  "smfa"
+  "force_plate"
+  "true_strength"
+  "arm_care"
+  "hitting_assessment"
+  "pitching_assessment"
+  "hit_trax_assessment"
+  "velo_assessment"
+  "fielding_assessment"
+  "catching_assessment"
+}
+
+Enum "auth_provider" {
+  "google"
+  "entra"
+}
+
+Enum "date_range" {
+  "1-2"
+  "3-4"
+  "5-6"
+  "7+"
+  "na"
+}
+
+Enum "external_system" {
+  "armcare"
+  "trackman"
+  "hittrax"
+  "hawkin"
+}
+
+Enum "injury_severity" {
+  "mild"
+  "moderate"
+  "severe"
+  "unknown"
+}
+
+Enum "injury_status" {
+  "active"
+  "resolved"
+  "recurring"
+  "monitoring"
+}
+
+Enum "left-right" {
+  "left"
+  "right"
+  "switch"
+}
+
+Enum "lesson_types" {
+  "strength"
+  "hitting"
+  "pitching"
+  "fielding"
+  "catching"
+}
+
+Enum "lesson_types_old" {
+  "strength"
+  "hitting"
+  "pithing"
+  "fielding"
+  "pitching"
+}
+
+Enum "linking_method" {
+  "email_match"
+  "phone"
+  "manual"
+  "name_match"
+  "external_id"
+}
+
+Enum "linking_status" {
+  "active"
+  "pending"
+  "inactive"
+  "failed"
+}
+
+Enum "mechanic_type" {
+  "pitching"
+  "hitting"
+  "fielding"
+  "catching"
+  "strength"
+}
+
+Enum "roles" {
+  "player"
+  "coach"
+  "admin"
+}
+
+Enum "sports" {
+  "baseball"
+  "softball"
+}
+
+Enum "sync_status" {
+  "running"
+  "success"
+  "partial_success"
+  "failed"
+}
+
+Table "account" {
+  "userId" uuid [not null]
+  "type" text [not null]
+  "provider" text [not null]
+  "providerAccountId" text [not null]
+  "refresh_token" text
+  "access_token" text
+  "expires_at" int4
+  "token_type" text
+  "scope" text
+  "id_token" text
+  "session_state" text
+}
+
+Table "session" {
+  "sessionToken" text [pk, not null]
+  "userId" uuid [not null]
+  "expires" timestamp [not null]
+}
+
+Table "user" {
+  "id" uuid [pk, not null, default: `gen_random_uuid()`]
+  "name" varchar(255)
+  "email" varchar(320) [unique, not null]
+  "emailVerified" timestamp
+  "image" varchar(2048)
+  "role" roles [default: 'coach']
+  "username" varchar(25) [unique]
+  "access" access [default: 'read/write']
+  "is_active" bool [default: true]
+}
+
+Table "player_information" {
+  "id" uuid [pk, not null, default: `gen_random_uuid()`]
+  "userId" uuid
+  "height" float4 [not null]
+  "weight" float4 [not null]
+  "position" text [not null]
+  "throws" text [not null]
+  "hits" text [not null]
+  "first_name" text [not null]
+  "last_name" text [not null]
+  "profile_picture_url" text
+  "date_of_birth" date
+  "prospect" bool [not null, default: false]
+  "created_at" timestamp [not null, default: `now()`]
+  "updated_at" timestamp [not null, default: `now()`]
+  "sport" sports [not null, default: 'baseball']
+}
+
+Table "notes" {
+  "id" uuid [pk, not null, default: `gen_random_uuid()`]
+  "userId" uuid [not null]
+  "notes" text
+  "lesson_date" timestamp [not null]
+  "created_on" timestamp [not null, default: `now()`]
+  "coachId" uuid [not null]
+}
+
+Table "arm_care" {
+  "id" uuid [pk, not null, default: `gen_random_uuid()`]
+  "player_id" uuid [not null]
+  "coach_id" uuid [not null]
+  "notes" text
+  "shoulder_er_l" float4 [not null]
+  "shoulder_er_r" float4 [not null]
+  "shoulder_ir_l" float4 [not null]
+  "shoulder_ir_r" float4 [not null]
+  "shoulder_flexion_l" float4 [not null]
+  "shoulder_flexion_r" float4 [not null]
+  "supine_hip_er_l" float4 [not null]
+  "supine_hip_er_r" float4 [not null]
+  "supine_hip_ir_l" float4 [not null]
+  "supine_hip_ir_r" float4 [not null]
+  "straight_leg_l" float4 [not null]
+  "straight_leg_r" float4 [not null]
+  "lesson_date" timestamp [not null]
+  "created_on" timestamp [not null, default: `now()`]
+  "lesson_id" uuid [not null]
+
+  Indexes {
+    coach_id [type: btree, name: "arm_care_coach_idx"]
+    lesson_id [type: btree, name: "arm_care_lesson_idx"]
+    player_id [type: btree, name: "arm_care_player_idx"]
+  }
+}
+
+Table "hawkins_force_plate" {
+  "id" uuid [pk, not null, default: `gen_random_uuid()`]
+  "player_id" uuid [not null]
+  "coach_id" uuid [not null]
+  "notes" text
+  "cmj" float4 [not null]
+  "drop_jump" float4 [not null]
+  "pogo" float4 [not null]
+  "mid_thigh_pull" float4 [not null]
+  "mtp_time" float4 [not null]
+  "cop_ml_l" float4 [not null]
+  "cop_ml_r" float4 [not null]
+  "cop_ap_l" float4 [not null]
+  "cop_ap_r" float4 [not null]
+  "lesson_date" timestamp [not null]
+  "created_on" timestamp [not null, default: `now()`]
+  "lesson_id" uuid [not null]
+
+  Indexes {
+    lesson_id [type: btree, name: "hawkins_force_plate_lesson_idx"]
+  }
+}
+
+Table "smfa" {
+  "id" uuid [pk, not null, default: `gen_random_uuid()`]
+  "player_id" uuid [not null]
+  "coach_id" uuid [not null]
+  "notes" text
+  "pelvic_rotation_l" float4 [not null]
+  "pelvic_rotation_r" float4 [not null]
+  "seated_trunk_rotation_l" float4 [not null]
+  "seated_trunk_rotation_r" float4 [not null]
+  "ankle_test_l" float4 [not null]
+  "ankle_test_r" float4 [not null]
+  "forearm_test_l" float4 [not null]
+  "forearm_test_r" float4 [not null]
+  "cervical_rotation_l" float4 [not null]
+  "cervical_rotation_r" float4 [not null]
+  "msf_l" float4 [not null]
+  "msf_r" float4 [not null]
+  "mse_l" float4 [not null]
+  "mse_r" float4 [not null]
+  "msr_l" float4 [not null]
+  "msr_r" float4 [not null]
+  "pelvic_tilt" float4 [not null]
+  "squat_test" float4 [not null]
+  "cervical_flexion" float4 [not null]
+  "cervical_extension" float4 [not null]
+  "lesson_date" timestamp [not null]
+  "created_on" timestamp [not null, default: `now()`]
+  "lesson_id" uuid [not null]
+
+  Indexes {
+    coach_id [type: btree, name: "smfa_coach_idx"]
+    lesson_id [type: btree, name: "smfa_lesson_idx"]
+    player_id [type: btree, name: "smfa_player_idx"]
+  }
+}
+
+Table "true_strength" {
+  "id" uuid [pk, not null, default: `gen_random_uuid()`]
+  "player_id" uuid [not null]
+  "coach_id" uuid [not null]
+  "notes" text
+  "seated_shoulder_er_l" float4 [not null]
+  "seated_shoulder_er_r" float4 [not null]
+  "seated_shoulder_ir_l" float4 [not null]
+  "seated_shoulder_ir_r" float4 [not null]
+  "shoulder_rotation_l" float4 [not null]
+  "shoulder_rotation_r" float4 [not null]
+  "shoulder_rotation_rfd_l" float4 [not null]
+  "shoulder_rotation_rfd_r" float4 [not null]
+  "hip_rotation_l" float4 [not null]
+  "hip_rotation_r" float4 [not null]
+  "hip_rotation_rfd_l" float4 [not null]
+  "hip_rotation_rfd_r" float4 [not null]
+  "lesson_date" timestamp [not null]
+  "created_on" timestamp [not null, default: `now()`]
+  "lesson_id" uuid [not null]
+
+  Indexes {
+    coach_id [type: btree, name: "true_strength_coach_idx"]
+    lesson_id [type: btree, name: "true_strength_lesson_idx"]
+    player_id [type: btree, name: "true_strength_user_idx"]
+  }
+}
+
+Table "lesson" {
+  "id" uuid [pk, not null, default: `gen_random_uuid()`]
+  "player_id" uuid [not null]
+  "coach_id" uuid [not null]
+  "lesson_type" lesson_types [not null]
+  "notes" text
+  "created_on" timestamp [not null, default: `now()`]
+  "lesson_date" timestamp [not null]
+
+  Indexes {
+    coach_id [type: btree, name: "lesson_coach_idx"]
+    lesson_date [type: btree, name: "lesson_date_idx"]
+    player_id [type: btree, name: "lesson_player_idx"]
+    lesson_type [type: btree, name: "lesson_type_idx"]
+  }
+}
+
+Table "lesson_assessments" {
+  "id" uuid [pk, not null, default: `gen_random_uuid()`]
+  "lesson_id" uuid [not null]
+  "assessment_type" assessment_type [not null]
+  "assessment_id" uuid [not null]
+  "created_on" timestamp [not null, default: `now()`]
+
+  Indexes {
+    lesson_id [type: btree, name: "lesson_assessments_lesson_idx"]
+    assessment_type [type: btree, name: "lesson_assessments_type_idx"]
+    (assessment_type, assessment_id) [type: btree, name: "lesson_assessments_unique_idx"]
+  }
+}
+
+Table "motor_preferences" {
+  "id" uuid [pk, not null, default: `gen_random_uuid()`]
+  "player_id" uuid [not null]
+  "coach_id" uuid [not null]
+  "archetype" archetypes [not null]
+  "extension_leg" left-right [not null]
+  "breath" bool [not null]
+  "association" bool [not null]
+  "created_on" timestamp [not null, default: `now()`]
+  "assessment_date" timestamp [not null, default: `now()`]
+}
+
+Table "hitting_assessment" {
+  "id" uuid [pk, not null, default: `gen_random_uuid()`]
+  "player_id" uuid [not null]
+  "coach_id" uuid [not null]
+  "lesson_id" uuid [not null]
+  "notes" text
+  "upper" text
+  "lower" text
+  "head" text
+  "load" text
+  "max_ev" float4
+  "line_drive_pct" float4
+  "created_on" timestamp [not null, default: `now()`]
+
+  Indexes {
+    lesson_id [type: btree, name: "hitting_assessment_lesson_idx"]
+  }
+}
+
+Table "pitching_assessment" {
+  "id" uuid [pk, not null, default: `gen_random_uuid()`]
+  "player_id" uuid [not null]
+  "coach_id" uuid [not null]
+  "lesson_id" uuid [not null]
+  "notes" text
+  "upper" text
+  "mid" text
+  "lower" text
+  "velo_mound_2oz" float4
+  "velo_mound_4oz" float4
+  "velo_mound_5oz" float4
+  "velo_mound_6oz" float4
+  "velo_pull_down_2oz" float4
+  "velo_pull_down_4oz" float4
+  "velo_pull_down_5oz" float4
+  "velo_pull_down_6oz" float4
+  "strike_pct" float4
+  "goals" text
+  "last_time_pitched" date_range
+  "next_time_pitched" date_range
+  "feel" float4
+  "concerns" text
+  "created_on" timestamp [not null, default: `now()`]
+  "lesson_date" timestamp
+
+  Indexes {
+    lesson_id [type: btree, name: "pitching_assessment_lesson_idx"]
+  }
+}
+
+Table "smfa_boolean" {
+  "id" uuid [pk, not null, default: `gen_random_uuid()`]
+  "player_id" uuid [not null]
+  "coach_id" uuid [not null]
+  "lesson_id" uuid [not null]
+  "notes" text
+  "pelvic_rotation_l" bool [not null]
+  "pelvic_rotation_r" bool [not null]
+  "seated_trunk_rotation_l" bool [not null]
+  "seated_trunk_rotation_r" bool [not null]
+  "ankle_test_l" bool [not null]
+  "ankle_test_r" bool [not null]
+  "forearm_test_l" bool [not null]
+  "forearm_test_r" bool [not null]
+  "cervical_rotation_l" bool [not null]
+  "cervical_rotation_r" bool [not null]
+  "msf_l" bool [not null]
+  "msf_r" bool [not null]
+  "mse_l" bool [not null]
+  "mse_r" bool [not null]
+  "msr_l" bool [not null]
+  "msr_r" bool [not null]
+  "pelvic_tilt" bool [not null]
+  "squat_test" bool [not null]
+  "cervical_flexion" bool [not null]
+  "cervical_extension" bool [not null]
+  "lesson_date" timestamp [not null]
+  "created_on" timestamp [not null, default: `now()`]
+
+  Indexes {
+    coach_id [type: btree, name: "smfa_boolean_coach_idx"]
+    lesson_id [type: btree, name: "smfa_boolean_lesson_idx"]
+    player_id [type: btree, name: "smfa_boolean_player_idx"]
+  }
+}
+
+Table "player_measurements" {
+  "id" uuid [pk, not null, default: `gen_random_uuid()`]
+  "player_id" uuid [not null]
+  "height" float4 [not null]
+  "weight" float4 [not null]
+  "recorded_on" timestamp [not null, default: `now()`]
+}
+
+Table "hittrax_assessment" {
+  "id" uuid [pk, not null, default: `gen_random_uuid()`]
+  "player_id" uuid [not null]
+  "coach_id" uuid [not null]
+  "lesson_id" uuid [not null]
+  "pitch_type" text
+  "avg_exit_velo" float4
+  "avg_hard_hit" float4
+  "max_velo" float4
+  "max_dist" float4
+  "fb_and_gb_pct" float4
+  "line_drive_pct" float4
+  "created_on" date [not null, default: `now()`]
+  "lesson_date" date
+
+  Indexes {
+    lesson_id [type: btree, name: "hittrax_assessment_lesson_idx"]
+  }
+}
+
+Table "velo_assessment" {
+  "id" uuid [pk, not null, default: `gen_random_uuid()`]
+  "player_id" uuid [not null]
+  "coach_id" uuid [not null]
+  "lesson_id" uuid [not null]
+  "intent" int4
+  "avg_velo" float4
+  "top_velo" float4
+  "strike_pct" float4
+  "created_on" date [not null, default: `now()`]
+  "lesson_date" date
+
+  Indexes {
+    lesson_id [type: btree, name: "velo_assessment_lesson_idx"]
+  }
+}
+
+Table "fielding_assessment" {
+  "id" uuid [pk, not null, default: `gen_random_uuid()`]
+  "player_id" uuid [not null]
+  "coach_id" uuid [not null]
+  "lesson_id" uuid [not null]
+  "glovework" text
+  "footwork" text
+  "throwing" text
+  "throwdown_counter" float4 [not null]
+  "live" text
+  "consistency" text
+  "situational" text
+  "created_on" timestamp [not null, default: `now()`]
+  "lesson_date" timestamp [not null]
+
+  Indexes {
+    lesson_id [type: btree, name: "fielding_assessment_lesson_idx"]
+  }
+}
+
+Table "catching_assessment" {
+  "id" uuid [pk, not null, default: `gen_random_uuid()`]
+  "player_id" uuid [not null]
+  "coach_id" uuid [not null]
+  "lesson_id" uuid [not null]
+  "feel" int4
+  "last_4" int4
+  "ready_by" int4
+  "catch_throw" text
+  "receiving" text
+  "blocking" text
+  "iq" text
+  "mobility" text
+  "num_throws" int4
+
+  Indexes {
+    lesson_id [type: btree, name: "catching_assessment_lesson_idx"]
+  }
+}
+
+Table "writeups" {
+  "id" uuid [pk, not null, default: `gen_random_uuid()`]
+  "coach_id" uuid [not null]
+  "player_id" uuid [not null]
+  "writeup_type" text [not null]
+  "content" jsonb [not null]
+  "created_on" timestamp [default: `now()`]
+  "notes" text
+}
+
+Table "player_injuries" {
+  "id" uuid [pk, not null, default: `gen_random_uuid()`]
+  "player_id" uuid
+  "injury_type" text [not null]
+  "injury_date" timestamp [not null]
+  "status" injury_status [not null, default: 'active']
+  "severity" injury_severity [not null, default: 'unknown']
+  "description" text
+  "notes" text
+  "created_at" timestamp [not null, default: `now()`]
+  "updated_at" timestamp [not null, default: `now()`]
+}
+
+Table "armcare_exams" {
+  "id" uuid [pk, not null, default: `gen_random_uuid()`]
+  "player_id" uuid [not null]
+  "external_exam_id" text [unique, not null]
+  "exam_date" date [not null]
+  "exam_time" time
+  "exam_type" text
+  "timezone" text
+  "arm_score" numeric
+  "total_strength" numeric
+  "shoulder_balance" numeric
+  "velo" numeric
+  "svr" numeric
+  "total_strength_post" numeric
+  "post_strength_loss" numeric
+  "total_percent_fresh" numeric
+  "raw_data" jsonb [not null]
+  "synced_at" timestamp [not null, default: `now()`]
+  "sync_log_id" uuid
+  "created_at" timestamp [not null, default: `now()`]
+  "updated_at" timestamp [not null, default: `now()`]
+
+  Indexes {
+    exam_date [type: btree, name: "armcare_exams_date_idx"]
+    player_id [type: btree, name: "armcare_exams_player_idx"]
+  }
+}
+
+Table "armcare_exams_unmatched" {
+  "id" uuid [pk, not null, default: `gen_random_uuid()`]
+  "external_exam_id" text [unique, not null]
+  "external_player_id" text [not null]
+  "external_email" text
+  "external_first_name" text
+  "external_last_name" text
+  "exam_date" date [not null]
+  "exam_time" time
+  "exam_type" text
+  "timezone" text
+  "arm_score" numeric
+  "total_strength" numeric
+  "shoulder_balance" numeric
+  "velo" numeric
+  "svr" numeric
+  "total_strength_post" numeric
+  "post_strength_loss" numeric
+  "total_percent_fresh" numeric
+  "raw_data" jsonb [not null]
+  "match_attempts" int4 [default: 0]
+  "last_match_attempt" timestamp
+  "match_errors" jsonb
+  "synced_at" timestamp [not null, default: `now()`]
+  "sync_log_id" uuid
+  "status" text [not null, default: 'pending']
+  "resolved_at" timestamp
+  "resolved_by" uuid
+  "created_at" timestamp [not null, default: `now()`]
+  "updated_at" timestamp [not null, default: `now()`]
+
+  Indexes {
+    external_player_id [type: btree, name: "armcare_exams_unmatched_player_idx"]
+    status [type: btree, name: "armcare_exams_unmatched_status_idx"]
+  }
+}
+
+Table "external_athlete_ids" {
+  "id" uuid [pk, not null, default: `gen_random_uuid()`]
+  "player_id" uuid [not null]
+  "external_system" external_system [not null]
+  "external_id" text [not null]
+  "external_email" text
+  "linking_method" linking_method [not null]
+  "linking_status" linking_status [not null, default: 'active']
+  "confidence" numeric
+  "external_metadata" jsonb
+  "linked_by" uuid
+  "linked_at" timestamp [not null, default: `now()`]
+  "verified_at" timestamp
+  "created_at" timestamp [not null, default: `now()`]
+  "updated_at" timestamp [not null, default: `now()`]
+
+  Indexes {
+    (external_system, external_id) [type: btree, unique, name: "external_athlete_ids_unique_idx"]
+    player_id [type: btree, name: "external_athlete_ids_player_idx"]
+  }
+}
+
+Table "external_sync_logs" {
+  "id" uuid [pk, not null, default: `gen_random_uuid()`]
+  "system" external_system [not null]
+  "status" sync_status [not null]
+  "records_created" int4 [default: 0]
+  "records_updated" int4 [default: 0]
+  "records_skipped" int4 [default: 0]
+  "records_failed" int4 [default: 0]
+  "players_matched" int4 [default: 0]
+  "players_unmatched" int4 [default: 0]
+  "new_match_suggestions" int4 [default: 0]
+  "started_at" timestamp [not null]
+  "completed_at" timestamp
+  "duration" int4
+  "errors" jsonb
+  "triggered_by" text
+  "triggered_by_user_id" uuid
+
+  Indexes {
+    system [type: btree, name: "sync_logs_system_idx"]
+  }
+}
+
+Table "external_systems_config" {
+  "id" uuid [pk, not null, default: `gen_random_uuid()`]
+  "system" external_system [unique, not null]
+  "sync_enabled" bool [default: true]
+  "sync_frequency" text [default: 'daily']
+  "last_sync_at" timestamp
+  "last_sync_status" text
+  "created_at" timestamp [not null, default: `now()`]
+  "updated_at" timestamp [not null, default: `now()`]
+}
+
+Table "external_systems_tokens" {
+  "id" uuid [pk, not null, default: `gen_random_uuid()`]
+  "system" external_system [unique, not null]
+  "access_token" text [not null]
+  "refresh_token" text
+  "expires_at" timestamp [not null]
+  "created_at" timestamp [not null, default: `now()`]
+  "updated_at" timestamp [not null, default: `now()`]
+}
+
+Table "writeup_log" {
+  "id" int4 [pk, not null, increment]
+  "player_id" uuid [not null]
+  "writeup_type" varchar(50) [not null]
+  "writeup_date" date [not null]
+  "coach_id" uuid
+  "notes" text
+  "created_at" timestamp [default: `now()`]
+
+  Indexes {
+    coach_id [type: btree, name: "writeup_log_coach_id_idx"]
+    writeup_date [type: btree, name: "writeup_log_date_idx"]
+    player_id [type: btree, name: "writeup_log_player_id_idx"]
+  }
+}
+
+Table "allowed_users" {
+  "id" uuid [pk, not null, default: `gen_random_uuid()`]
+  "email" varchar(255) [not null]
+  "provider" auth_provider [not null]
+  "status" allowed_user_status [not null, default: 'invited']
+  "organization_id" uuid [not null]
+  "role" varchar(50) [not null]
+  "created_at" timestamp [not null, default: `now()`]
+  "updated_at" timestamp [default: `now()`]
+
+  Indexes {
+    (organization_id, provider, email) [type: btree, unique, name: "allowed_users_org_provider_email_uniq"]
+  }
+}
+
+Table "mechanics" {
+  "id" uuid [pk, not null, default: `gen_random_uuid()`]
+  "name" varchar(255) [not null]
+  "description" varchar(1000)
+  "type" mechanic_type [not null]
+  "tags" "varchar[]"
+  "created_at" timestamp [not null, default: `now()`]
+  "updated_at" timestamp [not null, default: `now()`]
+}
+
+Table "hawkins_cmj" {
+  "id" uuid [pk, not null, default: `gen_random_uuid()`]
+  "timestamp" timestamptz [not null]
+  "external_unique_id" text [not null]
+  "athlete_id" text [not null]
+  "athlete_name" text
+  "test_type_name" text [not null]
+  "test_type_canonical_id" text [not null]
+  "raw_data" jsonb [not null]
+  "ingested_at" timestamptz [not null, default: `now()`]
+  "jump_height_m" numeric
+  "peak_propulsive_power_w" numeric
+  "avg_propulsive_velocity_m_s" numeric
+  "propulsive_impulse_n_s" numeric
+  "p1_propulsive_impulse_n_s" numeric
+  "p2_propulsive_impulse_n_s" numeric
+  "p1p2_propulsive_impulse_index" numeric
+  "attempt_key" text
+
+  Indexes {
+    (athlete_id, timestamp, attempt_key) [type: btree, unique, name: "hawkins_cmj_unique_attempt"]
+  }
+}
+
+Table "hawkins_drop_jump" {
+  "id" uuid [pk, not null, default: `gen_random_uuid()`]
+  "timestamp" timestamptz [not null]
+  "external_unique_id" text [not null]
+  "athlete_id" text [not null]
+  "athlete_name" text
+  "test_type_name" text [not null]
+  "test_type_canonical_id" text [not null]
+  "raw_data" jsonb [not null]
+  "ingested_at" timestamptz [not null, default: `now()`]
+  "mrsi" numeric
+  "attempt_key" text
+
+  Indexes {
+    (athlete_id, timestamp, attempt_key) [type: btree, unique, name: "hawkins_drop_jump_unique_attempt"]
+  }
+}
+
+Table "hawkins_iso" {
+  "id" uuid [pk, not null, default: `gen_random_uuid()`]
+  "timestamp" timestamptz [not null]
+  "external_unique_id" text [not null]
+  "athlete_id" text [not null]
+  "athlete_name" text
+  "test_type_name" text [not null]
+  "test_type_canonical_id" text [not null]
+  "raw_data" jsonb [not null]
+  "ingested_at" timestamptz [not null, default: `now()`]
+  "length_of_pull_s" numeric
+  "time_to_peak_force_s" numeric
+  "peak_force_n" numeric
+  "attempt_key" text
+
+  Indexes {
+    (athlete_id, timestamp, attempt_key) [type: btree, unique, name: "hawkins_iso_unique_attempt"]
+  }
+}
+
+Table "hawkins_multi" {
+  "id" uuid [pk, not null, default: `gen_random_uuid()`]
+  "timestamp" timestamptz [not null]
+  "external_unique_id" text [not null]
+  "athlete_id" text [not null]
+  "athlete_name" text
+  "test_type_name" text [not null]
+  "test_type_canonical_id" text [not null]
+  "raw_data" jsonb [not null]
+  "ingested_at" timestamptz [not null, default: `now()`]
+  "avg_mrsi" numeric
+  "attempt_key" text
+
+  Indexes {
+    (athlete_id, timestamp, attempt_key) [type: btree, unique, name: "hawkins_multi_unique_attempt"]
+  }
+}
+
+Table "hawkins_ts_iso" {
+  "id" uuid [pk, not null, default: `gen_random_uuid()`]
+  "timestamp" timestamptz [not null]
+  "external_unique_id" text [not null]
+  "athlete_id" text [not null]
+  "athlete_name" text
+  "test_type_name" text [not null]
+  "test_type_canonical_id" text [not null]
+  "raw_data" jsonb [not null]
+  "ingested_at" timestamptz [not null, default: `now()`]
+  "peak_force_n" numeric
+  "attempt_key" text
+
+  Indexes {
+    (athlete_id, timestamp, attempt_key) [type: btree, unique, name: "hawkins_ts_iso_unique_attempt"]
+  }
+}
+
+Table "lesson_mechanics" {
+  "id" uuid [pk, not null, default: `gen_random_uuid()`]
+  "lesson_id" uuid [not null]
+  "player_id" uuid [not null]
+  "mechanic_id" uuid [not null]
+  "notes" text
+
+  Indexes {
+    lesson_id [type: btree, name: "lesson_mechanics_lesson_idx"]
+    mechanic_id [type: btree, name: "lesson_mechanics_mechanic_idx"]
+    player_id [type: btree, name: "lesson_mechanics_player_idx"]
+  }
+}
+
+Table "lesson_players" {
+  "id" uuid [pk, not null, default: `gen_random_uuid()`]
+  "lesson_id" uuid [not null]
+  "player_id" uuid [not null]
+  "notes" text
+
+  Indexes {
+    lesson_id [type: btree, name: "lesson_players_lesson_idx"]
+    player_id [type: btree, name: "lesson_players_player_idx"]
+  }
+}
+
+Table "pitching_lesson_players" {
+  "id" uuid [pk, not null, default: `gen_random_uuid()`]
+  "lesson_player_id" uuid [not null]
+  "phase" text [not null]
+  "pitch_count" int4
+  "intent_percent" int4
+
+  Indexes {
+    lesson_player_id [type: btree, name: "pitching_lesson_players_lp_idx"]
+  }
+}
+
+Ref "account_userId_user_id_fk":"user"."id" < "account"."userId" [delete: cascade]
+
+Ref "arm_care_lesson_id_lesson_id_fk":"lesson"."id" < "arm_care"."lesson_id" [delete: cascade]
+
+Ref "armcare_exams_player_id_player_information_id_fk":"player_information"."id" < "armcare_exams"."player_id" [delete: cascade]
+
+Ref "armcare_exams_sync_log_id_external_sync_logs_id_fk":"external_sync_logs"."id" < "armcare_exams"."sync_log_id"
+
+Ref "armcare_exams_unmatched_resolved_by_user_id_fk":"user"."id" < "armcare_exams_unmatched"."resolved_by"
+
+Ref "armcare_exams_unmatched_sync_log_id_external_sync_logs_id_fk":"external_sync_logs"."id" < "armcare_exams_unmatched"."sync_log_id"
+
+Ref "catching_assessment_lesson_id_lesson_id_fk":"lesson"."id" < "catching_assessment"."lesson_id" [delete: cascade]
+
+Ref "external_athlete_ids_linked_by_user_id_fk":"user"."id" < "external_athlete_ids"."linked_by"
+
+Ref "external_athlete_ids_player_id_player_information_id_fk":"player_information"."id" < "external_athlete_ids"."player_id"
+
+Ref "external_sync_logs_triggered_by_user_id_user_id_fk":"user"."id" < "external_sync_logs"."triggered_by_user_id"
+
+Ref "fielding_assessment_lesson_id_lesson_id_fk":"lesson"."id" < "fielding_assessment"."lesson_id" [delete: cascade]
+
+Ref "hawkins_force_plate_lesson_id_lesson_id_fk":"lesson"."id" < "hawkins_force_plate"."lesson_id" [delete: cascade]
+
+Ref "hitting_assessment_lesson_id_lesson_id_fk":"lesson"."id" < "hitting_assessment"."lesson_id" [delete: cascade]
+
+Ref "hittrax_assessment_lesson_id_lesson_id_fk":"lesson"."id" < "hittrax_assessment"."lesson_id" [delete: cascade]
+
+Ref "lesson_coach_id_user_id_fk":"user"."id" < "lesson"."coach_id" [delete: cascade]
+
+Ref "lesson_player_id_player_information_id_fk":"player_information"."id" < "lesson"."player_id" [delete: cascade]
+
+Ref "lesson_assessments_lesson_id_lesson_id_fk":"lesson"."id" < "lesson_assessments"."lesson_id" [delete: cascade]
+
+Ref "lesson_mechanics_lesson_id_lesson_id_fk":"lesson"."id" < "lesson_mechanics"."lesson_id" [delete: cascade]
+
+Ref "lesson_mechanics_mechanic_id_mechanics_id_fk":"mechanics"."id" < "lesson_mechanics"."mechanic_id" [delete: cascade]
+
+Ref "lesson_mechanics_player_id_player_information_id_fk":"player_information"."id" < "lesson_mechanics"."player_id" [delete: cascade]
+
+Ref "lesson_players_lesson_id_lesson_id_fk":"lesson"."id" < "lesson_players"."lesson_id" [delete: cascade]
+
+Ref "lesson_players_player_id_player_information_id_fk":"player_information"."id" < "lesson_players"."player_id" [delete: cascade]
+
+Ref "motor_preferences_player_id_player_information_id_fk":"player_information"."id" < "motor_preferences"."player_id" [delete: cascade]
+
+Ref "notes_coachId_user_id_fk":"user"."id" < "notes"."coachId" [delete: cascade]
+
+Ref "notes_userId_user_id_fk":"user"."id" < "notes"."userId" [delete: cascade]
+
+Ref "pitching_assessment_lesson_id_lesson_id_fk":"lesson"."id" < "pitching_assessment"."lesson_id" [delete: cascade]
+
+Ref "pitching_lesson_players_lesson_player_id_lesson_players_id_fk":"lesson_players"."id" < "pitching_lesson_players"."lesson_player_id" [delete: cascade]
+
+Ref "player_information_userId_user_id_fk":"user"."id" < "player_information"."userId" [delete: cascade]
+
+Ref "player_injuries_player_id_player_information_id_fk":"player_information"."id" < "player_injuries"."player_id" [delete: cascade]
+
+Ref "player_measurements_player_id_player_information_id_fk":"player_information"."id" < "player_measurements"."player_id" [delete: cascade]
+
+Ref "session_userId_user_id_fk":"user"."id" < "session"."userId" [delete: cascade]
+
+Ref "smfa_lesson_id_lesson_id_fk":"lesson"."id" < "smfa"."lesson_id" [delete: cascade]
+
+Ref "smfa_boolean_lesson_id_lesson_id_fk":"lesson"."id" < "smfa_boolean"."lesson_id" [delete: cascade]
+
+Ref "true_strength_lesson_id_lesson_id_fk":"lesson"."id" < "true_strength"."lesson_id" [delete: cascade]
+
+Ref "velo_assessment_lesson_id_lesson_id_fk":"lesson"."id" < "velo_assessment"."lesson_id" [delete: cascade]
+
+Ref "writeup_log_coach_id_user_id_fk":"user"."id" < "writeup_log"."coach_id"
+
+Ref "writeup_log_player_id_player_information_id_fk":"player_information"."id" < "writeup_log"."player_id"
+
+Ref "writeups_coach_id_user_id_fk":"user"."id" < "writeups"."coach_id"
+
+Ref "writeups_player_id_player_information_id_fk":"player_information"."id" < "writeups"."player_id"
+
+Table "drizzle"."__drizzle_migrations" {
+  "id" int4 [pk, not null, increment]
+  "hash" text [not null]
+  "created_at" int8
+}
