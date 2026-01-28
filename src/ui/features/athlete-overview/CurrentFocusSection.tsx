@@ -3,33 +3,36 @@ import { Chip } from "@heroui/react";
 
 import { SectionShell } from "@/ui/core/athletes/SectionShell";
 
-export async function CurrentFocusSection() {
+interface CurrentFocusSectionProps {
+  data: {
+    mechanics: { id: string; name: string }[];
+  };
+}
+
+export function CurrentFocusSection({ data }: CurrentFocusSectionProps) {
   return (
     <SectionShell
-      title="Current Focus & Risk"
-      description="Active mechanics and athlete availability"
+      title="Current Focus & Availability"
+      description="Active mechanics and athlete status"
     >
       <div className="space-y-4">
+        {/* Active Mechanics */}
         <div>
           <h4 className="mb-2 text-sm font-medium">Active Mechanics</h4>
-          <div className="flex flex-wrap gap-2">
-            <Chip size="sm" variant="flat">
-              Hip / Shoulder Separation
-            </Chip>
-            <Chip size="sm" variant="flat">
-              Front Foot Timing
-            </Chip>
-            <Chip size="sm" variant="flat">
-              Lead Arm Stability
-            </Chip>
-          </div>
-        </div>
 
-        <div>
-          <h4 className="mb-1 text-sm font-medium">Injury Status</h4>
-          <p className="text-sm text-muted-foreground">
-            Shoulder soreness — throwing volume limited
-          </p>
+          {data.mechanics.length === 0 ? (
+            <p className="text-sm text-muted-foreground">
+              No active mechanics identified recently.
+            </p>
+          ) : (
+            <div className="flex flex-wrap gap-2">
+              {data.mechanics.map((m) => (
+                <Chip key={m.id} size="sm" variant="flat">
+                  {m.name}
+                </Chip>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </SectionShell>

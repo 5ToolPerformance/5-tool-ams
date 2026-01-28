@@ -24,7 +24,7 @@ export function AthleteTabs({ activeKey, onChange }: AthleteTabsProps) {
       variant="underlined"
       className="border-b border-divider"
     >
-      <Tab key="overview" title={<DisabledTab title="Overview" />} isDisabled />
+      <Tab key="overview" title="Overview" />
       <Tab key="training" title="Training" />
       <Tab
         key="performance"
