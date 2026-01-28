@@ -1,16 +1,12 @@
 import { Chip, Divider } from "@heroui/react";
-import { CalendarDays, Clock, User, Users } from "lucide-react";
+import { CalendarDays, User, Users } from "lucide-react";
 
 import { CoachDisplay } from "./CoachDisplay";
 import { LessonTypeBadge } from "./LessonTypeBadge";
 import { LessonTypeIcon } from "./LessonTypeIcon";
 import { MechanicsList } from "./MechanicsList";
 import { PlayerAvatars } from "./PlayerAvatars";
-import {
-  formatLessonDate,
-  formatLessonTime,
-  getRelativeTime,
-} from "./lessonFormatters";
+import { formatLessonDate, getRelativeTime } from "./lessonFormatters";
 import { LESSON_TYPE_CONFIG } from "./lessonTypeConfig";
 import type { LessonCardProps } from "./types";
 
@@ -29,7 +25,7 @@ export function LessonCard({
       : undefined;
   const notesToShow =
     viewContext === "player"
-      ? playerNoteTarget?.notes ?? lesson.notes
+      ? (playerNoteTarget?.notes ?? lesson.notes)
       : lesson.notes;
 
   return (
@@ -62,7 +58,7 @@ export function LessonCard({
         </div>
       </div>
 
-      <div className="space-y-3 px-4 pb-4 pt-3 sm:space-y-4 sm:pb-5 sm:pt-4 sm:px-5">
+      <div className="space-y-3 px-4 pb-4 pt-3 sm:space-y-4 sm:px-5 sm:pb-5 sm:pt-4">
         <div className="flex min-w-0 items-center gap-2">
           {viewContext === "coach" ? (
             <>
@@ -82,12 +78,6 @@ export function LessonCard({
             <CalendarDays className="h-4 w-4 flex-shrink-0" />
             <span className="whitespace-nowrap">
               {formatLessonDate(lesson.lessonDate)}
-            </span>
-          </span>
-          <span className="flex items-center gap-2">
-            <Clock className="h-4 w-4 flex-shrink-0" />
-            <span className="whitespace-nowrap">
-              {formatLessonTime(lesson.lessonDate)}
             </span>
           </span>
         </div>
