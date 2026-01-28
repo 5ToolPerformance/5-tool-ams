@@ -18,6 +18,7 @@ import { toast } from "sonner";
 
 import { NOTE_TYPES } from "@/domain/player/notes/constants";
 import { usePlayerNotes } from "@/hooks";
+import { useRouteRefetch } from "@/hooks/useRotueRefetch";
 
 interface AddPlayerNoteModalProps {
   playerId: string;
@@ -33,6 +34,7 @@ export function AddPlayerNoteModal({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { refresh } = usePlayerNotes(playerId);
   const [type, setType] = useState<string>("general");
+  const refetch = useRouteRefetch();
 
   const submit = async () => {
     if (!content.trim()) return;
@@ -53,6 +55,7 @@ export function AddPlayerNoteModal({
       setContent("");
       refresh();
       onOpenChange();
+      refetch();
       toast.success("Note added successfully");
     } catch (error) {
       console.error(error);
