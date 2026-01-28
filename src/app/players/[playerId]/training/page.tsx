@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 
-import { getLessonsByPlayerId } from "@/db/queries/lessons/lessonQueries";
+import { getTrainingTabData } from "@/application/players/training";
 import { TrainingTab } from "@/ui/features/athlete-training/TrainingTab";
 import { TrainingSkeleton } from "@/ui/features/athlete-training/skeletons/TrainingSkeleton";
 
@@ -10,10 +10,10 @@ export default async function TrainingPage({
   params: Promise<{ playerId: string }>;
 }) {
   const { playerId } = await params;
-  const playerLessons = await getLessonsByPlayerId(playerId);
+  const { lessons, summary } = await getTrainingTabData(playerId);
   return (
     <Suspense fallback={<TrainingSkeleton />}>
-      <TrainingTab lessons={playerLessons} />
+      <TrainingTab lessons={lessons} summary={summary} />
     </Suspense>
   );
 }
