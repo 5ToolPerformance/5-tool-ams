@@ -5,4 +5,6 @@ import { env } from "@/env/server";
 
 const db = drizzle(env.DATABASE_URL, { schema });
 
+export type DB = typeof db;
+
 export default db;

@@ -18,8 +18,8 @@ import {
 } from "@heroui/react";
 import { Search, SlidersHorizontal, X } from "lucide-react";
 
-import PlayerCreateForm from "@/components/players/PlayerCreateForm";
 import { useAllPlayers } from "@/hooks";
+import { CreatePlayerConfigModal } from "@/ui/core/athletes/CreatePlayerConfigModal";
 
 type SortKey = "firstName" | "lastName" | "age";
 type SortOrder = "asc" | "desc";
@@ -138,16 +138,9 @@ export default function PlayersPage() {
           <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-50">
             Players
           </h1>
-          <PlayerCreateForm
-            onPlayerCreated={(newPlayer) => {
-              mutate(
-                (current) =>
-                  Array.isArray(current)
-                    ? [newPlayer, ...current]
-                    : [newPlayer],
-                { revalidate: true }
-              );
-            }}
+          <CreatePlayerConfigModal
+            trigger={<Button>Create Player</Button>}
+            onSuccess={mutate}
           />
         </div>
 

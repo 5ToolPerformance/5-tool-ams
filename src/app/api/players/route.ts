@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import { auth } from "@/auth";
+import { createPlayer } from "@/db/queries/players/createPlayer";
+import { PlayerUpsertInput } from "@/domain/player/types";
 import { PlayerService } from "@/lib/services/players";
-import { PlayerInsert } from "@/types/database";
 
 export async function GET() {
   const session = await auth();
@@ -21,8 +22,24 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   try {
-    const body: PlayerInsert = await request.json();
-    const player = await PlayerService.createPlayerInformation(body);
+    const body: PlayerUpsertInput = await request.json();
+
+    // minimal invariant checks (never trust the client)
+    if (!body.firstName || !body.lastName) {
+      return NextResponse.json(
+        { success: false, error: "First and last name are required" },
+        { status: 400 }
+      );
+    }
+
+    if (!body.primaryPositionId) {
+      return NextResponse.json(
+        { success: false, error: "Primary position is required" },
+        { status: 400 }
+      );
+    }
+
+    const player = await createPlayer(body);
 
     return NextResponse.json({
       success: true,
@@ -31,6 +48,7 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     console.error("Error in POST /api/players:", error);
+
     return NextResponse.json(
       {
         success: false,
