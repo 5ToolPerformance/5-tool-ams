@@ -15,23 +15,20 @@ import {
   SelectItem,
   useDisclosure,
 } from "@heroui/react";
-import { parseDate } from "@internationalized/date";
+import { CalendarDate, today } from "@internationalized/date";
 import { toast } from "sonner";
 
-import { PlayerHeaderModel } from "@/domain/player/header/types";
 import { useAllPositions, useCoaches } from "@/hooks";
 
-interface EditPlayerConfigModalProps {
-  player: PlayerHeaderModel;
+interface CreatePlayerConfigModalProps {
   trigger: React.ReactElement<{ onPress?: () => void }>;
   onSuccess?: () => void;
 }
 
-export function EditPlayerConfigModal({
-  player,
+export function CreatePlayerConfigModal({
   trigger,
   onSuccess,
-}: EditPlayerConfigModalProps) {
+}: CreatePlayerConfigModalProps) {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   /* ---------- data ---------- */
@@ -41,35 +38,29 @@ export function EditPlayerConfigModal({
 
   /* ---------- identity state ---------- */
 
-  const [firstName, setFirstName] = useState(player.firstName);
-  const [lastName, setLastName] = useState(player.lastName);
-  const [dob, setDob] = useState(parseDate(player.dob));
-  const [height, setHeight] = useState<number | null>(player.height);
-  const [weight, setWeight] = useState<number | null>(player.weight);
-  const [sport, setSport] = useState<"baseball" | "softball">(player.sport);
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [dob, setDob] = useState<CalendarDate>(today("UTC"));
+  const [height, setHeight] = useState<number | null>(null);
+  const [weight, setWeight] = useState<number | null>(null);
+  const [sport, setSport] = useState<"baseball" | "softball">("baseball");
+
   const [throwsHand, setThrowsHand] = useState<
     "right" | "left" | "switch" | null
-  >(player.handedness.throw);
+  >(null);
 
   const [hitsHand, setHitsHand] = useState<"right" | "left" | "switch" | null>(
-    player.handedness.bat
+    null
   );
 
   /* ---------- relationships ---------- */
 
-  const primaryPosition = player.positions.find((p) => p.isPrimary) ?? null;
-  const secondaryPositions = player.positions.filter((p) => !p.isPrimary);
-
-  const [primaryCoachId, setPrimaryCoachId] = useState<string | null>(
-    player.primaryCoachId
-  );
-
+  const [primaryCoachId, setPrimaryCoachId] = useState<string | null>(null);
   const [primaryPositionId, setPrimaryPositionId] = useState<string | null>(
-    primaryPosition?.id ?? null
+    null
   );
-
   const [secondaryPositionIds, setSecondaryPositionIds] = useState<string[]>(
-    secondaryPositions.map((p) => p.id)
+    []
   );
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -83,6 +74,11 @@ export function EditPlayerConfigModal({
   /* ---------- submit ---------- */
 
   const submit = async () => {
+    if (!firstName || !lastName) {
+      toast.error("First and last name are required");
+      return;
+    }
+
     if (!primaryPositionId) {
       toast.error("Primary position is required");
       return;
@@ -91,8 +87,8 @@ export function EditPlayerConfigModal({
     setIsSubmitting(true);
 
     try {
-      const res = await fetch(`/api/players/${player.id}`, {
-        method: "PATCH",
+      const res = await fetch("/api/players", {
+        method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           // identity
@@ -117,15 +113,15 @@ export function EditPlayerConfigModal({
       });
 
       if (!res.ok) {
-        throw new Error("Failed to update player");
+        throw new Error("Failed to create player");
       }
 
-      toast.success("Player updated successfully");
+      toast.success("Player created successfully");
       onSuccess?.();
       onOpenChange();
     } catch (error) {
       console.error(error);
-      toast.error("Failed to update player");
+      toast.error("Failed to create player");
     } finally {
       setIsSubmitting(false);
     }
@@ -146,7 +142,7 @@ export function EditPlayerConfigModal({
         <ModalContent>
           {(onClose) => (
             <>
-              <ModalHeader>Edit Player</ModalHeader>
+              <ModalHeader>Create Player</ModalHeader>
 
               <ModalBody className="space-y-6">
                 {/* Identity */}
@@ -156,6 +152,7 @@ export function EditPlayerConfigModal({
                     value={firstName}
                     onChange={(e) => setFirstName(e.target.value)}
                   />
+
                   <Input
                     label="Last Name"
                     value={lastName}
@@ -250,7 +247,7 @@ export function EditPlayerConfigModal({
                     items
                       .map((i) => {
                         const p = positions.find((p) => p.id === i.key);
-                        return p ? `${p.code}` : null;
+                        return p ? p.code : null;
                       })
                       .filter(Boolean)
                       .join(", ")
@@ -305,7 +302,7 @@ export function EditPlayerConfigModal({
                   isLoading={isSubmitting}
                   onPress={submit}
                 >
-                  Save Changes
+                  Create Player
                 </Button>
               </ModalFooter>
             </>

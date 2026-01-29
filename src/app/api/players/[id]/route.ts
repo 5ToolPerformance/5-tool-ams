@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 
+import { updatePlayer } from "@/db/queries/players/updatePlayer";
+import { PlayerUpsertInput } from "@/domain/player/types";
 import { PlayerService } from "@/lib/services/players";
 import { RouteParams } from "@/types/api";
-import { PlayerInsert } from "@/types/database";
 
 export async function GET(
   request: NextRequest,
@@ -26,7 +27,6 @@ export async function GET(
       success: true,
       data: player,
     });
-    
   } catch (error) {
     console.error("Error fetching player by id:", error);
 
@@ -50,22 +50,22 @@ export async function PATCH(
     // Validate player ID
     if (!id) {
       return NextResponse.json(
-        { error: "Player ID is required" },
+        { success: false, error: "Player ID is required" },
         { status: 400 }
       );
     }
 
-    const body: Partial<PlayerInsert> = await request.json();
+    const body: Partial<PlayerUpsertInput> = await request.json();
 
-    const updated = await PlayerService.updatePlayerInformation(id, body);
+    await updatePlayer(id, body);
 
     return NextResponse.json({
       success: true,
-      data: updated,
       message: "Player updated successfully",
     });
   } catch (error) {
     console.error("Error updating player by id:", error);
+
     return NextResponse.json(
       {
         success: false,
