@@ -26,6 +26,10 @@ export const env = createEnv({
     ARMCARE_API_URL_STAGING: z.string().url(),
     ARMCARE_AUTH_URL_PROD: z.string().url(),
     ARMCARE_API_URL_PROD: z.string().url(),
+    //Azure Storage
+    AZURE_STORAGE_ACCOUNT_NAME: z.string(),
+    AZURE_STORAGE_CONNECTION_STRING: z.string(),
+    AZURE_STORAGE_CONTAINER_NAME: z.string(),
   },
   onValidationError: (error) => {
     console.error("❌ Invalid environment variables:", error);
