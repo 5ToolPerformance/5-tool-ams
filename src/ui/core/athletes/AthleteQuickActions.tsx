@@ -8,6 +8,7 @@ import { Pencil, Plus } from "lucide-react";
 import { PlayerHeaderModel } from "@/domain/player/header/types";
 import { usePlayerHeaderRefetch } from "@/hooks/usePlayerHeaderRefetch";
 import { EditPlayerConfigModal } from "@/ui/core/athletes/EditPlayerConfigModal";
+import { PlayerUploadDataModal } from "@/ui/core/athletes/PlayerUploadDataModal";
 
 import { AddPlayerNoteModal } from "./AddPlayerNoteModal";
 
@@ -41,6 +42,15 @@ export function AthleteQuickActions({
         trigger={
           <Button size="sm" color="primary" startContent={<Plus size={16} />}>
             Add Note
+          </Button>
+        }
+      />
+
+      <PlayerUploadDataModal
+        playerId={playerId}
+        trigger={
+          <Button size="sm" color="primary" startContent={<Plus size={16} />}>
+            Upload Data
           </Button>
         }
       />
