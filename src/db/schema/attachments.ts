@@ -7,7 +7,7 @@ import {
   uuid,
 } from "drizzle-orm/pg-core";
 
-import { lessonPlayers, playerInformation } from "@/db/schema";
+import { lessonPlayers, playerInformation, users } from "@/db/schema";
 import { facilities } from "@/db/schema/facilities";
 
 export const attachmentTypesEnum = pgEnum("attachment_types", [
@@ -31,7 +31,7 @@ export const attachments = pgTable("attachments", {
   source: text("source").notNull(),
   evidenceCategory: text("evidence_category"),
   notes: text("notes"),
-  createdBy: uuid("created_by").references(() => playerInformation.id, {
+  createdBy: uuid("created_by").references(() => users.id, {
     onDelete: "set null",
   }),
   createdAt: timestamp("created_at", { mode: "string" }).defaultNow().notNull(),
