@@ -11,7 +11,7 @@ export default async function PlayerOverviewPage({
   params: Promise<{ playerId: string }>;
 }) {
   const { playerId } = await params;
-  const { currentFocus, recentActivity, notes } =
+  const { currentFocus, recentActivity, notes, attachments } =
     await getOverviewData(playerId);
   return (
     <Suspense fallback={<OverviewSkeleton />}>
@@ -19,6 +19,7 @@ export default async function PlayerOverviewPage({
         notes={notes}
         currentFocus={currentFocus}
         recentActivity={recentActivity}
+        attachments={attachments}
       />
     </Suspense>
   );

@@ -11,6 +11,7 @@ interface OverviewTabProps {
   notes: Awaited<ReturnType<typeof getOverviewData>>["notes"];
   currentFocus: Awaited<ReturnType<typeof getOverviewData>>["currentFocus"];
   recentActivity: Awaited<ReturnType<typeof getOverviewData>>["recentActivity"];
+  attachments: Awaited<ReturnType<typeof getOverviewData>>["attachments"];
 }
 
 export async function OverviewTab({

@@ -1,4 +1,5 @@
 // application/overview/getOverviewData.ts
+import { getPlayerAttachmentOverviews } from "@/db/queries/attachments/getPlayerAttachmentOverviews";
 import { getLessonsByPlayerId } from "@/db/queries/lessons/lessonQueries";
 import { getRecentPlayerNotes } from "@/db/queries/players/notes/getRecentPlayerNotes";
 import {
@@ -7,9 +8,10 @@ import {
 } from "@/domain/player/overview";
 
 export async function getOverviewData(playerId: string) {
-  const [lessons, rawNotes] = await Promise.all([
+  const [lessons, rawNotes, attachments] = await Promise.all([
     getLessonsByPlayerId(playerId),
     getRecentPlayerNotes(playerId),
+    getPlayerAttachmentOverviews(playerId),
   ]);
 
   const notes = rawNotes.map((n) => ({
@@ -28,5 +30,6 @@ export async function getOverviewData(playerId: string) {
     currentFocus: buildCurrentFocus(lessons),
     recentActivity: buildRecentActivity(lessons, notes),
     notes,
+    attachments,
   };
 }
