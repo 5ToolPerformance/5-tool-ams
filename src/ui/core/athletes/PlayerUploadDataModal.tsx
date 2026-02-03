@@ -16,6 +16,8 @@ import {
 } from "@heroui/react";
 import { toast } from "sonner";
 
+import { useRouteRefetch } from "@/hooks/useRotueRefetch";
+
 interface PlayerUploadDataModalProps {
   playerId: string;
   trigger: React.ReactElement<{ onPress?: () => void }>;
@@ -37,6 +39,7 @@ export function PlayerUploadDataModal({
   const [notes, setNotes] = useState<string>("");
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const refetch = useRouteRefetch();
 
   /* ---------- submit ---------- */
 
@@ -72,6 +75,7 @@ export function PlayerUploadDataModal({
       toast.success("Data uploaded successfully");
       onSuccess?.();
       onOpenChange();
+      refetch();
     } catch (error) {
       console.error(error);
       toast.error("Failed to upload data");
