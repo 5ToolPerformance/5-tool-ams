@@ -17,11 +17,12 @@ export function hydrateLessonForm(read: LessonReadModel): LessonFormValues {
   }
 
   for (const participant of read.participants) {
-    const { playerId, notes, lessonSpecific } = participant;
+    const { playerId, lessonPlayerId, notes, lessonSpecific } = participant;
 
     values.selectedPlayerIds.push(playerId);
 
     values.players[playerId] = {
+      ...(lessonPlayerId ? { lessonPlayerId } : {}),
       ...(notes ? { notes } : {}),
       ...(lessonSpecific ? { lessonSpecific } : {}),
     };

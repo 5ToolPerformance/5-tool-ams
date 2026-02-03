@@ -6,8 +6,13 @@ import { useLessonFormContext } from "../LessonFormProvider";
 import { LESSON_TYPE_REGISTRY } from "../lessonTypes";
 
 export function StepConfirm() {
-  const { form, submit, isSubmitting, playerById, mechanicById } =
-    useLessonFormContext();
+  const {
+    form,
+    submitWithUploads,
+    isSubmitting,
+    playerById,
+    mechanicById,
+  } = useLessonFormContext();
 
   return (
     <form.Subscribe selector={(state) => state.values}>
@@ -133,7 +138,11 @@ export function StepConfirm() {
 
             {/* Action */}
             <div className="flex justify-end pt-4">
-              <Button color="primary" onPress={submit} isLoading={isSubmitting}>
+              <Button
+                color="primary"
+                onPress={submitWithUploads}
+                isLoading={isSubmitting}
+              >
                 {isSubmitting ? "Saving..." : "Confirm & Save"}
               </Button>
             </div>

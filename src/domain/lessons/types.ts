@@ -34,6 +34,7 @@ export type LessonReadModel = {
 
   participants: {
     playerId: string;
+    lessonPlayerId?: string;
     notes?: string;
     lessonSpecific?: unknown;
   }[];

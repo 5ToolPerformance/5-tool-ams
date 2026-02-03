@@ -2,6 +2,7 @@ import { InferInsertModel, eq, inArray } from "drizzle-orm";
 
 import db from "@/db";
 import {
+  attachments,
   lesson,
   lessonMechanics,
   lessonPlayers,
@@ -30,6 +31,10 @@ export async function updateLesson(
     });
 
     const existingLessonPlayerIds = existingLessonPlayers.map((lp) => lp.id);
+    const existingByPlayerId = Object.fromEntries(
+      existingLessonPlayers.map((lp) => [lp.playerId, lp])
+    );
+    const desiredPlayerIds = payload.participants.map((p) => p.playerId);
 
     /**
      * 1️⃣ Update lesson row (legacy-compatible)
@@ -68,35 +73,74 @@ export async function updateLesson(
     }
 
     /**
-     * 3️⃣ Delete generic child rows
+     * 3️⃣ Update lesson_players without deleting attachments
      */
-    await tx.delete(lessonPlayers).where(eq(lessonPlayers.lessonId, lessonId));
+    const toRemove = existingLessonPlayers.filter(
+      (lp) => !desiredPlayerIds.includes(lp.playerId)
+    );
+    const toInsert = payload.participants.filter(
+      (p) => !existingByPlayerId[p.playerId]
+    );
 
+    // Update notes for existing players
+    for (const participant of payload.participants) {
+      const existing = existingByPlayerId[participant.playerId];
+      if (!existing) continue;
+
+      if (existing.notes !== participant.notes) {
+        await tx
+          .update(lessonPlayers)
+          .set({ notes: participant.notes })
+          .where(eq(lessonPlayers.id, existing.id));
+      }
+    }
+
+    // Detach attachments before removing lesson players
+    if (toRemove.length > 0) {
+      const removedIds = toRemove.map((lp) => lp.id);
+      await tx
+        .update(attachments)
+        .set({ lessonPlayerId: null })
+        .where(inArray(attachments.lessonPlayerId, removedIds));
+
+      await tx
+        .delete(lessonPlayers)
+        .where(inArray(lessonPlayers.id, removedIds));
+    }
+
+    // Insert new lesson players
+    const insertedLessonPlayers =
+      toInsert.length > 0
+        ? await tx
+            .insert(lessonPlayers)
+            .values(
+              toInsert.map((p) => ({
+                lessonId,
+                playerId: p.playerId,
+                notes: p.notes,
+              }))
+            )
+            .returning()
+        : [];
+
+    const lessonPlayerByPlayerId = {
+      ...Object.fromEntries(
+        existingLessonPlayers
+          .filter((lp) => desiredPlayerIds.includes(lp.playerId))
+          .map((lp) => [lp.playerId, lp.id])
+      ),
+      ...Object.fromEntries(
+        insertedLessonPlayers.map((lp) => [lp.playerId, lp.id])
+      ),
+    };
+
+    /**
+     * 4️⃣ Reinsert lesson_mechanics
+     */
     await tx
       .delete(lessonMechanics)
       .where(eq(lessonMechanics.lessonId, lessonId));
 
-    /**
-     * 4️⃣ Reinsert lesson_players
-     */
-    const insertedLessonPlayers = await tx
-      .insert(lessonPlayers)
-      .values(
-        payload.participants.map((p) => ({
-          lessonId,
-          playerId: p.playerId,
-          notes: p.notes,
-        }))
-      )
-      .returning();
-
-    const lessonPlayerByPlayerId = Object.fromEntries(
-      insertedLessonPlayers.map((lp) => [lp.playerId, lp.id])
-    );
-
-    /**
-     * 5️⃣ Reinsert lesson_mechanics
-     */
     if (payload.mechanics.length > 0) {
       await tx.insert(lessonMechanics).values(
         payload.mechanics.map((m) => ({
@@ -109,7 +153,7 @@ export async function updateLesson(
     }
 
     /**
-     * 6️⃣ Reinsert lesson-type–specific data
+     * 5️⃣ Reinsert lesson-type–specific data
      */
     if (payload.lesson.type === "pitching") {
       const pitchingRows: PitchingLessonPlayerInsert[] = [];

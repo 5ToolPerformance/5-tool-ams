@@ -10,6 +10,7 @@ export type PlayerMechanicEntry = {
 };
 
 export type PlayerLessonData = {
+  lessonPlayerId?: string;
   notes?: string;
   mechanics?: Record<string, PlayerMechanicEntry>;
   lessonSpecific?: {

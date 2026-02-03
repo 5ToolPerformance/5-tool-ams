@@ -105,15 +105,19 @@ export function useLessonForm({
         }
 
         await updateLessonAction(lessonId, values);
-        setShowSuccess(true);
+        return { mode: "edit" as const };
       } else {
-        await submitLesson(values);
-        setShowSuccess(true);
+        const result = await submitLesson(values);
+        return { mode: "create" as const, ...result };
       }
     } catch (error) {
       console.error("Failed to submit lesson:", error);
       throw new Error("Failed to submit lesson");
     }
+  }
+
+  function completeSuccess() {
+    setShowSuccess(true);
   }
 
   function handleSuccessClose() {
@@ -143,6 +147,7 @@ export function useLessonForm({
     ensureSharedNotes,
 
     submit,
+    completeSuccess,
     showSuccess,
     handleSuccessClose,
 

@@ -118,6 +118,9 @@ export async function createLesson(
       }
     }
 
-    return lessonId;
+    return {
+      lessonId,
+      lessonPlayerByPlayerId,
+    };
   });
 }

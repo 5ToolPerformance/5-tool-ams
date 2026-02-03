@@ -6,10 +6,18 @@ import { Card, CardBody, Textarea } from "@heroui/react";
 
 import { useLessonFormContext } from "../LessonFormProvider";
 import { MechanicSelector } from "../components/MechanicSelector";
+import { EvidenceUploadSection } from "../components/EvidenceUploadSection";
 import { LESSON_TYPE_REGISTRY } from "../lessonTypes";
 
 export function StepPlayerNotes() {
-  const { form, ensurePlayer, playerById, mechanics } = useLessonFormContext();
+  const {
+    form,
+    ensurePlayer,
+    playerById,
+    mechanics,
+    evidenceDrafts,
+    setEvidenceDrafts,
+  } = useLessonFormContext();
 
   /**
    * Ensure player nodes exist when this step mounts.
@@ -120,6 +128,21 @@ export function StepPlayerNotes() {
                           />
                         </div>
                       )}
+
+                    {/* Evidence Upload */}
+                    <div className="space-y-2">
+                      <p className="text-sm font-medium">Evidence Upload</p>
+                      <EvidenceUploadSection
+                        playerName={playerName}
+                        draft={evidenceDrafts[playerId]}
+                        onDraftChange={(draft) =>
+                          setEvidenceDrafts((prev) => ({
+                            ...prev,
+                            [playerId]: draft,
+                          }))
+                        }
+                      />
+                    </div>
                   </CardBody>
                 </Card>
               );

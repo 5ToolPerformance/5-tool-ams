@@ -43,6 +43,7 @@ export async function getLessonForEdit(
     // New system
     participants = lessonPlayerRows.map((lp) => ({
       playerId: lp.playerId,
+      lessonPlayerId: lp.id,
       notes: lp.notes ?? undefined,
     }));
   } else {
@@ -50,6 +51,7 @@ export async function getLessonForEdit(
     participants = [
       {
         playerId: lessonRow.playerId,
+        lessonPlayerId: undefined,
         notes: lessonRow.notes ?? undefined,
       },
     ];

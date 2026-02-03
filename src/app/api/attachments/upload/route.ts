@@ -32,6 +32,7 @@ export async function POST(request: NextRequest) {
     const type = formData.get("type") as "file_csv" | "file_video" | null;
     const source = formData.get("source") as string | null;
     const notes = formData.get("notes") as string | null;
+    const evidenceCategory = formData.get("evidenceCategory") as string | null;
 
     if (!file || !athleteId || !type || !source) {
       return NextResponse.json(
@@ -79,6 +80,7 @@ export async function POST(request: NextRequest) {
       lessonPlayerId: lessonPlayerId ?? undefined,
       type,
       source,
+      evidenceCategory: evidenceCategory ?? undefined,
       notes: notes ?? undefined,
       file: {
         buffer,

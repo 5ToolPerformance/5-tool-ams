@@ -19,9 +19,12 @@ export async function submitLesson(values: LessonFormValues) {
   }
   const coachId = session.user.id!;
 
-  const lessonId = await createLesson(payload, coachId);
+  const { lessonId, lessonPlayerByPlayerId } = await createLesson(
+    payload,
+    coachId
+  );
 
-  return { lessonId };
+  return { lessonId, lessonPlayerByPlayerId };
 }
 
 export async function updateLessonAction(
