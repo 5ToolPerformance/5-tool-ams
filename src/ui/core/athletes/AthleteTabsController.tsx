@@ -4,7 +4,14 @@ import { usePathname, useRouter } from "next/navigation";
 
 import { AthleteTabs } from "./AthleteTabs";
 
-const TAB_KEYS = ["overview", "training", "performance", "health", "systems"];
+const TAB_KEYS = [
+  "overview",
+  "training",
+  "performance",
+  "context",
+  "health",
+  "systems",
+];
 
 export function AthleteTabsController() {
   const router = useRouter();

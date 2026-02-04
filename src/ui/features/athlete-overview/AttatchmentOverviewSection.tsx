@@ -11,11 +11,17 @@ interface PlayerAttachmentsViewerProps {
 function typeIcon(type: PlayerAttachmentOverview["type"]) {
   switch (type) {
     case "file_csv":
-      return "📄";
+      return "CSV";
     case "file_video":
-      return "🎥";
+      return "VID";
+    case "file_image":
+      return "IMG";
+    case "file_pdf":
+      return "PDF";
+    case "file_docx":
+      return "DOC";
     default:
-      return "📎";
+      return "ATT";
   }
 }
 
@@ -65,6 +71,15 @@ export function PlayerAttachmentsViewer({
               {a.notes && (
                 <div className="mt-1 line-clamp-1 text-xs text-muted-foreground">
                   {a.notes}
+                </div>
+              )}
+
+              {a.evidenceCategory === "context" && (
+                <div className="mt-1 text-xs text-muted-foreground">
+                  {[a.documentType, a.visibility]
+                    .filter(Boolean)
+                    .map((value) => (value as string).replace("_", " "))
+                    .join(" - ")}
                 </div>
               )}
 
