@@ -13,8 +13,22 @@ import { facilities } from "@/db/schema/facilities";
 export const attachmentTypesEnum = pgEnum("attachment_types", [
   "file_csv",
   "file_video",
+  "file_image",
+  "file_pdf",
+  "file_docx",
   "manual",
 ]);
+
+export const attachmentVisibilityEnum = pgEnum("attachment_visibility", [
+  "internal",
+  "private",
+  "public",
+]);
+
+export const attachmentDocumentTypesEnum = pgEnum(
+  "attachment_document_types",
+  ["medical", "pt", "external", "eval", "general", "other"]
+);
 
 export const attachments = pgTable("attachments", {
   id: uuid("id").defaultRandom().primaryKey(),
@@ -30,6 +44,10 @@ export const attachments = pgTable("attachments", {
   type: attachmentTypesEnum("type").notNull(),
   source: text("source").notNull(),
   evidenceCategory: text("evidence_category"),
+  visibility: attachmentVisibilityEnum("visibility")
+    .notNull()
+    .default("internal"),
+  documentType: attachmentDocumentTypesEnum("document_type"),
   notes: text("notes"),
   createdBy: uuid("created_by").references(() => users.id, {
     onDelete: "set null",
