@@ -7,8 +7,18 @@ import { StrengthRiskSection } from "./StrengthRiskSection";
 import { StrengthSessionTable } from "./StrengthSessionTable";
 import { StrengthTrendSection } from "./StrengthTrendSection";
 import type { NormalizedMetric, PowerRating, StrengthSession } from "./types";
+import type { PerformanceDocumentsAttachment } from "@/application/players/performance-documents/getPerformanceDocumentsData";
+import { PerformanceDocumentsPanel } from "@/ui/features/athlete-performance/shared/PerformanceDocumentsPanel";
 
-export async function StrengthPerformanceTab() {
+type StrengthPerformanceTabProps = {
+  performanceAttachments: PerformanceDocumentsAttachment[];
+};
+
+const STRENGTH_SOURCES: string[] = [];
+
+export async function StrengthPerformanceTab({
+  performanceAttachments,
+}: StrengthPerformanceTabProps) {
   const powerRating: PowerRating = {
     score: 82,
     percentile: 78,
@@ -102,6 +112,12 @@ export async function StrengthPerformanceTab() {
       <Suspense fallback={<ChartAreaSkeleton />}>
         <StrengthSessionTable sessions={sessions} />
       </Suspense>
+
+      <PerformanceDocumentsPanel
+        title="Strength Documents"
+        attachments={performanceAttachments}
+        allowedSources={STRENGTH_SOURCES}
+      />
     </div>
   );
 }

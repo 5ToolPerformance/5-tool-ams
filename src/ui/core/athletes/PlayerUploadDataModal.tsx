@@ -4,6 +4,7 @@ import { cloneElement, useState } from "react";
 
 import {
   Button,
+  Input,
   Modal,
   ModalBody,
   ModalContent,
@@ -34,11 +35,12 @@ export function PlayerUploadDataModal({
   /* ---------- state ---------- */
 
   const [file, setFile] = useState<File | null>(null);
-  const [uploadKind, setUploadKind] = useState<
-    "performance" | "context"
-  >("performance");
+  const [uploadKind, setUploadKind] = useState<"performance" | "context">(
+    "performance"
+  );
   const [type, setType] = useState<"file_csv" | "file_video">("file_csv");
-  const [source, setSource] = useState<string>("hitrax");
+  const [source, setSource] = useState<string>("hittrax");
+  const [contextSource, setContextSource] = useState<string>("");
   const [visibility, setVisibility] = useState<
     "internal" | "private" | "public"
   >("internal");
@@ -100,7 +102,8 @@ export function PlayerUploadDataModal({
           throw new Error("Unsupported context document file type");
         }
         formData.append("type", contextType);
-        formData.append("source", "manual");
+        const resolvedSource = contextSource.trim() || "manual";
+        formData.append("source", resolvedSource);
         formData.append("evidenceCategory", "context");
         formData.append("visibility", visibility);
         formData.append("documentType", documentType);
@@ -164,6 +167,7 @@ export function PlayerUploadDataModal({
                         | "context";
                       if (current !== next) {
                         setFile(null);
+                        setContextSource("");
                       }
                       return next;
                     })
@@ -210,7 +214,7 @@ export function PlayerUploadDataModal({
                         setSource(Array.from(keys)[0] as string)
                       }
                     >
-                      <SelectItem key="hitrax">HitTrax</SelectItem>
+                      <SelectItem key="hittrax">HitTrax</SelectItem>
                       <SelectItem key="blast_motion">Blast Motion</SelectItem>
                       <SelectItem key="manual">Manual / Other</SelectItem>
                     </Select>
@@ -219,6 +223,12 @@ export function PlayerUploadDataModal({
 
                 {uploadKind === "context" && (
                   <>
+                    <Input
+                      label="Source"
+                      placeholder="Enter document source"
+                      value={contextSource}
+                      onChange={(event) => setContextSource(event.target.value)}
+                    />
                     <Select
                       label="Document Type"
                       selectedKeys={[documentType]}
@@ -247,7 +257,10 @@ export function PlayerUploadDataModal({
                       selectedKeys={[visibility]}
                       onSelectionChange={(keys) =>
                         setVisibility(
-                          Array.from(keys)[0] as "internal" | "private" | "public"
+                          Array.from(keys)[0] as
+                            | "internal"
+                            | "private"
+                            | "public"
                         )
                       }
                     >

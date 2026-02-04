@@ -35,5 +35,9 @@ export async function getContextDocumentsData(playerId: string) {
     }
   );
 
-  return { attachments, lessonOptions };
+  const contextAttachments = attachments.filter(
+    (attachment) => attachment.evidenceCategory === "context"
+  );
+
+  return { attachments: contextAttachments, lessonOptions };
 }

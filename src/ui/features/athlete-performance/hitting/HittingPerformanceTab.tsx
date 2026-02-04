@@ -1,12 +1,22 @@
 // ui/features/athlete-performance/hitting/HittingPerformanceTab.tsx
 import { Suspense } from "react";
 
+import { PerformanceDocumentsPanel } from "@/ui/features/athlete-performance/shared/PerformanceDocumentsPanel";
 import { ChartAreaSkeleton } from "@/ui/features/athlete-performance/shared/skeletons/ChartAreaSkeleton";
 import { HittingOverviewSection } from "./HittingOverviewSection";
 import { HittingSessionsSection } from "./HittingSessionsSection";
 import type { HittingKpi, HittingSession, HittingTrend } from "./types";
+import type { PerformanceDocumentsAttachment } from "@/application/players/performance-documents/getPerformanceDocumentsData";
 
-export async function HittingPerformanceTab() {
+type HittingPerformanceTabProps = {
+  performanceAttachments: PerformanceDocumentsAttachment[];
+};
+
+const HITTING_SOURCES = ["hittrax", "blast_motion", "video"];
+
+export async function HittingPerformanceTab({
+  performanceAttachments,
+}: HittingPerformanceTabProps) {
   const kpis: HittingKpi[] = [
     {
       key: "avg_ev",
@@ -113,6 +123,12 @@ export async function HittingPerformanceTab() {
           selectedSession={selectedSession}
         />
       </Suspense>
+
+      <PerformanceDocumentsPanel
+        title="Hitting Documents"
+        attachments={performanceAttachments}
+        allowedSources={HITTING_SOURCES}
+      />
     </div>
   );
 }

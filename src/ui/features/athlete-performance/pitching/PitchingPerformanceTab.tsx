@@ -1,13 +1,23 @@
 // ui/features/athlete-performance/pitching/PitchingPerformanceTab.tsx
 import { Suspense } from "react";
 
+import { PerformanceDocumentsPanel } from "@/ui/features/athlete-performance/shared/PerformanceDocumentsPanel";
 import { ChartAreaSkeleton } from "@/ui/features/athlete-performance/shared/skeletons/ChartAreaSkeleton";
 import { PitchingOverviewSection } from "./PitchingOverviewSection";
 import { PitchingWorkloadSection } from "./PitchingWorkloadSection";
 import { PitchingSessionsSection } from "./PitchingSessionsSection";
 import type { PitchingKpi, PitchingSession, PitchingTrend } from "./types";
+import type { PerformanceDocumentsAttachment } from "@/application/players/performance-documents/getPerformanceDocumentsData";
 
-export async function PitchingPerformanceTab() {
+type PitchingPerformanceTabProps = {
+  performanceAttachments: PerformanceDocumentsAttachment[];
+};
+
+const PITCHING_SOURCES = ["trackman", "video"];
+
+export async function PitchingPerformanceTab({
+  performanceAttachments,
+}: PitchingPerformanceTabProps) {
   const kpis: PitchingKpi[] = [
     {
       key: "avg_velo",
@@ -120,6 +130,12 @@ export async function PitchingPerformanceTab() {
           selectedSession={selectedSession}
         />
       </Suspense>
+
+      <PerformanceDocumentsPanel
+        title="Pitching Documents"
+        attachments={performanceAttachments}
+        allowedSources={PITCHING_SOURCES}
+      />
     </div>
   );
 }
