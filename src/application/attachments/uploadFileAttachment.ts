@@ -18,9 +18,17 @@ interface UploadFileAttachmentParams {
         fileSizeBytes: number;
     };
 
-    type: "file_csv" | "file_video";
+    type: "file_csv" | "file_video" | "file_image" | "file_pdf" | "file_docx";
     source: string;
     evidenceCategory?: string;
+    visibility?: "internal" | "private" | "public";
+    documentType?:
+        | "medical"
+        | "pt"
+        | "external"
+        | "eval"
+        | "general"
+        | "other";
     notes?: string;
 }
 
@@ -36,6 +44,8 @@ export async function uploadFileAttachment(
         type,
         source,
         evidenceCategory,
+        visibility,
+        documentType,
         notes,
     } = params;
 
@@ -73,6 +83,8 @@ export async function uploadFileAttachment(
         type,
         source,
         evidenceCategory: evidenceCategory ?? null,
+        visibility: visibility ?? "internal",
+        documentType: documentType ?? null,
         notes: notes ?? null,
         createdBy,
     });
@@ -95,6 +107,8 @@ export async function uploadFileAttachment(
         type,
         source,
         evidenceCategory: evidenceCategory ?? null,
+        visibility: visibility ?? "internal",
+        documentType: documentType ?? null,
         createdAt: new Date().toISOString(),
     };
 }

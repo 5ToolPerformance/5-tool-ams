@@ -29,16 +29,54 @@ export async function POST(request: NextRequest) {
     const file = formData.get("file") as File | null;
     const athleteId = formData.get("athleteId") as string | null;
     const lessonPlayerId = formData.get("lessonPlayerId") as string | null;
-    const type = formData.get("type") as "file_csv" | "file_video" | null;
+    const type = formData.get("type") as
+      | "file_csv"
+      | "file_video"
+      | "file_image"
+      | "file_pdf"
+      | "file_docx"
+      | null;
     const source = formData.get("source") as string | null;
     const notes = formData.get("notes") as string | null;
     const evidenceCategory = formData.get("evidenceCategory") as string | null;
+    const visibility = formData.get("visibility") as
+      | "internal"
+      | "private"
+      | "public"
+      | null;
+    const documentType = formData.get("documentType") as
+      | "medical"
+      | "pt"
+      | "external"
+      | "eval"
+      | "general"
+      | "other"
+      | null;
 
     if (!file || !athleteId || !type || !source) {
       return NextResponse.json(
         { error: "Missing required fields" },
         { status: 400 }
       );
+    }
+
+    const isContextType =
+      type === "file_image" || type === "file_pdf" || type === "file_docx";
+
+    if (isContextType && evidenceCategory !== "context") {
+      return NextResponse.json(
+        { error: "Context documents must use evidenceCategory=context" },
+        { status: 400 }
+      );
+    }
+
+    if (evidenceCategory === "context") {
+      if (!visibility || !documentType) {
+        return NextResponse.json(
+          { error: "Missing context document fields" },
+          { status: 400 }
+        );
+      }
     }
 
     // ---------------------------------------------------------------------
@@ -65,6 +103,36 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    if (type === "file_image" && !file.type.startsWith("image/")) {
+      return NextResponse.json(
+        { error: "Invalid image file" },
+        { status: 400 }
+      );
+    }
+
+    if (
+      type === "file_pdf" &&
+      file.type !== "application/pdf" &&
+      !file.name.endsWith(".pdf")
+    ) {
+      return NextResponse.json(
+        { error: "Invalid PDF file" },
+        { status: 400 }
+      );
+    }
+
+    if (
+      type === "file_docx" &&
+      file.type !==
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document" &&
+      !file.name.endsWith(".docx")
+    ) {
+      return NextResponse.json(
+        { error: "Invalid DOCX file" },
+        { status: 400 }
+      );
+    }
+
     // ---------------------------------------------------------------------
     // 4. Convert File → Buffer
     // ---------------------------------------------------------------------
@@ -81,6 +149,8 @@ export async function POST(request: NextRequest) {
       type,
       source,
       evidenceCategory: evidenceCategory ?? undefined,
+      visibility: visibility ?? undefined,
+      documentType: documentType ?? undefined,
       notes: notes ?? undefined,
       file: {
         buffer,
