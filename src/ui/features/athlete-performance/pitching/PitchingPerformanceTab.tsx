@@ -13,7 +13,7 @@ type PitchingPerformanceTabProps = {
   performanceAttachments: PerformanceDocumentsAttachment[];
 };
 
-const PITCHING_SOURCES = ["trackman", "video"];
+const PITCHING_SOURCES = ["pitching", "trackman", "video"];
 
 export async function PitchingPerformanceTab({
   performanceAttachments,

@@ -12,7 +12,7 @@ type HittingPerformanceTabProps = {
   performanceAttachments: PerformanceDocumentsAttachment[];
 };
 
-const HITTING_SOURCES = ["hittrax", "blast_motion", "video"];
+const HITTING_SOURCES = ["hitting", "hittrax", "blast_motion", "video"];
 
 export async function HittingPerformanceTab({
   performanceAttachments,

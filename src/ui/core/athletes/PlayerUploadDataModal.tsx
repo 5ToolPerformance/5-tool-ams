@@ -35,11 +35,14 @@ export function PlayerUploadDataModal({
   /* ---------- state ---------- */
 
   const [file, setFile] = useState<File | null>(null);
-  const [uploadKind, setUploadKind] = useState<"performance" | "context">(
-    "performance"
-  );
-  const [type, setType] = useState<"file_csv" | "file_video">("file_csv");
+  const [uploadKind, setUploadKind] = useState<
+    "performance" | "media" | "context"
+  >("performance");
+  const [type] = useState<"file_csv">("file_csv");
   const [source, setSource] = useState<string>("hittrax");
+  const [mediaSource, setMediaSource] = useState<
+    "hitting" | "pitching" | "fielding" | "strength" | "catching"
+  >("hitting");
   const [contextSource, setContextSource] = useState<string>("");
   const [visibility, setVisibility] = useState<
     "internal" | "private" | "public"
@@ -67,11 +70,7 @@ export function PlayerUploadDataModal({
 
     const resolveContextType = (
       selectedFile: File
-    ): "file_image" | "file_pdf" | "file_docx" | null => {
-      if (selectedFile.type.startsWith("image/")) {
-        return "file_image";
-      }
-
+    ): "file_pdf" | "file_docx" | null => {
       if (
         selectedFile.type === "application/pdf" ||
         selectedFile.name.toLowerCase().endsWith(".pdf")
@@ -87,6 +86,18 @@ export function PlayerUploadDataModal({
         return "file_docx";
       }
 
+      return null;
+    };
+
+    const resolveMediaType = (
+      selectedFile: File
+    ): "file_image" | "file_video" | null => {
+      if (selectedFile.type.startsWith("image/")) {
+        return "file_image";
+      }
+      if (selectedFile.type.startsWith("video/")) {
+        return "file_video";
+      }
       return null;
     };
 
@@ -107,9 +118,18 @@ export function PlayerUploadDataModal({
         formData.append("evidenceCategory", "context");
         formData.append("visibility", visibility);
         formData.append("documentType", documentType);
+      } else if (uploadKind === "media") {
+        const mediaType = resolveMediaType(file);
+        if (!mediaType) {
+          throw new Error("Unsupported media file type");
+        }
+        formData.append("type", mediaType);
+        formData.append("source", mediaSource);
+        formData.append("evidenceCategory", "media");
       } else {
         formData.append("type", type);
         formData.append("source", source);
+        formData.append("evidenceCategory", "performance");
       }
 
       if (notes.trim()) {
@@ -164,6 +184,7 @@ export function PlayerUploadDataModal({
                     setUploadKind((current) => {
                       const next = Array.from(keys)[0] as
                         | "performance"
+                        | "media"
                         | "context";
                       if (current !== next) {
                         setFile(null);
@@ -174,6 +195,7 @@ export function PlayerUploadDataModal({
                   }
                 >
                   <SelectItem key="performance">Performance Data</SelectItem>
+                  <SelectItem key="media">Media (Image / Video)</SelectItem>
                   <SelectItem key="context">Context Document</SelectItem>
                 </Select>
 
@@ -182,30 +204,16 @@ export function PlayerUploadDataModal({
                   type="file"
                   accept={
                     uploadKind === "context"
-                      ? "image/*,.pdf,.docx"
-                      : type === "file_csv"
-                        ? ".csv"
-                        : "video/*"
+                      ? ".pdf,.docx"
+                      : uploadKind === "media"
+                        ? "image/*,video/*"
+                        : ".csv"
                   }
                   onChange={(e) => setFile(e.target.files?.[0] ?? null)}
                 />
 
                 {uploadKind === "performance" && (
                   <>
-                    {/* Type */}
-                    <Select
-                      label="Data Type"
-                      selectedKeys={[type]}
-                      onSelectionChange={(keys) =>
-                        setType(
-                          Array.from(keys)[0] as "file_csv" | "file_video"
-                        )
-                      }
-                    >
-                      <SelectItem key="file_csv">CSV (Session Data)</SelectItem>
-                      <SelectItem key="file_video">Video</SelectItem>
-                    </Select>
-
                     {/* Source */}
                     <Select
                       label="Source"
@@ -219,6 +227,29 @@ export function PlayerUploadDataModal({
                       <SelectItem key="manual">Manual / Other</SelectItem>
                     </Select>
                   </>
+                )}
+
+                {uploadKind === "media" && (
+                  <Select
+                    label="Media Source"
+                    selectedKeys={[mediaSource]}
+                    onSelectionChange={(keys) =>
+                      setMediaSource(
+                        Array.from(keys)[0] as
+                          | "hitting"
+                          | "pitching"
+                          | "fielding"
+                          | "strength"
+                          | "catching"
+                      )
+                    }
+                  >
+                    <SelectItem key="hitting">Hitting</SelectItem>
+                    <SelectItem key="pitching">Pitching</SelectItem>
+                    <SelectItem key="fielding">Fielding</SelectItem>
+                    <SelectItem key="strength">Strength</SelectItem>
+                    <SelectItem key="catching">Catching</SelectItem>
+                  </Select>
                 )}
 
                 {uploadKind === "context" && (

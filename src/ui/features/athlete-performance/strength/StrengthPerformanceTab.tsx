@@ -14,7 +14,7 @@ type StrengthPerformanceTabProps = {
   performanceAttachments: PerformanceDocumentsAttachment[];
 };
 
-const STRENGTH_SOURCES: string[] = [];
+const STRENGTH_SOURCES: string[] = ["strength"];
 
 export async function StrengthPerformanceTab({
   performanceAttachments,

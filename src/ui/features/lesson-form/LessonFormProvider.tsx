@@ -10,6 +10,7 @@ import {
   EvidenceUploadDraft,
   EvidenceUploadSource,
 } from "@/ui/features/lesson-form/components/EvidenceUploadSection";
+import type { LessonType } from "@/hooks/lessons/lessonForm.types";
 
 export type LessonFormPlayer = {
   id: string;
@@ -97,8 +98,17 @@ export function LessonFormProvider({
     return Object.fromEntries(mechanics.map((m) => [m.id, m]));
   }, [mechanics]);
 
-  function inferAttachmentType(source: EvidenceUploadSource) {
-    return source === "video" ? "file_video" : "file_csv";
+  function inferAttachmentType(
+    source: EvidenceUploadSource,
+    file?: File | null
+  ) {
+    if (source !== "media") return "file_csv";
+    if (file?.type?.startsWith("image/")) return "file_image";
+    return "file_video";
+  }
+
+  function inferMediaSource(lessonType?: LessonType) {
+    return lessonType ?? "hitting";
   }
 
   async function uploadEvidenceDrafts(
@@ -127,9 +137,25 @@ export function LessonFormProvider({
           formData.append("file", item.file as File);
           formData.append("athleteId", playerId);
           formData.append("lessonPlayerId", lessonPlayerId);
-          formData.append("type", inferAttachmentType(item.source));
-          formData.append("source", item.source);
-          formData.append("evidenceCategory", "performance");
+          const attachmentType = inferAttachmentType(
+            item.source,
+            item.file
+          );
+          formData.append("type", attachmentType);
+
+          if (item.source === "media") {
+            if (!form.state.values.lessonType) {
+              throw new Error("Media uploads require a lesson type");
+            }
+            formData.append(
+              "source",
+              inferMediaSource(form.state.values.lessonType)
+            );
+            formData.append("evidenceCategory", "media");
+          } else {
+            formData.append("source", item.source);
+            formData.append("evidenceCategory", "performance");
+          }
 
           if (item.notes.trim()) {
             formData.append("notes", item.notes);

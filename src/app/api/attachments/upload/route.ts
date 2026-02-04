@@ -60,12 +60,19 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const isContextType =
-      type === "file_image" || type === "file_pdf" || type === "file_docx";
+    const isContextType = type === "file_pdf" || type === "file_docx";
+    const isMediaType = type === "file_image" || type === "file_video";
 
     if (isContextType && evidenceCategory !== "context") {
       return NextResponse.json(
         { error: "Context documents must use evidenceCategory=context" },
+        { status: 400 }
+      );
+    }
+
+    if (isMediaType && evidenceCategory !== "media") {
+      return NextResponse.json(
+        { error: "Media uploads must use evidenceCategory=media" },
         { status: 400 }
       );
     }

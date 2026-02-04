@@ -11,7 +11,7 @@ import {
   Textarea,
 } from "@heroui/react";
 
-export type EvidenceUploadSource = "hitrax" | "blast_motion" | "video";
+export type EvidenceUploadSource = "hitrax" | "blast_motion" | "media";
 
 export type EvidenceUploadItem = {
   id: string;
@@ -86,13 +86,15 @@ export function EvidenceUploadSection({
       >
         <div className="space-y-4">
           <p className="text-sm text-foreground-500">
-            Attach CSV or video evidence for {playerName}.
+            Attach CSV or media evidence for {playerName}.
           </p>
 
           <div className="space-y-4">
             {resolvedDraft.items.map((item, index) => {
               const accept =
-                item.source === "video" ? "video/*" : ".csv";
+                item.source === "media"
+                  ? "image/*,video/*"
+                  : ".csv";
 
               return (
                 <div
@@ -126,7 +128,7 @@ export function EvidenceUploadSection({
                     >
                       <SelectItem key="hitrax">HitTrax</SelectItem>
                       <SelectItem key="blast_motion">Blast Motion</SelectItem>
-                      <SelectItem key="video">Video</SelectItem>
+                      <SelectItem key="media">Media</SelectItem>
                     </Select>
                   </div>
 
@@ -158,8 +160,8 @@ export function EvidenceUploadSection({
                         {item.file.name}
                       </Chip>
                       <span className="text-foreground-500">
-                        {item.source === "video"
-                          ? "Video selected"
+                        {item.source === "media"
+                          ? "Media selected"
                           : "CSV selected"}
                       </span>
                     </div>

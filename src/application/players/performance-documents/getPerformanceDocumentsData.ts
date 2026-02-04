@@ -7,6 +7,8 @@ export type PerformanceDocumentsAttachment = Awaited<
 export async function getPerformanceDocumentsData(playerId: string) {
   const attachments = await getPlayerAttachmentsForDocumentsTab(playerId);
   return attachments.filter(
-    (attachment) => attachment.evidenceCategory === "performance"
+    (attachment) =>
+      attachment.evidenceCategory === "performance" ||
+      attachment.evidenceCategory === "media"
   );
 }

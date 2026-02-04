@@ -20,14 +20,11 @@ type PerformanceDocumentsPanelProps = {
   allowedSources: string[];
 };
 
-const GLOBAL_SOURCES = new Set(["video"]);
-
 function shouldIncludeAttachment(
   attachment: PerformanceDocumentsAttachment,
   allowedSources: string[]
 ) {
   const source = attachment.source?.toLowerCase() ?? "";
-  if (GLOBAL_SOURCES.has(source)) return true;
   return allowedSources.some(
     (allowed) => allowed.toLowerCase() === source
   );
