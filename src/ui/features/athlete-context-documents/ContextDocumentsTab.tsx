@@ -3,6 +3,7 @@
 import {
   Button,
   Chip,
+  DatePicker,
   Input,
   Select,
   SelectItem,
@@ -14,57 +15,26 @@ import {
   TableRow,
 } from "@heroui/react";
 import { useMemo, useState } from "react";
+import { parseDate } from "@internationalized/date";
 import { toast } from "sonner";
 
 import type {
   ContextDocumentsAttachment,
-  ContextDocumentsLessonOption,
 } from "@/application/players/context-documents/getContextDocumentsData";
 
 type ContextDocumentsTabProps = {
   attachments: ContextDocumentsAttachment[];
-  lessonOptions: ContextDocumentsLessonOption[];
 };
-
-type LinkedFilter = "all" | "linked" | "unlinked";
-
-function formatLessonLabel(option: ContextDocumentsLessonOption) {
-  const dateLabel = option.lessonDate
-    ? new Date(option.lessonDate).toLocaleDateString()
-    : "Unknown date";
-  const typeLabel = option.lessonType ?? "Lesson";
-  const coachLabel = option.coachName ? ` · ${option.coachName}` : "";
-  return `${dateLabel} · ${typeLabel}${coachLabel}`;
-}
 
 export function ContextDocumentsTab({
   attachments,
-  lessonOptions,
 }: ContextDocumentsTabProps) {
   const [rows, setRows] = useState(attachments);
   const [search, setSearch] = useState("");
   const [typeFilter, setTypeFilter] = useState<string>("all");
   const [visibilityFilter, setVisibilityFilter] = useState<string>("all");
-  const [linkedFilter, setLinkedFilter] = useState<LinkedFilter>("all");
-  const [isUpdating, setIsUpdating] = useState<string | null>(null);
-
-  const lessonLabelById = useMemo(() => {
-    const map = new Map<string, string>();
-    for (const option of lessonOptions) {
-      map.set(option.lessonPlayerId, formatLessonLabel(option));
-    }
-    return map;
-  }, [lessonOptions]);
-
-  const lessonSelectOptions = useMemo(() => {
-    return [
-      { key: "unlinked", label: "Unlinked" },
-      ...lessonOptions.map((option) => ({
-        key: option.lessonPlayerId,
-        label: formatLessonLabel(option),
-      })),
-    ];
-  }, [lessonOptions]);
+  const [isUpdatingEffectiveDate, setIsUpdatingEffectiveDate] =
+    useState<string | null>(null);
 
   const filteredRows = useMemo(() => {
     const searchLower = search.trim().toLowerCase();
@@ -76,8 +46,6 @@ export function ContextDocumentsTab({
       ) {
         return false;
       }
-      if (linkedFilter === "linked" && !row.lessonPlayerId) return false;
-      if (linkedFilter === "unlinked" && row.lessonPlayerId) return false;
 
       if (!searchLower) return true;
       const haystack = [
@@ -92,7 +60,7 @@ export function ContextDocumentsTab({
         .toLowerCase();
       return haystack.includes(searchLower);
     });
-  }, [rows, search, typeFilter, visibilityFilter, linkedFilter]);
+  }, [rows, search, typeFilter, visibilityFilter]);
 
   async function handleView(attachmentId: string) {
     try {
@@ -109,38 +77,44 @@ export function ContextDocumentsTab({
     }
   }
 
-  async function handleLinkChange(attachmentId: string, nextValue: string) {
-    const lessonPlayerId = nextValue === "unlinked" ? null : nextValue;
-    const previous = rows.find((row) => row.id === attachmentId)?.lessonPlayerId;
+  async function handleEffectiveDateChange(
+    attachmentId: string,
+    nextValue: string
+  ) {
+    const previous =
+      rows.find((row) => row.id === attachmentId)?.effectiveDate ?? "";
 
     setRows((current) =>
       current.map((row) =>
-        row.id === attachmentId ? { ...row, lessonPlayerId } : row
+        row.id === attachmentId ? { ...row, effectiveDate: nextValue } : row
       )
     );
-    setIsUpdating(attachmentId);
+    setIsUpdatingEffectiveDate(attachmentId);
 
     try {
-      const res = await fetch(`/api/attachments/${attachmentId}/link`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ lessonPlayerId }),
-      });
+      const res = await fetch(
+        `/api/attachments/${attachmentId}/effective-date`,
+        {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ effectiveDate: nextValue }),
+        }
+      );
       if (!res.ok) {
         const data = await res.json().catch(() => null);
-        throw new Error(data?.error ?? "Failed to update link");
+        throw new Error(data?.error ?? "Failed to update effective date");
       }
-      toast.success("Attachment link updated");
+      toast.success("Effective date updated");
     } catch (error) {
       console.error(error);
-      toast.error("Failed to update attachment link");
+      toast.error("Failed to update effective date");
       setRows((current) =>
         current.map((row) =>
-          row.id === attachmentId ? { ...row, lessonPlayerId: previous ?? null } : row
+          row.id === attachmentId ? { ...row, effectiveDate: previous } : row
         )
       );
     } finally {
-      setIsUpdating(null);
+      setIsUpdatingEffectiveDate(null);
     }
   }
 
@@ -201,20 +175,6 @@ export function ContextDocumentsTab({
             <SelectItem key="private">Private</SelectItem>
             <SelectItem key="public">Public</SelectItem>
           </Select>
-
-          <Select
-            label="Linked"
-            selectedKeys={[linkedFilter]}
-            onSelectionChange={(keys) => {
-              const selected = Array.from(keys)[0];
-              setLinkedFilter((selected ? String(selected) : "all") as LinkedFilter);
-            }}
-            className="md:w-40"
-          >
-            <SelectItem key="all">All</SelectItem>
-            <SelectItem key="linked">Linked</SelectItem>
-            <SelectItem key="unlinked">Unlinked</SelectItem>
-          </Select>
         </div>
       </div>
 
@@ -224,15 +184,12 @@ export function ContextDocumentsTab({
           <TableColumn>TYPE</TableColumn>
           <TableColumn>CATEGORY</TableColumn>
           <TableColumn>VISIBILITY</TableColumn>
-          <TableColumn>LINKED LESSON</TableColumn>
+          <TableColumn>EFFECTIVE DATE</TableColumn>
           <TableColumn>UPLOADED</TableColumn>
           <TableColumn align="end">ACTIONS</TableColumn>
         </TableHeader>
         <TableBody emptyContent="No attachments found.">
           {filteredRows.map((row) => {
-            const lessonLabel = row.lessonPlayerId
-              ? lessonLabelById.get(row.lessonPlayerId) ?? "Linked lesson"
-              : "Unlinked";
             const hasFile = Boolean(row.file?.storageKey);
             return (
               <TableRow key={row.id}>
@@ -269,29 +226,19 @@ export function ContextDocumentsTab({
                   </Chip>
                 </TableCell>
                 <TableCell>
-                  <Select
-                    aria-label="Linked lesson"
-                    selectedKeys={[
-                      row.lessonPlayerId ?? "unlinked",
-                    ]}
-                    onSelectionChange={(keys) => {
-                      const selected = Array.from(keys)[0];
-                      handleLinkChange(
-                        row.id,
-                        selected ? String(selected) : "unlinked"
-                      );
+                  <DatePicker
+                    aria-label="Effective date"
+                    value={
+                      row.effectiveDate ? parseDate(row.effectiveDate) : null
+                    }
+                    onChange={(value) => {
+                      if (!value) return;
+                      const nextValue = value.toString();
+                      if (nextValue === row.effectiveDate) return;
+                      handleEffectiveDateChange(row.id, nextValue);
                     }}
-                    isDisabled={isUpdating === row.id}
-                    className="min-w-[220px]"
-                    items={lessonSelectOptions}
-                  >
-                    {(item) => (
-                      <SelectItem key={item.key}>{item.label}</SelectItem>
-                    )}
-                  </Select>
-                  <div className="mt-1 text-xs text-muted-foreground">
-                    {lessonLabel}
-                  </div>
+                    isDisabled={isUpdatingEffectiveDate === row.id}
+                  />
                 </TableCell>
                 <TableCell>
                   {row.createdAt

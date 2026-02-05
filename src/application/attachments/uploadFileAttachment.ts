@@ -29,6 +29,7 @@ interface UploadFileAttachmentParams {
         | "eval"
         | "general"
         | "other";
+    effectiveDate?: string;
     notes?: string;
 }
 
@@ -46,6 +47,7 @@ export async function uploadFileAttachment(
         evidenceCategory,
         visibility,
         documentType,
+        effectiveDate,
         notes,
     } = params;
 
@@ -85,6 +87,7 @@ export async function uploadFileAttachment(
         evidenceCategory: evidenceCategory ?? null,
         visibility: visibility ?? "internal",
         documentType: documentType ?? null,
+        effectiveDate: effectiveDate ?? undefined,
         notes: notes ?? null,
         createdBy,
     });
@@ -109,6 +112,7 @@ export async function uploadFileAttachment(
         evidenceCategory: evidenceCategory ?? null,
         visibility: visibility ?? "internal",
         documentType: documentType ?? null,
+        effectiveDate: effectiveDate ?? null,
         createdAt: new Date().toISOString(),
     };
 }

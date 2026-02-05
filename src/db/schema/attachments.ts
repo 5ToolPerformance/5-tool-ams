@@ -1,4 +1,5 @@
 import {
+  date,
   pgEnum,
   pgTable,
   real,
@@ -52,6 +53,9 @@ export const attachments = pgTable("attachments", {
   createdBy: uuid("created_by").references(() => users.id, {
     onDelete: "set null",
   }),
+  effectiveDate: date("effective_date", { mode: "string" })
+    .notNull()
+    .defaultNow(),
   createdAt: timestamp("created_at", { mode: "string" }).defaultNow().notNull(),
   deletedAt: timestamp("deleted_at", { mode: "string" }),
 });

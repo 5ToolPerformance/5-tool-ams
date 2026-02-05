@@ -32,6 +32,12 @@ export function PlayerUploadDataModal({
 }: PlayerUploadDataModalProps) {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
+  const getTodayDateString = () => {
+    const now = new Date();
+    const offsetMs = now.getTimezoneOffset() * 60000;
+    return new Date(now.getTime() - offsetMs).toISOString().slice(0, 10);
+  };
+
   /* ---------- state ---------- */
 
   const [file, setFile] = useState<File | null>(null);
@@ -50,6 +56,9 @@ export function PlayerUploadDataModal({
   const [documentType, setDocumentType] = useState<
     "medical" | "pt" | "external" | "eval" | "general" | "other"
   >("general");
+  const [effectiveDate, setEffectiveDate] = useState<string>(() =>
+    getTodayDateString()
+  );
   const [notes, setNotes] = useState<string>("");
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -118,6 +127,9 @@ export function PlayerUploadDataModal({
         formData.append("evidenceCategory", "context");
         formData.append("visibility", visibility);
         formData.append("documentType", documentType);
+        const resolvedEffectiveDate =
+          effectiveDate.trim() || getTodayDateString();
+        formData.append("effectiveDate", resolvedEffectiveDate);
       } else if (uploadKind === "media") {
         const mediaType = resolveMediaType(file);
         if (!mediaType) {
@@ -189,6 +201,9 @@ export function PlayerUploadDataModal({
                       if (current !== next) {
                         setFile(null);
                         setContextSource("");
+                        if (next === "context") {
+                          setEffectiveDate(getTodayDateString());
+                        }
                       }
                       return next;
                     })
@@ -299,6 +314,15 @@ export function PlayerUploadDataModal({
                       <SelectItem key="private">Private</SelectItem>
                       <SelectItem key="public">Public</SelectItem>
                     </Select>
+
+                    <Input
+                      type="date"
+                      label="Effective Date"
+                      value={effectiveDate}
+                      onChange={(event) =>
+                        setEffectiveDate(event.target.value)
+                      }
+                    />
                   </>
                 )}
 

@@ -6,6 +6,16 @@ import { auth } from "@/auth";
 // IMPORTANT: must run in Node runtime for file uploads
 export const runtime = "nodejs";
 
+function getTodayDateString() {
+  const now = new Date();
+  const offsetMs = now.getTimezoneOffset() * 60000;
+  return new Date(now.getTime() - offsetMs).toISOString().slice(0, 10);
+}
+
+function isValidDateString(value: string) {
+  return /^\d{4}-\d{2}-\d{2}$/.test(value);
+}
+
 export async function POST(request: NextRequest) {
   try {
     // ---------------------------------------------------------------------
@@ -52,6 +62,7 @@ export async function POST(request: NextRequest) {
       | "general"
       | "other"
       | null;
+    const effectiveDate = formData.get("effectiveDate") as string | null;
 
     if (!file || !athleteId || !type || !source) {
       return NextResponse.json(
@@ -84,6 +95,22 @@ export async function POST(request: NextRequest) {
           { status: 400 }
         );
       }
+    }
+
+    const resolvedEffectiveDate =
+      evidenceCategory === "context"
+        ? (effectiveDate?.trim() || getTodayDateString())
+        : undefined;
+
+    if (
+      evidenceCategory === "context" &&
+      resolvedEffectiveDate &&
+      !isValidDateString(resolvedEffectiveDate)
+    ) {
+      return NextResponse.json(
+        { error: "Invalid effective date" },
+        { status: 400 }
+      );
     }
 
     // ---------------------------------------------------------------------
@@ -158,6 +185,7 @@ export async function POST(request: NextRequest) {
       evidenceCategory: evidenceCategory ?? undefined,
       visibility: visibility ?? undefined,
       documentType: documentType ?? undefined,
+      effectiveDate: resolvedEffectiveDate,
       notes: notes ?? undefined,
       file: {
         buffer,

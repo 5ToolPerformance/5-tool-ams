@@ -15,7 +15,6 @@ export default async function PlayerContextDocumentsPage({
     <Suspense fallback={<div>Loading context documents...</div>}>
       <ContextDocumentsTab
         attachments={data.attachments}
-        lessonOptions={data.lessonOptions}
       />
     </Suspense>
   );

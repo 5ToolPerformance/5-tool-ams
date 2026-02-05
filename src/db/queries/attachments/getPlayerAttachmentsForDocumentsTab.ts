@@ -19,6 +19,7 @@ export async function getPlayerAttachmentsForDocumentsTab(athleteId: string) {
       visibility: attachments.visibility,
       documentType: attachments.documentType,
       notes: attachments.notes,
+      effectiveDate: attachments.effectiveDate,
       createdAt: attachments.createdAt,
       lessonPlayerId: attachments.lessonPlayerId,
       file: {
