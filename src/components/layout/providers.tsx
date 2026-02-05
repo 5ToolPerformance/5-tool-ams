@@ -6,6 +6,8 @@ import { HeroUIProvider } from "@heroui/react";
 import { SessionProvider } from "next-auth/react";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 
+import { AttachmentViewerProvider } from "@/ui/features/attachments/AttachmentViewerProvider";
+
 export default function Providers({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   return (
@@ -14,7 +16,9 @@ export default function Providers({ children }: { children: React.ReactNode }) {
         navigate={router.push}
         className="flex h-full w-full flex-col"
       >
-        <NextThemesProvider attribute="class">{children}</NextThemesProvider>
+        <NextThemesProvider attribute="class">
+          <AttachmentViewerProvider>{children}</AttachmentViewerProvider>
+        </NextThemesProvider>
       </HeroUIProvider>
     </SessionProvider>
   );

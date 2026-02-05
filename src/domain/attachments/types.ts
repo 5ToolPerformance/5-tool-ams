@@ -21,4 +21,10 @@ export type PlayerAttachmentOverview = {
   notes: string | null;
   createdAt: string;
   lessonPlayerId: string | null;
+  file?: {
+    originalFileName: string | null;
+    mimeType: string | null;
+    fileSizeBytes: number | null;
+    storageKey: string | null;
+  } | null;
 };

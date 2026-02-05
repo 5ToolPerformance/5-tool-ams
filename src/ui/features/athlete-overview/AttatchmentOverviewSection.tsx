@@ -1,8 +1,9 @@
 "use client";
 
-import { Chip } from "@heroui/react";
+import { Button, Chip } from "@heroui/react";
 
 import { PlayerAttachmentOverview } from "@/domain/attachments/types";
+import { useAttachmentViewer } from "@/ui/features/attachments/AttachmentViewerProvider";
 
 interface PlayerAttachmentsViewerProps {
   attachments: PlayerAttachmentOverview[];
@@ -28,6 +29,8 @@ function typeIcon(type: PlayerAttachmentOverview["type"]) {
 export function PlayerAttachmentsViewer({
   attachments,
 }: PlayerAttachmentsViewerProps) {
+  const { openAttachment } = useAttachmentViewer();
+
   if (attachments.length === 0) {
     return (
       <div className="rounded-lg border p-4 text-sm text-muted-foreground">
@@ -43,6 +46,7 @@ export function PlayerAttachmentsViewer({
       <div className="max-h-[420px] space-y-2 overflow-y-auto p-2">
         {attachments.map((a) => {
           const isLinked = a.lessonPlayerId !== null;
+          const hasFile = Boolean(a.file?.storageKey);
 
           return (
             <div
@@ -85,6 +89,17 @@ export function PlayerAttachmentsViewer({
 
               <div className="mt-1 text-xs text-muted-foreground">
                 {new Date(a.createdAt).toLocaleString()}
+              </div>
+
+              <div className="mt-2 flex justify-end">
+                <Button
+                  size="sm"
+                  variant="flat"
+                  isDisabled={!hasFile}
+                  onPress={() => openAttachment(a)}
+                >
+                  {hasFile ? "View" : "Missing file"}
+                </Button>
               </div>
             </div>
           );

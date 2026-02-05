@@ -21,6 +21,7 @@ import { toast } from "sonner";
 import type {
   ContextDocumentsAttachment,
 } from "@/application/players/context-documents/getContextDocumentsData";
+import { useAttachmentViewer } from "@/ui/features/attachments/AttachmentViewerProvider";
 
 type ContextDocumentsTabProps = {
   attachments: ContextDocumentsAttachment[];
@@ -29,6 +30,7 @@ type ContextDocumentsTabProps = {
 export function ContextDocumentsTab({
   attachments,
 }: ContextDocumentsTabProps) {
+  const { openAttachment } = useAttachmentViewer();
   const [rows, setRows] = useState(attachments);
   const [search, setSearch] = useState("");
   const [typeFilter, setTypeFilter] = useState<string>("all");
@@ -61,21 +63,6 @@ export function ContextDocumentsTab({
       return haystack.includes(searchLower);
     });
   }, [rows, search, typeFilter, visibilityFilter]);
-
-  async function handleView(attachmentId: string) {
-    try {
-      const res = await fetch(`/api/attachments/${attachmentId}/view`);
-      if (!res.ok) {
-        const data = await res.json().catch(() => null);
-        throw new Error(data?.error ?? "Failed to open attachment");
-      }
-      const data = (await res.json()) as { url: string };
-      window.open(data.url, "_blank", "noopener,noreferrer");
-    } catch (error) {
-      console.error(error);
-      toast.error("Unable to open attachment");
-    }
-  }
 
   async function handleEffectiveDateChange(
     attachmentId: string,
@@ -249,7 +236,7 @@ export function ContextDocumentsTab({
                   <Button
                     size="sm"
                     variant="flat"
-                    onPress={() => handleView(row.id)}
+                    onPress={() => openAttachment(row)}
                     isDisabled={!hasFile}
                   >
                     {hasFile ? "View" : "Missing file"}

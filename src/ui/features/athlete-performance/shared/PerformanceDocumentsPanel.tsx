@@ -10,9 +10,9 @@ import {
   TableHeader,
   TableRow,
 } from "@heroui/react";
-import { toast } from "sonner";
 
 import type { PerformanceDocumentsAttachment } from "@/application/players/performance-documents/getPerformanceDocumentsData";
+import { useAttachmentViewer } from "@/ui/features/attachments/AttachmentViewerProvider";
 
 type PerformanceDocumentsPanelProps = {
   title: string;
@@ -35,24 +35,10 @@ export function PerformanceDocumentsPanel({
   attachments,
   allowedSources,
 }: PerformanceDocumentsPanelProps) {
+  const { openAttachment } = useAttachmentViewer();
   const filtered = attachments.filter((attachment) =>
     shouldIncludeAttachment(attachment, allowedSources)
   );
-
-  async function handleView(attachmentId: string) {
-    try {
-      const res = await fetch(`/api/attachments/${attachmentId}/view`);
-      if (!res.ok) {
-        const data = await res.json().catch(() => null);
-        throw new Error(data?.error ?? "Failed to open attachment");
-      }
-      const data = (await res.json()) as { url: string };
-      window.open(data.url, "_blank", "noopener,noreferrer");
-    } catch (error) {
-      console.error(error);
-      toast.error("Unable to open attachment");
-    }
-  }
 
   if (filtered.length === 0) {
     return (
@@ -114,7 +100,7 @@ export function PerformanceDocumentsPanel({
                   <Button
                     size="sm"
                     variant="flat"
-                    onPress={() => handleView(row.id)}
+                    onPress={() => openAttachment(row)}
                     isDisabled={!hasFile}
                   >
                     {hasFile ? "View" : "Missing file"}

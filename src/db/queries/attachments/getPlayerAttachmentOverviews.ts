@@ -1,7 +1,7 @@
 import { and, desc, eq, isNull } from "drizzle-orm";
 
 import db from "@/db";
-import { attachments } from "@/db/schema";
+import { attachmentFiles, attachments } from "@/db/schema";
 
 export async function getPlayerAttachmentOverviews(athleteId: string) {
   return db
@@ -15,8 +15,18 @@ export async function getPlayerAttachmentOverviews(athleteId: string) {
       notes: attachments.notes,
       createdAt: attachments.createdAt,
       lessonPlayerId: attachments.lessonPlayerId,
+      file: {
+        originalFileName: attachmentFiles.originalFileName,
+        mimeType: attachmentFiles.mimeType,
+        fileSizeBytes: attachmentFiles.fileSizeBytes,
+        storageKey: attachmentFiles.storageKey,
+      },
     })
     .from(attachments)
+    .leftJoin(
+      attachmentFiles,
+      eq(attachmentFiles.attachmentId, attachments.id)
+    )
     .where(
       and(eq(attachments.athleteId, athleteId), isNull(attachments.deletedAt))
     )
