@@ -36,7 +36,7 @@ export function ArmCareProfileCard({
             {date}
           </div>
           <Link
-            href={`/players/${playerId}/armcare-summary`}
+            href={`/players/${playerId}/health/armcare-summary`}
             className="text-primary hover:underline"
           >
             View Full ArmCare Summary

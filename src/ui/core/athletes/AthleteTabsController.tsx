@@ -19,9 +19,12 @@ export function AthleteTabsController() {
 
   const pathSegments = pathname.split("/").filter(Boolean);
   const isPerformanceRoute = pathSegments.includes("performance");
+  const isHealthRoute = pathSegments.includes("health");
   const lastSegment = pathSegments[pathSegments.length - 1];
   const activeKey = isPerformanceRoute
     ? "performance"
+    : isHealthRoute
+      ? "health"
     : TAB_KEYS.includes(lastSegment ?? "")
       ? lastSegment
       : "overview";

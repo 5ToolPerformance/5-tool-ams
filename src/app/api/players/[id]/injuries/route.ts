@@ -5,9 +5,10 @@ import { getPlayerInjuries } from "@/db/queries/injuries/getPlayerInjuries";
 
 export async function GET(
   _req: Request,
-  { params }: { params: { playerId: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  const injuries = await getPlayerInjuries(db, params.playerId);
+  const { id } = await params;
+  const injuries = await getPlayerInjuries(db, id);
 
   return NextResponse.json(injuries);
 }
