@@ -18,7 +18,7 @@ export async function logInjury(
     focusAreaId: input.focusAreaId,
     side: input.side,
     level: input.level,
-    confidence: input.confidence,
+    confidence: "observed",
 
     status: "active",
     startDate,

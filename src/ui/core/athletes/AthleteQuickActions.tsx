@@ -7,6 +7,7 @@ import { Pencil, Plus } from "lucide-react";
 
 import { PlayerHeaderModel } from "@/domain/player/header/types";
 import { usePlayerHeaderRefetch } from "@/hooks/usePlayerHeaderRefetch";
+import { AddPlayerInjuryModal } from "@/ui/core/athletes/AddPlayerInjuryModal";
 import { EditPlayerConfigModal } from "@/ui/core/athletes/EditPlayerConfigModal";
 import { PlayerUploadDataModal } from "@/ui/core/athletes/PlayerUploadDataModal";
 
@@ -51,6 +52,15 @@ export function AthleteQuickActions({
         trigger={
           <Button size="sm" color="primary" startContent={<Plus size={16} />}>
             Upload Data
+          </Button>
+        }
+      />
+
+      <AddPlayerInjuryModal
+        playerId={playerId}
+        trigger={
+          <Button size="sm" color="primary" startContent={<Plus size={16} />}>
+            Add Injury
           </Button>
         }
       />
