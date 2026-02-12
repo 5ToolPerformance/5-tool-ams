@@ -36,21 +36,34 @@ function isAppRole(role: string | null | undefined): role is AppRole {
 export async function getAuthContext(): Promise<AuthContext> {
   const session = await auth();
   const sessionUserId = session?.user?.id;
+  const sessionEmail = session?.user?.email?.toLowerCase();
 
-  if (!sessionUserId) {
+  if (!sessionUserId && !sessionEmail) {
     throw new AuthError(401, "Unauthorized");
   }
 
-  const [dbUser] = await db
-    .select({
-      id: users.id,
-      email: users.email,
-      role: users.role,
-      facilityId: users.facilityId,
-    })
-    .from(users)
-    .where(eq(users.id, sessionUserId))
-    .limit(1);
+  const [dbUser] =
+    sessionUserId
+      ? await db
+          .select({
+            id: users.id,
+            email: users.email,
+            role: users.role,
+            facilityId: users.facilityId,
+          })
+          .from(users)
+          .where(eq(users.id, sessionUserId))
+          .limit(1)
+      : await db
+          .select({
+            id: users.id,
+            email: users.email,
+            role: users.role,
+            facilityId: users.facilityId,
+          })
+          .from(users)
+          .where(eq(users.email, sessionEmail!))
+          .limit(1);
 
   if (!dbUser) {
     throw new AuthError(401, "Unauthorized");
