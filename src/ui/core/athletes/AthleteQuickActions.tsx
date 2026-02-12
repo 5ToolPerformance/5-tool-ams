@@ -27,11 +27,14 @@ export function AthleteQuickActions({
   const router = useRouter();
   const refetchHeader = usePlayerHeaderRefetch();
   const playerId = player.id;
+  const buttonClassName = "w-full justify-center";
+
   return (
-    <div className="flex gap-2">
+    <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-5">
       <Button
         size="sm"
         color="primary"
+        className={buttonClassName}
         startContent={<Plus size={16} />}
         onPress={() => router.push(`/lessons/new?playerId=${playerId}`)}
       >
@@ -41,7 +44,12 @@ export function AthleteQuickActions({
       <AddPlayerNoteModal
         playerId={playerId}
         trigger={
-          <Button size="sm" color="primary" startContent={<Plus size={16} />}>
+          <Button
+            size="sm"
+            color="primary"
+            className={buttonClassName}
+            startContent={<Plus size={16} />}
+          >
             Add Note
           </Button>
         }
@@ -50,7 +58,12 @@ export function AthleteQuickActions({
       <PlayerUploadDataModal
         playerId={playerId}
         trigger={
-          <Button size="sm" color="primary" startContent={<Plus size={16} />}>
+          <Button
+            size="sm"
+            color="primary"
+            className={buttonClassName}
+            startContent={<Plus size={16} />}
+          >
             Upload Data
           </Button>
         }
@@ -59,7 +72,12 @@ export function AthleteQuickActions({
       <AddPlayerInjuryModal
         playerId={playerId}
         trigger={
-          <Button size="sm" color="primary" startContent={<Plus size={16} />}>
+          <Button
+            size="sm"
+            color="primary"
+            className={buttonClassName}
+            startContent={<Plus size={16} />}
+          >
             Add Injury
           </Button>
         }
@@ -76,6 +94,7 @@ export function AthleteQuickActions({
             <Button
               size="sm"
               variant="flat"
+              className={buttonClassName}
               startContent={<Pencil size={16} />}
             >
               Edit Player

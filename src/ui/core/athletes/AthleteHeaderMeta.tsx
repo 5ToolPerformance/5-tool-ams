@@ -4,6 +4,7 @@ interface AthleteHeaderMetaProps {
   age: number;
   handedness: string;
   roles?: string;
+  primaryCoachName?: string | null;
 }
 
 export function AthleteHeaderMeta({
@@ -11,6 +12,7 @@ export function AthleteHeaderMeta({
   age,
   handedness,
   roles,
+  primaryCoachName,
 }: AthleteHeaderMetaProps) {
   return (
     <div className="flex flex-col gap-1">
@@ -19,6 +21,11 @@ export function AthleteHeaderMeta({
         {age} yrs • {handedness}
         {roles ? ` • ${roles}` : null}
       </p>
+      {primaryCoachName ? (
+        <p className="text-sm text-muted-foreground">
+          Primary Coach: {primaryCoachName}
+        </p>
+      ) : null}
     </div>
   );
 }

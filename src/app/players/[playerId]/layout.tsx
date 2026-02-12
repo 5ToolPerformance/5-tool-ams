@@ -7,7 +7,10 @@ import { AthleteHeader } from "@/ui/core/athletes/AthleteHeader";
 import { AthleteHeaderMeta } from "@/ui/core/athletes/AthleteHeaderMeta";
 import { AthletePageShell } from "@/ui/core/athletes/AthletePageShell";
 import { AthleteQuickActions } from "@/ui/core/athletes/AthleteQuickActions";
-import { AthleteStatusBadges } from "@/ui/core/athletes/AthleteStatusBadge";
+import {
+  AthleteHeaderStatus,
+  AthleteStatusBadges,
+} from "@/ui/core/athletes/AthleteStatusBadge";
 import { AthleteTabsController } from "@/ui/core/athletes/AthleteTabsController";
 import { TabContentShell } from "@/ui/core/athletes/TabContentShell";
 
@@ -34,7 +37,17 @@ export default async function PlayerLayout({
     player.positions.length > 0
       ? player.positions.map((p) => p.name).join(" / ")
       : undefined;
-  const statuses = [player.status.injuryFlag ? "Injured" : "Active"];
+  const statusLabelByLevel: Record<
+    "soreness" | "injury" | "diagnosis",
+    AthleteHeaderStatus
+  > = {
+    soreness: "Soreness",
+    injury: "Injury",
+    diagnosis: "Diagnosed Injury",
+  };
+  const statuses: AthleteHeaderStatus[] = player.status.activeInjuryLevel
+    ? [statusLabelByLevel[player.status.activeInjuryLevel]]
+    : ["Active"];
 
   if (!player) {
     return null;
@@ -46,13 +59,14 @@ export default async function PlayerLayout({
       {/* Player Header (blocks render, correct)                              */}
       {/* ------------------------------------------------------------------ */}
       <AthleteHeader>
-        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <div className="flex flex-col gap-4">
           <div className="space-y-2">
             <AthleteHeaderMeta
               name={name}
               age={player.age}
               handedness={handedness}
               roles={roles}
+              primaryCoachName={player.primaryCoachName}
             />
             <AthleteStatusBadges statuses={statuses} />
           </div>

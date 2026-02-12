@@ -9,6 +9,13 @@ export interface PlayerHeaderModel {
   height: number | null;
   weight: number | null;
   primaryCoachId: string | null;
+  primaryCoachName?: string | null;
+  status?: {
+    availability: "active" | "injured";
+    restrictions: (string | null)[];
+    injuryFlag: boolean;
+    activeInjuryLevel: "soreness" | "injury" | "diagnosis" | null;
+  };
   handedness: {
     bat: Handedness;
     throw: Handedness;

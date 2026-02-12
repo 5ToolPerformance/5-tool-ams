@@ -1,12 +1,14 @@
-import { and, eq, gte, lte } from "drizzle-orm";
+import { and, eq, gte, lte, ne } from "drizzle-orm";
 
 import db from "@/db";
 import {
   athleteContextFlags,
   externalAthleteIds,
+  injury,
   playerInformation,
   playerPositions,
   positions,
+  users,
 } from "@/db/schema";
 import { Handedness } from "@/domain/player/header/types";
 import { calculateAge } from "@/lib/dates";
@@ -31,9 +33,11 @@ export async function getPlayerCore(playerId: string) {
       weight: playerInformation.weight,
       sport: playerInformation.sport,
       primaryCoachId: playerInformation.primaryCoachId,
+      primaryCoachName: users.name,
       prospect: playerInformation.prospect,
     })
     .from(playerInformation)
+    .leftJoin(users, eq(playerInformation.primaryCoachId, users.id))
     .where(eq(playerInformation.id, playerId));
   return player;
 }
@@ -69,12 +73,32 @@ export async function getPlayerStatus(playerId: string) {
     );
 
   const injuryFlag = activeFlags.some((f) => f.type === "injury");
+  const activeInjuries = await db
+    .select({
+      level: injury.level,
+    })
+    .from(injury)
+    .where(and(eq(injury.playerId, playerId), ne(injury.status, "resolved")));
+
+  const levelRank = {
+    soreness: 1,
+    injury: 2,
+    diagnosis: 3,
+  } as const;
+
+  const activeInjuryLevel =
+    activeInjuries.length > 0
+      ? [...activeInjuries]
+          .sort((a, b) => levelRank[b.level] - levelRank[a.level])[0]
+          .level
+      : null;
 
   return {
     availability: injuryFlag ? "injured" : "active",
     restrictions: activeFlags.map((f) => f.notes).filter(Boolean),
     injuryFlag,
-  };
+    activeInjuryLevel,
+  } as const;
 }
 
 export async function getPlayerSystems(playerId: string) {
@@ -117,6 +141,7 @@ export async function getPlayerHeader(playerId: string) {
     status,
     systems,
     primaryCoachId: core.primaryCoachId,
+    primaryCoachName: core.primaryCoachName,
     prospect: core.prospect,
   };
 }
