@@ -15,6 +15,7 @@ export interface PlayerUpsertInput {
 
   // relationships
   primaryCoachId: string | null;
+  facilityId?: string | null;
 
   primaryPositionId: string;
   secondaryPositionIds: string[];

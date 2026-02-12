@@ -78,6 +78,10 @@ export { default as playerInjuries } from "./players/playerInjuries";
 export { default as playerMeasurements } from "./players/playerMeasurements";
 export { playerNotes, playerNotesRelations } from "./players/playerNotes";
 export { playerPositions } from "./players/playerPositions";
+export {
+  playerAccountLinkActionEnum,
+  playerAccountLinkAudit,
+} from "./playerAccountLinkAudit";
 export { positions } from "./positions";
 export { writeupLog } from "./writeupLog";
 export { default as writeups } from "./writeups";

@@ -56,7 +56,10 @@ export default function AdminDashboard({ adminId }: Props) {
   }
 
   // Prepare leaderboard data when lessons are available
-  const allLessons = (lessons || []) as LessonWithCoachAndUser[];
+  const allLessons = Array.isArray(lessons)
+    ? (lessons as LessonWithCoachAndUser[])
+    : [];
+  const renderableLessons = allLessons.filter((l) => Boolean(l?.lesson?.id));
 
   const coachLeaderboard = (() => {
     const map = new Map<
@@ -64,6 +67,7 @@ export default function AdminDashboard({ adminId }: Props) {
       { id: string; name: string | null; image?: string | null; count: number }
     >();
     for (const item of allLessons) {
+      if (!item?.coach?.id) continue;
       const id = item.coach.id as string;
       const name = item.coach.name ?? "Unknown Coach";
       const image = item.coach.image ?? null;
@@ -77,6 +81,7 @@ export default function AdminDashboard({ adminId }: Props) {
   const playerLeaderboard = (() => {
     const map = new Map<string, { id: string; name: string; count: number }>();
     for (const item of allLessons) {
+      if (!item?.player?.id) continue;
       const id = item.player.id as string;
       const first = item.player.firstName ?? "Unknown";
       const last = item.player.lastName ?? "Player";
@@ -242,15 +247,15 @@ export default function AdminDashboard({ adminId }: Props) {
                   allLessons.length === 0 ? "No lessons" : undefined
                 }
               >
-                {allLessons.map((l) => {
+                {renderableLessons.map((l) => {
                   const dateStr = l.lesson.lessonDate
                     ? new Date(
                         l.lesson.lessonDate as unknown as string
                       ).toLocaleDateString()
                     : "";
-                  const coachName = l.coach.name ?? "Unknown Coach";
+                  const coachName = l.coach?.name ?? "Unknown Coach";
                   const playerName =
-                    `${l.player.firstName ?? "Unknown"} ${l.player.lastName ?? "Player"}`.trim();
+                    `${l.player?.firstName ?? "Unknown"} ${l.player?.lastName ?? "Player"}`.trim();
                   const type = (l.lesson.lessonType as string) || "-";
                   return (
                     <TableRow key={l.lesson.id}>

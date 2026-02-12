@@ -2,9 +2,14 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { and, eq, inArray } from "drizzle-orm";
 
-import { auth } from "@/auth";
 import db from "@/db";
 import { playerPositions, positions } from "@/db/schema";
+import {
+  assertPlayerAccess,
+  getAuthContext,
+  requireRole,
+} from "@/lib/auth/auth-context";
+import { toAuthErrorResponse } from "@/lib/auth/http";
 import { RouteParams } from "@/types/api";
 
 interface PatchPlayerPositionsPayload {
@@ -17,12 +22,11 @@ export async function PATCH(
   { params }: RouteParams<{ playerId: string }>
 ) {
   try {
-    const session = await auth();
-    if (!session) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const ctx = await getAuthContext();
+    requireRole(ctx, ["coach", "admin"]);
 
     const { playerId } = await params;
+    await assertPlayerAccess(ctx, playerId);
 
     const body = (await req.json()) as PatchPlayerPositionsPayload;
     const { primaryPositionId, secondaryPositionIds } = body;
@@ -87,6 +91,8 @@ export async function PATCH(
 
     return NextResponse.json({ success: true });
   } catch (error) {
+    const authResponse = toAuthErrorResponse(error);
+    if (authResponse) return authResponse;
     console.error("PATCH /players/[id]/positions error:", error);
     return NextResponse.json(
       { error: "Failed to update player positions" },

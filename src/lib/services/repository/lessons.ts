@@ -1,4 +1,4 @@
-import { desc, eq } from "drizzle-orm";
+import { and, desc, eq } from "drizzle-orm";
 
 import db from "@/db";
 import { lesson, playerInformation, users } from "@/db/schema";
@@ -23,6 +23,33 @@ export const lessonRepository = {
     } catch (error) {
       console.error(
         "[LessonRepo] getLessonsByPlayerId - Database error: ",
+        error
+      );
+      throw new Error("Failed to fetch lessons from the database");
+    }
+  },
+  getLessonsByPlayerIdScoped: async (id: string, facilityId: string) => {
+    try {
+      const lessons = await db
+        .select({
+          lesson: lesson,
+          coach: users,
+        })
+        .from(lesson)
+        .innerJoin(users, eq(lesson.coachId, users.id))
+        .innerJoin(playerInformation, eq(lesson.playerId, playerInformation.id))
+        .where(
+          and(
+            eq(lesson.playerId, id),
+            eq(playerInformation.facilityId, facilityId)
+          )
+        )
+        .orderBy(desc(lesson.lessonDate));
+
+      return lessons;
+    } catch (error) {
+      console.error(
+        "[LessonRepo] getLessonsByPlayerIdScoped - Database error: ",
         error
       );
       throw new Error("Failed to fetch lessons from the database");
@@ -93,6 +120,78 @@ export const lessonRepository = {
       );
       throw new Error("Failed to fetch lesson report from the database");
     }
+  },
+  getLessonReportByPlayerIdScoped: async (
+    playerId: string,
+    lessonCount: number,
+    facilityId: string
+  ) => {
+    const player = await db
+      .select({
+        player: playerInformation,
+      })
+      .from(playerInformation)
+      .where(
+        and(
+          eq(playerInformation.id, playerId),
+          eq(playerInformation.facilityId, facilityId)
+        )
+      );
+
+    if (player.length === 0) {
+      return null;
+    }
+
+    const lessonsData = await db
+      .select({
+        lessonId: lesson.id,
+        lessonDate: lesson.lessonDate,
+        lessonType: lesson.lessonType,
+        lessonNotes: lesson.notes,
+        coachName: users.name,
+      })
+      .from(lesson)
+      .innerJoin(users, eq(lesson.coachId, users.id))
+      .innerJoin(playerInformation, eq(lesson.playerId, playerInformation.id))
+      .where(
+        and(
+          eq(lesson.playerId, playerId),
+          eq(playerInformation.facilityId, facilityId)
+        )
+      )
+      .orderBy(desc(lesson.lessonDate))
+      .limit(lessonCount);
+
+    const lessonsWithAssessments = await Promise.all(
+      lessonsData.map(async (lessonItem) => {
+        const assessments = await AssessmentService.getAssessmentsByLessonId(
+          lessonItem.lessonId
+        );
+
+        const cleanedAssessments = assessments
+          .map((assessment) => ({
+            assessmentType: assessment.lessonType,
+            data: lessonRepository.cleanAssessmentData(
+              assessment.data as AssessmentDataSelect
+            ),
+          }))
+          .filter((a) => a.data !== null);
+
+        return {
+          lessonId: lessonItem.lessonId,
+          lessonDate: lessonItem.lessonDate,
+          lessonType: lessonItem.lessonType,
+          lessonNotes: lessonItem.lessonNotes,
+          coachName: lessonItem.coachName,
+          assessments: cleanedAssessments,
+        };
+      })
+    );
+
+    return {
+      player,
+      lessonsWithAssessments,
+    };
   },
 
   /**

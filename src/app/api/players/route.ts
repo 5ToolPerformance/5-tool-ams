@@ -1,27 +1,36 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { auth } from "@/auth";
 import { createPlayer } from "@/db/queries/players/createPlayer";
 import { PlayerUpsertInput } from "@/domain/player/types";
+import { getAuthContext, requireRole } from "@/lib/auth/auth-context";
+import { toAuthErrorResponse } from "@/lib/auth/http";
 import { PlayerService } from "@/lib/services/players";
 
 export async function GET() {
-  const session = await auth();
+  try {
+    const ctx = await getAuthContext();
+    requireRole(ctx, ["coach", "admin"]);
 
-  if (!session || !["coach", "admin"].includes(session.user.role ?? "")) {
+    const allPlayers = await PlayerService.getAllPlayersWithInformationScoped(
+      ctx.facilityId
+    );
+
+    return NextResponse.json({
+      success: true,
+      data: allPlayers,
+    });
+  } catch (error) {
+    const authResponse = toAuthErrorResponse(error);
+    if (authResponse) return authResponse;
     return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
   }
-
-  const allPlayers = await PlayerService.getAllPlayersWithInformation();
-
-  return NextResponse.json({
-    success: true,
-    data: allPlayers,
-  });
 }
 
 export async function POST(request: NextRequest) {
   try {
+    const ctx = await getAuthContext();
+    requireRole(ctx, ["coach", "admin"]);
+
     const body: PlayerUpsertInput = await request.json();
 
     // minimal invariant checks (never trust the client)
@@ -39,7 +48,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const player = await createPlayer(body);
+    const player = await createPlayer({
+      ...body,
+      facilityId: ctx.facilityId,
+    });
 
     return NextResponse.json({
       success: true,
@@ -47,6 +59,9 @@ export async function POST(request: NextRequest) {
       message: "Player created successfully",
     });
   } catch (error) {
+    const authResponse = toAuthErrorResponse(error);
+    if (authResponse) return authResponse;
+
     console.error("Error in POST /api/players:", error);
 
     return NextResponse.json(

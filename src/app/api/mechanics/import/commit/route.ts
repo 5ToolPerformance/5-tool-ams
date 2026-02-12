@@ -3,6 +3,8 @@ import { NextResponse } from "next/server";
 
 import { z } from "zod";
 
+import { getAuthContext, requireRole } from "@/lib/auth/auth-context";
+import { toAuthErrorResponse } from "@/lib/auth/http";
 import { mechanicsRepository } from "@/lib/services/repository/mechanics";
 
 const commitSchema = z.object({
@@ -17,21 +19,30 @@ const commitSchema = z.object({
 });
 
 export async function POST(req: Request) {
-  const body = await req.json();
-  const parsed = commitSchema.parse(body);
+  try {
+    const ctx = await getAuthContext();
+    requireRole(ctx, ["coach", "admin"]);
 
-  await Promise.all(
-    parsed.rows.map((row) =>
-      mechanicsRepository.create({
-        name: row.name,
-        description: row.description,
-        type: row.type,
-        tags: row.tags ? row.tags.split(",").map((t) => t.trim()) : [],
-      })
-    )
-  );
+    const body = await req.json();
+    const parsed = commitSchema.parse(body);
 
-  return NextResponse.json({
-    created: parsed.rows.length,
-  });
+    await Promise.all(
+      parsed.rows.map((row) =>
+        mechanicsRepository.create({
+          name: row.name,
+          description: row.description,
+          type: row.type,
+          tags: row.tags ? row.tags.split(",").map((t) => t.trim()) : [],
+        })
+      )
+    );
+
+    return NextResponse.json({
+      created: parsed.rows.length,
+    });
+  } catch (error) {
+    const authResponse = toAuthErrorResponse(error);
+    if (authResponse) return authResponse;
+    return NextResponse.json({ error: "Failed to commit mechanics import" }, { status: 500 });
+  }
 }

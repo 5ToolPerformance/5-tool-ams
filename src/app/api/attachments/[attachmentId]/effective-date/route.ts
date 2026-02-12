@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { auth } from "@/auth";
 import db from "@/db";
 import { attachments } from "@/db/schema";
+import { assertCanAccessAttachment, getAuthContext, requireRole } from "@/lib/auth/auth-context";
+import { toAuthErrorResponse } from "@/lib/auth/http";
 import { eq } from "drizzle-orm";
 
 function isValidDateString(value: string) {
@@ -14,10 +15,8 @@ export async function PATCH(
   context: { params: Promise<{ attachmentId: string }> }
 ) {
   try {
-    const session = await auth();
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const ctx = await getAuthContext();
+    requireRole(ctx, ["coach", "admin"]);
 
     const { attachmentId } = await context.params;
     if (!attachmentId) {
@@ -26,6 +25,8 @@ export async function PATCH(
         { status: 400 }
       );
     }
+
+    await assertCanAccessAttachment(ctx, attachmentId);
 
     const { effectiveDate } = (await request.json()) as {
       effectiveDate?: string | null;
@@ -65,6 +66,8 @@ export async function PATCH(
 
     return NextResponse.json({ success: true });
   } catch (error) {
+    const authResponse = toAuthErrorResponse(error);
+    if (authResponse) return authResponse;
     console.error("Attachment effective date update failed:", error);
     return NextResponse.json(
       { error: "Failed to update effective date" },

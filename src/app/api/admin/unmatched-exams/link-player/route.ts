@@ -1,18 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { auth } from "@/auth";
+import { assertPlayerAccess, getAuthContext, requireRole } from "@/lib/auth/auth-context";
+import { toAuthErrorResponse } from "@/lib/auth/http";
 import { armcareExamsRepository } from "@/lib/services/repository/armcare-exams";
 
 export async function POST(request: NextRequest) {
-  const session = await auth();
-
-  if (session?.user.role !== "admin" || !session.user.id) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
-  const userId = session?.user.id; // Replace with actual session user ID
-
   try {
+    const ctx = await getAuthContext();
+    requireRole(ctx, ["admin"]);
+
     const body = await request.json();
     const { externalPlayerId, pathPlayerId } = body;
 
@@ -22,11 +18,12 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
+    await assertPlayerAccess(ctx, pathPlayerId);
 
     const result = await armcareExamsRepository.linkArmcarePlayer(
       externalPlayerId,
       pathPlayerId,
-      userId
+      ctx.userId
     );
 
     if (!result.success) {
@@ -41,6 +38,8 @@ export async function POST(request: NextRequest) {
       result,
     });
   } catch (error) {
+    const authResponse = toAuthErrorResponse(error);
+    if (authResponse) return authResponse;
     console.error("Link player API error:", error);
     return NextResponse.json(
       {

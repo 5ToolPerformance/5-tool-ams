@@ -2,7 +2,12 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { z } from "zod";
 
-import { auth } from "@/auth";
+import {
+  assertPlayerAccess,
+  getAuthContext,
+  requireRole,
+} from "@/lib/auth/auth-context";
+import { toAuthErrorResponse } from "@/lib/auth/http";
 import writeupRepository from "@/lib/services/repository";
 
 const batchWriteupSchema = z.object({
@@ -14,20 +19,22 @@ const batchWriteupSchema = z.object({
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await auth();
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const ctx = await getAuthContext();
+    requireRole(ctx, ["coach", "admin"]);
 
     const body = await request.json();
     const validated = batchWriteupSchema.parse(body);
+
+    await Promise.all(
+      validated.playerIds.map((playerId) => assertPlayerAccess(ctx, playerId))
+    );
 
     // Create writeup for each player
     const writeups = await Promise.all(
       validated.playerIds.map((playerId) =>
         writeupRepository.createWriteupLog({
           playerId,
-          coachId: session.user.id,
+          coachId: ctx.userId,
           writeupType: validated.writeupType,
           writeupDate: validated.writeupDate,
           notes: validated.notes,
@@ -43,6 +50,8 @@ export async function POST(request: NextRequest) {
       { status: 201 }
     );
   } catch (error) {
+    const authResponse = toAuthErrorResponse(error);
+    if (authResponse) return authResponse;
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: "Invalid input", details: error.errors },

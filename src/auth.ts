@@ -5,10 +5,22 @@ import GoogleProvider from "next-auth/providers/google";
 import MicrosoftEntraID from "next-auth/providers/microsoft-entra-id";
 
 import db from "@/db";
-import { allowedUsers, users } from "@/db/schema";
+import { allowedUsers, playerInformation, users } from "@/db/schema";
 import { env } from "@/env/server";
 
 import { DEFAULT_ORGANIZATION_ID } from "./lib/constants";
+
+const normalizedRole = (
+  value: unknown
+): "player" | "coach" | "admin" | undefined => {
+  if (value === "player" || value === "coach" || value === "admin") {
+    return value;
+  }
+  return undefined;
+};
+
+const asString = (value: unknown): string | undefined =>
+  typeof value === "string" ? value : undefined;
 
 export const { auth, handlers, signIn, signOut } = NextAuth({
   adapter: DrizzleAdapter(db),
@@ -66,28 +78,61 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
     },
     async jwt({ token, user }) {
       if (user) {
-        token.role = user.role;
-        token.id = user.id;
+        token.role = normalizedRole(user.role);
+        token.id = asString(user.id);
+        token.facilityId = asString(user.facilityId);
+        token.playerId = asString(user.playerId) ?? null;
       }
+
+      const tokenUserId = asString(token.sub) ?? asString(token.id);
+      if (!tokenUserId) {
+        return token;
+      }
+
+      const [dbUser] = await db
+        .select({
+          id: users.id,
+          role: users.role,
+          facilityId: users.facilityId,
+          email: users.email,
+        })
+        .from(users)
+        .where(eq(users.id, tokenUserId))
+        .limit(1);
+
+      if (!dbUser) {
+        return token;
+      }
+
+      token.id = dbUser.id;
+      token.sub = dbUser.id;
+      token.email = dbUser.email;
+      token.role = dbUser.role ?? undefined;
+      token.facilityId = dbUser.facilityId ?? undefined;
+
+      const [player] = await db
+        .select({
+          id: playerInformation.id,
+        })
+        .from(playerInformation)
+        .where(eq(playerInformation.userId, dbUser.id))
+        .limit(1);
+
+      token.playerId = player?.id ?? null;
+
       return token;
     },
     async session({ session, token }) {
       if (!session.user?.email) return session;
 
-      if (token?.sub && session.user) {
-        session.user.id = token.sub;
-      }
-
-      const [dbUser] = await db
-        .select()
-        .from(users)
-        .where(eq(users.email, session.user.email))
-        .limit(1);
-
-      if (dbUser) {
-        session.user.role = dbUser.role ?? "user";
-      } else {
-        session.user.role = "user";
+      if (session.user) {
+        const sessionUserId = asString(token.id) ?? asString(token.sub);
+        if (sessionUserId) {
+          session.user.id = sessionUserId;
+        }
+        session.user.role = normalizedRole(token.role);
+        session.user.facilityId = asString(token.facilityId);
+        session.user.playerId = asString(token.playerId) ?? null;
       }
 
       return session;

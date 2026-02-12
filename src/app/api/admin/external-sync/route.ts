@@ -1,27 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { auth } from "@/auth";
+import { getAuthContext, requireRole } from "@/lib/auth/auth-context";
+import { toAuthErrorResponse } from "@/lib/auth/http";
 import { ArmCareService } from "@/lib/services/external-systems/armcare/armcare-service";
 
 export async function POST(request: NextRequest) {
-  const session = await auth();
-
-  if (session?.user.role !== "admin") {
-    return NextResponse.json(
-      {
-        error: "Unauthorized",
-        details: "User is not authorized to perform this action",
-        timestamp: new Date().toISOString(),
-      },
-      {
-        status: 401,
-      }
-    );
-  }
-
-  const { system } = await request.json();
-
   try {
+    const ctx = await getAuthContext();
+    requireRole(ctx, ["admin"]);
+
+    const { system } = await request.json();
+
     let result;
 
     switch (system) {
@@ -47,6 +36,8 @@ export async function POST(request: NextRequest) {
       timestamp: new Date().toISOString(),
     });
   } catch (error) {
+    const authResponse = toAuthErrorResponse(error);
+    if (authResponse) return authResponse;
     console.error("Sync error:", error);
     return NextResponse.json(
       {

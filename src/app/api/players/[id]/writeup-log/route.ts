@@ -3,7 +3,12 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { z } from "zod";
 
-import { auth } from "@/auth";
+import {
+  assertPlayerAccess,
+  getAuthContext,
+  requireRole,
+} from "@/lib/auth/auth-context";
+import { toAuthErrorResponse } from "@/lib/auth/http";
 import writeupRepository from "@/lib/services/repository";
 
 const createWriteupSchema = z.object({
@@ -18,16 +23,16 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await auth();
-    if (!session) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const ctx = await getAuthContext();
 
     const { id } = await params;
+    await assertPlayerAccess(ctx, id);
 
     const writeups = await writeupRepository.getPlayerWriteupLog(id);
     return NextResponse.json(writeups);
   } catch (error) {
+    const authResponse = toAuthErrorResponse(error);
+    if (authResponse) return authResponse;
     console.error("Error fetching writeups:", error);
     return NextResponse.json(
       { error: "Failed to fetch writeups" },
@@ -42,24 +47,25 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await auth();
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const ctx = await getAuthContext();
+    requireRole(ctx, ["coach", "admin"]);
 
     const body = await request.json();
     const validated = createWriteupSchema.parse(body);
 
     const { id } = await params;
+    await assertPlayerAccess(ctx, id);
 
     const writeup = await writeupRepository.createWriteupLog({
       playerId: id,
-      coachId: session.user.id,
+      coachId: ctx.userId,
       ...validated,
     });
 
     return NextResponse.json(writeup, { status: 201 });
   } catch (error) {
+    const authResponse = toAuthErrorResponse(error);
+    if (authResponse) return authResponse;
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: "Invalid input", details: error.errors },

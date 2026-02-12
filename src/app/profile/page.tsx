@@ -1,4 +1,5 @@
 import { Card, CardBody, User } from "@heroui/react";
+import { redirect } from "next/navigation";
 
 import { auth } from "@/auth";
 import AdminDashboard from "@/components/dashboards/AdminDashboard";
@@ -19,6 +20,10 @@ export default async function Profile() {
 
   if (session?.user?.role === "admin") {
     return <AdminDashboard adminId={session.user.id} />;
+  }
+
+  if (session?.user?.role === "player" && session.user.playerId) {
+    redirect(`/players/${session.user.playerId}/overview`);
   }
 
   return (

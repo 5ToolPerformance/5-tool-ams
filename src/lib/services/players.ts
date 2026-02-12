@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 
 import db from "@/db";
 import {
@@ -231,6 +231,38 @@ export class PlayerService {
     } catch (error) {
       console.error("Error fetching player by id:", error);
       throw new Error("Failed to fetch player");
+    }
+  }
+
+  static async getPlayerByIdScoped(playerId: string, facilityId: string) {
+    try {
+      const [player] = await db
+        .select()
+        .from(playerInformation)
+        .where(
+          and(
+            eq(playerInformation.id, playerId),
+            eq(playerInformation.facilityId, facilityId)
+          )
+        )
+        .limit(1);
+
+      return player ?? null;
+    } catch (error) {
+      console.error("Error fetching scoped player by id:", error);
+      throw new Error("Failed to fetch player");
+    }
+  }
+
+  static async getAllPlayersWithInformationScoped(facilityId: string) {
+    try {
+      return await db
+        .select()
+        .from(playerInformation)
+        .where(eq(playerInformation.facilityId, facilityId));
+    } catch (error) {
+      console.error("Error fetching scoped players with information:", error);
+      throw new Error("Failed to fetch players with information");
     }
   }
 }

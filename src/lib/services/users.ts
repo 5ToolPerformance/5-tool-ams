@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 
 import db from "@/db";
 import { users } from "@/db/schema";
@@ -17,6 +17,15 @@ export class UserService {
       return await db.select().from(users);
     } catch (error) {
       console.error("Error fetching users:", error);
+      throw new Error("Failed to fetch users");
+    }
+  }
+
+  static async getAllUsersScoped(facilityId: string) {
+    try {
+      return await db.select().from(users).where(eq(users.facilityId, facilityId));
+    } catch (error) {
+      console.error("Error fetching scoped users:", error);
       throw new Error("Failed to fetch users");
     }
   }
@@ -75,6 +84,35 @@ export class UserService {
       return user.length > 0 ? user[0] : null;
     } catch (error) {
       console.error("Error fetching user by ID:", error);
+      throw new Error("Failed to fetch user");
+    }
+  }
+
+  static async getAllCoachesScoped(facilityId: string) {
+    try {
+      return await db
+        .select()
+        .from(users)
+        .where(and(eq(users.role, "coach"), eq(users.facilityId, facilityId)));
+    } catch (error) {
+      console.error("Error fetching scoped coaches:", error);
+      throw new Error("Failed to fetch players");
+    }
+  }
+
+  static async getUserByIdScoped(id: string, facilityId: string) {
+    try {
+      const user = await db
+        .select()
+        .from(users)
+        .where(eq(users.id, id))
+        .limit(1);
+
+      if (user.length === 0) return null;
+      if (user[0].facilityId !== facilityId) return null;
+      return user[0];
+    } catch (error) {
+      console.error("Error fetching scoped user by ID:", error);
       throw new Error("Failed to fetch user");
     }
   }

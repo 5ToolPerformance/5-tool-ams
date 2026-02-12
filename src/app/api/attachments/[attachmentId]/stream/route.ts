@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import { AzureBlobStorage } from "@/application/storage/azureBlobStorage";
-import { auth } from "@/auth";
 import db from "@/db";
 import { attachmentFiles, attachments } from "@/db/schema";
+import { assertCanAccessAttachment, getAuthContext } from "@/lib/auth/auth-context";
+import { toAuthErrorResponse } from "@/lib/auth/http";
 import { eq } from "drizzle-orm";
 
 export const runtime = "nodejs";
@@ -69,10 +70,7 @@ export async function HEAD(
   context: { params: Promise<{ attachmentId: string }> }
 ) {
   try {
-    const session = await auth();
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const ctx = await getAuthContext();
 
     const { attachmentId } = await context.params;
     if (!attachmentId) {
@@ -81,6 +79,8 @@ export async function HEAD(
         { status: 400 }
       );
     }
+
+    await assertCanAccessAttachment(ctx, attachmentId);
 
     const record = await getAttachmentRecord(attachmentId);
     if (!record?.attachmentId) {
@@ -106,6 +106,8 @@ export async function HEAD(
       }),
     });
   } catch (error) {
+    const authResponse = toAuthErrorResponse(error);
+    if (authResponse) return authResponse;
     console.error("Attachment stream head failed:", error);
     return NextResponse.json(
       { error: "Failed to read attachment metadata" },
@@ -119,10 +121,7 @@ export async function GET(
   context: { params: Promise<{ attachmentId: string }> }
 ) {
   try {
-    const session = await auth();
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const ctx = await getAuthContext();
 
     const { attachmentId } = await context.params;
     if (!attachmentId) {
@@ -131,6 +130,8 @@ export async function GET(
         { status: 400 }
       );
     }
+
+    await assertCanAccessAttachment(ctx, attachmentId);
 
     const record = await getAttachmentRecord(attachmentId);
 
@@ -172,6 +173,8 @@ export async function GET(
       }),
     });
   } catch (error) {
+    const authResponse = toAuthErrorResponse(error);
+    if (authResponse) return authResponse;
     console.error("Attachment stream failed:", error);
     return NextResponse.json(
       { error: "Failed to stream attachment" },

@@ -1,21 +1,27 @@
 import { NextResponse } from "next/server";
 
 import { logInjury } from "@/application/injuries/logInjury";
-import { auth } from "@/auth";
 import db from "@/db";
+import { assertPlayerAccess, getAuthContext, requireRole } from "@/lib/auth/auth-context";
+import { toAuthErrorResponse } from "@/lib/auth/http";
 
 export async function POST(req: Request) {
-  const body = await req.json();
-  const session = await auth();
+  try {
+    const ctx = await getAuthContext();
+    requireRole(ctx, ["coach", "admin"]);
 
-  if (!session) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const body = await req.json();
+    await assertPlayerAccess(ctx, body.playerId);
+
+    const injury = await logInjury(db, body, {
+      reportedByUserId: ctx.userId,
+      reportedByRole: "coach", // "coach" | "trainer" | etc
+    });
+
+    return NextResponse.json(injury, { status: 201 });
+  } catch (error) {
+    const authResponse = toAuthErrorResponse(error);
+    if (authResponse) return authResponse;
+    return NextResponse.json({ error: "Failed to log injury" }, { status: 500 });
   }
-
-  const injury = await logInjury(db, body, {
-    reportedByUserId: session.user.id,
-    reportedByRole: "coach", // "coach" | "trainer" | etc
-  });
-
-  return NextResponse.json(injury, { status: 201 });
 }

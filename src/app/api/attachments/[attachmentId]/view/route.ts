@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import { AzureBlobStorage } from "@/application/storage/azureBlobStorage";
-import { auth } from "@/auth";
 import db from "@/db";
 import { attachmentFiles, attachments } from "@/db/schema";
+import { assertCanAccessAttachment, getAuthContext } from "@/lib/auth/auth-context";
+import { toAuthErrorResponse } from "@/lib/auth/http";
 import { eq } from "drizzle-orm";
 
 export async function GET(
@@ -11,15 +12,14 @@ export async function GET(
   context: { params: Promise<{ attachmentId: string }> }
 ) {
   try {
-    const session = await auth();
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const ctx = await getAuthContext();
 
     const { attachmentId } = await context.params;
     if (!attachmentId) {
       return NextResponse.json({ error: "Missing attachmentId" }, { status: 400 });
     }
+
+    await assertCanAccessAttachment(ctx, attachmentId);
 
     const [record] = await db
       .select({
@@ -47,6 +47,8 @@ export async function GET(
 
     return NextResponse.json({ url });
   } catch (error) {
+    const authResponse = toAuthErrorResponse(error);
+    if (authResponse) return authResponse;
     console.error("Attachment view failed:", error);
     return NextResponse.json({ error: "Failed to generate view link" }, { status: 500 });
   }

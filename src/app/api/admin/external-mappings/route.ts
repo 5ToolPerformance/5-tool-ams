@@ -2,98 +2,81 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { desc, eq } from "drizzle-orm";
 
-import { auth } from "@/auth";
 import db from "@/db";
 import { externalAthleteIds } from "@/db/schema";
+import { getAuthContext, requireRole } from "@/lib/auth/auth-context";
+import { toAuthErrorResponse } from "@/lib/auth/http";
 
 export async function GET() {
-  const session = await auth();
+  try {
+    const ctx = await getAuthContext();
+    requireRole(ctx, ["admin"]);
 
-  if (session?.user.role !== "admin") {
-    return NextResponse.json(
-      {
-        error: "Unauthorized",
-        details: "User is not authorized to perform this action",
-        timestamp: new Date().toISOString(),
+    const mappings = await db.query.externalAthleteIds.findMany({
+      with: {
+        player: true,
       },
-      {
-        status: 401,
-      }
-    );
+      orderBy: desc(externalAthleteIds.linkedAt),
+    });
+
+    return NextResponse.json({ mappings });
+  } catch (error) {
+    const authResponse = toAuthErrorResponse(error);
+    if (authResponse) return authResponse;
+    return NextResponse.json({ error: "Failed to fetch mappings" }, { status: 500 });
   }
-
-  const mappings = await db.query.externalAthleteIds.findMany({
-    with: {
-      player: true,
-    },
-    orderBy: desc(externalAthleteIds.linkedAt),
-  });
-
-  return NextResponse.json({ mappings });
 }
 
 export async function POST(request: NextRequest) {
-  const session = await auth();
+  try {
+    const ctx = await getAuthContext();
+    requireRole(ctx, ["admin"]);
 
-  if (session?.user.role !== "admin") {
-    return NextResponse.json(
-      {
-        error: "Unauthorized",
-        details: "User is not authorized to perform this action",
-        timestamp: new Date().toISOString(),
-      },
-      {
-        status: 401,
-      }
-    );
+    const { playerId, externalSystem, externalId, externalEmail } =
+      await request.json();
+
+    const [mapping] = await db
+      .insert(externalAthleteIds)
+      .values({
+        playerId,
+        externalSystem,
+        externalId,
+        externalEmail,
+        linkingMethod: "manual",
+        linkingStatus: "active",
+        confidence: "1.0",
+        linkedBy: ctx.userId,
+        verifiedAt: new Date().toISOString(),
+      })
+      .returning();
+
+    return NextResponse.json({ mapping });
+  } catch (error) {
+    const authResponse = toAuthErrorResponse(error);
+    if (authResponse) return authResponse;
+    return NextResponse.json({ error: "Failed to create mapping" }, { status: 500 });
   }
-
-  const { playerId, externalSystem, externalId, externalEmail } =
-    await request.json();
-
-  const [mapping] = await db
-    .insert(externalAthleteIds)
-    .values({
-      playerId,
-      externalSystem,
-      externalId,
-      externalEmail,
-      linkingMethod: "manual",
-      linkingStatus: "active",
-      confidence: "1.0",
-      linkedBy: session.user.id,
-      verifiedAt: new Date().toISOString(),
-    })
-    .returning();
-
-  return NextResponse.json({ mapping });
 }
 
 export async function PATCH(request: NextRequest) {
-  const session = await auth();
+  try {
+    const ctx = await getAuthContext();
+    requireRole(ctx, ["admin"]);
 
-  if (session?.user.role !== "admin") {
-    return NextResponse.json(
-      {
-        error: "Unauthorized",
-        details: "User is not authorized to perform this action",
-        timestamp: new Date().toISOString(),
-      },
-      {
-        status: 401,
-      }
-    );
+    const { id, status } = await request.json();
+
+    await db
+      .update(externalAthleteIds)
+      .set({
+        linkingStatus: status,
+        updatedAt: new Date().toISOString(),
+      })
+      .where(eq(externalAthleteIds.id, id));
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    const authResponse = toAuthErrorResponse(error);
+    if (authResponse) return authResponse;
+    return NextResponse.json({ error: "Failed to update mapping" }, { status: 500 });
   }
-
-  const { id, status } = await request.json();
-
-  await db
-    .update(externalAthleteIds)
-    .set({
-      linkingStatus: status,
-      updatedAt: new Date().toISOString(),
-    })
-    .where(eq(externalAthleteIds.id, id));
-
-  return NextResponse.json({ success: true });
 }

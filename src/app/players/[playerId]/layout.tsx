@@ -1,7 +1,9 @@
 // app/players/[playerId]/overview/page.tsx
 import { ReactNode } from "react";
+import { notFound } from "next/navigation";
 
 import { getPlayerHeader } from "@/db/queries/players/PlayerHeader";
+import { requirePlayerRouteAccess } from "@/lib/auth/page-guards";
 import { toHandednessAbbrev } from "@/lib/utils/handedness";
 import { AthleteHeader } from "@/ui/core/athletes/AthleteHeader";
 import { AthleteHeaderMeta } from "@/ui/core/athletes/AthleteHeaderMeta";
@@ -30,7 +32,13 @@ export default async function PlayerLayout({
   children,
 }: PlayerLayoutProps) {
   const { playerId } = await params;
+  await requirePlayerRouteAccess(playerId);
+
   const player = await getPlayerHeader(playerId);
+  if (!player) {
+    notFound();
+  }
+
   const name = `${player.firstName} ${player.lastName}`;
   const handedness = `${toHandednessAbbrev(player.handedness.bat) ?? "?"}/${toHandednessAbbrev(player.handedness.throw) ?? "?"}`;
   const roles =
@@ -48,10 +56,6 @@ export default async function PlayerLayout({
   const statuses: AthleteHeaderStatus[] = player.status.activeInjuryLevel
     ? [statusLabelByLevel[player.status.activeInjuryLevel]]
     : ["Active"];
-
-  if (!player) {
-    return null;
-  }
 
   return (
     <AthletePageShell>

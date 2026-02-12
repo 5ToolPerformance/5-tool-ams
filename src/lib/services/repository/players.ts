@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 
 import db from "@/db";
 import { playerInformation, playerInjuries } from "@/db/schema";
@@ -42,6 +42,25 @@ export const playerRepository = {
       return player;
     } catch (error) {
       console.error("[PlayerRepo] findById - Database error: ", error);
+      throw new Error(`Failed to fetch player ${playerId}`);
+    }
+  },
+  findByIdScoped: async (playerId: string, facilityId: string) => {
+    try {
+      const [player] = await db
+        .select()
+        .from(playerInformation)
+        .where(
+          and(
+            eq(playerInformation.id, playerId),
+            eq(playerInformation.facilityId, facilityId)
+          )
+        )
+        .limit(1);
+
+      return player ?? null;
+    } catch (error) {
+      console.error("[PlayerRepo] findByIdScoped - Database error: ", error);
       throw new Error(`Failed to fetch player ${playerId}`);
     }
   },
@@ -134,6 +153,27 @@ export const playerRepository = {
     } catch (error) {
       console.error(
         "[PlayerRepo] findPlayersForLessonForm - Database error: ",
+        error
+      );
+      throw new Error("Failed to fetch players for lesson form");
+    }
+  },
+  findPlayersForLessonFormScoped: async (facilityId: string) => {
+    try {
+      const players = await db
+        .select({
+          id: playerInformation.id,
+          firstName: playerInformation.firstName,
+          lastName: playerInformation.lastName,
+        })
+        .from(playerInformation)
+        .where(eq(playerInformation.facilityId, facilityId))
+        .orderBy(playerInformation.lastName, playerInformation.firstName);
+
+      return players;
+    } catch (error) {
+      console.error(
+        "[PlayerRepo] findPlayersForLessonFormScoped - Database error: ",
         error
       );
       throw new Error("Failed to fetch players for lesson form");

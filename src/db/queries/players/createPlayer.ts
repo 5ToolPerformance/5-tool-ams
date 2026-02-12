@@ -33,6 +33,7 @@ export async function createPlayer(input: PlayerUpsertInput) {
         throws: input.throws ?? "right",
         hits: input.hits ?? "right",
         primaryCoachId: input.primaryCoachId,
+        facilityId: input.facilityId ?? null,
         position: primary.code, // legacy shadow column
       })
       .returning();

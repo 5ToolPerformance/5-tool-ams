@@ -1,7 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import { uploadFileAttachment } from "@/application/attachments/uploadFileAttachment";
-import { auth } from "@/auth";
+import {
+  assertPlayerAccess,
+  getAuthContext,
+  requireRole,
+} from "@/lib/auth/auth-context";
+import { toAuthErrorResponse } from "@/lib/auth/http";
 
 // IMPORTANT: must run in Node runtime for file uploads
 export const runtime = "nodejs";
@@ -21,15 +26,8 @@ export async function POST(request: NextRequest) {
     // ---------------------------------------------------------------------
     // 1. Auth
     // ---------------------------------------------------------------------
-    const session = await auth();
-
-    // Example placeholders:
-    const userId = session?.user?.id;
-    const facilityId = "fc3369cb-4218-4701-ae20-68426f23b9e0"; // REPLACE WITH REAL FACILITY ID FROM SESSION/CONTEXT
-
-    if (!userId || !facilityId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const ctx = await getAuthContext();
+    requireRole(ctx, ["coach", "admin"]);
 
     // ---------------------------------------------------------------------
     // 2. Parse multipart form data
@@ -70,6 +68,8 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
+
+    await assertPlayerAccess(ctx, athleteId);
 
     const isContextType = type === "file_pdf" || type === "file_docx";
     const isMediaType = type === "file_image" || type === "file_video";
@@ -177,8 +177,8 @@ export async function POST(request: NextRequest) {
     // ---------------------------------------------------------------------
     const attachment = await uploadFileAttachment({
       athleteId,
-      facilityId,
-      createdBy: userId,
+      facilityId: ctx.facilityId,
+      createdBy: ctx.userId,
       lessonPlayerId: lessonPlayerId ?? undefined,
       type,
       source,
@@ -200,6 +200,8 @@ export async function POST(request: NextRequest) {
     // ---------------------------------------------------------------------
     return NextResponse.json({ attachment }, { status: 201 });
   } catch (error) {
+    const authResponse = toAuthErrorResponse(error);
+    if (authResponse) return authResponse;
     console.error("Attachment upload failed:", error);
 
     return NextResponse.json(

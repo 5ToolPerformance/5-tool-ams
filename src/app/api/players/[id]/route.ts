@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { updatePlayer } from "@/db/queries/players/updatePlayer";
 import { PlayerUpsertInput } from "@/domain/player/types";
+import { assertPlayerAccess, getAuthContext } from "@/lib/auth/auth-context";
+import { toAuthErrorResponse } from "@/lib/auth/http";
 import { PlayerService } from "@/lib/services/players";
 import { RouteParams } from "@/types/api";
 
@@ -10,6 +12,7 @@ export async function GET(
   { params }: RouteParams<{ id: string }>
 ) {
   try {
+    const ctx = await getAuthContext();
     const { id } = await params;
 
     // Validate player ID
@@ -21,13 +24,16 @@ export async function GET(
     }
 
     // Get lessons for the player
-    const player = await PlayerService.getPlayerById(id);
+    await assertPlayerAccess(ctx, id);
+    const player = await PlayerService.getPlayerByIdScoped(id, ctx.facilityId);
 
     return NextResponse.json({
       success: true,
       data: player,
     });
   } catch (error) {
+    const authResponse = toAuthErrorResponse(error);
+    if (authResponse) return authResponse;
     console.error("Error fetching player by id:", error);
 
     return NextResponse.json(
@@ -45,6 +51,7 @@ export async function PATCH(
   { params }: RouteParams<{ id: string }>
 ) {
   try {
+    const ctx = await getAuthContext();
     const { id } = await params;
 
     // Validate player ID
@@ -55,6 +62,7 @@ export async function PATCH(
       );
     }
 
+    await assertPlayerAccess(ctx, id);
     const body: Partial<PlayerUpsertInput> = await request.json();
 
     await updatePlayer(id, body);
