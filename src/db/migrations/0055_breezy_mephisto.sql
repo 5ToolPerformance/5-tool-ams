@@ -1,0 +1,1 @@
+ALTER TABLE "drills" ADD COLUMN "discipline" text DEFAULT 'hitting' NOT NULL;
