@@ -3,97 +3,103 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 
-import { Button, Card, CardBody, Chip, Input } from "@heroui/react";
+import { Button, Input } from "@heroui/react";
 import { Search } from "lucide-react";
 
-import { DrillListItem } from "@/ui/features/drills/types";
+import { DrillCard } from "@/ui/features/drills/DrillCard";
+import { DrillViewModal } from "@/ui/features/drills/DrillViewModal";
+import { Drill, DrillListItem } from "@/ui/features/drills/types";
 
 type DrillsLibraryPageClientProps = {
   drills: DrillListItem[];
 };
 
+const DISCIPLINE_ORDER: Record<DrillListItem["discipline"], number> = {
+  hitting: 0,
+  pitching: 1,
+  strength: 2,
+  fielding: 3,
+  catching: 4,
+  arm_care: 5,
+};
+
 export function DrillsLibraryPageClient({ drills }: DrillsLibraryPageClientProps) {
   const [query, setQuery] = useState("");
-  const formatDiscipline = (value: DrillListItem["discipline"]) =>
-    value === "arm_care"
-      ? "Arm Care"
-      : `${value.charAt(0).toUpperCase()}${value.slice(1)}`;
+  const [isViewOpen, setIsViewOpen] = useState(false);
+  const [isLoadingView, setIsLoadingView] = useState(false);
+  const [viewError, setViewError] = useState<string | null>(null);
+  const [selectedDrill, setSelectedDrill] = useState<Drill | null>(null);
 
   const filtered = useMemo(() => {
     const normalized = query.trim().toLowerCase();
-    if (!normalized) return drills;
+    const filteredRows = normalized
+      ? drills.filter(
+          (drill) =>
+            drill.title.toLowerCase().includes(normalized) ||
+            drill.discipline.toLowerCase().includes(normalized) ||
+            drill.tags.some((tag) => tag.includes(normalized))
+        )
+      : drills;
 
-    return drills.filter(
-      (drill) =>
-        drill.title.toLowerCase().includes(normalized) ||
-        drill.discipline.toLowerCase().includes(normalized) ||
-        drill.tags.some((tag) => tag.includes(normalized))
-    );
+    return [...filteredRows].sort((a, b) => {
+      const orderDiff = DISCIPLINE_ORDER[a.discipline] - DISCIPLINE_ORDER[b.discipline];
+      if (orderDiff !== 0) return orderDiff;
+      return a.title.localeCompare(b.title);
+    });
   }, [drills, query]);
 
+  async function openDrillView(drillId: string) {
+    setIsViewOpen(true);
+    setIsLoadingView(true);
+    setViewError(null);
+    setSelectedDrill(null);
+
+    try {
+      const res = await fetch(`/api/drills/${drillId}`);
+      const data = (await res.json().catch(() => null)) as
+        | { drill?: Drill; error?: string }
+        | null;
+
+      if (!res.ok || !data?.drill) {
+        throw new Error(data?.error ?? "Failed to load drill");
+      }
+
+      setSelectedDrill(data.drill);
+    } catch (error) {
+      setViewError(error instanceof Error ? error.message : "Failed to load drill");
+    } finally {
+      setIsLoadingView(false);
+    }
+  }
+
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
-        <div>
-          <h1 className="text-2xl font-semibold">Drills</h1>
-          <p className="text-sm text-foreground-500">
-            Create and maintain drills with video and image references.
-          </p>
+    <>
+      <div className="space-y-6">
+        <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
+          <div>
+            <h1 className="text-2xl font-semibold">Drills</h1>
+            <p className="text-sm text-foreground-500">
+              Create and maintain drills with video and image references.
+            </p>
+          </div>
+
+          <Button as={Link} href="/drills/new" color="primary">
+            New Drill
+          </Button>
         </div>
 
-        <Button as={Link} href="/drills/new" color="primary">
-          New Drill
-        </Button>
-      </div>
+        <Input
+          placeholder="Search drills by title, discipline, or tag"
+          startContent={<Search className="h-4 w-4 text-foreground-500" />}
+          value={query}
+          onValueChange={setQuery}
+        />
 
-      <Input
-        placeholder="Search drills by title, discipline, or tag"
-        startContent={<Search className="h-4 w-4 text-foreground-500" />}
-        value={query}
-        onValueChange={setQuery}
-      />
-
-      <div className="grid gap-4">
-        {filtered.map((drill) => (
-          <Card key={drill.id}>
-            <CardBody className="space-y-3">
-              <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-start">
-                <div className="space-y-1">
-                  <h2 className="text-lg font-semibold">{drill.title}</h2>
-                  <p className="text-sm text-foreground-500">{drill.description}</p>
-                  <p className="text-xs text-foreground-400">
-                    By {drill.createdBy.name ?? "Unknown"} • Updated{" "}
-                    {new Date(drill.updatedOn).toLocaleDateString()}
-                  </p>
-                </div>
-
-                {drill.canEdit ? (
-                  <Button as={Link} href={`/drills/${drill.id}/edit`} size="sm" variant="flat">
-                    Edit
-                  </Button>
-                ) : (
-                  <Chip size="sm" variant="flat">
-                    Read only
-                  </Chip>
-                )}
-              </div>
-
-              <div className="flex flex-wrap items-center gap-2">
-                <Chip size="sm" color="secondary" variant="flat">
-                  {formatDiscipline(drill.discipline)}
-                </Chip>
-                {drill.tags.map((tag) => (
-                  <Chip key={`${drill.id}-${tag}`} size="sm" variant="flat">
-                    {tag}
-                  </Chip>
-                ))}
-                <Chip size="sm" color="primary" variant="flat">
-                  {drill.mediaCount} media
-                </Chip>
-              </div>
-            </CardBody>
-          </Card>
-        ))}
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+          {filtered.map((drill) => (
+            <DrillCard key={drill.id} drill={drill} onView={openDrillView} />
+          ))}
+        </div>
 
         {filtered.length === 0 && (
           <p className="rounded-md border border-dashed border-default-300 p-6 text-center text-sm text-foreground-500">
@@ -101,6 +107,14 @@ export function DrillsLibraryPageClient({ drills }: DrillsLibraryPageClientProps
           </p>
         )}
       </div>
-    </div>
+
+      <DrillViewModal
+        isOpen={isViewOpen}
+        onClose={() => setIsViewOpen(false)}
+        isLoading={isLoadingView}
+        error={viewError}
+        drill={selectedDrill}
+      />
+    </>
   );
 }
