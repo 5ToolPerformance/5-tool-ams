@@ -46,6 +46,7 @@ export {
 } from "./assessments/pitchingAssessment";
 export { default as veloAssessment } from "./assessments/veloAssessment";
 export * from "./attachments";
+export * from "./drills";
 export {
   armcareExams,
   armcareExamsUnmatched,
@@ -63,6 +64,7 @@ export {
   syncStatusEnum,
 } from "./external-systems/external-systems";
 export * from "./facilities";
+export * from "./files";
 export { hawkinsCmj } from "./hawkin/hawkinCmj";
 export { hawkinsDropJump } from "./hawkin/hawkinDropJump";
 export { hawkinsIso } from "./hawkin/hawkinIso";
@@ -74,14 +76,14 @@ export { lessonMechanics } from "./lesson-logging-v2/lessonMechanics";
 export { lessonPlayers } from "./lesson-logging-v2/lessonPlayers";
 export { pitchingLessonPlayers } from "./lesson-logging-v2/lessonTypes/pitching";
 export { mechanics, mechanicTypeEnum } from "./lesson-logging-v2/mechanics";
-export { default as playerInjuries } from "./players/playerInjuries";
-export { default as playerMeasurements } from "./players/playerMeasurements";
-export { playerNotes, playerNotesRelations } from "./players/playerNotes";
-export { playerPositions } from "./players/playerPositions";
 export {
   playerAccountLinkActionEnum,
   playerAccountLinkAudit,
 } from "./playerAccountLinkAudit";
+export { default as playerInjuries } from "./players/playerInjuries";
+export { default as playerMeasurements } from "./players/playerMeasurements";
+export { playerNotes, playerNotesRelations } from "./players/playerNotes";
+export { playerPositions } from "./players/playerPositions";
 export { positions } from "./positions";
 export { writeupLog } from "./writeupLog";
 export { default as writeups } from "./writeups";
