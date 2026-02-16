@@ -58,6 +58,13 @@ export class AzureBlobStorage {
         };
     }
 
+    async deleteFile(storageKey: string) {
+        const containerClient =
+            this.blobServiceClient.getContainerClient(this.containerName);
+        const blobClient = containerClient.getBlockBlobClient(storageKey);
+        await blobClient.deleteIfExists();
+    }
+
     getReadUrl(storageKey: string, expiresInMinutes = 15) {
         const credential = new StorageSharedKeyCredential(
             this.accountName,

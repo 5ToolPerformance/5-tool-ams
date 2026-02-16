@@ -1,4 +1,4 @@
-import nextJest from "next/jest";
+import nextJest from "next/jest.js";
 
 // Provide the path to your Next.js app to load next.config.js and .env files in your test environment
 const createJestConfig = nextJest({
@@ -36,21 +36,9 @@ const customJestConfig = {
     "**/?(*.)+(spec|test).[jt]s?(x)",
   ],
 
-  // Transform files
-  transform: {
-    "^.+\\.(ts|tsx)$": [
-      "ts-jest",
-      {
-        tsconfig: {
-          jsx: "react",
-        },
-      },
-    ],
-  },
-
   // Module file extensions
   moduleFileExtensions: ["ts", "tsx", "js", "jsx", "json"],
 };
 
 // createJestConfig is exported this way to ensure that next/jest can load the Next.js config which is async
-module.exports = createJestConfig(customJestConfig);
+export default createJestConfig(customJestConfig);

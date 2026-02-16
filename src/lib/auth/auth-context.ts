@@ -4,6 +4,7 @@ import { auth } from "@/auth";
 import db from "@/db";
 import {
   attachments,
+  drills,
   injury,
   lesson,
   playerInformation,
@@ -213,6 +214,56 @@ export async function assertCanAccessInjury(ctx: AuthContext, injuryId: string) 
 
   if (ctx.role !== "player") {
     assertFacilityAccess(ctx, record.facilityId);
+  }
+}
+
+export async function assertCanReadDrill(ctx: AuthContext, drillId: string) {
+  const [record] = await db
+    .select({
+      drillId: drills.id,
+      createdBy: drills.createdBy,
+      creatorFacilityId: users.facilityId,
+    })
+    .from(drills)
+    .innerJoin(users, eq(drills.createdBy, users.id))
+    .where(eq(drills.id, drillId))
+    .limit(1);
+
+  if (!record) {
+    throw new AuthError(404, "Resource not found");
+  }
+
+  if (ctx.role === "player") {
+    throw new AuthError(403, "Forbidden");
+  }
+
+  assertFacilityAccess(ctx, record.creatorFacilityId);
+}
+
+export async function assertCanEditDrill(ctx: AuthContext, drillId: string) {
+  const [record] = await db
+    .select({
+      drillId: drills.id,
+      createdBy: drills.createdBy,
+      creatorFacilityId: users.facilityId,
+    })
+    .from(drills)
+    .innerJoin(users, eq(drills.createdBy, users.id))
+    .where(eq(drills.id, drillId))
+    .limit(1);
+
+  if (!record) {
+    throw new AuthError(404, "Resource not found");
+  }
+
+  if (ctx.role === "player") {
+    throw new AuthError(403, "Forbidden");
+  }
+
+  assertFacilityAccess(ctx, record.creatorFacilityId);
+
+  if (ctx.role === "coach" && record.createdBy !== ctx.userId) {
+    throw new AuthError(403, "Forbidden");
   }
 }
 
