@@ -9,6 +9,7 @@ import {
   IconBallBaseball,
   IconChevronDown,
   IconClipboardData,
+  IconCone2,
   IconHome,
   IconPackage,
   IconPencil,
@@ -63,6 +64,16 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
         icon: IconBallBaseball,
         target: "_self",
       },
+      ...(session?.user?.role === "coach" || session?.user?.role === "admin"
+        ? [
+            {
+              label: "Drills",
+              href: "/drills",
+              icon: IconCone2,
+              target: "_self" as const,
+            },
+          ]
+        : []),
       {
         label: "Log Writeup",
         href: "/player-writeups",

@@ -7,7 +7,7 @@ expand(config({ path: "./.env.local" }));
 
 export const env = createEnv({
   server: {
-    NODE_ENV: z.enum(["development", "production"]),
+    NODE_ENV: z.enum(["development", "production", "test"]),
     AUTH_URL: z.string().url(),
     AUTH_SECRET: z.string(),
     GOOGLE_CLIENT_ID: z.string(),
