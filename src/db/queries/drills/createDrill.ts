@@ -5,6 +5,7 @@ import { drills } from "@/db/schema";
 type CreateDrillValues = {
   title: string;
   description: string;
+  discipline: "hitting" | "pitching" | "strength" | "fielding" | "catching" | "arm_care";
   createdBy: string;
 };
 

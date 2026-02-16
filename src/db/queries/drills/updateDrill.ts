@@ -7,6 +7,7 @@ import { drills } from "@/db/schema";
 type UpdateDrillValues = {
   title: string;
   description: string;
+  discipline: "hitting" | "pitching" | "strength" | "fielding" | "catching" | "arm_care";
 };
 
 export async function updateDrill(

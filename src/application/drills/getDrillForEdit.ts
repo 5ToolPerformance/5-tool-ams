@@ -1,4 +1,5 @@
 import { getDrillById } from "@/db/queries/drills/getDrillById";
+import { assertDrillDiscipline } from "@/domain/drills/rules";
 import { DrillReadModel } from "@/domain/drills/types";
 
 export async function getDrillForEdit(drillId: string): Promise<DrillReadModel> {
@@ -12,6 +13,7 @@ export async function getDrillForEdit(drillId: string): Promise<DrillReadModel> 
     id: drill.id,
     title: drill.title,
     description: drill.description,
+    discipline: assertDrillDiscipline(drill.discipline),
     createdBy: {
       id: drill.createdBy,
       name: drill.creatorName,

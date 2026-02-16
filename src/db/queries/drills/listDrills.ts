@@ -10,6 +10,7 @@ export async function listDrills(facilityId: string, conn: DB = db) {
       id: drills.id,
       title: drills.title,
       description: drills.description,
+      discipline: drills.discipline,
       createdBy: drills.createdBy,
       createdOn: drills.createdOn,
       updatedOn: drills.updatedOn,

@@ -2,13 +2,13 @@
 
 import { useState } from "react";
 
-import { Button, Input, Textarea } from "@heroui/react";
+import { Button, Input, Select, SelectItem, Textarea } from "@heroui/react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 import { DrillMediaPicker, PendingUpload } from "@/ui/features/drills/DrillMediaPicker";
 import { DrillTagInput } from "@/ui/features/drills/DrillTagInput";
-import { Drill } from "@/ui/features/drills/types";
+import { Drill, DrillDiscipline } from "@/ui/features/drills/types";
 
 type DrillFormProps = {
   mode: "create" | "edit";
@@ -33,6 +33,9 @@ export function DrillForm({ mode, initialDrill }: DrillFormProps) {
 
   const [title, setTitle] = useState(initialDrill?.title ?? "");
   const [description, setDescription] = useState(initialDrill?.description ?? "");
+  const [discipline, setDiscipline] = useState<DrillDiscipline>(
+    initialDrill?.discipline ?? "hitting"
+  );
   const [tags, setTags] = useState<string[]>(initialDrill?.tags ?? []);
   const [existingMedia, setExistingMedia] = useState(initialDrill?.media ?? []);
   const [removeFileIds, setRemoveFileIds] = useState<string[]>([]);
@@ -67,6 +70,7 @@ export function DrillForm({ mode, initialDrill }: DrillFormProps) {
       body: JSON.stringify({
         title,
         description,
+        discipline,
         tags,
       }),
     });
@@ -218,6 +222,24 @@ export function DrillForm({ mode, initialDrill }: DrillFormProps) {
         isRequired
         minRows={5}
       />
+
+      <Select
+        label="Discipline"
+        selectedKeys={new Set([discipline])}
+        onSelectionChange={(keys) => {
+          const value = Array.from(keys)[0] as DrillDiscipline | undefined;
+          if (value) {
+            setDiscipline(value);
+          }
+        }}
+      >
+        <SelectItem key="hitting">Hitting</SelectItem>
+        <SelectItem key="pitching">Pitching</SelectItem>
+        <SelectItem key="strength">Strength</SelectItem>
+        <SelectItem key="fielding">Fielding</SelectItem>
+        <SelectItem key="catching">Catching</SelectItem>
+        <SelectItem key="arm_care">Arm Care</SelectItem>
+      </Select>
 
       <DrillTagInput tags={tags} onChange={setTags} />
 

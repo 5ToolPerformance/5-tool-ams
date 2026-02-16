@@ -4,6 +4,7 @@ import { createDrill as createDrillQuery } from "@/db/queries/drills/createDrill
 import { getDrillById } from "@/db/queries/drills/getDrillById";
 import { syncDrillTags } from "@/db/queries/drills/syncDrillTags";
 import { normalizeDrillWriteInput } from "@/domain/drills/normalize";
+import { assertDrillDiscipline } from "@/domain/drills/rules";
 import { DrillReadModel, DrillWriteInput } from "@/domain/drills/types";
 
 function toReadModel(record: NonNullable<Awaited<ReturnType<typeof getDrillById>>>): DrillReadModel {
@@ -11,6 +12,7 @@ function toReadModel(record: NonNullable<Awaited<ReturnType<typeof getDrillById>
     id: record.id,
     title: record.title,
     description: record.description,
+    discipline: assertDrillDiscipline(record.discipline),
     createdBy: {
       id: record.createdBy,
       name: record.creatorName,
@@ -41,6 +43,7 @@ export async function createDrill(
       {
         title: normalized.title,
         description: normalized.description,
+        discipline: normalized.discipline,
         createdBy,
       },
       conn

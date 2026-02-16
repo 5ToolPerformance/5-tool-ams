@@ -48,12 +48,20 @@ export async function PATCH(
     const body = (await request.json()) as {
       title?: string;
       description?: string;
+      discipline?:
+        | "hitting"
+        | "pitching"
+        | "strength"
+        | "fielding"
+        | "catching"
+        | "arm_care";
       tags?: string[];
     };
 
     const drill = await updateDrill(id, {
       title: body.title ?? "",
       description: body.description ?? "",
+      discipline: body.discipline ?? "hitting",
       tags: body.tags ?? [],
     });
 
@@ -62,7 +70,10 @@ export async function PATCH(
     const authResponse = toAuthErrorResponse(error);
     if (authResponse) return authResponse;
 
-    if (error instanceof Error && error.message.includes("required")) {
+    if (
+      error instanceof Error &&
+      (error.message.includes("required") || error.message.includes("Invalid"))
+    ) {
       return NextResponse.json({ error: error.message }, { status: 400 });
     }
 

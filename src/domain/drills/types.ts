@@ -1,6 +1,18 @@
+export const DRILL_DISCIPLINES = [
+  "hitting",
+  "pitching",
+  "strength",
+  "fielding",
+  "catching",
+  "arm_care",
+] as const;
+
+export type DrillDiscipline = (typeof DRILL_DISCIPLINES)[number];
+
 export type DrillWriteInput = {
   title: string;
   description: string;
+  discipline: DrillDiscipline;
   tags: string[];
 };
 
@@ -17,6 +29,7 @@ export type DrillReadModel = {
   id: string;
   title: string;
   description: string;
+  discipline: DrillDiscipline;
   createdBy: {
     id: string;
     name: string | null;
@@ -31,6 +44,7 @@ export type DrillListItem = {
   id: string;
   title: string;
   description: string;
+  discipline: DrillDiscipline;
   createdBy: {
     id: string;
     name: string | null;

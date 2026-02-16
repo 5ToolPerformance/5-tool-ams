@@ -1,5 +1,5 @@
 import { listDrills } from "@/db/queries/drills/listDrills";
-import { canCoachEditDrill } from "@/domain/drills/rules";
+import { assertDrillDiscipline, canCoachEditDrill } from "@/domain/drills/rules";
 import { DrillListItem } from "@/domain/drills/types";
 import { AuthContext } from "@/lib/auth/auth-context";
 
@@ -13,6 +13,7 @@ export async function listDrillsForLibrary(
     id: drill.id,
     title: drill.title,
     description: drill.description,
+    discipline: assertDrillDiscipline(drill.discipline),
     createdBy: {
       id: drill.createdBy,
       name: drill.creatorName,

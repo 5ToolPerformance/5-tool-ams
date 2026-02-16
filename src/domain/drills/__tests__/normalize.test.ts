@@ -5,6 +5,7 @@ describe("normalizeDrillWriteInput", () => {
     const normalized = normalizeDrillWriteInput({
       title: "  Pitching Balance Drill  ",
       description: "  Keep center of mass stable through delivery. ",
+      discipline: "pitching",
       tags: [],
     });
 
@@ -18,6 +19,7 @@ describe("normalizeDrillWriteInput", () => {
     const normalized = normalizeDrillWriteInput({
       title: "A",
       description: "B",
+      discipline: "hitting",
       tags: [" Rotation ", "rotation", "Video", "video", ""],
     });
 
@@ -29,6 +31,7 @@ describe("normalizeDrillWriteInput", () => {
       normalizeDrillWriteInput({
         title: "   ",
         description: "desc",
+        discipline: "hitting",
         tags: [],
       })
     ).toThrow("Drill title is required");
@@ -39,8 +42,20 @@ describe("normalizeDrillWriteInput", () => {
       normalizeDrillWriteInput({
         title: "title",
         description: "   ",
+        discipline: "hitting",
         tags: [],
       })
     ).toThrow("Drill description is required");
+  });
+
+  it("throws for invalid discipline", () => {
+    expect(() =>
+      normalizeDrillWriteInput({
+        title: "title",
+        description: "desc",
+        discipline: "speed" as never,
+        tags: [],
+      })
+    ).toThrow("Invalid drill discipline");
   });
 });

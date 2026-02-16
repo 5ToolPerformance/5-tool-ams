@@ -13,6 +13,7 @@ export const drills = pgTable("drills", {
 
   title: text("title").notNull(),
   description: text("description").notNull(),
+  discipline: text("discipline").default("hitting").notNull(),
 
   createdBy: uuid("created_by")
     .notNull()

@@ -1,3 +1,11 @@
+export type DrillDiscipline =
+  | "hitting"
+  | "pitching"
+  | "strength"
+  | "fielding"
+  | "catching"
+  | "arm_care";
+
 export type DrillMedia = {
   fileId: string;
   originalName: string;
@@ -10,6 +18,7 @@ export type Drill = {
   id: string;
   title: string;
   description: string;
+  discipline: DrillDiscipline;
   createdBy: {
     id: string;
     name: string | null;
@@ -24,6 +33,7 @@ export type DrillListItem = {
   id: string;
   title: string;
   description: string;
+  discipline: DrillDiscipline;
   createdBy: {
     id: string;
     name: string | null;

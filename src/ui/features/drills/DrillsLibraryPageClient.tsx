@@ -14,6 +14,10 @@ type DrillsLibraryPageClientProps = {
 
 export function DrillsLibraryPageClient({ drills }: DrillsLibraryPageClientProps) {
   const [query, setQuery] = useState("");
+  const formatDiscipline = (value: DrillListItem["discipline"]) =>
+    value === "arm_care"
+      ? "Arm Care"
+      : `${value.charAt(0).toUpperCase()}${value.slice(1)}`;
 
   const filtered = useMemo(() => {
     const normalized = query.trim().toLowerCase();
@@ -22,6 +26,7 @@ export function DrillsLibraryPageClient({ drills }: DrillsLibraryPageClientProps
     return drills.filter(
       (drill) =>
         drill.title.toLowerCase().includes(normalized) ||
+        drill.discipline.toLowerCase().includes(normalized) ||
         drill.tags.some((tag) => tag.includes(normalized))
     );
   }, [drills, query]);
@@ -42,7 +47,7 @@ export function DrillsLibraryPageClient({ drills }: DrillsLibraryPageClientProps
       </div>
 
       <Input
-        placeholder="Search drills by title or tag"
+        placeholder="Search drills by title, discipline, or tag"
         startContent={<Search className="h-4 w-4 text-foreground-500" />}
         value={query}
         onValueChange={setQuery}
@@ -74,6 +79,9 @@ export function DrillsLibraryPageClient({ drills }: DrillsLibraryPageClientProps
               </div>
 
               <div className="flex flex-wrap items-center gap-2">
+                <Chip size="sm" color="secondary" variant="flat">
+                  {formatDiscipline(drill.discipline)}
+                </Chip>
                 {drill.tags.map((tag) => (
                   <Chip key={`${drill.id}-${tag}`} size="sm" variant="flat">
                     {tag}
