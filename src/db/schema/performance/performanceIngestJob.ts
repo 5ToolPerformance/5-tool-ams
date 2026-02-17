@@ -18,7 +18,7 @@ export const performanceIngestStatus = pgEnum("performance_ingest_status", [
   "failed",
 ]);
 
-const performanceIngestJob = pgTable(
+export const performanceIngestJob = pgTable(
   "performance_ingest_job",
   {
     id: uuid("id").primaryKey().defaultRandom(),
@@ -51,5 +51,3 @@ const performanceIngestJob = pgTable(
     index("performance_ingest_session_idx").on(table.sessionId),
   ]
 );
-
-export default performanceIngestJob;

@@ -12,7 +12,7 @@ import {
 
 import { performanceSession } from "./performanceSession";
 
-const hittraxEvent = pgTable(
+export const hittraxEvent = pgTable(
   "hittrax_event",
   {
     id: uuid("id").primaryKey().defaultRandom(),
@@ -101,5 +101,3 @@ const hittraxEvent = pgTable(
     ),
   ]
 );
-
-export default hittraxEvent;

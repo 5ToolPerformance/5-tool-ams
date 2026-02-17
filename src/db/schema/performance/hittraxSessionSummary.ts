@@ -3,7 +3,7 @@ import { index, integer, numeric, pgTable, uuid } from "drizzle-orm/pg-core";
 
 import { performanceSession } from "./performanceSession";
 
-const hittraxSessionSummary = pgTable(
+export const hittraxSessionSummary = pgTable(
   "hittrax_session_summary",
   {
     sessionId: uuid("session_id")
@@ -69,5 +69,3 @@ const hittraxSessionSummary = pgTable(
   },
   (table) => [index("hittrax_summary_session_idx").on(table.sessionId)]
 );
-
-export default hittraxSessionSummary;
