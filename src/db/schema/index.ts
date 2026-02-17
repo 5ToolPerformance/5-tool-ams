@@ -76,6 +76,10 @@ export { lessonMechanics } from "./lesson-logging-v2/lessonMechanics";
 export { lessonPlayers } from "./lesson-logging-v2/lessonPlayers";
 export { pitchingLessonPlayers } from "./lesson-logging-v2/lessonTypes/pitching";
 export { mechanics, mechanicTypeEnum } from "./lesson-logging-v2/mechanics";
+export * from "./performance/hittraxEvent";
+export * from "./performance/hittraxSessionSummary";
+export * from "./performance/performanceIngestJob";
+export * from "./performance/performanceSession";
 export {
   playerAccountLinkActionEnum,
   playerAccountLinkAudit,
