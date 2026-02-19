@@ -1,11 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { prepareDrillFileUpload } from "@/application/drills/prepareDrillFileUpload";
+import { linkUploadedDrillFile } from "@/application/drills/linkUploadedDrillFile";
 import { assertCanEditDrill, getAuthContext, requireRole } from "@/lib/auth/auth-context";
 import { toAuthErrorResponse } from "@/lib/auth/http";
 import { RouteParams } from "@/types/api";
-
-export const runtime = "nodejs";
 
 export async function POST(
   request: NextRequest,
@@ -19,22 +17,26 @@ export async function POST(
     await assertCanEditDrill(ctx, id);
 
     const body = (await request.json()) as {
-      originalFileName?: string;
+      fileId?: string;
+      storageKey?: string;
+      originalName?: string;
       mimeType?: string;
       size?: number;
     };
 
-    const upload = await prepareDrillFileUpload({
+    const media = await linkUploadedDrillFile({
       drillId: id,
-      facilityId: ctx.facilityId,
+      uploadedBy: ctx.userId,
       file: {
-        originalFileName: body.originalFileName ?? "",
+        fileId: body.fileId ?? "",
+        storageKey: body.storageKey ?? "",
+        originalName: body.originalName ?? "",
         mimeType: body.mimeType ?? "",
         size: body.size ?? 0,
       },
     });
 
-    return NextResponse.json({ upload }, { status: 201 });
+    return NextResponse.json({ media }, { status: 201 });
   } catch (error) {
     const authResponse = toAuthErrorResponse(error);
     if (authResponse) return authResponse;
@@ -48,9 +50,9 @@ export async function POST(
       return NextResponse.json({ error: error.message }, { status: 400 });
     }
 
-    console.error("Error in POST /api/drills/[id]/files:", error);
+    console.error("Error in POST /api/drills/[id]/files/link:", error);
     return NextResponse.json(
-      { error: "Failed to upload drill file" },
+      { error: "Failed to link drill file" },
       { status: 500 }
     );
   }

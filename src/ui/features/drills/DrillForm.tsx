@@ -120,20 +120,69 @@ export function DrillForm({ mode, initialDrill }: DrillFormProps) {
 
     const results = await Promise.allSettled(
       pendingUploads.map(async (pending) => {
-        const formData = new FormData();
-        formData.append("file", pending.file);
-
-        const res = await fetch(`/api/drills/${drillId}/files`, {
+        const prepareRes = await fetch(`/api/drills/${drillId}/files`, {
           method: "POST",
-          body: formData,
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            originalFileName: pending.file.name,
+            mimeType: pending.file.type || "application/octet-stream",
+            size: pending.file.size,
+          }),
         });
 
-        if (!res.ok) {
-          const data = await res.json().catch(() => null);
+        const prepareData = (await prepareRes
+          .json()
+          .catch(() => null)) as
+          | {
+              upload?: {
+                fileId: string;
+                storageKey: string;
+                uploadUrl: string;
+                headers?: Record<string, string>;
+              };
+              error?: string;
+            }
+          | null;
+
+        if (!prepareRes.ok || !prepareData?.upload) {
+          const data = prepareData;
           throw new Error(data?.error ?? "Upload failed");
         }
 
-        return (await res.json()) as { media: Drill["media"][number] };
+        const uploadRes = await fetch(prepareData.upload.uploadUrl, {
+          method: "PUT",
+          headers: {
+            ...(prepareData.upload.headers ?? {}),
+          },
+          body: pending.file,
+        });
+
+        if (!uploadRes.ok) {
+          throw new Error("Direct upload failed");
+        }
+
+        const linkRes = await fetch(`/api/drills/${drillId}/files/link`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            fileId: prepareData.upload.fileId,
+            storageKey: prepareData.upload.storageKey,
+            originalName: pending.file.name,
+            mimeType: pending.file.type || "application/octet-stream",
+            size: pending.file.size,
+          }),
+        });
+
+        if (!linkRes.ok) {
+          const linkData = await linkRes.json().catch(() => null);
+          throw new Error(linkData?.error ?? "Link failed");
+        }
+
+        return (await linkRes.json()) as { media: Drill["media"][number] };
       })
     );
 
