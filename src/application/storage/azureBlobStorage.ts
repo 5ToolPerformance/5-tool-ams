@@ -90,6 +90,31 @@ export class AzureBlobStorage {
         return `${blobUrl}?${sasToken}`;
     }
 
+    getUploadUrl(storageKey: string, expiresInMinutes = 15) {
+        const credential = new StorageSharedKeyCredential(
+            this.accountName,
+            this.accountKey
+        );
+
+        const expiresOn = new Date(
+            Date.now() + expiresInMinutes * 60 * 1000
+        );
+
+        const sasToken = generateBlobSASQueryParameters(
+            {
+                containerName: this.containerName,
+                blobName: storageKey,
+                permissions: BlobSASPermissions.parse("cw"),
+                expiresOn,
+                protocol: SASProtocol.Https,
+            },
+            credential
+        ).toString();
+
+        const blobUrl = `https://${this.accountName}.blob.core.windows.net/${this.containerName}/${storageKey}`;
+        return `${blobUrl}?${sasToken}`;
+    }
+
     private parseConnectionString(connectionString: string) {
         const segments = connectionString.split(";").filter(Boolean);
         const values = new Map<string, string>();
