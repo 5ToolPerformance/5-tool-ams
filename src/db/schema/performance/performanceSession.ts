@@ -1,4 +1,11 @@
-import { index, pgEnum, pgTable, timestamp, uuid } from "drizzle-orm/pg-core";
+import {
+  index,
+  pgEnum,
+  pgTable,
+  text,
+  timestamp,
+  uuid,
+} from "drizzle-orm/pg-core";
 
 import lesson from "../lesson";
 import playerInformation from "../players/playerInformation";
@@ -37,6 +44,7 @@ export const performanceSession = pgTable(
 
     status: performanceSessionStatus("status").notNull().default("pending"),
 
+    errorMessage: text("error_message"),
     createdAt: timestamp("created_at", { mode: "string" })
       .notNull()
       .defaultNow(),
