@@ -9,6 +9,7 @@ export function StepConfirm() {
   const {
     form,
     submitWithUploads,
+    isSubmitLocked,
     isSubmitting,
     playerById,
     mechanicById,
@@ -141,9 +142,10 @@ export function StepConfirm() {
               <Button
                 color="primary"
                 onPress={submitWithUploads}
-                isLoading={isSubmitting}
+                isLoading={isSubmitLocked || isSubmitting}
+                isDisabled={isSubmitLocked || isSubmitting}
               >
-                {isSubmitting ? "Saving..." : "Confirm & Save"}
+                {isSubmitLocked || isSubmitting ? "Saving..." : "Confirm & Save"}
               </Button>
             </div>
           </div>

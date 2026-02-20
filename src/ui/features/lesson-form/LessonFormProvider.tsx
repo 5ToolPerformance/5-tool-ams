@@ -37,6 +37,7 @@ type LessonFormContextValue = ReturnType<typeof useLessonForm> & {
   setEvidenceDrafts: React.Dispatch<
     React.SetStateAction<Record<string, EvidenceUploadDraft>>
   >;
+  isSubmitLocked: boolean;
   submitWithUploads: () => Promise<void>;
 };
 
@@ -76,6 +77,7 @@ export function LessonFormProvider({
   const [evidenceDrafts, setEvidenceDrafts] = useState<
     Record<string, EvidenceUploadDraft>
   >({});
+  const [isSubmitLocked, setIsSubmitLocked] = useState(false);
 
   useEffect(() => {
     if (!initialPlayerId) return;
@@ -194,17 +196,24 @@ export function LessonFormProvider({
   }
 
   async function submitWithUploads() {
+    if (isSubmitLocked) return;
+    setIsSubmitLocked(true);
+
+    try {
     const result = await lessonForm.submit();
 
-    if (!result) return;
+      if (!result) return;
 
-    if (result.mode === "create") {
-      await uploadEvidenceDrafts(result.lessonPlayerByPlayerId);
-    } else {
-      await uploadEvidenceDrafts();
+      if (result.mode === "create") {
+        await uploadEvidenceDrafts(result.lessonPlayerByPlayerId);
+      } else {
+        await uploadEvidenceDrafts();
+      }
+
+      lessonForm.completeSuccess();
+    } finally {
+      setIsSubmitLocked(false);
     }
-
-    lessonForm.completeSuccess();
   }
 
   return (
@@ -220,6 +229,7 @@ export function LessonFormProvider({
 
         evidenceDrafts,
         setEvidenceDrafts,
+        isSubmitLocked,
         submitWithUploads,
       }}
     >
