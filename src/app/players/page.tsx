@@ -8,7 +8,7 @@ export default async function PlayersPage() {
 
   if (ctx.role === "player") {
     if (ctx.playerId) {
-      redirect(`/players/${ctx.playerId}/overview`);
+      redirect(`/players/${ctx.playerId}/training`);
     }
     redirect("/profile");
   }

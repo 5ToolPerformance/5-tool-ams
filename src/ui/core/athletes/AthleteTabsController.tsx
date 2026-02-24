@@ -25,9 +25,9 @@ export function AthleteTabsController() {
     ? "performance"
     : isHealthRoute
       ? "health"
-    : TAB_KEYS.includes(lastSegment ?? "")
-      ? lastSegment
-      : "overview";
+      : TAB_KEYS.includes(lastSegment ?? "")
+        ? lastSegment
+        : "overview";
 
   const playerId = pathSegments[1];
 
