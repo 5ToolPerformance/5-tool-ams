@@ -57,6 +57,7 @@ export default function PlayersPage() {
   const [sortBy, setSortBy] = useState<SortKey>("lastName");
   const [sortOrder, setSortOrder] = useState<SortOrder>("asc");
   const [showFilters, setShowFilters] = useState(false);
+  const normalizedSearchTerm = searchTerm.trim().toLowerCase();
 
   // Enhance players data with calculated age
   const playersWithAge = useMemo(() => {
@@ -81,13 +82,18 @@ export default function PlayersPage() {
     let filtered = playersWithAge;
 
     // Search
-    if (searchTerm) {
-      const term = searchTerm.toLowerCase();
-      filtered = filtered.filter(
-        (player) =>
-          player.firstName?.toLowerCase().includes(term) ||
-          player.lastName?.toLowerCase().includes(term)
-      );
+    if (normalizedSearchTerm) {
+      filtered = filtered.filter((player) => {
+        const firstName = (player.firstName ?? "").toLowerCase();
+        const lastName = (player.lastName ?? "").toLowerCase();
+        const fullName = `${firstName} ${lastName}`.trim();
+
+        return (
+          firstName.includes(normalizedSearchTerm) ||
+          lastName.includes(normalizedSearchTerm) ||
+          fullName.includes(normalizedSearchTerm)
+        );
+      });
     }
 
     // Age filter
@@ -116,14 +122,16 @@ export default function PlayersPage() {
     });
   }, [
     playersWithAge,
-    searchTerm,
+    normalizedSearchTerm,
     ageFilter,
     sortBy,
     sortOrder,
     playersLoading,
   ]);
 
-  const activeFiltersCount = [searchTerm, ageFilter].filter(Boolean).length;
+  const activeFiltersCount = [normalizedSearchTerm, ageFilter].filter(
+    Boolean
+  ).length;
 
   const clearFilters = () => {
     setSearchTerm("");
@@ -150,7 +158,7 @@ export default function PlayersPage() {
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400 dark:text-gray-500" />
             <Input
               type="search"
-              placeholder="Search by first or last name..."
+              placeholder="Search by player name..."
               className="pl-10"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
