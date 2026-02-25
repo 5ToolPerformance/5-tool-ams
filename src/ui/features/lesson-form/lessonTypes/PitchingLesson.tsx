@@ -1,23 +1,20 @@
 "use client";
 
-import { Input, Select, SelectItem } from "@heroui/react";
+import { Select, SelectItem, Textarea } from "@heroui/react";
 
-import {
-  PitchingLessonData,
-  PitchingPhase,
-} from "@/hooks/lessons/lessonForm.types";
+import { PitchingLessonData } from "@/hooks/lessons/lessonForm.types";
 
 import { useLessonFormContext } from "../LessonFormProvider";
 import { LessonTypeImplementation } from "./lessonTypes";
 
-const PITCHING_PHASES: {
-  value: PitchingPhase;
+const LESSON_FOCUS: {
+  value: string;
   label: string;
 }[] = [
-  { value: "1", label: "Phase 1" },
-  { value: "2", label: "Phase 2" },
-  { value: "3", label: "Phase 3" },
-  { value: "4", label: "Phase 4" },
+  { value: "flat_ground", label: "Flat Ground" },
+  { value: "bullpen", label: "Bullpen" },
+  { value: "drill_work", label: "Drill Work" },
+  { value: "arm_care", label: "Arm Care" },
 ];
 
 export const PitchingLesson: LessonTypeImplementation<PitchingLessonData> = {
@@ -26,6 +23,8 @@ export const PitchingLesson: LessonTypeImplementation<PitchingLessonData> = {
 
   // Used for mechanics filtering
   allowedMechanicTypes: ["pitching"],
+  allowedDrillTypes: ["pitching"],
+  fatigueCheck: true,
 
   PlayerNotes({ playerId }) {
     const { form } = useLessonFormContext();
@@ -37,57 +36,38 @@ export const PitchingLesson: LessonTypeImplementation<PitchingLessonData> = {
       <div className="space-y-4">
         <p className="text-sm font-medium">Pitching Details</p>
 
-        {/* Phase */}
+        {/* Summary */}
+        <Textarea
+          label="Summary"
+          placeholder="Brief summary of the lesson"
+          value={data.summary ?? ""}
+          onChange={(e) =>
+            form.setFieldValue(
+              `players.${playerId}.lessonSpecific.pitching.summary`,
+              e.target.value
+            )
+          }
+        />
+
         <Select
-          label="Phase"
-          placeholder="Select phase"
-          selectedKeys={data.phase ? [data.phase] : []}
+          label="Lesson Type"
+          placeholder="Select a lesson type"
+          selectedKeys={data.focus ? [data.focus] : []}
           onSelectionChange={(keys) => {
             const value = Array.from(keys)[0];
             form.setFieldValue(
-              `players.${playerId}.lessonSpecific.pitching.phase`,
-              value as PitchingPhase
+              `players.${playerId}.lessonSpecific.pitching.focus`,
+              value as string
             );
           }}
           isRequired
         >
-          {PITCHING_PHASES.map((p) => (
-            <SelectItem key={p.value} textValue={p.label}>
-              {p.label}
+          {LESSON_FOCUS.map((focus) => (
+            <SelectItem key={focus.value} textValue={focus.label}>
+              {focus.label}
             </SelectItem>
           ))}
         </Select>
-
-        {/* Pitch Count */}
-        <Input
-          type="number"
-          label="Pitch Count"
-          placeholder="Total pitches thrown"
-          min={0}
-          value={data.pitchCount != null ? String(data.pitchCount) : ""}
-          onChange={(e) =>
-            form.setFieldValue(
-              `players.${playerId}.lessonSpecific.pitching.pitchCount`,
-              Number(e.target.value)
-            )
-          }
-        />
-
-        {/* Intent */}
-        <Input
-          type="number"
-          label="Intent Level (%)"
-          placeholder="0–100"
-          min={0}
-          max={100}
-          value={data.intentPercent != null ? String(data.intentPercent) : ""}
-          onChange={(e) =>
-            form.setFieldValue(
-              `players.${playerId}.lessonSpecific.pitching.intentPercent`,
-              Number(e.target.value)
-            )
-          }
-        />
       </div>
     );
   },
@@ -96,18 +76,12 @@ export const PitchingLesson: LessonTypeImplementation<PitchingLessonData> = {
     return (
       <div className="space-y-1 text-sm text-foreground-600">
         <p>
-          <strong>Phase:</strong> {data.phase}
+          <strong>Summary:</strong> {data.summary}
         </p>
 
-        {data.pitchCount != null && (
+        {data.focus != null && (
           <p>
-            <strong>Pitch Count:</strong> {data.pitchCount}
-          </p>
-        )}
-
-        {data.intentPercent != null && (
-          <p>
-            <strong>Intent:</strong> {data.intentPercent}%
+            <strong>Focus:</strong> {data.focus}
           </p>
         )}
       </div>

@@ -5,8 +5,8 @@ import { useEffect } from "react";
 import { Card, CardBody, Textarea } from "@heroui/react";
 
 import { useLessonFormContext } from "../LessonFormProvider";
-import { MechanicSelector } from "../components/MechanicSelector";
 import { EvidenceUploadSection } from "../components/EvidenceUploadSection";
+import { MechanicSelector } from "../components/MechanicSelector";
 import { LESSON_TYPE_REGISTRY } from "../lessonTypes";
 
 export function StepPlayerNotes() {
@@ -83,26 +83,9 @@ export function StepPlayerNotes() {
                     {/* Player Name */}
                     <h3 className="text-base font-semibold">{playerName}</h3>
 
-                    {/* Base Notes */}
-                    <Textarea
-                      label="General Notes"
-                      placeholder="Notes for this player…"
-                      minRows={3}
-                      value={player.notes ?? ""}
-                      onChange={(e) =>
-                        form.setFieldValue(
-                          `players.${playerId}.notes`,
-                          e.target.value
-                        )
-                      }
-                    />
-
                     {/* Lesson-type–specific notes */}
                     {lessonImpl?.PlayerNotes && (
                       <div className="space-y-2">
-                        <p className="text-sm font-medium">
-                          {lessonImpl.label} Details
-                        </p>
                         {lessonType === "strength" && (
                           <lessonImpl.PlayerNotes
                             playerId={playerId}
@@ -129,6 +112,12 @@ export function StepPlayerNotes() {
                         </div>
                       )}
 
+                    {lessonImpl?.fatigueCheck && (
+                      <div className="space-y-2">
+                        <p className="text-sm font-medium">Fatigue Report</p>
+                      </div>
+                    )}
+
                     {/* Evidence Upload */}
                     <div className="space-y-2">
                       <p className="text-sm font-medium">Evidence Upload</p>
@@ -143,6 +132,20 @@ export function StepPlayerNotes() {
                         }
                       />
                     </div>
+
+                    {/* Base Notes */}
+                    <Textarea
+                      label="General Notes"
+                      placeholder="Notes for this player…"
+                      minRows={3}
+                      value={player.notes ?? ""}
+                      onChange={(e) =>
+                        form.setFieldValue(
+                          `players.${playerId}.notes`,
+                          e.target.value
+                        )
+                      }
+                    />
                   </CardBody>
                 </Card>
               );

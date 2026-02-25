@@ -8,6 +8,8 @@ export const FieldingLesson: LessonTypeImplementation<never> = {
 
   // Used for mechanics filtering
   allowedMechanicTypes: ["fielding"],
+  allowedDrillTypes: ["fielding"],
+  fatigueCheck: false,
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   PlayerNotes({ playerId }) {

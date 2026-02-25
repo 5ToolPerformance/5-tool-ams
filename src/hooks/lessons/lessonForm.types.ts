@@ -18,6 +18,7 @@ export type PlayerLessonData = {
     strength?: StrengthLessonSpecific;
   };
   videoAssetId?: string;
+  fatigueReport?: FatigueReportData;
 };
 
 export type LessonFormValues = {
@@ -44,12 +45,15 @@ export const LESSON_STEPS: LessonStep[] = [
   "confirm",
 ];
 
-export type PitchingPhase = "1" | "2" | "3" | "4";
-
 export type PitchingLessonData = {
-  phase?: PitchingPhase;
-  pitchCount?: number;
-  intentPercent?: number;
+  summary?: string;
+  focus?: string;
+};
+
+export type FatigueReportData = {
+  fatigue: boolean;
+  injury: boolean;
+  bodyPartId?: string;
 };
 
 export type TsIsoData = {

@@ -8,6 +8,8 @@ export const HittingLesson: LessonTypeImplementation<never> = {
 
   // Used for mechanics filtering
   allowedMechanicTypes: ["hitting"],
+  allowedDrillTypes: ["hitting"],
+  fatigueCheck: false,
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   PlayerNotes({ playerId }) {
