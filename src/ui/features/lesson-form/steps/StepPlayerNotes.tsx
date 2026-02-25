@@ -4,6 +4,8 @@ import { useEffect } from "react";
 
 import { Card, CardBody, Textarea } from "@heroui/react";
 
+import { FatigueCheckin } from "@/ui/features/lesson-form/components/FatigueCheckin";
+
 import { useLessonFormContext } from "../LessonFormProvider";
 import { EvidenceUploadSection } from "../components/EvidenceUploadSection";
 import { MechanicSelector } from "../components/MechanicSelector";
@@ -95,6 +97,9 @@ export function StepPlayerNotes() {
                         {lessonType !== "strength" && (
                           <lessonImpl.PlayerNotes playerId={playerId} />
                         )}
+                        {lessonImpl?.fatigueCheck && (
+                          <FatigueCheckin playerId={playerId} />
+                        )}
                       </div>
                     )}
 
@@ -111,12 +116,6 @@ export function StepPlayerNotes() {
                           />
                         </div>
                       )}
-
-                    {lessonImpl?.fatigueCheck && (
-                      <div className="space-y-2">
-                        <p className="text-sm font-medium">Fatigue Report</p>
-                      </div>
-                    )}
 
                     {/* Evidence Upload */}
                     <div className="space-y-2">

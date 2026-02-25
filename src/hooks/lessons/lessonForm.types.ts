@@ -51,8 +51,8 @@ export type PitchingLessonData = {
 };
 
 export type FatigueReportData = {
-  fatigue: boolean;
-  injury: boolean;
+  report: "fatigue" | "injury" | "none";
+  rating?: number;
   bodyPartId?: string;
 };
 
