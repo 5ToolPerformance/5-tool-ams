@@ -1,5 +1,6 @@
 import { manualTsIso, pitchingLessonPlayers } from "@/db/schema";
 import {
+  FatigueReportData,
   LessonType,
   StrengthLessonSpecific,
 } from "@/hooks/lessons/lessonForm.types";
@@ -15,6 +16,7 @@ export type LessonWritePayload = {
     playerId: string;
     notes?: string;
     lessonSpecific?: unknown;
+    fatigueReport?: FatigueReportData;
   }[];
 
   mechanics: {
@@ -37,6 +39,7 @@ export type LessonReadModel = {
     lessonPlayerId?: string;
     notes?: string;
     lessonSpecific?: unknown;
+    fatigueReport?: FatigueReportData;
   }[];
 
   mechanics: {

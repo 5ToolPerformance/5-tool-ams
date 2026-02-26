@@ -17,7 +17,8 @@ export function hydrateLessonForm(read: LessonReadModel): LessonFormValues {
   }
 
   for (const participant of read.participants) {
-    const { playerId, lessonPlayerId, notes, lessonSpecific } = participant;
+    const { playerId, lessonPlayerId, notes, lessonSpecific, fatigueReport } =
+      participant;
 
     values.selectedPlayerIds.push(playerId);
 
@@ -25,6 +26,7 @@ export function hydrateLessonForm(read: LessonReadModel): LessonFormValues {
       ...(lessonPlayerId ? { lessonPlayerId } : {}),
       ...(notes ? { notes } : {}),
       ...(lessonSpecific ? { lessonSpecific } : {}),
+      ...(fatigueReport ? { fatigueReport } : {}),
     };
   }
 

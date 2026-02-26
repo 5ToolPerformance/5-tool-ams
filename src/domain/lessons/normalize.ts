@@ -29,6 +29,7 @@ export function normalizeLessonForCreate(
       playerId,
       notes: player.notes || undefined,
       lessonSpecific: player.lessonSpecific ?? undefined,
+      fatigueReport: player.fatigueReport ?? undefined,
     };
   });
 
