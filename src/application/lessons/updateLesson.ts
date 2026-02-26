@@ -4,12 +4,18 @@ import db from "@/db";
 import {
   attachments,
   lesson,
+  lessonDrills,
   lessonMechanics,
+  lessonPlayerFatigue,
   lessonPlayers,
   manualTsIso,
   pitchingLessonPlayers,
 } from "@/db/schema";
-import type { LessonWritePayload, TsIsoInsert } from "@/domain/lessons/types";
+import type {
+  FatigueReportInsert,
+  LessonWritePayload,
+  TsIsoInsert,
+} from "@/domain/lessons/types";
 import { isPitchingLessonSpecific } from "@/domain/lessons/types";
 import { StrengthLessonSpecific } from "@/hooks/lessons/lessonForm.types";
 
@@ -70,6 +76,16 @@ export async function updateLesson(
           .delete(manualTsIso)
           .where(inArray(manualTsIso.lessonPlayerId, existingLessonPlayerIds));
       }
+
+      await tx
+        .delete(lessonPlayerFatigue)
+        .where(
+          inArray(lessonPlayerFatigue.lessonPlayerId, existingLessonPlayerIds)
+        );
+
+      await tx
+        .delete(lessonDrills)
+        .where(inArray(lessonDrills.lessonPlayerId, existingLessonPlayerIds));
     }
 
     /**
@@ -165,9 +181,8 @@ export async function updateLesson(
 
         pitchingRows.push({
           lessonPlayerId: lessonPlayerByPlayerId[p.playerId],
-          phase: ls.phase,
-          pitchCount: ls.pitchCount,
-          intentPercent: ls.intentPercent,
+          summary: ls.summary,
+          focus: ls.focus,
         });
       }
 
@@ -195,6 +210,46 @@ export async function updateLesson(
 
       if (tsIsoRows.length > 0) {
         await tx.insert(manualTsIso).values(tsIsoRows);
+      }
+    }
+
+    /**
+     * 6 Insert lesson_drills
+     */
+    if (payload.drills.length > 0) {
+      await tx.insert(lessonDrills).values(
+        payload.drills.map((d) => ({
+          lessonPlayerId: lessonPlayerByPlayerId[d.playerId],
+          drillId: d.drillId,
+          notes: d.notes,
+        }))
+      );
+    }
+
+    /**
+     * 7 Insert fatigue report (if provided)
+     */
+    if (payload.participants.some((p) => p.fatigueReport)) {
+      const fatigueRows: FatigueReportInsert[] = [];
+
+      for (const p of payload.participants) {
+        if (
+          !p.fatigueReport ||
+          p.fatigueReport.report === "none" ||
+          !p.fatigueReport.bodyPartId
+        )
+          continue;
+
+        fatigueRows.push({
+          lessonPlayerId: lessonPlayerByPlayerId[p.playerId],
+          report: p.fatigueReport.report as string,
+          bodyPartId: p.fatigueReport.bodyPartId,
+          severity: p.fatigueReport.severity,
+        });
+      }
+
+      if (fatigueRows.length > 0) {
+        await tx.insert(lessonPlayerFatigue).values(fatigueRows);
       }
     }
   });
