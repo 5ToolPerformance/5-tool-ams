@@ -72,6 +72,7 @@ export { hawkinsMulti } from "./hawkin/hawkinMulti";
 export { hawkinsTsIso } from "./hawkin/hawkinTsIso";
 export { manualTsIso } from "./hawkin/manualTsIso";
 export * from "./injuries";
+export { lessonDrills } from "./lesson-logging-v2/lessonDrills";
 export { lessonPlayerFatigue } from "./lesson-logging-v2/lessonFatigue";
 export { lessonMechanics } from "./lesson-logging-v2/lessonMechanics";
 export { lessonPlayers } from "./lesson-logging-v2/lessonPlayers";
