@@ -24,6 +24,12 @@ export type LessonWritePayload = {
     mechanicId: string;
     notes?: string;
   }[];
+
+  drills: {
+    playerId: string;
+    drillId: string;
+    notes?: string;
+  }[];
 };
 
 export type LessonReadModel = {
@@ -45,6 +51,12 @@ export type LessonReadModel = {
   mechanics: {
     playerId: string;
     mechanicId: string;
+    notes?: string;
+  }[];
+
+  drills: {
+    playerId: string;
+    drillId: string;
     notes?: string;
   }[];
 };

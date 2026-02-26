@@ -44,5 +44,18 @@ export function hydrateLessonForm(read: LessonReadModel): LessonFormValues {
     };
   }
 
+  for (const drill of read.drills) {
+    const player =
+      values.players[drill.playerId] ?? (values.players[drill.playerId] = {});
+
+    if (!player.drills) {
+      player.drills = {};
+    }
+
+    player.drills[drill.drillId] = {
+      ...(drill.notes ? { notes: drill.notes } : {}),
+    };
+  }
+
   return values;
 }

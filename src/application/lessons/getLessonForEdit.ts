@@ -152,5 +152,6 @@ export async function getLessonForEdit(
       mechanicId: m.mechanicId,
       notes: m.notes ?? undefined,
     })),
+    drills: [],
   };
 }
