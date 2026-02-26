@@ -89,58 +89,66 @@ export function MechanicSelector({
 
   return (
     <Accordion variant="splitted" selectionMode="multiple" className="mt-2">
-      {orderedTags.map((tag) => {
-        const tagMechanics = mechanicsByTag[tag];
+      <AccordionItem
+        key="Mechanics"
+        aria-label="All Mechanics"
+        title="All Mechanics"
+      >
+        <Accordion variant="splitted" selectionMode="multiple" className="mt-2">
+          {orderedTags.map((tag) => {
+            const tagMechanics = mechanicsByTag[tag];
 
-        return (
-          <AccordionItem key={tag} aria-label={tag} title={tag}>
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-              {tagMechanics.map((mechanic) => {
-                const entry = mechanicMap[mechanic.id];
-                const isSelected = !!entry;
+            return (
+              <AccordionItem key={tag} aria-label={tag} title={tag}>
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                  {tagMechanics.map((mechanic) => {
+                    const entry = mechanicMap[mechanic.id];
+                    const isSelected = !!entry;
 
-                return (
-                  <div
-                    key={mechanic.id}
-                    className="flex flex-col gap-2 rounded-md border border-default-200 p-3"
-                  >
-                    <div className="flex items-start gap-2">
-                      <Checkbox
-                        isSelected={isSelected}
-                        onValueChange={() => toggleMechanic(mechanic.id)}
+                    return (
+                      <div
+                        key={mechanic.id}
+                        className="flex flex-col gap-2 rounded-md border border-default-200 p-3"
                       >
-                        {mechanic.name}
-                      </Checkbox>
+                        <div className="flex items-start gap-2">
+                          <Checkbox
+                            isSelected={isSelected}
+                            onValueChange={() => toggleMechanic(mechanic.id)}
+                          >
+                            {mechanic.name}
+                          </Checkbox>
 
-                      {mechanic.description && (
-                        <Tooltip
-                          content={mechanic.description}
-                          placement="right"
-                        >
-                          <InfoIcon className="h-4 w-4 cursor-pointer text-default-400" />
-                        </Tooltip>
-                      )}
-                    </div>
+                          {mechanic.description && (
+                            <Tooltip
+                              content={mechanic.description}
+                              placement="right"
+                            >
+                              <InfoIcon className="h-4 w-4 cursor-pointer text-default-400" />
+                            </Tooltip>
+                          )}
+                        </div>
 
-                    {/* Optional notes */}
-                    {isSelected && (
-                      <Textarea
-                        size="sm"
-                        minRows={2}
-                        placeholder="Optional clarification…"
-                        value={entry.notes ?? ""}
-                        onChange={(e) =>
-                          updateNotes(mechanic.id, e.target.value)
-                        }
-                      />
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          </AccordionItem>
-        );
-      })}
+                        {/* Optional notes */}
+                        {isSelected && (
+                          <Textarea
+                            size="sm"
+                            minRows={2}
+                            placeholder="Optional clarification…"
+                            value={entry.notes ?? ""}
+                            onChange={(e) =>
+                              updateNotes(mechanic.id, e.target.value)
+                            }
+                          />
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </AccordionItem>
+            );
+          })}
+        </Accordion>
+      </AccordionItem>
     </Accordion>
   );
 }

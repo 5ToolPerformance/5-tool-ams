@@ -9,10 +9,15 @@ export type PlayerMechanicEntry = {
   notes?: string;
 };
 
+export type PlayerDrillEntry = {
+  notes?: string;
+};
+
 export type PlayerLessonData = {
   lessonPlayerId?: string;
   notes?: string;
   mechanics?: Record<string, PlayerMechanicEntry>;
+  drills?: Record<string, PlayerDrillEntry>;
   lessonSpecific?: {
     pitching?: PitchingLessonData;
     strength?: StrengthLessonSpecific;

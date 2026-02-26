@@ -10,13 +10,17 @@ import {
 } from "@heroui/react";
 
 import { FatigueReportData } from "@/hooks/lessons/lessonForm.types";
-import { useLessonFormContext } from "@/ui/features/lesson-form/LessonFormProvider";
+import {
+  LessonFormBodyPart,
+  useLessonFormContext,
+} from "@/ui/features/lesson-form/LessonFormProvider";
 
 type FatigueCheckinProps = {
+  bodyParts: LessonFormBodyPart[];
   playerId: string;
 };
 
-export function FatigueCheckin({ playerId }: FatigueCheckinProps) {
+export function FatigueCheckin({ bodyParts, playerId }: FatigueCheckinProps) {
   const { form } = useLessonFormContext();
   const formFatigueReport = form.state.values.players[playerId]?.fatigueReport;
   const [severity, setSeverity] = useState(0);
@@ -33,18 +37,6 @@ export function FatigueCheckin({ playerId }: FatigueCheckinProps) {
     formFatigueReport?.bodyPartId,
     formFatigueReport?.severity,
   ]);
-
-  const bodyPartOptions = [
-    "Head",
-    "Neck",
-    "Shoulder",
-    "Arm",
-    "Back",
-    "Hip",
-    "Knee",
-    "Ankle",
-    "Foot",
-  ];
 
   const showBodyParts = fatigue === "injury" || fatigue === "fatigue";
 
@@ -116,9 +108,9 @@ export function FatigueCheckin({ playerId }: FatigueCheckinProps) {
               onValueChange={handleBodyPartChange}
             >
               <div className="grid grid-cols-3 gap-2">
-                {bodyPartOptions.map((part) => (
-                  <Radio key={part} value={part}>
-                    {part}
+                {bodyParts.map((part) => (
+                  <Radio key={part.name} value={part.id}>
+                    {part.name}
                   </Radio>
                 ))}
               </div>

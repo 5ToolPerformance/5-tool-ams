@@ -4,6 +4,7 @@ import { useEffect } from "react";
 
 import { Card, CardBody, Textarea } from "@heroui/react";
 
+import { DrillSelector } from "@/ui/features/lesson-form/components/DrillSelector";
 import { FatigueCheckin } from "@/ui/features/lesson-form/components/FatigueCheckin";
 
 import { useLessonFormContext } from "../LessonFormProvider";
@@ -17,6 +18,8 @@ export function StepPlayerNotes() {
     ensurePlayer,
     playerById,
     mechanics,
+    bodyParts,
+    drills,
     evidenceDrafts,
     setEvidenceDrafts,
   } = useLessonFormContext();
@@ -64,6 +67,16 @@ export function StepPlayerNotes() {
           return m.type === lessonType;
         });
 
+        const availableDrills = drills.filter((d) => {
+          if (d.discipline === null) return true;
+
+          if (lessonImpl?.allowedDrillTypes) {
+            return lessonImpl.allowedDrillTypes.includes(d.discipline);
+          }
+
+          return d.discipline === lessonType;
+        });
+
         return (
           <div className="space-y-6">
             {/* Step Header */}
@@ -98,7 +111,10 @@ export function StepPlayerNotes() {
                           <lessonImpl.PlayerNotes playerId={playerId} />
                         )}
                         {lessonImpl?.fatigueCheck && (
-                          <FatigueCheckin playerId={playerId} />
+                          <FatigueCheckin
+                            playerId={playerId}
+                            bodyParts={bodyParts}
+                          />
                         )}
                       </div>
                     )}
@@ -113,6 +129,18 @@ export function StepPlayerNotes() {
                           <MechanicSelector
                             playerId={playerId}
                             mechanics={availableMechanics}
+                          />
+                        </div>
+                      )}
+
+                    {/* Drills */}
+                    {lessonImpl?.allowedDrillTypes &&
+                      lessonImpl.allowedDrillTypes.length > 0 && (
+                        <div className="space-y-2">
+                          <p className="text-sm font-medium">Drills</p>
+                          <DrillSelector
+                            playerId={playerId}
+                            drills={availableDrills}
                           />
                         </div>
                       )}
