@@ -407,6 +407,20 @@
       "when": 1771344987022,
       "tag": "0057_optimal_warpath",
       "breakpoints": true
+    },
+    {
+      "idx": 58,
+      "version": "7",
+      "when": 1772123825355,
+      "tag": "0058_fixed_molly_hayes",
+      "breakpoints": true
+    },
+    {
+      "idx": 59,
+      "version": "7",
+      "when": 1772123946456,
+      "tag": "0059_needy_sprite",
+      "breakpoints": true
     }
   ]
 }

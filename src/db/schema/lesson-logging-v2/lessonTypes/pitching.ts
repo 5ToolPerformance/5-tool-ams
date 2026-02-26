@@ -1,4 +1,4 @@
-import { index, integer, pgTable, text, uuid } from "drizzle-orm/pg-core";
+import { index, pgTable, text, uuid } from "drizzle-orm/pg-core";
 
 import lessonPlayers from "../lessonPlayers";
 
@@ -12,12 +12,8 @@ export const pitchingLessonPlayers = pgTable(
       .references(() => lessonPlayers.id, {
         onDelete: "cascade",
       }),
-
-    phase: text("phase").notNull(),
-
-    pitchCount: integer("pitch_count"),
-
-    intentPercent: integer("intent_percent"),
+    summary: text("summary"),
+    focus: text("focus"),
   },
   (table) => [index("pitching_lesson_players_lp_idx").on(table.lessonPlayerId)]
 );
