@@ -81,11 +81,16 @@ export async function createLesson(
       const pitchingRows: PitchingLessonInsert[] = [];
 
       for (const p of payload.participants) {
-        if (!isPitchingLessonSpecific(p.lessonSpecific)) {
+        const lessonSpecific = p.lessonSpecific as
+          | { pitching?: unknown }
+          | undefined;
+        const pitching = lessonSpecific?.pitching;
+
+        if (!isPitchingLessonSpecific(pitching)) {
           continue;
         }
 
-        const ls = p.lessonSpecific; // ✅ now correctly narrowed
+        const ls = pitching;
 
         pitchingRows.push({
           lessonPlayerId: lessonPlayerByPlayerId[p.playerId],

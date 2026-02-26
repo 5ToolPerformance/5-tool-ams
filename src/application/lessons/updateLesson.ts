@@ -175,9 +175,14 @@ export async function updateLesson(
       const pitchingRows: PitchingLessonPlayerInsert[] = [];
 
       for (const p of payload.participants) {
-        if (!isPitchingLessonSpecific(p.lessonSpecific)) continue;
+        const lessonSpecific = p.lessonSpecific as
+          | { pitching?: unknown }
+          | undefined;
+        const pitching = lessonSpecific?.pitching;
 
-        const ls = p.lessonSpecific;
+        if (!isPitchingLessonSpecific(pitching)) continue;
+
+        const ls = pitching;
 
         pitchingRows.push({
           lessonPlayerId: lessonPlayerByPlayerId[p.playerId],

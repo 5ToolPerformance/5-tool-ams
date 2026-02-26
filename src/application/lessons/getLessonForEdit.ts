@@ -82,9 +82,10 @@ export async function getLessonForEdit(
       if (!pitching) continue;
 
       p.lessonSpecific = {
-        phase: pitching.phase,
-        pitchCount: pitching.pitchCount ?? undefined,
-        intentPercent: pitching.intentPercent ?? undefined,
+        pitching: {
+          summary: pitching.summary ?? undefined,
+          focus: pitching.focus ?? undefined,
+        },
       };
     }
   }
