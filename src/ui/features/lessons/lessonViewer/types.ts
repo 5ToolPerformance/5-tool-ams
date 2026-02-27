@@ -6,6 +6,7 @@ export interface LessonViewerProps {
   lesson: LessonCardData;
   viewContext: ViewContext;
   className?: string;
+  returnTo?: string;
 }
 
 export interface LessonViewerSectionProps {

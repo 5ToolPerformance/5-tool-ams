@@ -87,6 +87,12 @@ export function LessonCard({
             {notesToShow}
           </p>
         )}
+        {lesson.drills.length > 0 && (
+          <p className="text-sm text-zinc-600 dark:text-zinc-400">
+            <strong>Drills:</strong>{" "}
+            {lesson.drills.map((drill) => drill.title).join(", ")}
+          </p>
+        )}
 
         {lesson.mechanics.length > 0 && (
           <>

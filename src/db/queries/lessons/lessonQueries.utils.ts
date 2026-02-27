@@ -4,12 +4,15 @@ import db from "@/db";
 import {
   LessonCardData,
   LessonCoachData,
+  LessonDrillData,
   LessonMechanicData,
   LessonPlayerData,
   LessonQueryFilters,
 } from "@/db/queries/lessons/lessonQueries.types";
 import {
+  drills,
   lesson,
+  lessonDrills,
   lessonMechanics,
   lessonPlayers,
   mechanics,
@@ -31,6 +34,11 @@ interface RawLessonPlayerRow {
 interface RawLessonMechanicRow {
   lessonMechanic: typeof lessonMechanics.$inferSelect;
   mechanic: typeof mechanics.$inferSelect;
+}
+
+interface RawLessonDrillRow {
+  lessonDrill: typeof lessonDrills.$inferSelect;
+  drill: typeof drills.$inferSelect;
 }
 
 /**
@@ -147,13 +155,38 @@ export async function fetchLessonMechanicsBatch(
   return mechanicMap;
 }
 
+export async function fetchLessonDrillsBatch(
+  lessonPlayerIds: string[]
+): Promise<Map<string, RawLessonDrillRow[]>> {
+  if (lessonPlayerIds.length === 0) return new Map();
+
+  const rows = await db
+    .select({
+      lessonDrill: lessonDrills,
+      drill: drills,
+    })
+    .from(lessonDrills)
+    .innerJoin(drills, eq(lessonDrills.drillId, drills.id))
+    .where(inArray(lessonDrills.lessonPlayerId, lessonPlayerIds));
+
+  const drillMap = new Map<string, RawLessonDrillRow[]>();
+  for (const row of rows) {
+    const existing = drillMap.get(row.lessonDrill.lessonPlayerId) ?? [];
+    existing.push(row);
+    drillMap.set(row.lessonDrill.lessonPlayerId, existing);
+  }
+
+  return drillMap;
+}
+
 /**
  * Transform raw data into LessonCardData format
  */
 export function transformToLessonCard(
   rawLesson: RawLessonRow,
   lessonPlayersData: RawLessonPlayerRow[],
-  lessonMechanicsData: RawLessonMechanicRow[]
+  lessonMechanicsData: RawLessonMechanicRow[],
+  lessonDrillsData: RawLessonDrillRow[]
 ): LessonCardData {
   const { lesson: lessonData, coach, legacyPlayer } = rawLesson;
 
@@ -216,6 +249,16 @@ export function transformToLessonCard(
     })
   );
 
+  const drillsData: LessonDrillData[] = lessonDrillsData.map((row) => ({
+    id: row.lessonDrill.id,
+    drillId: row.lessonDrill.drillId,
+    title: row.drill.title,
+    description: row.drill.description,
+    discipline: row.drill.discipline,
+    notes: row.lessonDrill.notes,
+    lessonPlayerId: row.lessonDrill.lessonPlayerId,
+  }));
+
   return {
     id: lessonData.id,
     lessonType: lessonData.lessonType,
@@ -225,6 +268,7 @@ export function transformToLessonCard(
     coach: coachData,
     players,
     mechanics: mechanicsData,
+    drills: drillsData,
     isLegacy,
   };
 }

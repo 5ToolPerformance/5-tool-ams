@@ -8,6 +8,7 @@ import {
 import {
   buildWhereConditions,
   fetchBaseLessons,
+  fetchLessonDrillsBatch,
   fetchLessonMechanicsBatch,
   fetchLessonPlayersBatch,
   transformToLessonCard,
@@ -75,14 +76,23 @@ export async function getLessonsWithFilters(
     fetchLessonPlayersBatch(lessonIds),
     fetchLessonMechanicsBatch(lessonIds),
   ]);
+  const lessonPlayerIds = Array.from(playersMap.values())
+    .flat()
+    .map((row) => row.lessonPlayer.id);
+  const drillsMap = await fetchLessonDrillsBatch(lessonPlayerIds);
 
   return baseLessons.map((rawLesson) => {
     const lessonPlayersData = playersMap.get(rawLesson.lesson.id) ?? [];
     const lessonMechanicsData = mechanicsMap.get(rawLesson.lesson.id) ?? [];
+    const lessonDrillsData = lessonPlayersData.flatMap((row) =>
+      drillsMap.get(row.lessonPlayer.id) ?? []
+    );
+
     return transformToLessonCard(
       rawLesson,
       lessonPlayersData,
-      lessonMechanicsData
+      lessonMechanicsData,
+      lessonDrillsData
     );
   });
 }
@@ -111,14 +121,22 @@ export async function getLessonById(
     fetchLessonPlayersBatch([lessonId]),
     fetchLessonMechanicsBatch([lessonId]),
   ]);
+  const lessonPlayerIds = Array.from(playersMap.values())
+    .flat()
+    .map((row) => row.lessonPlayer.id);
+  const drillsMap = await fetchLessonDrillsBatch(lessonPlayerIds);
 
   const lessonPlayersData = playersMap.get(lessonId) ?? [];
   const lessonMechanicsData = mechanicsMap.get(lessonId) ?? [];
+  const lessonDrillsData = lessonPlayersData.flatMap((row) =>
+    drillsMap.get(row.lessonPlayer.id) ?? []
+  );
 
   return transformToLessonCard(
     baseLessons[0],
     lessonPlayersData,
-    lessonMechanicsData
+    lessonMechanicsData,
+    lessonDrillsData
   );
 }
 
@@ -185,14 +203,23 @@ export async function getAllLessonsForPlayer(
     fetchLessonPlayersBatch(fetchedLessonIds),
     fetchLessonMechanicsBatch(fetchedLessonIds),
   ]);
+  const lessonPlayerIds = Array.from(playersMap.values())
+    .flat()
+    .map((row) => row.lessonPlayer.id);
+  const drillsMap = await fetchLessonDrillsBatch(lessonPlayerIds);
 
   return baseLessons.map((rawLesson) => {
     const lessonPlayersData = playersMap.get(rawLesson.lesson.id) ?? [];
     const lessonMechanicsData = mechanicsMap.get(rawLesson.lesson.id) ?? [];
+    const lessonDrillsData = lessonPlayersData.flatMap((row) =>
+      drillsMap.get(row.lessonPlayer.id) ?? []
+    );
+
     return transformToLessonCard(
       rawLesson,
       lessonPlayersData,
-      lessonMechanicsData
+      lessonMechanicsData,
+      lessonDrillsData
     );
   });
 }

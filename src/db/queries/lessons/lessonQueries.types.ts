@@ -11,6 +11,40 @@ export interface LessonMechanicData {
   playerId: string;
 }
 
+export interface LessonDrillData {
+  id: string;
+  drillId: string;
+  title: string;
+  description: string | null;
+  discipline: string;
+  notes: string | null;
+  /** Player this drill was logged for */
+  lessonPlayerId: string;
+}
+
+// TODO
+export interface LessonAttachmentData {
+  id: string;
+}
+
+// TODO
+export interface LessonFatigueData {
+  id: string;
+  report: string;
+  severity: number | null;
+  bodyPart: string | null;
+}
+
+// TODO
+export interface LessonSpecificData {
+  data: PitchingLessonData | null; // Extend with other lesson types as needed
+}
+
+export interface PitchingLessonData {
+  summary: string;
+  focus: string;
+}
+
 /** Player data for lesson cards */
 export interface LessonPlayerData {
   id: string;
@@ -45,6 +79,8 @@ export interface LessonCardData {
   players: LessonPlayerData[];
   /** Mechanics worked on during lesson */
   mechanics: LessonMechanicData[];
+  /** Drills assigned during lesson */
+  drills: LessonDrillData[];
   /** Whether this is a legacy lesson (no lesson_players records) */
   isLegacy: boolean;
 }
