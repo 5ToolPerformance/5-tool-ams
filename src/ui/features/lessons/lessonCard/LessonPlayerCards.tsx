@@ -1,6 +1,7 @@
+import { ReactNode } from "react";
+
 import { Chip, Tooltip } from "@heroui/react";
 import { Paperclip, Video } from "lucide-react";
-import { ReactNode } from "react";
 
 import {
   LessonCardData,
@@ -29,20 +30,16 @@ function getPlayerMechanics(lesson: LessonCardData, player: LessonPlayerData) {
 }
 
 function getPlayerEvidenceCounts(player: LessonPlayerData) {
-  const videos = player.attachments.filter((a) => a.type === "file_video").length;
+  const videos = player.attachments.filter(
+    (a) => a.type === "file_video"
+  ).length;
   return {
     videos,
     attachments: player.attachments.length - videos,
   };
 }
 
-function HoverListChip({
-  label,
-  items,
-}: {
-  label: string;
-  items: string[];
-}) {
+function HoverListChip({ label, items }: { label: string; items: string[] }) {
   if (items.length === 0) return null;
 
   const visibleItems = items.slice(0, 8);
@@ -76,13 +73,7 @@ function HoverListChip({
   );
 }
 
-function PresenceChip({
-  label,
-  icon,
-}: {
-  label: string;
-  icon: ReactNode;
-}) {
+function PresenceChip({ label, icon }: { label: string; icon: ReactNode }) {
   return (
     <Tooltip content={label} placement="top">
       <Chip
@@ -128,7 +119,9 @@ function PlayerSpecificSummary({
   }
 
   if (lesson.lessonType === "strength") {
-    const metricCount = countStrengthMetrics(player.lessonSpecific.strength?.tsIso);
+    const metricCount = countStrengthMetrics(
+      player.lessonSpecific.strength?.tsIso
+    );
     if (metricCount === 0) return null;
 
     return (
@@ -179,21 +172,6 @@ export function LessonPlayerCards({ lesson, players }: LessonPlayerCardsProps) {
                 >
                   {player.position}
                 </Chip>
-              </div>
-
-              <div className="mb-2 flex flex-wrap gap-2">
-                {fatigueCount > 0 && (
-                  <Chip
-                    size="sm"
-                    variant="flat"
-                    classNames={{
-                      base: "bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800",
-                      content: "text-[11px] text-amber-700 dark:text-amber-300",
-                    }}
-                  >
-                    Fatigue x{fatigueCount}
-                  </Chip>
-                )}
               </div>
 
               {player.notes && (

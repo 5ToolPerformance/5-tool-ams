@@ -35,7 +35,10 @@ export function ClickableLessonCard({
     if (onClick) {
       onClick(lesson.id);
     } else {
-      router.push(href ?? `/lessons/${lesson.id}`);
+      const fallbackHref = playerId
+        ? `/lessons/${lesson.id}?playerId=${encodeURIComponent(playerId)}`
+        : `/lessons/${lesson.id}`;
+      router.push(href ?? fallbackHref);
     }
   };
 

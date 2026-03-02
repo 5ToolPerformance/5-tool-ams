@@ -5,6 +5,7 @@ export type ViewContext = "coach" | "player";
 export interface LessonViewerProps {
   lesson: LessonCardData;
   viewContext: ViewContext;
+  playerId?: string;
   className?: string;
   returnTo?: string;
 }

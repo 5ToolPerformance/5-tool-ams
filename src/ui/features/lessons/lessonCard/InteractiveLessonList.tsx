@@ -269,7 +269,11 @@ export function InteractiveLessonList({
                 lesson={lesson}
                 viewContext={viewContext}
                 playerId={playerId}
-                href={`${baseHref}/${lesson.id}`}
+                href={
+                  playerId
+                    ? `${baseHref}/${lesson.id}?playerId=${encodeURIComponent(playerId)}`
+                    : `${baseHref}/${lesson.id}`
+                }
                 onClick={onLessonClick}
               />
             ))}
