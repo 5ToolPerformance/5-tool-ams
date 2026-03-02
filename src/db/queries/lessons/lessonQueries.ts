@@ -8,9 +8,13 @@ import {
 import {
   buildWhereConditions,
   fetchBaseLessons,
+  fetchLessonAttachmentsBatch,
   fetchLessonDrillsBatch,
+  fetchLessonFatigueBatch,
   fetchLessonMechanicsBatch,
   fetchLessonPlayersBatch,
+  fetchPitchingLessonSpecificBatch,
+  fetchStrengthLessonSpecificBatch,
   transformToLessonCard,
 } from "@/db/queries/lessons/lessonQueries.utils";
 import { lesson, lessonPlayers, playerInformation, users } from "@/db/schema";
@@ -79,7 +83,14 @@ export async function getLessonsWithFilters(
   const lessonPlayerIds = Array.from(playersMap.values())
     .flat()
     .map((row) => row.lessonPlayer.id);
-  const drillsMap = await fetchLessonDrillsBatch(lessonPlayerIds);
+  const [drillsMap, fatigueMap, attachmentsMap, pitchingSpecificMap, strengthSpecificMap] =
+    await Promise.all([
+      fetchLessonDrillsBatch(lessonPlayerIds),
+      fetchLessonFatigueBatch(lessonPlayerIds),
+      fetchLessonAttachmentsBatch(lessonPlayerIds),
+      fetchPitchingLessonSpecificBatch(lessonPlayerIds),
+      fetchStrengthLessonSpecificBatch(lessonPlayerIds),
+    ]);
 
   return baseLessons.map((rawLesson) => {
     const lessonPlayersData = playersMap.get(rawLesson.lesson.id) ?? [];
@@ -92,7 +103,11 @@ export async function getLessonsWithFilters(
       rawLesson,
       lessonPlayersData,
       lessonMechanicsData,
-      lessonDrillsData
+      lessonDrillsData,
+      fatigueMap,
+      attachmentsMap,
+      pitchingSpecificMap,
+      strengthSpecificMap
     );
   });
 }
@@ -124,7 +139,14 @@ export async function getLessonById(
   const lessonPlayerIds = Array.from(playersMap.values())
     .flat()
     .map((row) => row.lessonPlayer.id);
-  const drillsMap = await fetchLessonDrillsBatch(lessonPlayerIds);
+  const [drillsMap, fatigueMap, attachmentsMap, pitchingSpecificMap, strengthSpecificMap] =
+    await Promise.all([
+      fetchLessonDrillsBatch(lessonPlayerIds),
+      fetchLessonFatigueBatch(lessonPlayerIds),
+      fetchLessonAttachmentsBatch(lessonPlayerIds),
+      fetchPitchingLessonSpecificBatch(lessonPlayerIds),
+      fetchStrengthLessonSpecificBatch(lessonPlayerIds),
+    ]);
 
   const lessonPlayersData = playersMap.get(lessonId) ?? [];
   const lessonMechanicsData = mechanicsMap.get(lessonId) ?? [];
@@ -136,7 +158,11 @@ export async function getLessonById(
     baseLessons[0],
     lessonPlayersData,
     lessonMechanicsData,
-    lessonDrillsData
+    lessonDrillsData,
+    fatigueMap,
+    attachmentsMap,
+    pitchingSpecificMap,
+    strengthSpecificMap
   );
 }
 
@@ -206,7 +232,14 @@ export async function getAllLessonsForPlayer(
   const lessonPlayerIds = Array.from(playersMap.values())
     .flat()
     .map((row) => row.lessonPlayer.id);
-  const drillsMap = await fetchLessonDrillsBatch(lessonPlayerIds);
+  const [drillsMap, fatigueMap, attachmentsMap, pitchingSpecificMap, strengthSpecificMap] =
+    await Promise.all([
+      fetchLessonDrillsBatch(lessonPlayerIds),
+      fetchLessonFatigueBatch(lessonPlayerIds),
+      fetchLessonAttachmentsBatch(lessonPlayerIds),
+      fetchPitchingLessonSpecificBatch(lessonPlayerIds),
+      fetchStrengthLessonSpecificBatch(lessonPlayerIds),
+    ]);
 
   return baseLessons.map((rawLesson) => {
     const lessonPlayersData = playersMap.get(rawLesson.lesson.id) ?? [];
@@ -219,7 +252,11 @@ export async function getAllLessonsForPlayer(
       rawLesson,
       lessonPlayersData,
       lessonMechanicsData,
-      lessonDrillsData
+      lessonDrillsData,
+      fatigueMap,
+      attachmentsMap,
+      pitchingSpecificMap,
+      strengthSpecificMap
     );
   });
 }

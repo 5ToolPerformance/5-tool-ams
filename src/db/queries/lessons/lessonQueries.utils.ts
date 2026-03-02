@@ -1,22 +1,31 @@
-import { SQL, and, desc, eq, inArray } from "drizzle-orm";
+import { SQL, and, asc, desc, eq, inArray, isNull } from "drizzle-orm";
 
 import db from "@/db";
 import {
+  LessonAttachmentData,
   LessonCardData,
   LessonCoachData,
   LessonDrillData,
+  LessonFatigueData,
   LessonMechanicData,
   LessonPlayerData,
   LessonQueryFilters,
+  StrengthLessonData,
 } from "@/db/queries/lessons/lessonQueries.types";
 import {
+  attachmentFiles,
+  attachments,
   drills,
+  injuryBodyPart,
   lesson,
   lessonDrills,
+  lessonPlayerFatigue,
   lessonMechanics,
   lessonPlayers,
+  manualTsIso,
   mechanics,
   playerInformation,
+  pitchingLessonPlayers,
   users,
 } from "@/db/schema";
 
@@ -40,6 +49,26 @@ interface RawLessonDrillRow {
   lessonDrill: typeof lessonDrills.$inferSelect;
   drill: typeof drills.$inferSelect;
 }
+
+interface RawLessonFatigueRow {
+  fatigue: typeof lessonPlayerFatigue.$inferSelect;
+  bodyPart: typeof injuryBodyPart.$inferSelect;
+}
+
+interface RawLessonAttachmentRow {
+  attachment: typeof attachments.$inferSelect;
+  file:
+    | {
+        originalFileName: string | null;
+        mimeType: string | null;
+        fileSizeBytes: number | null;
+        storageKey: string | null;
+      }
+    | null;
+}
+
+type RawPitchingLessonSpecificRow = typeof pitchingLessonPlayers.$inferSelect;
+type RawStrengthLessonSpecificRow = typeof manualTsIso.$inferSelect;
 
 /**
  * Build WHERE conditions based on filters
@@ -179,6 +208,110 @@ export async function fetchLessonDrillsBatch(
   return drillMap;
 }
 
+export async function fetchLessonFatigueBatch(
+  lessonPlayerIds: string[]
+): Promise<Map<string, RawLessonFatigueRow[]>> {
+  if (lessonPlayerIds.length === 0) return new Map();
+
+  const rows = await db
+    .select({
+      fatigue: lessonPlayerFatigue,
+      bodyPart: injuryBodyPart,
+    })
+    .from(lessonPlayerFatigue)
+    .innerJoin(
+      injuryBodyPart,
+      eq(lessonPlayerFatigue.bodyPartId, injuryBodyPart.id)
+    )
+    .where(inArray(lessonPlayerFatigue.lessonPlayerId, lessonPlayerIds));
+
+  const fatigueMap = new Map<string, RawLessonFatigueRow[]>();
+  for (const row of rows) {
+    const existing = fatigueMap.get(row.fatigue.lessonPlayerId) ?? [];
+    existing.push(row);
+    fatigueMap.set(row.fatigue.lessonPlayerId, existing);
+  }
+
+  return fatigueMap;
+}
+
+export async function fetchLessonAttachmentsBatch(
+  lessonPlayerIds: string[]
+): Promise<Map<string, RawLessonAttachmentRow[]>> {
+  if (lessonPlayerIds.length === 0) return new Map();
+
+  const rows = await db
+    .select({
+      attachment: attachments,
+      file: {
+        originalFileName: attachmentFiles.originalFileName,
+        mimeType: attachmentFiles.mimeType,
+        fileSizeBytes: attachmentFiles.fileSizeBytes,
+        storageKey: attachmentFiles.storageKey,
+      },
+    })
+    .from(attachments)
+    .leftJoin(attachmentFiles, eq(attachmentFiles.attachmentId, attachments.id))
+    .where(
+      and(
+        inArray(attachments.lessonPlayerId, lessonPlayerIds),
+        isNull(attachments.deletedAt)
+      )
+    );
+
+  const attachmentMap = new Map<string, RawLessonAttachmentRow[]>();
+  for (const row of rows) {
+    if (!row.attachment.lessonPlayerId) continue;
+    const existing = attachmentMap.get(row.attachment.lessonPlayerId) ?? [];
+    existing.push(row);
+    attachmentMap.set(row.attachment.lessonPlayerId, existing);
+  }
+
+  return attachmentMap;
+}
+
+export async function fetchPitchingLessonSpecificBatch(
+  lessonPlayerIds: string[]
+): Promise<Map<string, RawPitchingLessonSpecificRow>> {
+  if (lessonPlayerIds.length === 0) return new Map();
+
+  const rows = await db
+    .select()
+    .from(pitchingLessonPlayers)
+    .where(inArray(pitchingLessonPlayers.lessonPlayerId, lessonPlayerIds))
+    .orderBy(asc(pitchingLessonPlayers.id));
+
+  const pitchingMap = new Map<string, RawPitchingLessonSpecificRow>();
+  for (const row of rows) {
+    if (!pitchingMap.has(row.lessonPlayerId)) {
+      pitchingMap.set(row.lessonPlayerId, row);
+    }
+  }
+
+  return pitchingMap;
+}
+
+export async function fetchStrengthLessonSpecificBatch(
+  lessonPlayerIds: string[]
+): Promise<Map<string, RawStrengthLessonSpecificRow>> {
+  if (lessonPlayerIds.length === 0) return new Map();
+
+  const rows = await db
+    .select()
+    .from(manualTsIso)
+    .where(inArray(manualTsIso.lessonPlayerId, lessonPlayerIds))
+    .orderBy(asc(manualTsIso.id));
+
+  const strengthMap = new Map<string, RawStrengthLessonSpecificRow>();
+  for (const row of rows) {
+    if (!strengthMap.has(row.lessonPlayerId)) {
+      strengthMap.set(row.lessonPlayerId, row);
+    }
+  }
+
+  return strengthMap;
+}
+
 /**
  * Transform raw data into LessonCardData format
  */
@@ -186,7 +319,11 @@ export function transformToLessonCard(
   rawLesson: RawLessonRow,
   lessonPlayersData: RawLessonPlayerRow[],
   lessonMechanicsData: RawLessonMechanicRow[],
-  lessonDrillsData: RawLessonDrillRow[]
+  lessonDrillsData: RawLessonDrillRow[],
+  fatigueMap: Map<string, RawLessonFatigueRow[]>,
+  attachmentsMap: Map<string, RawLessonAttachmentRow[]>,
+  pitchingSpecificMap: Map<string, RawPitchingLessonSpecificRow>,
+  strengthSpecificMap: Map<string, RawStrengthLessonSpecificRow>
 ): LessonCardData {
   const { lesson: lessonData, coach, legacyPlayer } = rawLesson;
 
@@ -217,22 +354,102 @@ export function transformToLessonCard(
         hits: legacyPlayer.hits,
         sport: legacyPlayer.sport,
         notes: null,
+        fatigueData: [],
+        attachments: [],
+        lessonSpecific: {
+          pitching: null,
+          strength: null,
+        },
       },
     ];
   } else {
     // Modern lesson: use lessonPlayers table
-    players = lessonPlayersData.map((row) => ({
-      id: row.player.id,
-      lessonPlayerId: row.lessonPlayer.id,
-      firstName: row.player.firstName,
-      lastName: row.player.lastName,
-      profilePictureUrl: row.player.profilePictureUrl,
-      position: row.player.position,
-      throws: row.player.throws,
-      hits: row.player.hits,
-      sport: row.player.sport,
-      notes: row.lessonPlayer.notes,
-    }));
+    players = lessonPlayersData.map((row) => {
+      const lessonPlayerId = row.lessonPlayer.id;
+
+      const fatigueData: LessonFatigueData[] = (
+        fatigueMap.get(lessonPlayerId) ?? []
+      ).map((fatigueRow) => ({
+        id: fatigueRow.fatigue.id,
+        report: fatigueRow.fatigue.report,
+        severity: fatigueRow.fatigue.severity,
+        bodyPartId: fatigueRow.fatigue.bodyPartId,
+        bodyPart: fatigueRow.bodyPart.name,
+      }));
+
+      const attachmentsData: LessonAttachmentData[] = (
+        attachmentsMap.get(lessonPlayerId) ?? []
+      ).map((attachmentRow) => ({
+        id: attachmentRow.attachment.id,
+        lessonPlayerId,
+        type: attachmentRow.attachment.type,
+        source: attachmentRow.attachment.source,
+        evidenceCategory: attachmentRow.attachment.evidenceCategory,
+        visibility: attachmentRow.attachment.visibility,
+        documentType: attachmentRow.attachment.documentType,
+        notes: attachmentRow.attachment.notes,
+        effectiveDate: attachmentRow.attachment.effectiveDate,
+        createdAt: attachmentRow.attachment.createdAt,
+        file: attachmentRow.file,
+      }));
+
+      const pitchingSpecific =
+        lessonData.lessonType === "pitching"
+          ? pitchingSpecificMap.get(lessonPlayerId) ?? null
+          : null;
+      const strengthSpecific =
+        lessonData.lessonType === "strength"
+          ? strengthSpecificMap.get(lessonPlayerId) ?? null
+          : null;
+
+      const strengthLessonSpecificData: StrengthLessonData | null =
+        strengthSpecific
+          ? {
+              tsIso: {
+                shoulderErL: strengthSpecific.shoulderErL,
+                shoulderErR: strengthSpecific.shoulderErR,
+                shoulderErTtpfL: strengthSpecific.shoulderErTtpfL,
+                shoulderErTtpfR: strengthSpecific.shoulderErTtpfR,
+                shoulderIrL: strengthSpecific.shoulderIrL,
+                shoulderIrR: strengthSpecific.shoulderIrR,
+                shoulderIrTtpfL: strengthSpecific.shoulderIrTtpfL,
+                shoulderIrTtpfR: strengthSpecific.shoulderIrTtpfR,
+                shoulderRotL: strengthSpecific.shoulderRotL,
+                shoulderRotR: strengthSpecific.shoulderRotR,
+                shoulderRotRfdL: strengthSpecific.shoulderRotRfdL,
+                shoulderRotRfdR: strengthSpecific.shoulderRotRfdR,
+                hipRotL: strengthSpecific.hipRotL,
+                hipRotR: strengthSpecific.hipRotR,
+                hipRotRfdL: strengthSpecific.hipRotRfdL,
+                hipRotRfdR: strengthSpecific.hipRotRfdR,
+              },
+            }
+          : null;
+
+      return {
+        id: row.player.id,
+        lessonPlayerId,
+        firstName: row.player.firstName,
+        lastName: row.player.lastName,
+        profilePictureUrl: row.player.profilePictureUrl,
+        position: row.player.position,
+        throws: row.player.throws,
+        hits: row.player.hits,
+        sport: row.player.sport,
+        notes: row.lessonPlayer.notes,
+        fatigueData,
+        attachments: attachmentsData,
+        lessonSpecific: {
+          pitching: pitchingSpecific
+            ? {
+                summary: pitchingSpecific.summary,
+                focus: pitchingSpecific.focus,
+              }
+            : null,
+          strength: strengthLessonSpecificData,
+        },
+      };
+    });
   }
 
   // Transform mechanics

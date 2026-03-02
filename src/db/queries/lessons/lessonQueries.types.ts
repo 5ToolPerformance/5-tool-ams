@@ -22,27 +22,79 @@ export interface LessonDrillData {
   lessonPlayerId: string;
 }
 
-// TODO
-export interface LessonAttachmentData {
-  id: string;
+export interface LessonAttachmentFileData {
+  originalFileName: string | null;
+  mimeType: string | null;
+  fileSizeBytes: number | null;
+  storageKey: string | null;
 }
 
-// TODO
+export interface LessonAttachmentData {
+  id: string;
+  lessonPlayerId: string;
+  type:
+    | "file_csv"
+    | "file_video"
+    | "file_image"
+    | "file_pdf"
+    | "file_docx"
+    | "manual";
+  source: string;
+  evidenceCategory: string | null;
+  visibility: "internal" | "private" | "public";
+  documentType:
+    | "medical"
+    | "pt"
+    | "external"
+    | "eval"
+    | "general"
+    | "other"
+    | null;
+  notes: string | null;
+  effectiveDate: string;
+  createdAt: string;
+  file: LessonAttachmentFileData | null;
+}
+
 export interface LessonFatigueData {
   id: string;
   report: string;
   severity: number | null;
+  bodyPartId: string | null;
   bodyPart: string | null;
 }
 
-// TODO
-export interface LessonSpecificData {
-  data: PitchingLessonData | null; // Extend with other lesson types as needed
+export interface StrengthTsIsoData {
+  shoulderErL?: number | null;
+  shoulderErR?: number | null;
+  shoulderErTtpfL?: number | null;
+  shoulderErTtpfR?: number | null;
+  shoulderIrL?: number | null;
+  shoulderIrR?: number | null;
+  shoulderIrTtpfL?: number | null;
+  shoulderIrTtpfR?: number | null;
+  shoulderRotL?: number | null;
+  shoulderRotR?: number | null;
+  shoulderRotRfdL?: number | null;
+  shoulderRotRfdR?: number | null;
+  hipRotL?: number | null;
+  hipRotR?: number | null;
+  hipRotRfdL?: number | null;
+  hipRotRfdR?: number | null;
+}
+
+export interface StrengthLessonData {
+  tsIso: StrengthTsIsoData;
 }
 
 export interface PitchingLessonData {
-  summary: string;
-  focus: string;
+  summary: string | null;
+  focus: string | null;
+}
+
+export interface LessonPlayerSpecificData {
+  pitching: PitchingLessonData | null;
+  strength: StrengthLessonData | null;
 }
 
 /** Player data for lesson cards */
@@ -57,6 +109,9 @@ export interface LessonPlayerData {
   hits: string;
   sport: "baseball" | "softball";
   notes: string | null;
+  fatigueData: LessonFatigueData[];
+  attachments: LessonAttachmentData[];
+  lessonSpecific: LessonPlayerSpecificData;
 }
 
 /** Coach data for lesson cards */
