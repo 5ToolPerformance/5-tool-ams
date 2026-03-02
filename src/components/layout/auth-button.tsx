@@ -68,15 +68,13 @@ export default function AuthButton({ minimal = true }: { minimal?: boolean }) {
       <DropdownMenu aria-label="Sign in options" variant="flat">
         <DropdownItem
           key="entra"
-          onPress={() =>
-            signIn("microsoft-entra-id", { callbackUrl: "/profile" })
-          }
+          onPress={() => signIn("microsoft-entra-id", { callbackUrl: "/" })}
         >
           Sign in with Microsoft
         </DropdownItem>
         <DropdownItem
           key="google"
-          onPress={() => signIn("google", { callbackUrl: "/profile" })}
+          onPress={() => signIn("google", { callbackUrl: "/" })}
         >
           Sign in with Google
         </DropdownItem>

@@ -8,13 +8,10 @@ import {
   Icon3dCubeSphereOff,
   IconBallBaseball,
   IconChevronDown,
-  IconClipboardData,
   IconCone2,
   IconHome,
   IconPackage,
-  IconPencil,
   IconShieldLock,
-  IconUser,
   IconUsers,
   IconX,
 } from "@tabler/icons-react";
@@ -32,7 +29,8 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
   const { status, data: session } = useSession();
   const pathname = usePathname();
   const isActiveLink = (href: string) => {
-    return pathname === href;
+    if (href === "/") return pathname === "/";
+    return pathname === href || pathname.startsWith(`${href}/`);
   };
 
   const menuItems = [
@@ -46,12 +44,6 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
 
   if (status === "authenticated") {
     menuItems.push(
-      {
-        label: "Profile",
-        href: "/profile",
-        icon: IconUser,
-        target: "_self",
-      },
       {
         label: "Players",
         href: "/players",
@@ -75,18 +67,6 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
           ]
         : []),
       {
-        label: "Log Writeup",
-        href: "/player-writeups",
-        icon: IconPencil,
-        target: "_self",
-      },
-      {
-        label: "Lesson Reports",
-        href: "/reports/generate-report",
-        icon: IconClipboardData,
-        target: "_self",
-      },
-      {
         label: "Feedback",
         href: "https://forms.office.com/r/parLxEE76t",
         icon: Icon3dCubeSphereOff,
@@ -96,6 +76,10 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
   }
 
   const adminLinks = [
+    {
+      label: "Dashboard",
+      href: "/dashboard",
+    },
     {
       label: "External Sync",
       href: "/admin/external-sync",
