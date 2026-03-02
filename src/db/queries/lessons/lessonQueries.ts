@@ -8,8 +8,13 @@ import {
 import {
   buildWhereConditions,
   fetchBaseLessons,
+  fetchLessonAttachmentsBatch,
+  fetchLessonDrillsBatch,
+  fetchLessonFatigueBatch,
   fetchLessonMechanicsBatch,
   fetchLessonPlayersBatch,
+  fetchPitchingLessonSpecificBatch,
+  fetchStrengthLessonSpecificBatch,
   transformToLessonCard,
 } from "@/db/queries/lessons/lessonQueries.utils";
 import { lesson, lessonPlayers, playerInformation, users } from "@/db/schema";
@@ -75,14 +80,34 @@ export async function getLessonsWithFilters(
     fetchLessonPlayersBatch(lessonIds),
     fetchLessonMechanicsBatch(lessonIds),
   ]);
+  const lessonPlayerIds = Array.from(playersMap.values())
+    .flat()
+    .map((row) => row.lessonPlayer.id);
+  const [drillsMap, fatigueMap, attachmentsMap, pitchingSpecificMap, strengthSpecificMap] =
+    await Promise.all([
+      fetchLessonDrillsBatch(lessonPlayerIds),
+      fetchLessonFatigueBatch(lessonPlayerIds),
+      fetchLessonAttachmentsBatch(lessonPlayerIds),
+      fetchPitchingLessonSpecificBatch(lessonPlayerIds),
+      fetchStrengthLessonSpecificBatch(lessonPlayerIds),
+    ]);
 
   return baseLessons.map((rawLesson) => {
     const lessonPlayersData = playersMap.get(rawLesson.lesson.id) ?? [];
     const lessonMechanicsData = mechanicsMap.get(rawLesson.lesson.id) ?? [];
+    const lessonDrillsData = lessonPlayersData.flatMap((row) =>
+      drillsMap.get(row.lessonPlayer.id) ?? []
+    );
+
     return transformToLessonCard(
       rawLesson,
       lessonPlayersData,
-      lessonMechanicsData
+      lessonMechanicsData,
+      lessonDrillsData,
+      fatigueMap,
+      attachmentsMap,
+      pitchingSpecificMap,
+      strengthSpecificMap
     );
   });
 }
@@ -111,14 +136,33 @@ export async function getLessonById(
     fetchLessonPlayersBatch([lessonId]),
     fetchLessonMechanicsBatch([lessonId]),
   ]);
+  const lessonPlayerIds = Array.from(playersMap.values())
+    .flat()
+    .map((row) => row.lessonPlayer.id);
+  const [drillsMap, fatigueMap, attachmentsMap, pitchingSpecificMap, strengthSpecificMap] =
+    await Promise.all([
+      fetchLessonDrillsBatch(lessonPlayerIds),
+      fetchLessonFatigueBatch(lessonPlayerIds),
+      fetchLessonAttachmentsBatch(lessonPlayerIds),
+      fetchPitchingLessonSpecificBatch(lessonPlayerIds),
+      fetchStrengthLessonSpecificBatch(lessonPlayerIds),
+    ]);
 
   const lessonPlayersData = playersMap.get(lessonId) ?? [];
   const lessonMechanicsData = mechanicsMap.get(lessonId) ?? [];
+  const lessonDrillsData = lessonPlayersData.flatMap((row) =>
+    drillsMap.get(row.lessonPlayer.id) ?? []
+  );
 
   return transformToLessonCard(
     baseLessons[0],
     lessonPlayersData,
-    lessonMechanicsData
+    lessonMechanicsData,
+    lessonDrillsData,
+    fatigueMap,
+    attachmentsMap,
+    pitchingSpecificMap,
+    strengthSpecificMap
   );
 }
 
@@ -185,14 +229,34 @@ export async function getAllLessonsForPlayer(
     fetchLessonPlayersBatch(fetchedLessonIds),
     fetchLessonMechanicsBatch(fetchedLessonIds),
   ]);
+  const lessonPlayerIds = Array.from(playersMap.values())
+    .flat()
+    .map((row) => row.lessonPlayer.id);
+  const [drillsMap, fatigueMap, attachmentsMap, pitchingSpecificMap, strengthSpecificMap] =
+    await Promise.all([
+      fetchLessonDrillsBatch(lessonPlayerIds),
+      fetchLessonFatigueBatch(lessonPlayerIds),
+      fetchLessonAttachmentsBatch(lessonPlayerIds),
+      fetchPitchingLessonSpecificBatch(lessonPlayerIds),
+      fetchStrengthLessonSpecificBatch(lessonPlayerIds),
+    ]);
 
   return baseLessons.map((rawLesson) => {
     const lessonPlayersData = playersMap.get(rawLesson.lesson.id) ?? [];
     const lessonMechanicsData = mechanicsMap.get(rawLesson.lesson.id) ?? [];
+    const lessonDrillsData = lessonPlayersData.flatMap((row) =>
+      drillsMap.get(row.lessonPlayer.id) ?? []
+    );
+
     return transformToLessonCard(
       rawLesson,
       lessonPlayersData,
-      lessonMechanicsData
+      lessonMechanicsData,
+      lessonDrillsData,
+      fatigueMap,
+      attachmentsMap,
+      pitchingSpecificMap,
+      strengthSpecificMap
     );
   });
 }

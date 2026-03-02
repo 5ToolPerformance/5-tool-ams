@@ -29,10 +29,12 @@ export function normalizeLessonForCreate(
       playerId,
       notes: player.notes || undefined,
       lessonSpecific: player.lessonSpecific ?? undefined,
+      fatigueReport: player.fatigueReport ?? undefined,
     };
   });
 
   const mechanics: LessonWritePayload["mechanics"] = [];
+  const drills: LessonWritePayload["drills"] = [];
 
   for (const playerId of values.selectedPlayerIds) {
     const mechanicMap = values.players[playerId]?.mechanics ?? {};
@@ -46,9 +48,22 @@ export function normalizeLessonForCreate(
     }
   }
 
+  for (const playerId of values.selectedPlayerIds) {
+    const drillMap = values.players[playerId]?.drills ?? {};
+
+    for (const [drillId, entry] of Object.entries(drillMap)) {
+      drills.push({
+        playerId,
+        drillId,
+        notes: entry.notes || undefined,
+      });
+    }
+  }
+
   return {
     lesson,
     participants,
     mechanics,
+    drills,
   };
 }

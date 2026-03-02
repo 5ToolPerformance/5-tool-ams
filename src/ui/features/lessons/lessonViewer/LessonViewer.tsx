@@ -5,17 +5,25 @@ import { Divider } from "@heroui/react";
 import { LESSON_TYPE_CONFIG } from "../lessonCard/lessonTypeConfig";
 import { CoachSection } from "./CoachSection";
 import { LessonViewerHeader } from "./LessonViewerHeader";
-import { MechanicsSection } from "./MechanicsSection";
 import { NotesSection } from "./NotesSection";
+import { PlayerLessonDetailsPanel } from "./PlayerLessonDetailsPanel";
 import { PlayersSection } from "./PlayersSection";
 import type { LessonViewerProps } from "./types";
 
 export function LessonViewer({
   lesson,
   viewContext,
+  playerId,
   className = "",
 }: LessonViewerProps) {
   const cfg = LESSON_TYPE_CONFIG[lesson.lessonType];
+  const filteredPlayer = playerId
+    ? lesson.players.find((player) => player.id === playerId)
+    : undefined;
+  const playersForPanel = filteredPlayer ? [filteredPlayer] : lesson.players;
+  const showTabs = playersForPanel.length > 1;
+  const showGlobalPlayersSummary =
+    !filteredPlayer && lesson.players.length > 1;
 
   return (
     <div
@@ -30,15 +38,22 @@ export function LessonViewer({
 
         {viewContext === "player" && <CoachSection coach={lesson.coach} />}
 
-        <PlayersSection players={lesson.players} />
-
-        <Divider className="dark:bg-zinc-800" />
-
-        <MechanicsSection mechanics={lesson.mechanics} />
-
-        <Divider className="dark:bg-zinc-800" />
+        {showGlobalPlayersSummary && (
+          <>
+            <PlayersSection players={lesson.players} />
+            <Divider className="dark:bg-zinc-800" />
+          </>
+        )}
 
         <NotesSection notes={lesson.notes} />
+
+        <Divider className="dark:bg-zinc-800" />
+
+        <PlayerLessonDetailsPanel
+          lesson={lesson}
+          players={playersForPanel}
+          showTabs={showTabs}
+        />
       </div>
     </div>
   );

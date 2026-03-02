@@ -1,3 +1,6 @@
+import db from "@/db";
+import { getDrillsForLessonForm } from "@/db/queries/drills/getDrillsForLessonForm";
+import { getInjuryBodyParts } from "@/db/queries/injuryTaxonomy/getInjuryBodyParts";
 import { env } from "@/env/server";
 import { mechanicsRepository } from "@/lib/services/repository/mechanics";
 import { playerRepository } from "@/lib/services/repository/players";
@@ -12,12 +15,16 @@ export default async function NewLessonPage({
 }) {
   const players = await playerRepository.findPlayersForLessonForm();
   const mechanics = await mechanicsRepository.findAllForLessonForm();
+  const drills = await getDrillsForLessonForm(db);
+  const bodyParts = await getInjuryBodyParts(db);
   const { playerId } = await searchParams;
 
   return (
     <LessonFormProvider
+      bodyParts={bodyParts}
       players={players}
       mechanics={mechanics}
+      drills={drills}
       initialPlayerId={playerId}
     >
       <LessonStepper />

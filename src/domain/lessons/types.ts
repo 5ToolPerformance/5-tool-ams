@@ -1,5 +1,10 @@
-import { manualTsIso, pitchingLessonPlayers } from "@/db/schema";
 import {
+  lessonPlayerFatigue,
+  manualTsIso,
+  pitchingLessonPlayers,
+} from "@/db/schema";
+import {
+  FatigueReportData,
   LessonType,
   StrengthLessonSpecific,
 } from "@/hooks/lessons/lessonForm.types";
@@ -15,11 +20,18 @@ export type LessonWritePayload = {
     playerId: string;
     notes?: string;
     lessonSpecific?: unknown;
+    fatigueReport?: FatigueReportData;
   }[];
 
   mechanics: {
     playerId: string;
     mechanicId: string;
+    notes?: string;
+  }[];
+
+  drills: {
+    playerId: string;
+    drillId: string;
     notes?: string;
   }[];
 };
@@ -37,6 +49,7 @@ export type LessonReadModel = {
     lessonPlayerId?: string;
     notes?: string;
     lessonSpecific?: unknown;
+    fatigueReport?: FatigueReportData;
   }[];
 
   mechanics: {
@@ -44,13 +57,18 @@ export type LessonReadModel = {
     mechanicId: string;
     notes?: string;
   }[];
+
+  drills: {
+    playerId: string;
+    drillId: string;
+    notes?: string;
+  }[];
 };
 
 // Lesson Specific Payload for Pitching Lessons
 export type PitchingLessonSpecific = {
-  phase: string;
-  pitchCount?: number;
-  intentPercent?: number;
+  summary: string;
+  focus?: string;
 };
 
 export type PitchingLessonInsert = typeof pitchingLessonPlayers.$inferInsert;
@@ -58,7 +76,7 @@ export type PitchingLessonInsert = typeof pitchingLessonPlayers.$inferInsert;
 export function isPitchingLessonSpecific(
   value: unknown
 ): value is PitchingLessonSpecific {
-  return typeof value === "object" && value !== null && "phase" in value;
+  return typeof value === "object" && value !== null && "summary" in value;
 }
 
 export function isStrengthLessonSpecific(
@@ -68,3 +86,5 @@ export function isStrengthLessonSpecific(
 }
 
 export type TsIsoInsert = typeof manualTsIso.$inferInsert;
+
+export type FatigueReportInsert = typeof lessonPlayerFatigue.$inferInsert;

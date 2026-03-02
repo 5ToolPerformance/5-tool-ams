@@ -57,6 +57,7 @@ export function DebugFormState() {
             },
             participants: normalized.participants,
             mechanics: normalized.mechanics,
+            drills: normalized.drills,
           });
         } catch (e) {
           error =

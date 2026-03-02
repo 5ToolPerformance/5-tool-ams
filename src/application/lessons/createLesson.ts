@@ -2,11 +2,14 @@ import db from "@/db";
 import {
   lesson,
   lessonMechanics,
+  lessonPlayerFatigue,
   lessonPlayers,
   manualTsIso,
   pitchingLessonPlayers,
 } from "@/db/schema";
+import { lessonDrills } from "@/db/schema/lesson-logging-v2/lessonDrills";
 import {
+  FatigueReportInsert,
   type LessonWritePayload,
   PitchingLessonInsert,
   TsIsoInsert,
@@ -78,17 +81,21 @@ export async function createLesson(
       const pitchingRows: PitchingLessonInsert[] = [];
 
       for (const p of payload.participants) {
-        if (!isPitchingLessonSpecific(p.lessonSpecific)) {
+        const lessonSpecific = p.lessonSpecific as
+          | { pitching?: unknown }
+          | undefined;
+        const pitching = lessonSpecific?.pitching;
+
+        if (!isPitchingLessonSpecific(pitching)) {
           continue;
         }
 
-        const ls = p.lessonSpecific; // ✅ now correctly narrowed
+        const ls = pitching;
 
         pitchingRows.push({
           lessonPlayerId: lessonPlayerByPlayerId[p.playerId],
-          phase: ls.phase,
-          pitchCount: ls.pitchCount,
-          intentPercent: ls.intentPercent,
+          summary: ls.summary,
+          focus: ls.focus,
         });
       }
 
@@ -115,6 +122,46 @@ export async function createLesson(
 
       if (tsIsoRows.length > 0) {
         await tx.insert(manualTsIso).values(tsIsoRows);
+      }
+    }
+
+    /**
+     * 5️⃣ Insert lesson_drills
+     */
+    if (payload.drills.length > 0) {
+      await tx.insert(lessonDrills).values(
+        payload.drills.map((d) => ({
+          lessonPlayerId: lessonPlayerByPlayerId[d.playerId],
+          drillId: d.drillId,
+          notes: d.notes,
+        }))
+      );
+    }
+
+    /**
+     * 6️⃣ Insert fatigue report (if provided)
+     */
+    if (payload.participants.some((p) => p.fatigueReport)) {
+      const fatigueRows: FatigueReportInsert[] = [];
+
+      for (const p of payload.participants) {
+        if (
+          !p.fatigueReport ||
+          p.fatigueReport.report === "none" ||
+          !p.fatigueReport.bodyPartId
+        )
+          continue;
+
+        fatigueRows.push({
+          lessonPlayerId: lessonPlayerByPlayerId[p.playerId],
+          report: p.fatigueReport.report as string,
+          bodyPartId: p.fatigueReport.bodyPartId,
+          severity: p.fatigueReport.severity,
+        });
+      }
+
+      if (fatigueRows.length > 0) {
+        await tx.insert(lessonPlayerFatigue).values(fatigueRows);
       }
     }
 

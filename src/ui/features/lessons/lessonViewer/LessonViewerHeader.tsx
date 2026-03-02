@@ -1,15 +1,15 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
-import { Chip } from "@heroui/react";
-import { CalendarDays, Clock, Pencil } from "lucide-react";
+import { Button, Chip } from "@heroui/react";
+import { ArrowLeft, CalendarDays, Pencil } from "lucide-react";
 
 import { LessonCardData } from "@/db/queries/lessons/lessonQueries.types";
 
 import {
   formatLessonDate,
-  formatLessonTime,
   getRelativeTime,
 } from "../lessonCard/lessonFormatters";
 import { LESSON_TYPE_CONFIG } from "../lessonCard/lessonTypeConfig";
@@ -19,11 +19,24 @@ interface Props {
 }
 
 export function LessonViewerHeader({ lesson }: Props) {
+  const router = useRouter();
   const cfg = LESSON_TYPE_CONFIG[lesson.lessonType];
   const Icon = cfg.icon;
 
   return (
     <div className="space-y-4">
+      <div>
+        <Button
+          size="sm"
+          variant="light"
+          startContent={<ArrowLeft className="h-4 w-4" />}
+          className="px-2 text-zinc-600 dark:text-zinc-300"
+          onPress={() => router.back()}
+        >
+          Back
+        </Button>
+      </div>
+
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div className="flex items-center gap-4">
           <div
@@ -67,10 +80,6 @@ export function LessonViewerHeader({ lesson }: Props) {
         <div className="flex items-center gap-2 rounded-lg bg-zinc-100 px-3 py-2 dark:bg-zinc-800">
           <CalendarDays className="h-4 w-4 flex-shrink-0" />
           <span>{formatLessonDate(lesson.lessonDate)}</span>
-        </div>
-        <div className="flex items-center gap-2 rounded-lg bg-zinc-100 px-3 py-2 dark:bg-zinc-800">
-          <Clock className="h-4 w-4 flex-shrink-0" />
-          <span>{formatLessonTime(lesson.lessonDate)}</span>
         </div>
       </div>
     </div>

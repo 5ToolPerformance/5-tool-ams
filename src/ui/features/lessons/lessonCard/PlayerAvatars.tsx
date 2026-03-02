@@ -13,6 +13,7 @@ interface Props {
 
 export function PlayerAvatars({ players, maxVisible = 4 }: Props) {
   const visiblePlayers = players.slice(0, maxVisible);
+  const hasOverflow = players.length > maxVisible;
 
   if (players.length === 1) {
     const player = players[0];
@@ -37,21 +38,25 @@ export function PlayerAvatars({ players, maxVisible = 4 }: Props) {
   return (
     <div className="flex min-w-0 items-center gap-3">
       <AvatarGroup
-        max={maxVisible}
-        total={players.length}
+        max={hasOverflow ? maxVisible : undefined}
+        total={hasOverflow ? players.length : undefined}
         size="sm"
-        renderCount={(count) => (
-          <Tooltip content={`${count} more players`}>
-            <Avatar
-              name={`+${count}`}
-              size="sm"
-              classNames={{
-                base: "ring-2 ring-white dark:ring-zinc-900 bg-zinc-200 dark:bg-zinc-700",
-                name: "text-xs font-semibold text-zinc-700 dark:text-zinc-300",
-              }}
-            />
-          </Tooltip>
-        )}
+        renderCount={
+          hasOverflow
+            ? (count) => (
+                <Tooltip content={`${count} more players`}>
+                  <Avatar
+                    name={`+${count}`}
+                    size="sm"
+                    classNames={{
+                      base: "ring-2 ring-white dark:ring-zinc-900 bg-zinc-200 dark:bg-zinc-700",
+                      name: "text-xs font-semibold text-zinc-700 dark:text-zinc-300",
+                    }}
+                  />
+                </Tooltip>
+              )
+            : undefined
+        }
       >
         {visiblePlayers.map((player) => (
           <Tooltip

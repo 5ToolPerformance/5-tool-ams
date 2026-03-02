@@ -4,9 +4,12 @@ import { useEffect } from "react";
 
 import { Card, CardBody, Textarea } from "@heroui/react";
 
+import { DrillSelector } from "@/ui/features/lesson-form/components/DrillSelector";
+import { FatigueCheckin } from "@/ui/features/lesson-form/components/FatigueCheckin";
+
 import { useLessonFormContext } from "../LessonFormProvider";
-import { MechanicSelector } from "../components/MechanicSelector";
 import { EvidenceUploadSection } from "../components/EvidenceUploadSection";
+import { MechanicSelector } from "../components/MechanicSelector";
 import { LESSON_TYPE_REGISTRY } from "../lessonTypes";
 
 export function StepPlayerNotes() {
@@ -15,6 +18,8 @@ export function StepPlayerNotes() {
     ensurePlayer,
     playerById,
     mechanics,
+    bodyParts,
+    drills,
     evidenceDrafts,
     setEvidenceDrafts,
   } = useLessonFormContext();
@@ -62,6 +67,16 @@ export function StepPlayerNotes() {
           return m.type === lessonType;
         });
 
+        const availableDrills = drills.filter((d) => {
+          if (d.discipline === null) return true;
+
+          if (lessonImpl?.allowedDrillTypes) {
+            return lessonImpl.allowedDrillTypes.includes(d.discipline);
+          }
+
+          return d.discipline === lessonType;
+        });
+
         return (
           <div className="space-y-6">
             {/* Step Header */}
@@ -83,26 +98,9 @@ export function StepPlayerNotes() {
                     {/* Player Name */}
                     <h3 className="text-base font-semibold">{playerName}</h3>
 
-                    {/* Base Notes */}
-                    <Textarea
-                      label="General Notes"
-                      placeholder="Notes for this player…"
-                      minRows={3}
-                      value={player.notes ?? ""}
-                      onChange={(e) =>
-                        form.setFieldValue(
-                          `players.${playerId}.notes`,
-                          e.target.value
-                        )
-                      }
-                    />
-
                     {/* Lesson-type–specific notes */}
                     {lessonImpl?.PlayerNotes && (
                       <div className="space-y-2">
-                        <p className="text-sm font-medium">
-                          {lessonImpl.label} Details
-                        </p>
                         {lessonType === "strength" && (
                           <lessonImpl.PlayerNotes
                             playerId={playerId}
@@ -111,6 +109,12 @@ export function StepPlayerNotes() {
                         )}
                         {lessonType !== "strength" && (
                           <lessonImpl.PlayerNotes playerId={playerId} />
+                        )}
+                        {lessonImpl?.fatigueCheck && (
+                          <FatigueCheckin
+                            playerId={playerId}
+                            bodyParts={bodyParts}
+                          />
                         )}
                       </div>
                     )}
@@ -129,6 +133,18 @@ export function StepPlayerNotes() {
                         </div>
                       )}
 
+                    {/* Drills */}
+                    {lessonImpl?.allowedDrillTypes &&
+                      lessonImpl.allowedDrillTypes.length > 0 && (
+                        <div className="space-y-2">
+                          <p className="text-sm font-medium">Drills</p>
+                          <DrillSelector
+                            playerId={playerId}
+                            drills={availableDrills}
+                          />
+                        </div>
+                      )}
+
                     {/* Evidence Upload */}
                     <div className="space-y-2">
                       <p className="text-sm font-medium">Evidence Upload</p>
@@ -143,6 +159,20 @@ export function StepPlayerNotes() {
                         }
                       />
                     </div>
+
+                    {/* Base Notes */}
+                    <Textarea
+                      label="General Notes"
+                      placeholder="Notes for this player…"
+                      minRows={3}
+                      value={player.notes ?? ""}
+                      onChange={(e) =>
+                        form.setFieldValue(
+                          `players.${playerId}.notes`,
+                          e.target.value
+                        )
+                      }
+                    />
                   </CardBody>
                 </Card>
               );

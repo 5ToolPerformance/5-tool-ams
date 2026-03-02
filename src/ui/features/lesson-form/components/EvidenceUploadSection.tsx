@@ -11,7 +11,11 @@ import {
   Textarea,
 } from "@heroui/react";
 
-export type EvidenceUploadSource = "hitrax" | "blast_motion" | "media";
+export type EvidenceUploadSource =
+  | "hitrax"
+  | "blast_motion"
+  | "trackman"
+  | "media";
 
 export type EvidenceUploadItem = {
   id: string;
@@ -74,11 +78,7 @@ export function EvidenceUploadSection({
   }
 
   return (
-    <Accordion
-      variant="splitted"
-      selectionMode="multiple"
-      className="mt-2"
-    >
+    <Accordion variant="splitted" selectionMode="multiple" className="mt-2">
       <AccordionItem
         key="upload"
         aria-label={`Upload evidence for ${playerName}`}
@@ -92,9 +92,7 @@ export function EvidenceUploadSection({
           <div className="space-y-4">
             {resolvedDraft.items.map((item, index) => {
               const accept =
-                item.source === "media"
-                  ? "image/*,video/*"
-                  : ".csv";
+                item.source === "media" ? "image/*,video/*" : ".csv";
 
               return (
                 <div
@@ -102,9 +100,7 @@ export function EvidenceUploadSection({
                   className="rounded-md border border-default-200 p-3"
                 >
                   <div className="flex flex-wrap items-center justify-between gap-2">
-                    <p className="text-sm font-medium">
-                      Upload {index + 1}
-                    </p>
+                    <p className="text-sm font-medium">Upload {index + 1}</p>
                     <Button
                       size="sm"
                       variant="flat"
@@ -128,6 +124,7 @@ export function EvidenceUploadSection({
                     >
                       <SelectItem key="hitrax">HitTrax</SelectItem>
                       <SelectItem key="blast_motion">Blast Motion</SelectItem>
+                      <SelectItem key="trackman">Trackman</SelectItem>
                       <SelectItem key="media">Media</SelectItem>
                     </Select>
                   </div>

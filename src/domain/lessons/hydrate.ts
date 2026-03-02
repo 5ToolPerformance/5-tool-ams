@@ -17,7 +17,8 @@ export function hydrateLessonForm(read: LessonReadModel): LessonFormValues {
   }
 
   for (const participant of read.participants) {
-    const { playerId, lessonPlayerId, notes, lessonSpecific } = participant;
+    const { playerId, lessonPlayerId, notes, lessonSpecific, fatigueReport } =
+      participant;
 
     values.selectedPlayerIds.push(playerId);
 
@@ -25,6 +26,7 @@ export function hydrateLessonForm(read: LessonReadModel): LessonFormValues {
       ...(lessonPlayerId ? { lessonPlayerId } : {}),
       ...(notes ? { notes } : {}),
       ...(lessonSpecific ? { lessonSpecific } : {}),
+      ...(fatigueReport ? { fatigueReport } : {}),
     };
   }
 
@@ -39,6 +41,19 @@ export function hydrateLessonForm(read: LessonReadModel): LessonFormValues {
 
     player.mechanics[mechanic.mechanicId] = {
       ...(mechanic.notes ? { notes: mechanic.notes } : {}),
+    };
+  }
+
+  for (const drill of read.drills) {
+    const player =
+      values.players[drill.playerId] ?? (values.players[drill.playerId] = {});
+
+    if (!player.drills) {
+      player.drills = {};
+    }
+
+    player.drills[drill.drillId] = {
+      ...(drill.notes ? { notes: drill.notes } : {}),
     };
   }
 

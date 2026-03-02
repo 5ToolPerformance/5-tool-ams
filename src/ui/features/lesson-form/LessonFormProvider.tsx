@@ -4,13 +4,13 @@ import { createContext, useContext, useEffect, useMemo, useState } from "react";
 
 import { toast } from "sonner";
 
+import type { LessonType } from "@/hooks/lessons/lessonForm.types";
 import { LessonFormValues } from "@/hooks/lessons/lessonForm.types";
 import { useLessonForm } from "@/hooks/lessons/useLessonForm";
 import {
   EvidenceUploadDraft,
   EvidenceUploadSource,
 } from "@/ui/features/lesson-form/components/EvidenceUploadSection";
-import type { LessonType } from "@/hooks/lessons/lessonForm.types";
 
 export type LessonFormPlayer = {
   id: string;
@@ -26,12 +26,29 @@ export type LessonFormMechanic = {
   tags: string[] | null;
 };
 
+export type LessonFormBodyPart = {
+  id: string;
+  name: string;
+};
+
+export type LessonFormDrill = {
+  id: string;
+  title: string;
+  description: string | null;
+  discipline: string;
+};
+
 type LessonFormContextValue = ReturnType<typeof useLessonForm> & {
   players: LessonFormPlayer[];
   playerById: Record<string, string>;
 
   mechanics: LessonFormMechanic[];
   mechanicById: Record<string, LessonFormMechanic>;
+
+  bodyParts: LessonFormBodyPart[];
+
+  drills: LessonFormDrill[];
+  drillsById: Record<string, LessonFormDrill>;
 
   evidenceDrafts: Record<string, EvidenceUploadDraft>;
   setEvidenceDrafts: React.Dispatch<
@@ -59,6 +76,8 @@ type LessonFormProviderProps = {
   defaultValues?: LessonFormValues;
   players: LessonFormPlayer[];
   mechanics: LessonFormMechanic[];
+  bodyParts: LessonFormBodyPart[];
+  drills: LessonFormDrill[];
   children: React.ReactNode;
   initialPlayerId?: string;
 };
@@ -67,8 +86,10 @@ export function LessonFormProvider({
   mode = "create",
   lessonId,
   defaultValues,
+  bodyParts = [],
   players = [],
   mechanics = [],
+  drills = [],
   children,
   initialPlayerId,
 }: LessonFormProviderProps) {
@@ -82,13 +103,10 @@ export function LessonFormProvider({
   useEffect(() => {
     if (!initialPlayerId) return;
 
-    form.setFieldValue("selectedPlayerIds", [
-      initialPlayerId,
-    ]);
+    form.setFieldValue("selectedPlayerIds", [initialPlayerId]);
 
     ensurePlayers([initialPlayerId]);
   }, [initialPlayerId]);
-
 
   const playerById = useMemo(() => {
     return Object.fromEntries(
@@ -99,6 +117,10 @@ export function LessonFormProvider({
   const mechanicById = useMemo(() => {
     return Object.fromEntries(mechanics.map((m) => [m.id, m]));
   }, [mechanics]);
+
+  const drillsById = useMemo(() => {
+    return Object.fromEntries(drills.map((d) => [d.id, d]));
+  }, [drills]);
 
   function inferAttachmentType(
     source: EvidenceUploadSource,
@@ -127,52 +149,49 @@ export function LessonFormProvider({
         return draft.items
           .filter((item) => !!item.file)
           .map(async (item) => {
-          const lessonPlayerId =
-            lessonPlayerByPlayerId?.[playerId] ??
-            form.getFieldValue(`players.${playerId}.lessonPlayerId`);
+            const lessonPlayerId =
+              lessonPlayerByPlayerId?.[playerId] ??
+              form.getFieldValue(`players.${playerId}.lessonPlayerId`);
 
-          if (!lessonPlayerId) {
-            throw new Error(`Missing lessonPlayerId for ${playerId}`);
-          }
-
-          const formData = new FormData();
-          formData.append("file", item.file as File);
-          formData.append("athleteId", playerId);
-          formData.append("lessonPlayerId", lessonPlayerId);
-          const attachmentType = inferAttachmentType(
-            item.source,
-            item.file
-          );
-          formData.append("type", attachmentType);
-
-          if (item.source === "media") {
-            if (!form.state.values.lessonType) {
-              throw new Error("Media uploads require a lesson type");
+            if (!lessonPlayerId) {
+              throw new Error(`Missing lessonPlayerId for ${playerId}`);
             }
-            formData.append(
-              "source",
-              inferMediaSource(form.state.values.lessonType)
-            );
-            formData.append("evidenceCategory", "media");
-          } else {
-            formData.append("source", item.source);
-            formData.append("evidenceCategory", "performance");
-          }
 
-          if (item.notes.trim()) {
-            formData.append("notes", item.notes);
-          }
+            const formData = new FormData();
+            formData.append("file", item.file as File);
+            formData.append("athleteId", playerId);
+            formData.append("lessonPlayerId", lessonPlayerId);
+            const attachmentType = inferAttachmentType(item.source, item.file);
+            formData.append("type", attachmentType);
 
-          const res = await fetch("/api/attachments/upload", {
-            method: "POST",
-            body: formData,
+            if (item.source === "media") {
+              if (!form.state.values.lessonType) {
+                throw new Error("Media uploads require a lesson type");
+              }
+              formData.append(
+                "source",
+                inferMediaSource(form.state.values.lessonType)
+              );
+              formData.append("evidenceCategory", "media");
+            } else {
+              formData.append("source", item.source);
+              formData.append("evidenceCategory", "performance");
+            }
+
+            if (item.notes.trim()) {
+              formData.append("notes", item.notes);
+            }
+
+            const res = await fetch("/api/attachments/upload", {
+              method: "POST",
+              body: formData,
+            });
+
+            if (!res.ok) {
+              const data = await res.json().catch(() => null);
+              throw new Error(data?.error ?? "Upload failed");
+            }
           });
-
-          if (!res.ok) {
-            const data = await res.json().catch(() => null);
-            throw new Error(data?.error ?? "Upload failed");
-          }
-        });
       })
     );
 
@@ -200,7 +219,7 @@ export function LessonFormProvider({
     setIsSubmitLocked(true);
 
     try {
-    const result = await lessonForm.submit();
+      const result = await lessonForm.submit();
 
       if (!result) return;
 
@@ -226,6 +245,11 @@ export function LessonFormProvider({
 
         mechanics,
         mechanicById,
+
+        bodyParts,
+
+        drills,
+        drillsById,
 
         evidenceDrafts,
         setEvidenceDrafts,

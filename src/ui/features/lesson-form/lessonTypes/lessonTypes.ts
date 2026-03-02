@@ -24,6 +24,8 @@ export type LessonTypeImplementation<TLessonSpecific> = {
   Review?: React.ComponentType<{
     data: TLessonSpecific;
   }>;
+  allowedDrillTypes: string[];
+  fatigueCheck: boolean;
 };
 
 export type LessonSpecificByType = {

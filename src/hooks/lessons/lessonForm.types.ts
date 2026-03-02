@@ -9,15 +9,21 @@ export type PlayerMechanicEntry = {
   notes?: string;
 };
 
+export type PlayerDrillEntry = {
+  notes?: string;
+};
+
 export type PlayerLessonData = {
   lessonPlayerId?: string;
   notes?: string;
   mechanics?: Record<string, PlayerMechanicEntry>;
+  drills?: Record<string, PlayerDrillEntry>;
   lessonSpecific?: {
     pitching?: PitchingLessonData;
     strength?: StrengthLessonSpecific;
   };
   videoAssetId?: string;
+  fatigueReport?: FatigueReportData;
 };
 
 export type LessonFormValues = {
@@ -44,12 +50,15 @@ export const LESSON_STEPS: LessonStep[] = [
   "confirm",
 ];
 
-export type PitchingPhase = "1" | "2" | "3" | "4";
-
 export type PitchingLessonData = {
-  phase?: PitchingPhase;
-  pitchCount?: number;
-  intentPercent?: number;
+  summary?: string;
+  focus?: string;
+};
+
+export type FatigueReportData = {
+  report: "fatigue" | "injury" | "none";
+  severity?: number;
+  bodyPartId: string;
 };
 
 export type TsIsoData = {
