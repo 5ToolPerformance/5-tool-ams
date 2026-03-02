@@ -1,12 +1,17 @@
 import { Chip, Divider } from "@heroui/react";
-import { CalendarDays, User, Users } from "lucide-react";
+import { User, Users } from "lucide-react";
 
 import { CoachDisplay } from "./CoachDisplay";
+import { LessonDrillsBadge } from "./LessonDrillsBadge";
+import { LessonEvidenceChips } from "./LessonEvidenceChips";
+import { LessonFatigueChips } from "./LessonFatigueChips";
+import { LessonPlayerCards } from "./LessonPlayerCards";
 import { LessonTypeBadge } from "./LessonTypeBadge";
 import { LessonTypeIcon } from "./LessonTypeIcon";
 import { MechanicsList } from "./MechanicsList";
+import { getPlayersForContext, getSelectedPlayer } from "./lessonCard.helpers";
 import { PlayerAvatars } from "./PlayerAvatars";
-import { formatLessonDate, getRelativeTime } from "./lessonFormatters";
+import { formatLessonDate } from "./lessonFormatters";
 import { LESSON_TYPE_CONFIG } from "./lessonTypeConfig";
 import type { LessonCardProps } from "./types";
 
@@ -17,16 +22,23 @@ export function LessonCard({
   className = "",
 }: LessonCardProps) {
   const cfg = LESSON_TYPE_CONFIG[lesson.lessonType];
-  const playerNoteTarget =
-    viewContext === "player"
-      ? lesson.players.find((player) =>
-          playerId ? player.id === playerId : lesson.players.length === 1
-        )
-      : undefined;
+
+  const selectedPlayer = getSelectedPlayer(lesson, viewContext, playerId);
+  const playersForContext = getPlayersForContext(
+    lesson,
+    viewContext,
+    selectedPlayer
+  );
+  const contextualAttachments = playersForContext.flatMap(
+    (player) => player.attachments
+  );
+  const videoCount = contextualAttachments.filter(
+    (attachment) => attachment.type === "file_video"
+  ).length;
+  const attachmentCount = contextualAttachments.length - videoCount;
+
   const notesToShow =
-    viewContext === "player"
-      ? (playerNoteTarget?.notes ?? lesson.notes)
-      : lesson.notes;
+    lesson.notes;
 
   return (
     <div
@@ -37,62 +49,77 @@ export function LessonCard({
           <div className="flex min-w-0 gap-3">
             <LessonTypeIcon lessonType={lesson.lessonType} />
             <div className="min-w-0">
-              <LessonTypeBadge lessonType={lesson.lessonType} />
+              <div className="flex flex-wrap items-center gap-2">
+                <LessonTypeBadge lessonType={lesson.lessonType} />
+                <LessonFatigueChips
+                  lesson={lesson}
+                  viewContext={viewContext}
+                  selectedPlayer={selectedPlayer}
+                  maxVisible={2}
+                />
+              </div>
               <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
-                {getRelativeTime(lesson.lessonDate)}
+                {formatLessonDate(lesson.lessonDate)}
               </p>
             </div>
           </div>
 
-          {lesson.isLegacy && (
-            <Chip
-              size="sm"
-              classNames={{
-                base: "bg-zinc-100 dark:bg-zinc-800",
-                content: "text-zinc-600 dark:text-zinc-400",
-              }}
-            >
-              Legacy
-            </Chip>
-          )}
+          <div className="flex flex-wrap items-center justify-end gap-2 pr-10">
+            <LessonEvidenceChips
+              videoCount={videoCount}
+              attachmentCount={attachmentCount}
+            />
+            {lesson.isLegacy && (
+              <Chip
+                size="sm"
+                classNames={{
+                  base: "bg-zinc-100 dark:bg-zinc-800",
+                  content: "text-zinc-600 dark:text-zinc-400",
+                }}
+              >
+                Legacy
+              </Chip>
+            )}
+          </div>
         </div>
       </div>
 
       <div className="space-y-3 px-4 pb-4 pt-3 sm:space-y-4 sm:px-5 sm:pb-5 sm:pt-4">
-        <div className="flex min-w-0 items-center gap-2">
-          {viewContext === "coach" ? (
-            <>
-              <Users className="h-4 w-4 flex-shrink-0 text-zinc-400 dark:text-zinc-500" />
-              <PlayerAvatars players={lesson.players} />
-            </>
-          ) : (
-            <>
-              <User className="h-4 w-4 flex-shrink-0 text-zinc-400 dark:text-zinc-500" />
-              <CoachDisplay coach={lesson.coach} />
-            </>
-          )}
+        <div className="grid gap-3 md:grid-cols-[minmax(0,1fr)_minmax(240px,auto)] md:gap-x-6">
+          <div className="min-w-0 space-y-3">
+            <div className="flex min-w-0 items-center gap-2">
+              {viewContext === "coach" ? (
+                <>
+                  <Users className="h-4 w-4 flex-shrink-0 text-zinc-400 dark:text-zinc-500" />
+                  <PlayerAvatars players={lesson.players} />
+                </>
+              ) : (
+                <>
+                  <User className="h-4 w-4 flex-shrink-0 text-zinc-400 dark:text-zinc-500" />
+                  <CoachDisplay coach={lesson.coach} />
+                </>
+              )}
+            </div>
+
+            {notesToShow && (
+              <p className="line-clamp-3 text-sm text-zinc-700 dark:text-zinc-300">
+                {notesToShow}
+              </p>
+            )}
+          </div>
+
+          <div className="space-y-2 md:justify-self-end md:text-right">
+            <div className="flex flex-wrap gap-2 md:justify-end">
+              <LessonDrillsBadge
+                lesson={lesson}
+                viewContext={viewContext}
+                selectedPlayer={selectedPlayer}
+              />
+            </div>
+          </div>
         </div>
 
-        <div className="flex flex-wrap gap-x-4 gap-y-2 text-sm text-zinc-600 dark:text-zinc-400">
-          <span className="flex items-center gap-2">
-            <CalendarDays className="h-4 w-4 flex-shrink-0" />
-            <span className="whitespace-nowrap">
-              {formatLessonDate(lesson.lessonDate)}
-            </span>
-          </span>
-        </div>
-
-        {notesToShow && (
-          <p className="line-clamp-2 text-sm text-zinc-700 dark:text-zinc-300">
-            {notesToShow}
-          </p>
-        )}
-        {lesson.drills.length > 0 && (
-          <p className="text-sm text-zinc-600 dark:text-zinc-400">
-            <strong>Drills:</strong>{" "}
-            {lesson.drills.map((drill) => drill.title).join(", ")}
-          </p>
-        )}
+        <LessonPlayerCards lesson={lesson} players={playersForContext} />
 
         {lesson.mechanics.length > 0 && (
           <>
