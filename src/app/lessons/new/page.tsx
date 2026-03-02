@@ -8,11 +8,6 @@ import { DebugFormState } from "@/ui/features/lesson-form/DebugFormState";
 import { LessonFormProvider } from "@/ui/features/lesson-form/LessonFormProvider";
 import { LessonStepper } from "@/ui/features/lesson-form/LessonStepper";
 
-const sampleBodyParts = [
-  { id: "1", name: "Shoulder" },
-  { id: "2", name: "Elbow" },
-];
-
 export default async function NewLessonPage({
   searchParams,
 }: {

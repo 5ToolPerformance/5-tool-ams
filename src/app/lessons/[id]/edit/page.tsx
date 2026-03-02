@@ -1,4 +1,7 @@
 import { getLessonForEdit } from "@/application/lessons/getLessonForEdit";
+import db from "@/db";
+import { getDrillsForLessonForm } from "@/db/queries/drills/getDrillsForLessonForm";
+import { getInjuryBodyParts } from "@/db/queries/injuryTaxonomy/getInjuryBodyParts";
 import { hydrateLessonForm } from "@/domain/lessons/hydrate";
 import { env } from "@/env/server";
 import { mechanicsRepository } from "@/lib/services/repository/mechanics";
@@ -14,6 +17,8 @@ export default async function EditLessonPage({
 }) {
   const players = await playerRepository.findPlayersForLessonForm();
   const mechanics = await mechanicsRepository.findAllForLessonForm();
+  const drills = await getDrillsForLessonForm(db);
+  const bodyParts = await getInjuryBodyParts(db);
   const { id } = await params;
   const readModel = await getLessonForEdit(id);
   const defaultValues = hydrateLessonForm(readModel);
@@ -22,6 +27,8 @@ export default async function EditLessonPage({
     <LessonFormProvider
       players={players}
       mechanics={mechanics}
+      drills={drills}
+      bodyParts={bodyParts}
       mode="edit"
       lessonId={id}
       defaultValues={defaultValues}

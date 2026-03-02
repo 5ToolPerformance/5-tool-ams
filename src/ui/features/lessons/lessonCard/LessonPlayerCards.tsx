@@ -148,7 +148,6 @@ export function LessonPlayerCards({ lesson, players }: LessonPlayerCardsProps) {
     <div className="overflow-x-auto pb-1">
       <div className="flex gap-3">
         {players.map((player) => {
-          const fatigueCount = player.fatigueData.length;
           const playerDrills = getPlayerDrills(lesson, player);
           const playerMechanics = getPlayerMechanics(lesson, player);
           const { videos, attachments } = getPlayerEvidenceCounts(player);

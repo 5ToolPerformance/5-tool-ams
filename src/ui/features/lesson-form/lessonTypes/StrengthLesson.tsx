@@ -15,6 +15,9 @@ export const StrengthLesson: LessonTypeImplementation<StrengthLessonSpecific> =
 
     // Used for mechanics filtering
     allowedMechanicTypes: [],
+    allowedDrillTypes: ["strength"],
+
+    fatigueCheck: false,
 
     PlayerNotes({ playerId, data }) {
       return <TsIsoTable playerId={playerId} data={data || {}} />;
