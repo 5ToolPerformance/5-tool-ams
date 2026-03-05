@@ -119,7 +119,7 @@ export default function PlayersPageClient({
   }
 
   return (
-    <div className="container mx-auto flex h-[calc(100vh-4.5rem)] flex-col gap-6 px-4 py-6 text-slate-900 dark:text-slate-100">
+    <div className="container mx-auto flex min-h-full flex-col gap-6 px-4 py-6 text-slate-900 dark:text-slate-100">
       <div className="flex flex-col space-y-4 sm:flex-row sm:items-center sm:justify-between sm:space-y-0">
         <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-50">Players</h1>
         <CreatePlayerConfigModal
@@ -161,7 +161,7 @@ export default function PlayersPageClient({
         Showing {filteredAndSortedPlayers.length} of {players.length} players
       </div>
 
-      <div className="min-h-0 flex-1 space-y-6">
+      <div className="space-y-6">
         {!activeFilters && (
           <RecentPlayersChips
             players={recentPlayers}
@@ -171,7 +171,7 @@ export default function PlayersPageClient({
           />
         )}
 
-        <div className="grid min-h-0 flex-1 gap-6 lg:grid-cols-1">
+        <div className="grid gap-6 lg:grid-cols-1">
           <PlayerSectionTable
             className="min-h-0"
             scrollHeightClassName="h-64"
