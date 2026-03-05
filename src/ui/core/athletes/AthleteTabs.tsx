@@ -26,7 +26,11 @@ export function AthleteTabs({ activeKey, onChange }: AthleteTabsProps) {
     >
       <Tab key="overview" title="Overview" />
       <Tab key="training" title="Training" />
-      <Tab key="performance" title="Performance" />
+      <Tab
+        key="performance"
+        title={<DisabledTab title="Performance" />}
+        isDisabled
+      />
       <Tab key="context" title="Context & Documents" />
       <Tab key="health" title="Health" />
       <Tab key="systems" title={<DisabledTab title="Systems" />} isDisabled />
