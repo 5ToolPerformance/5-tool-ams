@@ -15,7 +15,10 @@ import {
   TableRow,
 } from "@heroui/react";
 
-import { DashboardPlayersData, IncompleteProfileReason } from "@/domain/dashboard/types";
+import {
+  DashboardPlayersData,
+  IncompleteProfileReason,
+} from "@/domain/dashboard/types";
 
 const REASON_LABELS: Record<IncompleteProfileReason, string> = {
   missing_first_name: "Missing first name",
@@ -61,7 +64,7 @@ export function DashboardPlayersTab({ data }: { data: DashboardPlayersData }) {
       <Card shadow="sm">
         <CardBody>
           <h2 className="mb-3 text-lg font-semibold">Player Activity</h2>
-          <ScrollShadow hideScrollBar className="max-h-64 rounded-md bg-transparent">
+          <ScrollShadow className="max-h-64 rounded-md bg-transparent">
             <Table
               aria-label="Player activity"
               removeWrapper
@@ -77,13 +80,20 @@ export function DashboardPlayersTab({ data }: { data: DashboardPlayersData }) {
                 {data.playerRows.map((row) => (
                   <TableRow key={row.playerId}>
                     <TableCell>
-                      <Link href={`/players/${row.playerId}/overview`} className="hover:underline">
+                      <Link
+                        href={`/players/${row.playerId}/overview`}
+                        className="hover:underline"
+                      >
                         {row.firstName} {row.lastName}
                       </Link>
                     </TableCell>
                     <TableCell className="text-right">{row.lessons}</TableCell>
-                    <TableCell className="text-right">{row.uniqueCoaches}</TableCell>
-                    <TableCell className="text-right">{formatDate(row.latestLessonDate)}</TableCell>
+                    <TableCell className="text-right">
+                      {row.uniqueCoaches}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      {formatDate(row.latestLessonDate)}
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -94,8 +104,10 @@ export function DashboardPlayersTab({ data }: { data: DashboardPlayersData }) {
 
       <Card shadow="sm">
         <CardBody>
-          <h2 className="mb-3 text-lg font-semibold">Incomplete Player Profiles</h2>
-          <ScrollShadow hideScrollBar className="max-h-80 rounded-md bg-transparent">
+          <h2 className="mb-3 text-lg font-semibold">
+            Incomplete Player Profiles
+          </h2>
+          <ScrollShadow className="max-h-80 rounded-md bg-transparent">
             <Table
               aria-label="Incomplete player profiles"
               removeWrapper
@@ -109,14 +121,22 @@ export function DashboardPlayersTab({ data }: { data: DashboardPlayersData }) {
                 {data.incompleteProfiles.map((row) => (
                   <TableRow key={row.playerId}>
                     <TableCell>
-                      <Link href={`/players/${row.playerId}/overview`} className="hover:underline">
+                      <Link
+                        href={`/players/${row.playerId}/overview`}
+                        className="hover:underline"
+                      >
                         {row.firstName || "Unknown"} {row.lastName || "Player"}
                       </Link>
                     </TableCell>
                     <TableCell>
                       <div className="flex flex-wrap gap-2">
                         {row.reasons.map((reason) => (
-                          <Chip key={`${row.playerId}-${reason}`} size="sm" color="warning" variant="flat">
+                          <Chip
+                            key={`${row.playerId}-${reason}`}
+                            size="sm"
+                            color="warning"
+                            variant="flat"
+                          >
                             {REASON_LABELS[reason]}
                           </Chip>
                         ))}

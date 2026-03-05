@@ -17,17 +17,16 @@ import {
   User,
 } from "@heroui/react";
 
+import { LessonCardData } from "@/db/queries/lessons/lessonQueries.types";
 import { useCoachPlayerLessonCounts } from "@/hooks/coaches";
 import { useLessonsByCoachId } from "@/hooks/lessons";
 import { useUserById } from "@/hooks/players";
-
-import { LessonCardData } from "@/db/queries/lessons/lessonQueries.types";
 import { InteractiveLessonList } from "@/ui/features/lessons/lessonCard";
 
 export default function CoachProfile({
   coachId,
   avgTime,
-  lessonData
+  lessonData,
 }: {
   coachId: string;
   avgTime: number;
@@ -91,16 +90,6 @@ export default function CoachProfile({
             />
           </div>
         </CardHeader>
-        <CardBody className="pt-0">
-          <div className="flex flex-wrap gap-2">
-            <Chip color="primary" variant="flat">
-              Director of Health and Fitness
-            </Chip>
-            <Chip color="secondary" variant="flat">
-              Strength Coach
-            </Chip>
-          </div>
-        </CardBody>
       </Card>
 
       {/* Statistics Section */}
@@ -155,7 +144,7 @@ export default function CoachProfile({
                 {lessonCounts.map((stat) => (
                   <TableRow key={stat.playerId}>
                     <TableCell>
-                      <Link href={`/players/${stat.playerId}`}>
+                      <Link href={`/players/${stat.playerId}/overview`}>
                         {stat.playerName}
                       </Link>
                     </TableCell>
@@ -192,11 +181,11 @@ export default function CoachProfile({
           ) : (
             <div className="max-h-[600px] space-y-4 overflow-y-auto p-6">
               <InteractiveLessonList
-        lessons={lessonData}
-        viewContext="coach"
-        baseHref="/lessons"
-        emptyMessage="No lessons found for this coach"
-      />
+                lessons={lessonData}
+                viewContext="coach"
+                baseHref="/lessons"
+                emptyMessage="No lessons found for this coach"
+              />
             </div>
           )}
         </CardBody>
