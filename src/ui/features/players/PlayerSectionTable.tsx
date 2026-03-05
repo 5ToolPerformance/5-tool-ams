@@ -77,7 +77,6 @@ export function PlayerSectionTable({
       </div>
 
       <ScrollShadow
-        hideScrollBar
         className={`${scrollHeightClassName} rounded-md bg-transparent`}
       >
         <Table aria-label={`${title} players table`}>
