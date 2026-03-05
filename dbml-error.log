@@ -1,0 +1,7 @@
+2026-03-05T14:14:45.187Z
+Error: PostgreSQL connection error: error: connection is insecure (try using `sslmode=require`)
+    at D (C:\Users\jtn80\AppData\Local\pnpm\global\5\node_modules\@dbml\connector\dist\index.js:1:1741)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async ae (C:\Users\jtn80\AppData\Local\pnpm\global\5\node_modules\@dbml\connector\dist\index.js:218:278)
+    at async connectionHandler (C:\Users\jtn80\AppData\Local\pnpm\global\5\node_modules\@dbml\cli\lib\index.js:1179:22)
+
