@@ -7,7 +7,7 @@ import {
   uuid,
 } from "drizzle-orm/pg-core";
 
-import { users } from "@/db/schema";
+import { disciplines, users } from "@/db/schema";
 import { evaluations } from "@/db/schema/evaluations/evaluations";
 import playerInformation from "@/db/schema/players/playerInformation";
 
@@ -39,6 +39,10 @@ export const developmentPlans = pgTable(
     status: developmentPlanStatusEnum("status").default("active").notNull(),
 
     notes: text("notes"),
+
+    discipline: uuid("discipline")
+      .notNull()
+      .references(() => disciplines.id, { onDelete: "no action" }),
 
     createdOn: timestamp("created_on").defaultNow().notNull(),
   },

@@ -7,7 +7,7 @@ import {
   uuid,
 } from "drizzle-orm/pg-core";
 
-import { users } from "@/db/schema";
+import { disciplines, users } from "@/db/schema";
 import playerInformation from "@/db/schema/players/playerInformation";
 
 export const evaluationTypeEnum = pgEnum("evaluation_type", [
@@ -35,6 +35,10 @@ export const evaluations = pgTable(
     evaluationType: evaluationTypeEnum("evaluation_type").notNull(),
 
     notes: text("notes"),
+
+    discipline: uuid("discipline")
+      .notNull()
+      .references(() => disciplines.id, { onDelete: "no action" }),
 
     createdOn: timestamp("created_on").defaultNow().notNull(),
   },
