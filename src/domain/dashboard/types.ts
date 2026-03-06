@@ -62,7 +62,6 @@ export interface DashboardPlayerMetricRow {
 export type IncompleteProfileReason =
   | "missing_first_name"
   | "missing_last_name"
-  | "missing_primary_position"
   | "missing_primary_coach"
   | "invalid_throws"
   | "invalid_hits"

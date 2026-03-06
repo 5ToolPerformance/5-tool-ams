@@ -27,16 +27,7 @@ export function LessonSpecificSection({ lessonType, player }: Props) {
   if (lessonType === "pitching") {
     const pitching = player.lessonSpecific.pitching;
     if (!pitching?.summary && !pitching?.focus) {
-      return (
-        <LessonViewerSection
-          title="Lesson Specific"
-          icon={<FlaskConical className="h-4 w-4" />}
-        >
-          <p className="text-sm text-zinc-500 dark:text-zinc-400">
-            No pitching-specific information recorded.
-          </p>
-        </LessonViewerSection>
-      );
+      return null;
     }
 
     return (
@@ -64,16 +55,7 @@ export function LessonSpecificSection({ lessonType, player }: Props) {
     const tsIso = player.lessonSpecific.strength?.tsIso;
     const metricCount = countStrengthMetrics(tsIso);
     if (!tsIso || metricCount === 0) {
-      return (
-        <LessonViewerSection
-          title="Lesson Specific"
-          icon={<FlaskConical className="h-4 w-4" />}
-        >
-          <p className="text-sm text-zinc-500 dark:text-zinc-400">
-            No strength-specific information recorded.
-          </p>
-        </LessonViewerSection>
-      );
+      return null;
     }
 
     return (
@@ -97,11 +79,5 @@ export function LessonSpecificSection({ lessonType, player }: Props) {
     );
   }
 
-  return (
-    <LessonViewerSection title="Lesson Specific" icon={<FlaskConical className="h-4 w-4" />}>
-      <p className="text-sm text-zinc-500 dark:text-zinc-400">
-        No lesson-specific information for {lessonType} lessons.
-      </p>
-    </LessonViewerSection>
-  );
+  return null;
 }

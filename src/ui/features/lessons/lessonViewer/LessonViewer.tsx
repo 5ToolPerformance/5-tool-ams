@@ -17,13 +17,14 @@ export function LessonViewer({
   className = "",
 }: LessonViewerProps) {
   const cfg = LESSON_TYPE_CONFIG[lesson.lessonType];
-  const filteredPlayer = playerId
-    ? lesson.players.find((player) => player.id === playerId)
-    : undefined;
-  const playersForPanel = filteredPlayer ? [filteredPlayer] : lesson.players;
-  const showTabs = playersForPanel.length > 1;
-  const showGlobalPlayersSummary =
-    !filteredPlayer && lesson.players.length > 1;
+  const defaultSelectedPlayerId = lesson.players.some(
+    (player) => player.id === playerId
+  )
+    ? playerId
+    : lesson.players[0]?.id;
+  const hasNotes = Boolean(lesson.notes?.trim());
+  const showTabs = lesson.players.length > 1;
+  const showGlobalPlayersSummary = lesson.players.length > 1;
 
   return (
     <div
@@ -45,14 +46,20 @@ export function LessonViewer({
           </>
         )}
 
-        <NotesSection notes={lesson.notes} />
+        {hasNotes && (
+          <>
+            <NotesSection notes={lesson.notes} />
+            <Divider className="dark:bg-zinc-800" />
+          </>
+        )}
 
-        <Divider className="dark:bg-zinc-800" />
+        {!hasNotes && <Divider className="dark:bg-zinc-800" />}
 
         <PlayerLessonDetailsPanel
           lesson={lesson}
-          players={playersForPanel}
+          players={lesson.players}
           showTabs={showTabs}
+          defaultSelectedPlayerId={defaultSelectedPlayerId}
         />
       </div>
     </div>

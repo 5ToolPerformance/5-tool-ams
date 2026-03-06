@@ -70,16 +70,7 @@ function MechanicCard({ mechanic }: { mechanic: LessonMechanicData }) {
 
 export function MechanicsSection({ mechanics }: Props) {
   if (mechanics.length === 0) {
-    return (
-      <LessonViewerSection
-        title="Mechanics"
-        icon={<Wrench className="h-4 w-4" />}
-      >
-        <p className="text-sm text-zinc-500 dark:text-zinc-400">
-          No mechanics recorded for this lesson.
-        </p>
-      </LessonViewerSection>
-    );
+    return null;
   }
 
   return (

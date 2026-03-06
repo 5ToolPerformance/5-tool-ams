@@ -6,6 +6,7 @@ import { Button } from "@heroui/react";
 import { IconMenu2 } from "@tabler/icons-react";
 
 import Sidebar from "./sidebar";
+import UniversalBackButton from "./universal-back-button";
 
 interface SidebarLayoutProps {
   children: React.ReactNode;
@@ -48,7 +49,12 @@ export default function SidebarLayout({ children }: SidebarLayoutProps) {
 
         {/* Page content */}
         <main className="flex-1 overflow-auto bg-[url(/light-bg.svg)] bg-cover bg-repeat dark:bg-[url(/dark-bg.svg)]">
-          <div className="p-6">{children}</div>
+          <div className="p-6">
+            <div className="mb-4">
+              <UniversalBackButton />
+            </div>
+            {children}
+          </div>
         </main>
       </div>
     </div>

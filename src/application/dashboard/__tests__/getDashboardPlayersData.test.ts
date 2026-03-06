@@ -22,7 +22,7 @@ describe("getDashboardPlayersData", () => {
     jest.clearAllMocks();
   });
 
-  it("treats non-boolean falsey primary-position values as missing", async () => {
+  it("ignores primary-position values when building incomplete profiles", async () => {
     (getDashboardPlayerMetrics as jest.Mock).mockResolvedValue([]);
     (getIncompletePlayerProfiles as jest.Mock).mockResolvedValue([
       {
@@ -59,8 +59,6 @@ describe("getDashboardPlayersData", () => {
 
     const result = await getDashboardPlayersData("facility-1", range);
 
-    expect(result.incompleteProfiles).toHaveLength(2);
-    expect(result.incompleteProfiles[0].reasons).toContain("missing_primary_position");
-    expect(result.incompleteProfiles[1].reasons).toContain("missing_primary_position");
+    expect(result.incompleteProfiles).toEqual([]);
   });
 });

@@ -1,13 +1,15 @@
 "use client";
 
-import { Avatar, Chip, Divider, Tab, Tabs } from "@heroui/react";
+import { ReactNode } from "react";
+
+import { Divider, Tab, Tabs } from "@heroui/react";
 
 import {
   LessonCardData,
   LessonPlayerData,
 } from "@/db/queries/lessons/lessonQueries.types";
 
-import { getPlayerInitials } from "../lessonCard/lessonFormatters";
+import { countStrengthMetrics } from "../lessonCard/lessonCard.helpers";
 import { AttachmentsSection } from "./AttachmentsSection";
 import { DrillsSection } from "./DrillsSection";
 import { FatigueSection } from "./FatigueSection";
@@ -18,44 +20,7 @@ interface Props {
   lesson: LessonCardData;
   players: LessonPlayerData[];
   showTabs: boolean;
-}
-
-function PlayerIdentityCard({ player }: { player: LessonPlayerData }) {
-  return (
-    <div className="flex gap-4 rounded-lg border border-zinc-200 bg-zinc-50 p-4 dark:border-zinc-700 dark:bg-zinc-800/50">
-      <Avatar
-        src={player.profilePictureUrl ?? undefined}
-        name={getPlayerInitials(player)}
-        size="lg"
-        classNames={{
-          base: "ring-2 ring-white dark:ring-zinc-900 flex-shrink-0",
-          name: "text-sm font-semibold",
-        }}
-      />
-      <div className="min-w-0 flex-1 space-y-2">
-        <p className="truncate text-base font-semibold text-zinc-900 dark:text-zinc-100">
-          {player.firstName} {player.lastName}
-        </p>
-        <div className="flex flex-wrap gap-2">
-          <Chip size="sm" variant="flat">
-            {player.position}
-          </Chip>
-          <Chip size="sm" variant="flat">
-            Throws: {player.throws}
-          </Chip>
-          <Chip size="sm" variant="flat">
-            Hits: {player.hits}
-          </Chip>
-          <Chip size="sm" variant="flat">
-            {player.sport}
-          </Chip>
-        </div>
-        {player.notes && (
-          <p className="text-sm text-zinc-600 dark:text-zinc-400">{player.notes}</p>
-        )}
-      </div>
-    </div>
-  );
+  defaultSelectedPlayerId?: string;
 }
 
 function PlayerLessonDetailContent({
@@ -65,34 +30,91 @@ function PlayerLessonDetailContent({
   lesson: LessonCardData;
   player: LessonPlayerData;
 }) {
-  const mechanics = lesson.mechanics.filter((mechanic) => mechanic.playerId === player.id);
+  const mechanics = lesson.mechanics.filter(
+    (mechanic) => mechanic.playerId === player.id
+  );
   const drills = player.lessonPlayerId
-    ? lesson.drills.filter((drill) => drill.lessonPlayerId === player.lessonPlayerId)
+    ? lesson.drills.filter(
+        (drill) => drill.lessonPlayerId === player.lessonPlayerId
+      )
     : [];
+  const sections: ReactNode[] = [];
+
+  if (player.fatigueData.length > 0) {
+    sections.push(
+      <FatigueSection key="fatigue" fatigueData={player.fatigueData} />
+    );
+  }
+
+  const hasPitchingSpecific =
+    lesson.lessonType === "pitching" &&
+    Boolean(
+      player.lessonSpecific.pitching?.summary ||
+        player.lessonSpecific.pitching?.focus
+    );
+  const strengthTsIso = player.lessonSpecific.strength?.tsIso;
+  const hasStrengthSpecific =
+    lesson.lessonType === "strength" &&
+    Boolean(strengthTsIso && countStrengthMetrics(strengthTsIso) > 0);
+
+  if (hasPitchingSpecific || hasStrengthSpecific) {
+    sections.push(
+      <LessonSpecificSection
+        key="lesson-specific"
+        lessonType={lesson.lessonType}
+        player={player}
+      />
+    );
+  }
+
+  if (mechanics.length > 0) {
+    sections.push(<MechanicsSection key="mechanics" mechanics={mechanics} />);
+  }
+
+  if (drills.length > 0) {
+    sections.push(<DrillsSection key="drills" drills={drills} />);
+  }
+
+  if (player.attachments.length > 0) {
+    sections.push(
+      <AttachmentsSection key="attachments" attachments={player.attachments} />
+    );
+  }
 
   return (
-    <div className="space-y-6">
-      <PlayerIdentityCard player={player} />
-
-      <Divider className="dark:bg-zinc-800" />
-      <FatigueSection fatigueData={player.fatigueData} />
-
-      <Divider className="dark:bg-zinc-800" />
-      <LessonSpecificSection lessonType={lesson.lessonType} player={player} />
-
-      <Divider className="dark:bg-zinc-800" />
-      <MechanicsSection mechanics={mechanics} />
-
-      <Divider className="dark:bg-zinc-800" />
-      <DrillsSection drills={drills} />
-
-      <Divider className="dark:bg-zinc-800" />
-      <AttachmentsSection attachments={player.attachments} />
+    <div className="space-y-4">
+      <div className="space-y-2">
+        <h3 className="text-2xl font-semibold text-zinc-900 dark:text-zinc-100">
+          {player.firstName} {player.lastName}
+        </h3>
+        <Divider className="dark:bg-zinc-800" />
+        {player.notes && (
+          <div>
+            <h4 className="text-lg font-medium text-zinc-700 dark:text-zinc-300">
+              Player Notes
+            </h4>
+            <p className="text-sm text-zinc-600 dark:text-zinc-400">
+              {player.notes}
+            </p>
+          </div>
+        )}
+      </div>
+      {sections.map((section, index) => (
+        <div key={index}>
+          <Divider className="dark:bg-zinc-800" />
+          {section}
+        </div>
+      ))}
     </div>
   );
 }
 
-export function PlayerLessonDetailsPanel({ lesson, players, showTabs }: Props) {
+export function PlayerLessonDetailsPanel({
+  lesson,
+  players,
+  showTabs,
+  defaultSelectedPlayerId,
+}: Props) {
   if (players.length === 0) {
     return (
       <p className="text-sm text-zinc-500 dark:text-zinc-400">
@@ -108,6 +130,7 @@ export function PlayerLessonDetailsPanel({ lesson, players, showTabs }: Props) {
   return (
     <Tabs
       aria-label="Lesson players"
+      defaultSelectedKey={defaultSelectedPlayerId}
       variant="underlined"
       classNames={{
         tabList: "gap-1 overflow-x-auto",

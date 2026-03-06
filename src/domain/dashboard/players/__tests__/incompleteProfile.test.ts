@@ -11,7 +11,6 @@ describe("incomplete dashboard profiles", () => {
         throws: "ambi",
         hits: null,
         dateOfBirth: "2010-01-01",
-        hasPrimaryPosition: false,
       },
     ]);
 
@@ -19,7 +18,6 @@ describe("incomplete dashboard profiles", () => {
     expect(result[0].reasons).toEqual([
       "missing_first_name",
       "missing_last_name",
-      "missing_primary_position",
       "missing_primary_coach",
       "invalid_throws",
       "invalid_hits",
@@ -38,7 +36,6 @@ describe("incomplete dashboard profiles", () => {
         throws: "right",
         hits: "left",
         dateOfBirth: dob,
-        hasPrimaryPosition: true,
       },
     ]);
 
@@ -56,7 +53,6 @@ describe("incomplete dashboard profiles", () => {
         throws: "right",
         hits: "left",
         dateOfBirth: "2010-01-01",
-        hasPrimaryPosition: true,
       },
     ]);
 

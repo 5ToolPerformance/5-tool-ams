@@ -1,7 +1,7 @@
-import { eq, sql } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 
 import db, { DB } from "@/db";
-import { playerInformation, playerPositions } from "@/db/schema";
+import { playerInformation } from "@/db/schema";
 
 export interface IncompleteProfileRawRow {
   playerId: string;
@@ -11,7 +11,6 @@ export interface IncompleteProfileRawRow {
   throws: string;
   hits: string;
   dateOfBirth: string;
-  hasPrimaryPosition: boolean;
 }
 
 export async function getIncompletePlayerProfiles(
@@ -27,14 +26,6 @@ export async function getIncompletePlayerProfiles(
       throws: playerInformation.throws,
       hits: playerInformation.hits,
       dateOfBirth: playerInformation.date_of_birth,
-      hasPrimaryPosition: sql<boolean>`
-        exists(
-          select 1
-          from ${playerPositions}
-          where ${playerPositions.playerId} = ${playerInformation.id}
-            and ${playerPositions.isPrimary} = true
-        )
-      `,
     })
     .from(playerInformation)
     .where(eq(playerInformation.facilityId, facilityId));

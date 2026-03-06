@@ -3,19 +3,6 @@ import { getDashboardPlayerMetrics } from "@/db/queries/dashboard/getDashboardPl
 import { buildIncompletePlayerProfiles } from "@/domain/dashboard/players/incompleteProfile";
 import { DashboardPlayersData, DashboardRangeWindow } from "@/domain/dashboard/types";
 
-function coerceBoolean(value: unknown): boolean {
-  if (typeof value === "boolean") return value;
-  if (typeof value === "number") return value !== 0;
-  if (typeof value === "string") {
-    const normalized = value.trim().toLowerCase();
-    if (normalized === "t" || normalized === "true" || normalized === "1") return true;
-    if (normalized === "f" || normalized === "false" || normalized === "0" || normalized === "") {
-      return false;
-    }
-  }
-  return Boolean(value);
-}
-
 export async function getDashboardPlayersData(
   facilityId: string,
   range: DashboardRangeWindow
@@ -52,7 +39,6 @@ export async function getDashboardPlayersData(
       throws: row.throws,
       hits: row.hits,
       dateOfBirth: row.dateOfBirth,
-      hasPrimaryPosition: coerceBoolean(row.hasPrimaryPosition),
     }))
   );
 

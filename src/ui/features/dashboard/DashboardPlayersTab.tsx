@@ -23,7 +23,6 @@ import {
 const REASON_LABELS: Record<IncompleteProfileReason, string> = {
   missing_first_name: "Missing first name",
   missing_last_name: "Missing last name",
-  missing_primary_position: "Missing primary position",
   missing_primary_coach: "Missing primary coach",
   invalid_throws: "Invalid throws",
   invalid_hits: "Invalid hits",

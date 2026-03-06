@@ -81,13 +81,7 @@ function PlayerCard({ player }: { player: LessonPlayerData }) {
 
 export function PlayersSection({ players }: Props) {
   if (players.length === 0) {
-    return (
-      <LessonViewerSection title="Players" icon={<Users className="h-4 w-4" />}>
-        <p className="text-sm text-zinc-500 dark:text-zinc-400">
-          No players recorded for this lesson.
-        </p>
-      </LessonViewerSection>
-    );
+    return null;
   }
 
   return (

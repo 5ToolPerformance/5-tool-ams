@@ -20,13 +20,7 @@ function formatDbLabel(value: string) {
 
 export function DrillsSection({ drills }: Props) {
   if (drills.length === 0) {
-    return (
-      <LessonViewerSection title="Drills" icon={<ListChecks className="h-4 w-4" />}>
-        <p className="text-sm text-zinc-500 dark:text-zinc-400">
-          No drills recorded for this player.
-        </p>
-      </LessonViewerSection>
-    );
+    return null;
   }
 
   return (

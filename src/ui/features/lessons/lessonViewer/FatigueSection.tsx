@@ -17,13 +17,7 @@ function formatReport(report: string) {
 
 export function FatigueSection({ fatigueData }: Props) {
   if (fatigueData.length === 0) {
-    return (
-      <LessonViewerSection title="Fatigue" icon={<HeartPulse className="h-4 w-4" />}>
-        <p className="text-sm text-zinc-500 dark:text-zinc-400">
-          No fatigue data recorded for this player.
-        </p>
-      </LessonViewerSection>
-    );
+    return null;
   }
 
   return (

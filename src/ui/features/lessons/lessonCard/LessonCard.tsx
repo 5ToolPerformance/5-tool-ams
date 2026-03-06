@@ -119,7 +119,12 @@ export function LessonCard({
           </div>
         </div>
 
-        <LessonPlayerCards lesson={lesson} players={playersForContext} />
+        <LessonPlayerCards
+          lesson={lesson}
+          players={playersForContext}
+          viewContext={viewContext}
+          totalPlayers={lesson.players.length}
+        />
 
         {lesson.mechanics.length > 0 && (
           <>

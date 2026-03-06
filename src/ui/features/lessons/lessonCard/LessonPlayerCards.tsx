@@ -9,10 +9,13 @@ import {
 } from "@/db/queries/lessons/lessonQueries.types";
 
 import { countStrengthMetrics } from "./lessonCard.helpers";
+import type { ViewContext } from "./types";
 
 interface LessonPlayerCardsProps {
   lesson: LessonCardData;
   players: LessonPlayerData[];
+  viewContext: ViewContext;
+  totalPlayers: number;
 }
 
 function getPlayerDrills(
@@ -141,13 +144,43 @@ function PlayerSpecificSummary({
   return null;
 }
 
-export function LessonPlayerCards({ lesson, players }: LessonPlayerCardsProps) {
+export function LessonPlayerCards({
+  lesson,
+  players,
+  viewContext,
+  totalPlayers,
+}: LessonPlayerCardsProps) {
   if (players.length === 0) return null;
 
+  const maxVisiblePlayers = viewContext === "coach" ? 3 : 1;
+  const visiblePlayers = players.slice(0, maxVisiblePlayers);
+  const remainingPlayers = Math.max(0, totalPlayers - visiblePlayers.length);
+
   return (
-    <div className="overflow-x-auto pb-1">
-      <div className="flex gap-3">
-        {players.map((player) => {
+    <div className="space-y-2">
+      {remainingPlayers > 0 && (
+        <div className="flex justify-start">
+          <Chip
+            size="sm"
+            variant="flat"
+            classNames={{
+              base: "bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700",
+              content: "text-[11px]",
+            }}
+          >
+            +{remainingPlayers} more players
+          </Chip>
+        </div>
+      )}
+
+      <div
+        className={
+          viewContext === "coach"
+            ? "grid gap-3 md:grid-cols-2 xl:grid-cols-3"
+            : "grid grid-cols-1 gap-3"
+        }
+      >
+        {visiblePlayers.map((player) => {
           const playerDrills = getPlayerDrills(lesson, player);
           const playerMechanics = getPlayerMechanics(lesson, player);
           const { videos, attachments } = getPlayerEvidenceCounts(player);
@@ -155,7 +188,11 @@ export function LessonPlayerCards({ lesson, players }: LessonPlayerCardsProps) {
           return (
             <div
               key={player.id}
-              className="w-[280px] flex-shrink-0 rounded-lg border border-zinc-200 bg-zinc-50 p-3 dark:border-zinc-700 dark:bg-zinc-800/50"
+              className={
+                viewContext === "coach"
+                  ? "rounded-lg border border-zinc-200 bg-zinc-50 p-3 dark:border-zinc-700 dark:bg-zinc-800/50"
+                  : "w-full rounded-lg border border-zinc-200 bg-zinc-50 p-3 dark:border-zinc-700 dark:bg-zinc-800/50"
+              }
             >
               <div className="mb-2 flex items-center justify-between gap-2">
                 <p className="truncate text-sm font-semibold text-zinc-900 dark:text-zinc-100">

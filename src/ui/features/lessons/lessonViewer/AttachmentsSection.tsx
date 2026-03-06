@@ -17,16 +17,7 @@ export function AttachmentsSection({ attachments }: Props) {
   const { openAttachment } = useAttachmentViewer();
 
   if (attachments.length === 0) {
-    return (
-      <LessonViewerSection
-        title="Attachments"
-        icon={<Paperclip className="h-4 w-4" />}
-      >
-        <p className="text-sm text-zinc-500 dark:text-zinc-400">
-          No attachments recorded for this player.
-        </p>
-      </LessonViewerSection>
-    );
+    return null;
   }
 
   return (

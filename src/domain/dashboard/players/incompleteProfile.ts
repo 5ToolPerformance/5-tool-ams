@@ -14,7 +14,6 @@ export interface IncompleteProfileInput {
   throws: string | null;
   hits: string | null;
   dateOfBirth: string | null;
-  hasPrimaryPosition: boolean;
 }
 
 function isBlank(value: string | null | undefined): boolean {
@@ -28,7 +27,6 @@ export function evaluateIncompleteProfile(
 
   if (isBlank(input.firstName)) reasons.push("missing_first_name");
   if (isBlank(input.lastName)) reasons.push("missing_last_name");
-  if (!input.hasPrimaryPosition) reasons.push("missing_primary_position");
   if (!input.primaryCoachId) reasons.push("missing_primary_coach");
   if (!input.throws || !VALID_HANDEDNESS.has(input.throws)) {
     reasons.push("invalid_throws");
