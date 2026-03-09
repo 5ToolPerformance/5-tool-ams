@@ -50,8 +50,22 @@ export function useLessonForm({
     const sharedNotes = form.getFieldValue("sharedNotes");
 
     if (!sharedNotes) {
-      form.setFieldValue("sharedNotes", {});
+      form.setFieldValue("sharedNotes", { general: "" });
     }
+  }
+
+  function shouldSkipSharedNotes() {
+    return form.state.values.selectedPlayerIds.length === 1;
+  }
+
+  function getActiveSteps(): LessonStep[] {
+    if (!shouldSkipSharedNotes()) return LESSON_STEPS;
+    return LESSON_STEPS.filter((step) => step !== "shared-notes");
+  }
+
+  function syncSharedNotesForPlayerCount() {
+    if (!shouldSkipSharedNotes()) return;
+    form.setFieldValue("sharedNotes.general", "");
   }
 
   function isStepValid(step: LessonStep): boolean {
@@ -66,9 +80,7 @@ export function useLessonForm({
         );
 
       case "player-notes":
-        return values.selectedPlayerIds.every(
-          (id) => !!values.players[id]?.notes
-        );
+        return true;
 
       case "shared-notes":
         return true;
@@ -81,22 +93,27 @@ export function useLessonForm({
   function nextStep() {
     if (!isStepValid(currentStep)) return;
 
-    const index = LESSON_STEPS.indexOf(currentStep);
-    if (index < LESSON_STEPS.length - 1) {
-      setCurrentStep(LESSON_STEPS[index + 1]);
+    syncSharedNotesForPlayerCount();
+
+    const activeSteps = getActiveSteps();
+    const index = activeSteps.indexOf(currentStep);
+    if (index < activeSteps.length - 1) {
+      setCurrentStep(activeSteps[index + 1]);
     }
   }
 
   function prevStep() {
-    const index = LESSON_STEPS.indexOf(currentStep);
+    const activeSteps = getActiveSteps();
+    const index = activeSteps.indexOf(currentStep);
     if (index > 0) {
-      setCurrentStep(LESSON_STEPS[index - 1]);
+      setCurrentStep(activeSteps[index - 1]);
     }
   }
 
   async function submit() {
     if (!isStepValid("confirm")) return;
     try {
+      syncSharedNotesForPlayerCount();
       const values = form.state.values;
 
       if (mode === "edit") {

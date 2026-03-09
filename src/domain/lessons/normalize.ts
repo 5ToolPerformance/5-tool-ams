@@ -19,7 +19,10 @@ export function normalizeLessonForCreate(
   const lesson = {
     date: values.lessonDate,
     type: values.lessonType,
-    sharedNotes: values.sharedNotes?.general || undefined,
+    sharedNotes:
+      values.selectedPlayerIds.length === 1
+        ? ""
+        : values.sharedNotes?.general || undefined,
   };
 
   const participants = values.selectedPlayerIds.map((playerId) => {
