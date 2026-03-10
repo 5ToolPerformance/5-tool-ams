@@ -1,5 +1,6 @@
 import {
   index,
+  jsonb,
   pgEnum,
   pgTable,
   text,
@@ -60,6 +61,7 @@ export const evaluations = pgTable(
 
     createdOn: timestamp("created_on").defaultNow().notNull(),
     updatedOn: timestamp("updated_on").defaultNow().notNull(),
+    documentData: jsonb("document_data"),
   },
   (t) => [
     index("evaluations_player_idx").on(t.playerId),
