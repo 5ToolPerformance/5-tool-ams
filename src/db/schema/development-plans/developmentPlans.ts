@@ -1,4 +1,11 @@
-import { index, pgEnum, pgTable, timestamp, uuid } from "drizzle-orm/pg-core";
+import {
+  index,
+  jsonb,
+  pgEnum,
+  pgTable,
+  timestamp,
+  uuid,
+} from "drizzle-orm/pg-core";
 
 import { disciplines, users } from "@/db/schema";
 import { evaluations } from "@/db/schema/evaluations/evaluations";
@@ -39,6 +46,7 @@ export const developmentPlans = pgTable(
 
     createdOn: timestamp("created_on").defaultNow().notNull(),
     updatedOn: timestamp("updated_on").defaultNow().notNull(),
+    documentData: jsonb("document_data"),
   },
   (t) => [
     index("development_plans_player_idx").on(t.playerId),

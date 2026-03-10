@@ -2,6 +2,7 @@ import {
   boolean,
   index,
   integer,
+  jsonb,
   pgEnum,
   pgTable,
   text,
@@ -42,6 +43,7 @@ export const developmentPlanRoutines = pgTable(
 
     createdOn: timestamp("created_on").defaultNow().notNull(),
     updatedOn: timestamp("updated_on").defaultNow().notNull(),
+    documentData: jsonb("document_data"),
   },
   (t) => [
     index("development_plan_routines_plan_idx").on(t.developmentPlanId),
