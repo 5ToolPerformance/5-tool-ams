@@ -533,6 +533,8 @@ Push shaping logic into helper functions or the page-level read model.
 
 ## 6. Use HeroUI where applicable
 
+Use HeroUI for scroll shadows, cards, tables, etc.
+
 ---
 
 # Acceptance criteria
