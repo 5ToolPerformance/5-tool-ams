@@ -1,6 +1,8 @@
 import { DomainError } from "@/lib/errors";
 
-export type RoutineDocument = Record<string, unknown> | null;
+import { RoutineDocumentV1 } from "./types";
+
+export type RoutineDocument = RoutineDocumentV1 | null;
 
 export type ValidateRoutineInput = {
   developmentPlanId: string;

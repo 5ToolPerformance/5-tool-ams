@@ -1,6 +1,8 @@
 import { DomainError } from "@/lib/errors";
 
-export type EvaluationDocument = Record<string, unknown> | null;
+import { EvaluationDocumentV1 } from "./types";
+
+export type EvaluationDocument = EvaluationDocumentV1 | null;
 
 export type ValidateEvaluationInput = {
   playerId: string;
