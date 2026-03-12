@@ -1,10 +1,11 @@
+import { eq } from "drizzle-orm";
+
 import { DB } from "@/db";
 import { evaluations } from "@/db/schema";
 
-export type CreateEvaluationRowInput = {
-  playerId: string;
-  disciplineId: string;
-  createdBy: string;
+import { getEvaluationById } from "./getEvaluationById";
+
+export type UpdateEvaluationRowInput = {
   evaluationDate: Date;
   evaluationType:
     | "baseline"
@@ -27,16 +28,14 @@ export type CreateEvaluationRowInput = {
   documentData?: Record<string, unknown> | null;
 };
 
-export async function createEvaluation(
+export async function updateEvaluation(
   db: DB,
-  input: CreateEvaluationRowInput
+  evaluationId: string,
+  input: UpdateEvaluationRowInput
 ) {
-  const [row] = await db
-    .insert(evaluations)
-    .values({
-      playerId: input.playerId,
-      disciplineId: input.disciplineId,
-      createdBy: input.createdBy,
+  await db
+    .update(evaluations)
+    .set({
       evaluationDate: input.evaluationDate,
       evaluationType: input.evaluationType,
       phase: input.phase,
@@ -45,8 +44,9 @@ export async function createEvaluation(
       strengthProfileSummary: input.strengthProfileSummary,
       keyConstraintsSummary: input.keyConstraintsSummary,
       documentData: input.documentData ?? null,
+      updatedOn: new Date(),
     })
-    .returning();
+    .where(eq(evaluations.id, evaluationId));
 
-  return row;
+  return getEvaluationById(db, evaluationId);
 }
