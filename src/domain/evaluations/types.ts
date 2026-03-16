@@ -2,8 +2,6 @@ export type EvaluationDocumentV1 = {
   version: 1;
   snapshot?: {
     notes?: string;
-    phase?: string;
-    injuryNotes?: string;
   };
   strengthProfile?: {
     notes?: string;
