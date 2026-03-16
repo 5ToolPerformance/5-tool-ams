@@ -1,6 +1,7 @@
 import { Card, CardBody } from "@heroui/react";
 
 import type { PlayerDevelopmentTabData } from "@/application/players/development/getPlayerDevelopmentTabData";
+import type { EvaluationBucketOption, EvaluationDisciplineOption } from "@/ui/features/development/forms/evaluation/evaluationForm.types";
 
 import { ActivePlanPanel } from "./ActivePlanPanel";
 import { CurrentSnapshotPanel } from "./CurrentSnapshotPanel";
@@ -13,12 +14,16 @@ interface DevelopmentTabProps {
   playerId: string;
   createdBy: string;
   data: PlayerDevelopmentTabData;
+  evaluationDisciplineOptions: EvaluationDisciplineOption[];
+  evaluationBucketOptions: EvaluationBucketOption[];
 }
 
 export function DevelopmentTab({
   playerId,
   createdBy,
   data,
+  evaluationDisciplineOptions,
+  evaluationBucketOptions,
 }: DevelopmentTabProps) {
   const selectedDiscipline = data.selectedDiscipline;
 
@@ -34,7 +39,8 @@ export function DevelopmentTab({
           <DevelopmentActionButtons
             playerId={playerId}
             createdBy={createdBy}
-            disciplineOptions={data.disciplineOptions}
+            disciplineOptions={evaluationDisciplineOptions}
+            bucketOptions={evaluationBucketOptions}
           />
         </CardBody>
       </Card>
@@ -58,7 +64,8 @@ export function DevelopmentTab({
           <DevelopmentActionButtons
             playerId={playerId}
             createdBy={createdBy}
-            disciplineOptions={data.disciplineOptions}
+            disciplineOptions={evaluationDisciplineOptions}
+            bucketOptions={evaluationBucketOptions}
           />
         </CardBody>
       </Card>

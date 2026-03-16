@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { createEvaluation } from "@/application/evaluations/createEvaluation";
 import db from "@/db";
+import { listBucketsByIds } from "@/db/queries/config/listBucketsByIds";
 import type { CreateEvaluationRowInput } from "@/db/queries/evaluations/createEvaluation";
 import {
   assertPlayerAccess,
@@ -21,12 +22,47 @@ export async function POST(request: NextRequest) {
       "createdBy"
     > & {
       createdBy?: string;
+      evaluationDate: string | Date;
+      documentData?: {
+        buckets?: Array<{ bucketId: string }>;
+      } | null;
     };
+
+    const evaluationDate =
+      body.evaluationDate instanceof Date
+        ? body.evaluationDate
+        : new Date(body.evaluationDate);
+
+    if (Number.isNaN(evaluationDate.getTime())) {
+      return NextResponse.json(
+        { error: "Evaluation date is invalid." },
+        { status: 400 }
+      );
+    }
 
     await assertPlayerAccess(ctx, body.playerId);
 
+    const bucketIds =
+      body.documentData?.buckets?.map((bucket) => bucket.bucketId) ?? [];
+
+    if (bucketIds.length > 0) {
+      const matchingBuckets = await listBucketsByIds(
+        bucketIds,
+        body.disciplineId,
+        db
+      );
+
+      if (matchingBuckets.length !== new Set(bucketIds).size) {
+        return NextResponse.json(
+          { error: "One or more buckets do not belong to the selected discipline." },
+          { status: 400 }
+        );
+      }
+    }
+
     const evaluation = await createEvaluation(db, {
       ...body,
+      evaluationDate,
       createdBy: ctx.userId,
     });
 

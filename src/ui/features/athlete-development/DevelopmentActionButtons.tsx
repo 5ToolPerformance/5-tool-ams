@@ -7,7 +7,10 @@ import { useRouter } from "next/navigation";
 
 import { EvaluationForm } from "@/ui/features/development/forms/evaluation/EvaluationForm";
 import { EvaluationFormProvider } from "@/ui/features/development/forms/evaluation/EvaluationFormProvider";
-import type { EvaluationDisciplineOption } from "@/ui/features/development/forms/evaluation/evaluationForm.types";
+import type {
+  EvaluationBucketOption,
+  EvaluationDisciplineOption,
+} from "@/ui/features/development/forms/evaluation/evaluationForm.types";
 import { RightSideDrawer } from "@/ui/core/RightSideDrawer";
 
 type DevelopmentAction = "evaluation" | "plan" | "routine";
@@ -22,6 +25,7 @@ interface DevelopmentActionButtonsProps {
   playerId: string;
   createdBy: string;
   disciplineOptions: EvaluationDisciplineOption[];
+  bucketOptions: EvaluationBucketOption[];
   primaryAction?: DevelopmentAction;
 }
 
@@ -29,6 +33,7 @@ export function DevelopmentActionButtons({
   playerId,
   createdBy,
   disciplineOptions,
+  bucketOptions,
   primaryAction = "evaluation",
 }: DevelopmentActionButtonsProps) {
   const router = useRouter();
@@ -86,6 +91,7 @@ export function DevelopmentActionButtons({
               playerId={playerId}
               createdBy={createdBy}
               disciplineOptions={disciplineOptions}
+              bucketOptions={bucketOptions}
               onSaved={() => {
                 setActiveAction(null);
                 router.refresh();

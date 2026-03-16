@@ -5,7 +5,6 @@ import {
   Card,
   CardBody,
   CardHeader,
-  Input,
   Select,
   SelectItem,
   Textarea,
@@ -21,8 +20,16 @@ const BUCKET_STATUSES = [
 ] as const;
 
 export function EvaluationBucketsStep() {
-  const { values, errors, addBucket, updateBucket, removeBucket } =
-    useEvaluationFormContext();
+  const {
+    availableBucketOptions,
+    values,
+    errors,
+    addBucket,
+    updateBucket,
+    removeBucket,
+  } = useEvaluationFormContext();
+  const hasSelectedDiscipline = Boolean(values.disciplineId);
+  const hasBucketOptions = availableBucketOptions.length > 0;
 
   return (
     <Card shadow="sm">
@@ -42,12 +49,29 @@ export function EvaluationBucketsStep() {
             </p>
           </div>
 
-          <Button size="sm" variant="flat" onPress={addBucket}>
+          <Button
+            size="sm"
+            variant="flat"
+            onPress={addBucket}
+            isDisabled={!hasSelectedDiscipline || !hasBucketOptions}
+          >
             Add Bucket
           </Button>
         </div>
 
-        {values.buckets.length === 0 ? (
+        {errors.buckets ? (
+          <p className="text-sm text-danger">{errors.buckets}</p>
+        ) : null}
+
+        {!hasSelectedDiscipline ? (
+          <div className="rounded-medium border border-dashed px-4 py-6 text-sm text-default-500">
+            Select a discipline in Basic Information to load bucket options.
+          </div>
+        ) : !hasBucketOptions ? (
+          <div className="rounded-medium border border-dashed px-4 py-6 text-sm text-default-500">
+            No active buckets are configured for this discipline.
+          </div>
+        ) : values.buckets.length === 0 ? (
           <div className="rounded-medium border border-dashed px-4 py-6 text-sm text-default-500">
             No buckets added yet.
           </div>
@@ -67,17 +91,43 @@ export function EvaluationBucketsStep() {
                     </Button>
                   </div>
 
-                  <Input
-                    label="Bucket ID"
+                  <Select
+                    label="Bucket"
                     labelPlacement="outside"
-                    value={bucket.bucketId}
-                    onValueChange={(value) =>
-                      updateBucket(index, { bucketId: value })
-                    }
-                    placeholder="Select integration can replace this later"
+                    placeholder="Select a bucket"
+                    selectedKeys={bucket.bucketId ? [bucket.bucketId] : []}
+                    onSelectionChange={(keys) => {
+                      const selected = Array.from(keys)[0];
+                      if (typeof selected === "string") {
+                        updateBucket(index, { bucketId: selected });
+                      }
+                    }}
+                    isDisabled={!hasBucketOptions}
                     isInvalid={!!errors[`buckets.${index}.bucketId`]}
                     errorMessage={errors[`buckets.${index}.bucketId`]}
-                  />
+                    description={
+                      bucket.bucketId
+                        ? availableBucketOptions.find(
+                            (option) => option.id === bucket.bucketId
+                          )?.description ?? undefined
+                        : undefined
+                    }
+                  >
+                    {availableBucketOptions
+                      .filter((option) => {
+                        if (option.id === bucket.bucketId) {
+                          return true;
+                        }
+
+                        return !values.buckets.some(
+                          (entry, entryIndex) =>
+                            entryIndex !== index && entry.bucketId === option.id
+                        );
+                      })
+                      .map((option) => (
+                        <SelectItem key={option.id}>{option.label}</SelectItem>
+                      ))}
+                  </Select>
 
                   <Select
                     label="Status"

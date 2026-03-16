@@ -17,6 +17,7 @@ export function EvaluationFormProvider({
   playerId,
   createdBy,
   disciplineOptions,
+  bucketOptions,
   initialEvaluation,
   onSaved,
   onSavedAndContinue,
@@ -35,6 +36,10 @@ export function EvaluationFormProvider({
     () => ({
       mode: form.mode,
       disciplineOptions,
+      bucketOptions,
+      availableBucketOptions: bucketOptions.filter(
+        (bucket) => bucket.disciplineId === form.values.disciplineId
+      ),
       values: form.values,
       errors: form.errors,
       isSubmitting: form.isSubmitting,
@@ -58,7 +63,7 @@ export function EvaluationFormProvider({
       handleSubmit: form.handleSubmit,
       resetForm: form.resetForm,
     }),
-    [disciplineOptions, form]
+    [bucketOptions, disciplineOptions, form]
   );
 
   return (

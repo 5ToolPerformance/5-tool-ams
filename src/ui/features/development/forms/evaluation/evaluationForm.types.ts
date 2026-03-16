@@ -50,6 +50,16 @@ export type EvaluationDisciplineOption = {
   label: string;
 };
 
+export type EvaluationBucketOption = {
+  id: string;
+  disciplineId: string;
+  key: string;
+  label: string;
+  description: string | null;
+  sortOrder: number | null;
+  active: boolean;
+};
+
 export type EvaluationFormValues = {
   disciplineId: string;
   evaluationDate: string;
@@ -114,6 +124,8 @@ export type EvaluationFormSubmitPayload = {
 export type EvaluationFormContextValue = {
   mode: EvaluationFormMode;
   disciplineOptions: EvaluationDisciplineOption[];
+  bucketOptions: EvaluationBucketOption[];
+  availableBucketOptions: EvaluationBucketOption[];
   values: EvaluationFormValues;
   errors: EvaluationFormErrorMap;
   isSubmitting: boolean;
@@ -159,6 +171,7 @@ export type EvaluationFormProviderProps = {
   playerId?: string;
   createdBy: string;
   disciplineOptions: EvaluationDisciplineOption[];
+  bucketOptions: EvaluationBucketOption[];
   initialEvaluation?: EvaluationFormRecord | null;
   onCancel?: () => void;
   onSaved?: (evaluationId: string) => void;

@@ -94,7 +94,15 @@ const baseData = {
 describe("DevelopmentTab", () => {
   it("renders expected sections for populated state", () => {
     render(
-      <DevelopmentTab playerId="player-1" createdBy="coach-1" data={baseData} />
+      <DevelopmentTab
+        playerId="player-1"
+        createdBy="coach-1"
+        data={baseData}
+        evaluationDisciplineOptions={[
+          { id: "disc-1", key: "pitching", label: "Pitching" },
+        ]}
+        evaluationBucketOptions={[]}
+      />
     );
     const actionGroup = screen.getByRole("group", {
       name: "Development tab actions",
@@ -139,6 +147,10 @@ describe("DevelopmentTab", () => {
           disciplineOptions: [],
           flags: { ...baseData.flags, hasAnyDisciplineData: false },
         }}
+        evaluationDisciplineOptions={[
+          { id: "disc-1", key: "pitching", label: "Pitching" },
+        ]}
+        evaluationBucketOptions={[]}
       />
     );
     const actionGroup = screen.getByRole("group", {
@@ -161,7 +173,15 @@ describe("DevelopmentTab", () => {
 
   it("opens and closes the drawer for each development action", async () => {
     render(
-      <DevelopmentTab playerId="player-1" createdBy="coach-1" data={baseData} />
+      <DevelopmentTab
+        playerId="player-1"
+        createdBy="coach-1"
+        data={baseData}
+        evaluationDisciplineOptions={[
+          { id: "disc-1", key: "pitching", label: "Pitching" },
+        ]}
+        evaluationBucketOptions={[]}
+      />
     );
     const actionGroup = screen.getByRole("group", {
       name: "Development tab actions",

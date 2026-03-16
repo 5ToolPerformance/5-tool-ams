@@ -61,12 +61,22 @@ export function useEvaluationForm(params: UseEvaluationFormParams) {
       key: K,
       value: EvaluationFormValues[K]
     ) => {
-      setValues((prev) => ({
-        ...prev,
-        [key]: value,
-      }));
+      setValues((prev) => {
+        if (key === "disciplineId" && prev.disciplineId !== value) {
+          return {
+            ...prev,
+            disciplineId: value as EvaluationFormValues["disciplineId"],
+            buckets: params.mode === "create" ? [] : prev.buckets,
+          };
+        }
+
+        return {
+          ...prev,
+          [key]: value,
+        };
+      });
     },
-    []
+    [params.mode]
   );
 
   const addStrength = useCallback(() => {

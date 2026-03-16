@@ -52,6 +52,14 @@ export function validateEvaluationForm(
     }
   });
 
+  const selectedBucketIds = values.buckets
+    .map((item) => item.bucketId)
+    .filter(Boolean);
+
+  if (new Set(selectedBucketIds).size !== selectedBucketIds.length) {
+    errors.buckets = "Each bucket can only be selected once.";
+  }
+
   values.evidence.forEach((item, index) => {
     if (!item.performanceSessionId.trim()) {
       errors[`evidence.${index}.performanceSessionId`] =

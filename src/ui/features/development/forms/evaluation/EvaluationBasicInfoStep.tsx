@@ -30,7 +30,7 @@ const PHASES = [
 ] as const;
 
 export function EvaluationBasicInfoStep() {
-  const { disciplineOptions, values, errors, setFieldValue } =
+  const { mode, disciplineOptions, values, errors, setFieldValue } =
     useEvaluationFormContext();
 
   return (
@@ -58,7 +58,8 @@ export function EvaluationBasicInfoStep() {
               setFieldValue("disciplineId", selected);
             }
           }}
-          isDisabled={disciplineOptions.length === 0}
+          disallowEmptySelection
+          isDisabled={mode === "edit" || disciplineOptions.length === 0}
           isInvalid={!!errors.disciplineId}
           errorMessage={errors.disciplineId}
         >

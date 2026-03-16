@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 
+import { getEvaluationFormConfig } from "@/application/evaluations/getEvaluationFormConfig";
 import { getPlayerDevelopmentTabData } from "@/application/players/development";
 import { getAuthContext } from "@/lib/auth/auth-context";
 import { DevelopmentTab } from "@/ui/features/athlete-development/DevelopmentTab";
@@ -15,9 +16,10 @@ export default async function DevelopmentPage({
 }: DevelopmentPageProps) {
   const { playerId } = await params;
   const { discipline } = await searchParams;
-  const [data, authContext] = await Promise.all([
+  const [data, authContext, evaluationFormConfig] = await Promise.all([
     getPlayerDevelopmentTabData(playerId, discipline),
     getAuthContext(),
+    getEvaluationFormConfig(),
   ]);
 
   return (
@@ -26,6 +28,8 @@ export default async function DevelopmentPage({
         playerId={playerId}
         createdBy={authContext.userId}
         data={data}
+        evaluationDisciplineOptions={evaluationFormConfig.disciplineOptions}
+        evaluationBucketOptions={evaluationFormConfig.bucketOptions}
       />
     </Suspense>
   );
