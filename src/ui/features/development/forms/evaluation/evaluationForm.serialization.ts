@@ -76,7 +76,7 @@ export function serializeEvaluationFormToPayload(
 ): EvaluationFormSubmitPayload {
   return {
     playerId: context.playerId,
-    disciplineId: context.disciplineId,
+    disciplineId: values.disciplineId,
     createdBy: context.createdBy,
     evaluationDate: parseDateInput(values.evaluationDate),
     evaluationType: values.evaluationType,

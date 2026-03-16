@@ -21,6 +21,7 @@ function toDateInputValue(date: Date | string | null | undefined): string {
 
 export function createEmptyEvaluationFormValues(): EvaluationFormValues {
   return {
+    disciplineId: "",
     evaluationDate: toDateInputValue(new Date()),
     evaluationType: "general",
     phase: "general",
@@ -50,6 +51,7 @@ export function createEvaluationFormValuesFromRecord(
   const doc = evaluation.documentData;
 
   return {
+    disciplineId: evaluation.disciplineId,
     evaluationDate: toDateInputValue(evaluation.evaluationDate),
     evaluationType: evaluation.evaluationType,
     phase: evaluation.phase,

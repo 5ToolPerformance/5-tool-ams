@@ -44,7 +44,14 @@ export type EvaluationFormEvidence = {
   notes: string;
 };
 
+export type EvaluationDisciplineOption = {
+  id: string;
+  key: string;
+  label: string;
+};
+
 export type EvaluationFormValues = {
+  disciplineId: string;
   evaluationDate: string;
   evaluationType: EvaluationType;
   phase: AthletePhase;
@@ -106,6 +113,7 @@ export type EvaluationFormSubmitPayload = {
 
 export type EvaluationFormContextValue = {
   mode: EvaluationFormMode;
+  disciplineOptions: EvaluationDisciplineOption[];
   values: EvaluationFormValues;
   errors: EvaluationFormErrorMap;
   isSubmitting: boolean;
@@ -149,8 +157,8 @@ export type EvaluationFormContextValue = {
 export type EvaluationFormProviderProps = {
   mode: EvaluationFormMode;
   playerId?: string;
-  disciplineId?: string;
   createdBy: string;
+  disciplineOptions: EvaluationDisciplineOption[];
   initialEvaluation?: EvaluationFormRecord | null;
   onCancel?: () => void;
   onSaved?: (evaluationId: string) => void;

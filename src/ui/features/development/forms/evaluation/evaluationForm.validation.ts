@@ -8,6 +8,10 @@ export function validateEvaluationForm(
 ): EvaluationFormErrorMap {
   const errors: EvaluationFormErrorMap = {};
 
+  if (!values.disciplineId) {
+    errors.disciplineId = "Discipline is required.";
+  }
+
   if (!values.evaluationDate) {
     errors.evaluationDate = "Evaluation date is required.";
   }

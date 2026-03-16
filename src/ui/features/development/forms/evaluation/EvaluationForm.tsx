@@ -29,7 +29,7 @@ const STEP_TITLES = [
 ] as const;
 
 export function EvaluationForm({ onCancel }: EvaluationFormProps) {
-  const { mode, isSubmitting, handleSubmit } = useEvaluationFormContext();
+  const { mode, isSubmitting, handleSubmit, errors } = useEvaluationFormContext();
   const [stepIndex, setStepIndex] = useState(0);
 
   const isFirstStep = stepIndex === 0;
@@ -70,6 +70,9 @@ export function EvaluationForm({ onCancel }: EvaluationFormProps) {
       </div>
 
       <div className="border-t bg-background px-6 py-4">
+        {errors.form ? (
+          <p className="mb-3 text-sm text-danger">{errors.form}</p>
+        ) : null}
         <div className="flex items-center justify-between gap-3">
           <div>
             {!isFirstStep ? (

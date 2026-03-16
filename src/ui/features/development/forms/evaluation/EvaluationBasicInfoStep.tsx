@@ -30,7 +30,8 @@ const PHASES = [
 ] as const;
 
 export function EvaluationBasicInfoStep() {
-  const { values, errors, setFieldValue } = useEvaluationFormContext();
+  const { disciplineOptions, values, errors, setFieldValue } =
+    useEvaluationFormContext();
 
   return (
     <Card shadow="sm">
@@ -42,6 +43,30 @@ export function EvaluationBasicInfoStep() {
       </CardHeader>
 
       <CardBody className="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <Select
+          label="Discipline"
+          labelPlacement="outside"
+          placeholder={
+            disciplineOptions.length > 0
+              ? "Select a discipline"
+              : "No disciplines available"
+          }
+          selectedKeys={values.disciplineId ? [values.disciplineId] : []}
+          onSelectionChange={(keys) => {
+            const selected = Array.from(keys)[0];
+            if (typeof selected === "string") {
+              setFieldValue("disciplineId", selected);
+            }
+          }}
+          isDisabled={disciplineOptions.length === 0}
+          isInvalid={!!errors.disciplineId}
+          errorMessage={errors.disciplineId}
+        >
+          {disciplineOptions.map((item) => (
+            <SelectItem key={item.id}>{item.label}</SelectItem>
+          ))}
+        </Select>
+
         <Input
           type="date"
           label="Evaluation Date"

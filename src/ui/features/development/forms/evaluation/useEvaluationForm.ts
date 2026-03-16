@@ -1,9 +1,5 @@
 import { useCallback, useMemo, useState } from "react";
 
-import { createEvaluation as createEvaluationAction } from "@/application/evaluations/createEvaluation";
-import { updateEvaluation as updateEvaluationAction } from "@/application/evaluations/updateEvaluation";
-import db from "@/db";
-
 import {
   cloneEvaluationFormValues,
   createEmptyBucket,
@@ -30,7 +26,6 @@ import {
 type UseEvaluationFormParams = {
   mode: EvaluationFormMode;
   playerId?: string;
-  disciplineId?: string;
   createdBy: string;
   initialEvaluation?: EvaluationFormRecord | null;
   onSaved?: (evaluationId: string) => void;
@@ -211,16 +206,16 @@ export function useEvaluationForm(params: UseEvaluationFormParams) {
       };
     }
 
-    if (!params.playerId || !params.disciplineId) {
+    if (!params.playerId || !values.disciplineId) {
       throw new Error("playerId and disciplineId are required in create mode.");
     }
 
     return {
       playerId: params.playerId,
-      disciplineId: params.disciplineId,
+      disciplineId: values.disciplineId,
       createdBy: params.createdBy,
     };
-  }, [params]);
+  }, [params, values.disciplineId]);
 
   const handleSubmit = useCallback(
     async (action: EvaluationSubmitAction) => {
@@ -243,16 +238,39 @@ export function useEvaluationForm(params: UseEvaluationFormParams) {
         let savedId: string;
 
         if (params.mode === "edit" && params.initialEvaluation) {
-          const updated = await updateEvaluationAction(
-            db,
-            params.initialEvaluation.id,
+          const response = await fetch(
+            `/api/evaluations/${params.initialEvaluation.id}`,
             {
-              ...payload,
+              method: "PATCH",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(payload),
             }
           );
+
+          if (!response.ok) {
+            const result = (await response.json().catch(() => null)) as
+              | { error?: string }
+              | null;
+            throw new Error(result?.error ?? "Failed to update evaluation.");
+          }
+
+          const updated = (await response.json()) as { id: string };
           savedId = updated.id;
         } else {
-          const created = await createEvaluationAction(db, payload);
+          const response = await fetch("/api/evaluations", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          });
+
+          if (!response.ok) {
+            const result = (await response.json().catch(() => null)) as
+              | { error?: string }
+              | null;
+            throw new Error(result?.error ?? "Failed to create evaluation.");
+          }
+
+          const created = (await response.json()) as { id: string };
           savedId = created.id;
         }
 
@@ -261,6 +279,14 @@ export function useEvaluationForm(params: UseEvaluationFormParams) {
         } else {
           params.onSaved?.(savedId);
         }
+      } catch (error) {
+        setErrors((prev) => ({
+          ...prev,
+          form:
+            error instanceof Error
+              ? error.message
+              : "Failed to save evaluation.",
+        }));
       } finally {
         setIsSubmitting(false);
       }

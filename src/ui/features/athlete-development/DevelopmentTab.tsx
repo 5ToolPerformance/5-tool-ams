@@ -1,18 +1,25 @@
-import { Button, Card, CardBody } from "@heroui/react";
+import { Card, CardBody } from "@heroui/react";
 
 import type { PlayerDevelopmentTabData } from "@/application/players/development/getPlayerDevelopmentTabData";
 
 import { ActivePlanPanel } from "./ActivePlanPanel";
 import { CurrentSnapshotPanel } from "./CurrentSnapshotPanel";
+import { DevelopmentActionButtons } from "./DevelopmentActionButtons";
 import { DevelopmentDisciplineSelector } from "./DevelopmentDisciplineSelector";
 import { DevelopmentHistoryPanel } from "./DevelopmentHistoryPanel";
 import { RoutinesPanel } from "./RoutinesPanel";
 
 interface DevelopmentTabProps {
+  playerId: string;
+  createdBy: string;
   data: PlayerDevelopmentTabData;
 }
 
-export function DevelopmentTab({ data }: DevelopmentTabProps) {
+export function DevelopmentTab({
+  playerId,
+  createdBy,
+  data,
+}: DevelopmentTabProps) {
   const selectedDiscipline = data.selectedDiscipline;
 
   if (!data.flags.hasAnyDisciplineData || !selectedDiscipline) {
@@ -24,17 +31,11 @@ export function DevelopmentTab({ data }: DevelopmentTabProps) {
             No development data exists yet for this athlete. Add an evaluation to
             begin the development workflow.
           </p>
-          <div className="flex flex-wrap gap-2">
-            <Button size="sm" color="primary" isDisabled>
-              New Evaluation
-            </Button>
-            <Button size="sm" variant="flat" isDisabled>
-              New Development Plan
-            </Button>
-            <Button size="sm" variant="flat" isDisabled>
-              New Routine
-            </Button>
-          </div>
+          <DevelopmentActionButtons
+            playerId={playerId}
+            createdBy={createdBy}
+            disciplineOptions={data.disciplineOptions}
+          />
         </CardBody>
       </Card>
     );
@@ -54,17 +55,11 @@ export function DevelopmentTab({ data }: DevelopmentTabProps) {
             selectedDisciplineId={selectedDiscipline.id}
             disciplines={data.disciplineOptions}
           />
-          <div className="flex flex-wrap gap-2">
-            <Button size="sm" color="primary" isDisabled>
-              New Evaluation
-            </Button>
-            <Button size="sm" variant="flat" isDisabled>
-              New Development Plan
-            </Button>
-            <Button size="sm" variant="flat" isDisabled>
-              New Routine
-            </Button>
-          </div>
+          <DevelopmentActionButtons
+            playerId={playerId}
+            createdBy={createdBy}
+            disciplineOptions={data.disciplineOptions}
+          />
         </CardBody>
       </Card>
 

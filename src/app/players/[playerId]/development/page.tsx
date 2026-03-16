@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 
 import { getPlayerDevelopmentTabData } from "@/application/players/development";
+import { getAuthContext } from "@/lib/auth/auth-context";
 import { DevelopmentTab } from "@/ui/features/athlete-development/DevelopmentTab";
 
 interface DevelopmentPageProps {
@@ -14,11 +15,18 @@ export default async function DevelopmentPage({
 }: DevelopmentPageProps) {
   const { playerId } = await params;
   const { discipline } = await searchParams;
-  const data = await getPlayerDevelopmentTabData(playerId, discipline);
+  const [data, authContext] = await Promise.all([
+    getPlayerDevelopmentTabData(playerId, discipline),
+    getAuthContext(),
+  ]);
 
   return (
     <Suspense fallback={<div>Loading development tab...</div>}>
-      <DevelopmentTab data={data} />
+      <DevelopmentTab
+        playerId={playerId}
+        createdBy={authContext.userId}
+        data={data}
+      />
     </Suspense>
   );
 }

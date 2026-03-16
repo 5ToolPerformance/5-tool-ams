@@ -15,22 +15,26 @@ const EvaluationFormContext = createContext<EvaluationFormContextValue | null>(
 export function EvaluationFormProvider({
   mode,
   playerId,
-  disciplineId,
   createdBy,
+  disciplineOptions,
   initialEvaluation,
+  onSaved,
+  onSavedAndContinue,
   children,
 }: EvaluationFormProviderProps) {
   const form = useEvaluationForm({
     mode,
     playerId,
-    disciplineId,
     createdBy,
     initialEvaluation,
+    onSaved,
+    onSavedAndContinue,
   });
 
   const value = useMemo<EvaluationFormContextValue>(
     () => ({
       mode: form.mode,
+      disciplineOptions,
       values: form.values,
       errors: form.errors,
       isSubmitting: form.isSubmitting,
@@ -54,7 +58,7 @@ export function EvaluationFormProvider({
       handleSubmit: form.handleSubmit,
       resetForm: form.resetForm,
     }),
-    [form]
+    [disciplineOptions, form]
   );
 
   return (
