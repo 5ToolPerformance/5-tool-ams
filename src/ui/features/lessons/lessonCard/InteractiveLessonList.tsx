@@ -103,7 +103,10 @@ export function InteractiveLessonList({
         return false;
       }
 
-      if (lessonTypeFilter !== "all" && lesson.lessonType !== lessonTypeFilter) {
+      if (
+        lessonTypeFilter !== "all" &&
+        lesson.lessonType !== lessonTypeFilter
+      ) {
         return false;
       }
 
@@ -261,7 +264,7 @@ export function InteractiveLessonList({
           </p>
         </div>
       ) : (
-        <ScrollShadow hideScrollBar className={maxHeight}>
+        <ScrollShadow className={maxHeight}>
           <div className="flex flex-col gap-3 p-4 pb-4 sm:gap-4">
             {filteredLessons.map((lesson) => (
               <ClickableLessonCard
