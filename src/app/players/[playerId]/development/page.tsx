@@ -2,6 +2,7 @@ import { Suspense } from "react";
 
 import { getEvaluationFormConfig } from "@/application/evaluations/getEvaluationFormConfig";
 import { getPlayerDevelopmentTabData } from "@/application/players/development";
+import { getRoutineFormConfig } from "@/application/routines/getRoutineFormConfig";
 import { getAuthContext } from "@/lib/auth/auth-context";
 import { DevelopmentTab } from "@/ui/features/athlete-development/DevelopmentTab";
 
@@ -21,6 +22,23 @@ export default async function DevelopmentPage({
     getAuthContext(),
     getEvaluationFormConfig(),
   ]);
+  const routineFormConfig = data.selectedDiscipline
+    ? await getRoutineFormConfig({
+        playerId,
+        facilityId: authContext.facilityId,
+        disciplineId: data.selectedDiscipline.id,
+        disciplineKey: data.selectedDiscipline.key,
+        disciplineLabel: data.selectedDiscipline.label,
+        viewer: {
+          role: authContext.role,
+          userId: authContext.userId,
+        },
+      })
+    : {
+        developmentPlanOptions: [],
+        mechanicOptions: [],
+        drillOptions: [],
+      };
 
   return (
     <Suspense fallback={<div>Loading development tab...</div>}>
@@ -30,6 +48,7 @@ export default async function DevelopmentPage({
         data={data}
         evaluationDisciplineOptions={evaluationFormConfig.disciplineOptions}
         evaluationBucketOptions={evaluationFormConfig.bucketOptions}
+        routineFormConfig={routineFormConfig}
       />
     </Suspense>
   );

@@ -3,7 +3,10 @@ import {
   type UpdateRoutineRowInput,
   updateRoutine as updateRoutineQuery,
 } from "@/db/queries/routines/updateRoutine";
-import { validateRoutineDocument } from "@/domain/routines/validateRoutineDocument";
+import {
+  type ValidateRoutineInput,
+  validateRoutineDocument,
+} from "@/domain/routines/validateRoutineDocument";
 
 export async function updateRoutine(
   db: DB,
@@ -22,7 +25,7 @@ export async function updateRoutine(
     sortOrder: input.sortOrder,
     isActive: input.isActive,
     documentData: input.documentData,
-  });
+  } as ValidateRoutineInput);
 
   return updateRoutineQuery(db, routineId, input);
 }

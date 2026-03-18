@@ -9,6 +9,7 @@ import {
 } from "@testing-library/react";
 
 import { DevelopmentTab } from "@/ui/features/athlete-development/DevelopmentTab";
+import type { RoutineFormConfig } from "@/application/routines/getRoutineFormConfig";
 
 const refresh = jest.fn();
 
@@ -80,13 +81,13 @@ jest.mock(
       evaluationOptions,
       initialEvaluationId,
       isEvaluationSelectionLocked,
-      onSaved,
+      onSavedAndContinue,
     }: {
       children: ReactNode;
       evaluationOptions?: Array<{ id: string }>;
       initialEvaluationId?: string;
       isEvaluationSelectionLocked?: boolean;
-      onSaved?: (developmentPlanId: string) => void;
+      onSavedAndContinue?: (developmentPlanId: string) => void;
     }) => (
       <div>
         <div aria-label="development-plan-provider-meta">
@@ -95,8 +96,8 @@ jest.mock(
           <span>{`locked:${String(Boolean(isEvaluationSelectionLocked))}`}</span>
         </div>
         {children}
-        <button onClick={() => onSaved?.("plan-1")} type="button">
-          Trigger plan save
+        <button onClick={() => onSavedAndContinue?.("plan-1")} type="button">
+          Trigger plan continue
         </button>
       </div>
     ),
@@ -116,6 +117,50 @@ jest.mock(
     ),
   })
 );
+
+jest.mock(
+  "@/ui/features/development/forms/routines/RoutineFormProvider",
+  () => ({
+    RoutineFormProvider: ({
+      children,
+      developmentPlanOptions,
+      initialDevelopmentPlanId,
+      isDevelopmentPlanSelectionLocked,
+      onSaved,
+    }: {
+      children: ReactNode;
+      developmentPlanOptions?: Array<{ id: string }>;
+      initialDevelopmentPlanId?: string;
+      isDevelopmentPlanSelectionLocked?: boolean;
+      onSaved?: (routineId: string) => void;
+    }) => (
+      <div>
+        <div aria-label="routine-provider-meta">
+          <span>{`initial-plan:${initialDevelopmentPlanId ?? ""}`}</span>
+          <span>{`plan-count:${developmentPlanOptions?.length ?? 0}`}</span>
+          <span>{`plan-locked:${String(
+            Boolean(isDevelopmentPlanSelectionLocked)
+          )}`}</span>
+        </div>
+        {children}
+        <button onClick={() => onSaved?.("routine-1")} type="button">
+          Trigger routine save
+        </button>
+      </div>
+    ),
+  })
+);
+
+jest.mock("@/ui/features/development/forms/routines/RoutineForm", () => ({
+  RoutineForm: ({ onCancel }: { onCancel?: () => void }) => (
+    <div aria-label="routine-form">
+      <h3>Routine Basic Information</h3>
+      <button onClick={onCancel} type="button">
+        Cancel Routine
+      </button>
+    </div>
+  ),
+}));
 
 const baseData = {
   selectedDiscipline: { id: "disc-1", key: "pitching", label: "Pitching" },
@@ -163,6 +208,22 @@ const baseData = {
   },
 } as any;
 
+const baseRoutineFormConfig: RoutineFormConfig = {
+  developmentPlanOptions: [
+    {
+      id: "plan-1",
+      playerId: "player-1",
+      disciplineId: "disc-1",
+      disciplineKey: "pitching",
+      disciplineLabel: "Pitching",
+      status: "active",
+      title: "Active plan",
+    },
+  ],
+  mechanicOptions: [],
+  drillOptions: [],
+};
+
 describe("DevelopmentTab", () => {
   beforeEach(() => {
     refresh.mockReset();
@@ -178,6 +239,7 @@ describe("DevelopmentTab", () => {
           { id: "disc-1", key: "pitching", label: "Pitching" },
         ]}
         evaluationBucketOptions={[]}
+        routineFormConfig={baseRoutineFormConfig}
       />
     );
     const actionGroup = screen.getByRole("group", {
@@ -203,6 +265,13 @@ describe("DevelopmentTab", () => {
         }) as HTMLButtonElement
       ).disabled
     ).toBe(false);
+    expect(
+      (
+        within(actionGroup).getByRole("button", {
+          name: "New Routine",
+        }) as HTMLButtonElement
+      ).disabled
+    ).toBe(false);
   });
 
   it("disables plan creation when no evaluation exists for the selected discipline", () => {
@@ -220,6 +289,7 @@ describe("DevelopmentTab", () => {
           { id: "disc-1", key: "pitching", label: "Pitching" },
         ]}
         evaluationBucketOptions={[]}
+        routineFormConfig={baseRoutineFormConfig}
       />
     );
 
@@ -251,6 +321,7 @@ describe("DevelopmentTab", () => {
           { id: "disc-1", key: "pitching", label: "Pitching" },
         ]}
         evaluationBucketOptions={[]}
+        routineFormConfig={baseRoutineFormConfig}
       />
     );
     const actionGroup = screen.getByRole("group", {
@@ -281,6 +352,7 @@ describe("DevelopmentTab", () => {
           { id: "disc-1", key: "pitching", label: "Pitching" },
         ]}
         evaluationBucketOptions={[]}
+        routineFormConfig={baseRoutineFormConfig}
       />
     );
 
@@ -301,7 +373,7 @@ describe("DevelopmentTab", () => {
     expect(screen.getByText("locked:false")).toBeTruthy();
   });
 
-  it("transitions from evaluation continue into the plan drawer and refreshes after plan save", async () => {
+  it("opens the manual routine drawer with current-discipline plan options", async () => {
     render(
       <DevelopmentTab
         playerId="player-1"
@@ -311,6 +383,73 @@ describe("DevelopmentTab", () => {
           { id: "disc-1", key: "pitching", label: "Pitching" },
         ]}
         evaluationBucketOptions={[]}
+        routineFormConfig={{
+          developmentPlanOptions: [
+            {
+              id: "plan-1",
+              playerId: "player-1",
+              disciplineId: "disc-1",
+              disciplineKey: "pitching",
+              disciplineLabel: "Pitching",
+              status: "active" as const,
+              title: "Active plan",
+            },
+            {
+              id: "plan-2",
+              playerId: "player-1",
+              disciplineId: "disc-1",
+              disciplineKey: "pitching",
+              disciplineLabel: "Pitching",
+              status: "draft" as const,
+              title: "Older plan",
+            },
+          ],
+          mechanicOptions: [],
+          drillOptions: [],
+        }}
+      />
+    );
+
+    const actionGroup = screen.getByRole("group", {
+      name: "Development tab actions",
+    });
+
+    fireEvent.click(
+      within(actionGroup).getByRole("button", { name: "New Routine" })
+    );
+
+    expect(await screen.findByRole("heading", { name: "New Routine" })).toBeTruthy();
+    expect(screen.getByLabelText("routine-form")).toBeTruthy();
+    expect(screen.getByText("initial-plan:plan-1")).toBeTruthy();
+    expect(screen.getByText("plan-count:2")).toBeTruthy();
+    expect(screen.getByText("plan-locked:false")).toBeTruthy();
+  });
+
+  it("transitions from evaluation continue into the plan drawer and then into the routine drawer", async () => {
+    render(
+      <DevelopmentTab
+        playerId="player-1"
+        createdBy="coach-1"
+        data={baseData}
+        evaluationDisciplineOptions={[
+          { id: "disc-1", key: "pitching", label: "Pitching" },
+        ]}
+        evaluationBucketOptions={[]}
+        routineFormConfig={{
+          developmentPlanOptions: [
+            {
+              id: "plan-1",
+              playerId: "player-1",
+              disciplineId: "disc-1",
+              disciplineKey: "pitching",
+              disciplineLabel: "Pitching",
+              status: "active" as const,
+              title: "Active plan",
+            },
+          ],
+          mechanicOptions: [],
+          drillOptions: [],
+        }}
       />
     );
 
@@ -336,12 +475,21 @@ describe("DevelopmentTab", () => {
     expect(screen.getByText("initial:eval-from-save")).toBeTruthy();
     expect(screen.getByText("locked:true")).toBeTruthy();
 
-    fireEvent.click(screen.getByRole("button", { name: "Trigger plan save" }));
+    fireEvent.click(screen.getByRole("button", { name: "Trigger plan continue" }));
 
     await waitFor(() => {
       expect(
-        screen.queryByRole("heading", { name: "New Development Plan" })
-      ).toBeNull();
+        screen.getByRole("heading", { name: "New Routine" })
+      ).toBeTruthy();
+    });
+
+    expect(screen.getByText("initial-plan:plan-1")).toBeTruthy();
+    expect(screen.getByText("plan-locked:true")).toBeTruthy();
+
+    fireEvent.click(screen.getByRole("button", { name: "Trigger routine save" }));
+
+    await waitFor(() => {
+      expect(screen.queryByRole("heading", { name: "New Routine" })).toBeNull();
     });
 
     expect(refresh).toHaveBeenCalled();

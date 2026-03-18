@@ -13,6 +13,7 @@ const ACTION_LABELS: Record<DevelopmentAction, string> = {
 interface DevelopmentActionButtonsProps {
   primaryAction?: DevelopmentAction;
   canCreatePlan: boolean;
+  canCreateRoutine: boolean;
   onOpenEvaluation: () => void;
   onOpenPlan: () => void;
   onOpenRoutine: () => void;
@@ -21,6 +22,7 @@ interface DevelopmentActionButtonsProps {
 export function DevelopmentActionButtons({
   primaryAction = "evaluation",
   canCreatePlan,
+  canCreateRoutine,
   onOpenEvaluation,
   onOpenPlan,
   onOpenRoutine,
@@ -56,6 +58,7 @@ export function DevelopmentActionButtons({
         disableRipple
         variant={primaryAction === "routine" ? "solid" : "flat"}
         onPress={onOpenRoutine}
+        isDisabled={!canCreateRoutine}
       >
         {ACTION_LABELS.routine}
       </Button>

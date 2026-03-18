@@ -3,9 +3,12 @@ import {
   type CreateRoutineRowInput,
   createRoutine as createRoutineQuery,
 } from "@/db/queries/routines/createRoutine";
-import { validateRoutineDocument } from "@/domain/routines/validateRoutineDocument";
+import {
+  type ValidateRoutineInput,
+  validateRoutineDocument,
+} from "@/domain/routines/validateRoutineDocument";
 
 export async function createRoutine(db: DB, input: CreateRoutineRowInput) {
-  validateRoutineDocument(input);
+  validateRoutineDocument(input as ValidateRoutineInput);
   return createRoutineQuery(db, input);
 }

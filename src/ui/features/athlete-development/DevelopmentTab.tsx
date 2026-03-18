@@ -6,6 +6,7 @@ import { Card, CardBody } from "@heroui/react";
 import { useRouter } from "next/navigation";
 
 import type { PlayerDevelopmentTabData } from "@/application/players/development/getPlayerDevelopmentTabData";
+import type { RoutineFormConfig } from "@/application/routines/getRoutineFormConfig";
 import { RightSideDrawer } from "@/ui/core/RightSideDrawer";
 import { DevelopmentPlanForm } from "@/ui/features/development/forms/development-plan/DevelopmentPlanForm";
 import { DevelopmentPlanFormProvider } from "@/ui/features/development/forms/development-plan/DevelopmentPlanFormProvider";
@@ -16,6 +17,8 @@ import type {
   EvaluationBucketOption,
   EvaluationDisciplineOption,
 } from "@/ui/features/development/forms/evaluation/evaluationForm.types";
+import { RoutineForm } from "@/ui/features/development/forms/routines/RoutineForm";
+import { RoutineFormProvider } from "@/ui/features/development/forms/routines/RoutineFormProvider";
 
 import { ActivePlanPanel } from "./ActivePlanPanel";
 import { CurrentSnapshotPanel } from "./CurrentSnapshotPanel";
@@ -30,6 +33,7 @@ interface DevelopmentTabProps {
   data: PlayerDevelopmentTabData;
   evaluationDisciplineOptions: EvaluationDisciplineOption[];
   evaluationBucketOptions: EvaluationBucketOption[];
+  routineFormConfig: RoutineFormConfig;
 }
 
 type DevelopmentDrawerAction = "evaluation" | "plan" | "routine" | null;
@@ -48,12 +52,16 @@ export function DevelopmentTab({
   data,
   evaluationDisciplineOptions,
   evaluationBucketOptions,
+  routineFormConfig,
 }: DevelopmentTabProps) {
   const router = useRouter();
   const [activeAction, setActiveAction] =
     useState<DevelopmentDrawerAction>(null);
   const [initialPlanEvaluationId, setInitialPlanEvaluationId] = useState("");
   const [isPlanEvaluationLocked, setIsPlanEvaluationLocked] = useState(false);
+  const [initialRoutineDevelopmentPlanId, setInitialRoutineDevelopmentPlanId] =
+    useState("");
+  const [isRoutinePlanLocked, setIsRoutinePlanLocked] = useState(false);
 
   const selectedDiscipline = data.selectedDiscipline;
 
@@ -74,18 +82,38 @@ export function DevelopmentTab({
     }));
   }, [data.evaluationHistory, data.latestEvaluation, selectedDiscipline?.label]);
 
+  const developmentPlanOptions = useMemo(() => {
+    if (!data.activePlan) {
+      return routineFormConfig.developmentPlanOptions;
+    }
+
+    const active = routineFormConfig.developmentPlanOptions.find(
+      (plan) => plan.id === data.activePlan?.id
+    );
+    const rest = routineFormConfig.developmentPlanOptions.filter(
+      (plan) => plan.id !== data.activePlan?.id
+    );
+
+    return active ? [active, ...rest] : routineFormConfig.developmentPlanOptions;
+  }, [data.activePlan, routineFormConfig.developmentPlanOptions]);
+
   const canCreatePlan = evaluationOptions.length > 0;
+  const canCreateRoutine = Boolean(selectedDiscipline);
 
   const closeDrawer = () => {
     setActiveAction(null);
     setInitialPlanEvaluationId("");
     setIsPlanEvaluationLocked(false);
+    setInitialRoutineDevelopmentPlanId("");
+    setIsRoutinePlanLocked(false);
   };
 
   const openEvaluationDrawer = () => {
     setActiveAction("evaluation");
     setInitialPlanEvaluationId("");
     setIsPlanEvaluationLocked(false);
+    setInitialRoutineDevelopmentPlanId("");
+    setIsRoutinePlanLocked(false);
   };
 
   const openPlanDrawer = (
@@ -101,7 +129,14 @@ export function DevelopmentTab({
     setActiveAction("plan");
   };
 
-  const openRoutineDrawer = () => {
+  const openRoutineDrawer = (
+    developmentPlanId = data.activePlan?.id ??
+      developmentPlanOptions[0]?.id ??
+      "",
+    isLocked = false
+  ) => {
+    setInitialRoutineDevelopmentPlanId(developmentPlanId);
+    setIsRoutinePlanLocked(isLocked);
     setActiveAction("routine");
   };
 
@@ -126,9 +161,10 @@ export function DevelopmentTab({
             </p>
             <DevelopmentActionButtons
               canCreatePlan={false}
+              canCreateRoutine={false}
               onOpenEvaluation={openEvaluationDrawer}
               onOpenPlan={() => openPlanDrawer()}
-              onOpenRoutine={openRoutineDrawer}
+              onOpenRoutine={() => openRoutineDrawer()}
             />
           </CardBody>
         </Card>
@@ -156,11 +192,6 @@ export function DevelopmentTab({
                 <EvaluationForm onCancel={closeDrawer} />
               </EvaluationFormProvider>
             </div>
-          ) : activeAction === "routine" ? (
-            <div
-              aria-label="New Routine content"
-              className="min-h-[16rem] rounded-xl border border-dashed border-default-300 bg-default-50 p-6"
-            />
           ) : null}
         </RightSideDrawer>
       </>
@@ -184,9 +215,10 @@ export function DevelopmentTab({
             />
             <DevelopmentActionButtons
               canCreatePlan={canCreatePlan}
+              canCreateRoutine={canCreateRoutine}
               onOpenEvaluation={openEvaluationDrawer}
               onOpenPlan={() => openPlanDrawer()}
-              onOpenRoutine={openRoutineDrawer}
+              onOpenRoutine={() => openRoutineDrawer()}
             />
           </CardBody>
         </Card>
@@ -196,7 +228,7 @@ export function DevelopmentTab({
           disciplineKey={selectedDiscipline.key}
           onOpenEvaluation={openEvaluationDrawer}
           onOpenPlan={() => openPlanDrawer()}
-          onOpenRoutine={openRoutineDrawer}
+          onOpenRoutine={() => openRoutineDrawer()}
           canCreatePlan={canCreatePlan}
         />
 
@@ -208,14 +240,14 @@ export function DevelopmentTab({
             openPlanDrawer(data.latestEvaluation?.id ?? "")
           }
           onOpenEvaluation={openEvaluationDrawer}
-          onOpenRoutine={openRoutineDrawer}
+          onOpenRoutine={() => openRoutineDrawer(data.activePlan?.id ?? "", true)}
         />
 
         <RoutinesPanel
           playerRoutines={data.playerRoutines}
           universalRoutinesSupported={data.universalRoutinesSupported}
           disciplineKey={selectedDiscipline.key}
-          onOpenRoutine={openRoutineDrawer}
+          onOpenRoutine={() => openRoutineDrawer()}
         />
 
         <DevelopmentHistoryPanel
@@ -265,19 +297,31 @@ export function DevelopmentTab({
                 closeDrawer();
                 router.refresh();
               }}
-              onSavedAndContinue={() => {
-                closeDrawer();
-                router.refresh();
+              onSavedAndContinue={(developmentPlanId) => {
+                openRoutineDrawer(developmentPlanId, true);
               }}
             >
               <DevelopmentPlanForm onCancel={closeDrawer} />
             </DevelopmentPlanFormProvider>
           </div>
         ) : activeAction === "routine" ? (
-          <div
-            aria-label="New Routine content"
-            className="min-h-[16rem] rounded-xl border border-dashed border-default-300 bg-default-50 p-6"
-          />
+          <div className="-mx-6 -my-5 h-full">
+            <RoutineFormProvider
+              mode="create"
+              createdBy={createdBy}
+              developmentPlanOptions={developmentPlanOptions}
+              mechanicOptions={routineFormConfig.mechanicOptions}
+              drillOptions={routineFormConfig.drillOptions}
+              initialDevelopmentPlanId={initialRoutineDevelopmentPlanId}
+              isDevelopmentPlanSelectionLocked={isRoutinePlanLocked}
+              onSaved={() => {
+                closeDrawer();
+                router.refresh();
+              }}
+            >
+              <RoutineForm onCancel={closeDrawer} />
+            </RoutineFormProvider>
+          </div>
         ) : null}
       </RightSideDrawer>
     </>
