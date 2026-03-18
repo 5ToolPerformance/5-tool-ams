@@ -9,11 +9,19 @@ import { formatDate, getDisciplineAccentClass } from "./utils";
 interface CurrentSnapshotPanelProps {
   latestEvaluation: EvaluationRow | null;
   disciplineKey?: string;
+  onOpenEvaluation?: () => void;
+  onOpenPlan?: () => void;
+  onOpenRoutine?: () => void;
+  canCreatePlan?: boolean;
 }
 
 export function CurrentSnapshotPanel({
   latestEvaluation,
   disciplineKey,
+  onOpenEvaluation,
+  onOpenPlan,
+  onOpenRoutine,
+  canCreatePlan = false,
 }: CurrentSnapshotPanelProps) {
   if (!latestEvaluation) {
     return (
@@ -27,13 +35,18 @@ export function CurrentSnapshotPanel({
             establish development context.
           </p>
           <div className="flex flex-wrap gap-2">
-            <Button size="sm" color="primary" isDisabled>
+            <Button size="sm" color="primary" onPress={onOpenEvaluation}>
               New Evaluation
             </Button>
-            <Button size="sm" variant="flat" isDisabled>
+            <Button
+              size="sm"
+              variant="flat"
+              onPress={onOpenPlan}
+              isDisabled={!canCreatePlan}
+            >
               New Development Plan
             </Button>
-            <Button size="sm" variant="flat" isDisabled>
+            <Button size="sm" variant="flat" onPress={onOpenRoutine}>
               New Routine
             </Button>
           </div>
@@ -98,13 +111,18 @@ export function CurrentSnapshotPanel({
           )}
 
           <div className="flex flex-wrap gap-2 pt-2">
-            <Button size="sm" color="primary" isDisabled>
+            <Button size="sm" color="primary" onPress={onOpenEvaluation}>
               New Evaluation
             </Button>
-            <Button size="sm" variant="flat" isDisabled>
+            <Button
+              size="sm"
+              variant="flat"
+              onPress={onOpenPlan}
+              isDisabled={!canCreatePlan}
+            >
               New Development Plan
             </Button>
-            <Button size="sm" variant="flat" isDisabled>
+            <Button size="sm" variant="flat" onPress={onOpenRoutine}>
               New Routine
             </Button>
           </div>

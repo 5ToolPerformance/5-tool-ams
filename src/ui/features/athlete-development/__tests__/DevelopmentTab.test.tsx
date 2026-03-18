@@ -10,8 +10,10 @@ import {
 
 import { DevelopmentTab } from "@/ui/features/athlete-development/DevelopmentTab";
 
+const refresh = jest.fn();
+
 jest.mock("next/navigation", () => ({
-  useRouter: () => ({ push: jest.fn(), refresh: jest.fn() }),
+  useRouter: () => ({ push: jest.fn(), refresh }),
   usePathname: () => "/players/player-1/development",
   useSearchParams: () => new URLSearchParams("discipline=disc-1"),
 }));
@@ -42,7 +44,20 @@ jest.mock("@/ui/core/RightSideDrawer", () => ({
 jest.mock(
   "@/ui/features/development/forms/evaluation/EvaluationFormProvider",
   () => ({
-    EvaluationFormProvider: ({ children }: { children: ReactNode }) => children,
+    EvaluationFormProvider: ({
+      children,
+      onSavedAndContinue,
+    }: {
+      children: ReactNode;
+      onSavedAndContinue?: (evaluationId: string) => void;
+    }) => (
+      <div>
+        {children}
+        <button onClick={() => onSavedAndContinue?.("eval-from-save")} type="button">
+          Trigger evaluation continue
+        </button>
+      </div>
+    ),
   })
 );
 
@@ -56,6 +71,51 @@ jest.mock("@/ui/features/development/forms/evaluation/EvaluationForm", () => ({
     </div>
   ),
 }));
+
+jest.mock(
+  "@/ui/features/development/forms/development-plan/DevelopmentPlanFormProvider",
+  () => ({
+    DevelopmentPlanFormProvider: ({
+      children,
+      evaluationOptions,
+      initialEvaluationId,
+      isEvaluationSelectionLocked,
+      onSaved,
+    }: {
+      children: ReactNode;
+      evaluationOptions?: Array<{ id: string }>;
+      initialEvaluationId?: string;
+      isEvaluationSelectionLocked?: boolean;
+      onSaved?: (developmentPlanId: string) => void;
+    }) => (
+      <div>
+        <div aria-label="development-plan-provider-meta">
+          <span>{`initial:${initialEvaluationId ?? ""}`}</span>
+          <span>{`count:${evaluationOptions?.length ?? 0}`}</span>
+          <span>{`locked:${String(Boolean(isEvaluationSelectionLocked))}`}</span>
+        </div>
+        {children}
+        <button onClick={() => onSaved?.("plan-1")} type="button">
+          Trigger plan save
+        </button>
+      </div>
+    ),
+  })
+);
+
+jest.mock(
+  "@/ui/features/development/forms/development-plan/DevelopmentPlanForm",
+  () => ({
+    DevelopmentPlanForm: ({ onCancel }: { onCancel?: () => void }) => (
+      <div aria-label="development-plan-form">
+        <h3>Plan Basic Information</h3>
+        <button onClick={onCancel} type="button">
+          Cancel Plan
+        </button>
+      </div>
+    ),
+  })
+);
 
 const baseData = {
   selectedDiscipline: { id: "disc-1", key: "pitching", label: "Pitching" },
@@ -71,7 +131,19 @@ const baseData = {
     keyConstraintsSummary: "Constraint",
     documentData: null,
   },
-  evaluationHistory: [],
+  evaluationHistory: [
+    {
+      id: "eval-2",
+      disciplineId: "disc-1",
+      evaluationDate: new Date("2025-12-01"),
+      evaluationType: "baseline",
+      phase: "offseason",
+      snapshotSummary: "Older snapshot",
+      strengthProfileSummary: "Older strength",
+      keyConstraintsSummary: "Older constraint",
+      documentData: null,
+    },
+  ],
   activePlan: {
     id: "plan-1",
     status: "active",
@@ -92,6 +164,10 @@ const baseData = {
 } as any;
 
 describe("DevelopmentTab", () => {
+  beforeEach(() => {
+    refresh.mockReset();
+  });
+
   it("renders expected sections for populated state", () => {
     render(
       <DevelopmentTab
@@ -127,13 +203,37 @@ describe("DevelopmentTab", () => {
         }) as HTMLButtonElement
       ).disabled
     ).toBe(false);
+  });
+
+  it("disables plan creation when no evaluation exists for the selected discipline", () => {
+    render(
+      <DevelopmentTab
+        playerId="player-1"
+        createdBy="coach-1"
+        data={{
+          ...baseData,
+          latestEvaluation: null,
+          evaluationHistory: [],
+          flags: { ...baseData.flags, hasEvaluations: false },
+        }}
+        evaluationDisciplineOptions={[
+          { id: "disc-1", key: "pitching", label: "Pitching" },
+        ]}
+        evaluationBucketOptions={[]}
+      />
+    );
+
+    const actionGroup = screen.getByRole("group", {
+      name: "Development tab actions",
+    });
+
     expect(
       (
         within(actionGroup).getByRole("button", {
-          name: "New Routine",
+          name: "New Development Plan",
         }) as HTMLButtonElement
       ).disabled
-    ).toBe(false);
+    ).toBe(true);
   });
 
   it("renders empty state when no discipline data exists", () => {
@@ -171,7 +271,7 @@ describe("DevelopmentTab", () => {
     ).toBe(false);
   });
 
-  it("opens and closes the drawer for each development action", async () => {
+  it("opens the manual plan drawer with current-discipline evaluation options", async () => {
     render(
       <DevelopmentTab
         playerId="player-1"
@@ -183,6 +283,37 @@ describe("DevelopmentTab", () => {
         evaluationBucketOptions={[]}
       />
     );
+
+    const actionGroup = screen.getByRole("group", {
+      name: "Development tab actions",
+    });
+
+    fireEvent.click(
+      within(actionGroup).getByRole("button", { name: "New Development Plan" })
+    );
+
+    expect(
+      await screen.findByRole("heading", { name: "New Development Plan" })
+    ).toBeTruthy();
+    expect(screen.getByLabelText("development-plan-form")).toBeTruthy();
+    expect(screen.getByText("initial:eval-1")).toBeTruthy();
+    expect(screen.getByText("count:2")).toBeTruthy();
+    expect(screen.getByText("locked:false")).toBeTruthy();
+  });
+
+  it("transitions from evaluation continue into the plan drawer and refreshes after plan save", async () => {
+    render(
+      <DevelopmentTab
+        playerId="player-1"
+        createdBy="coach-1"
+        data={baseData}
+        evaluationDisciplineOptions={[
+          { id: "disc-1", key: "pitching", label: "Pitching" },
+        ]}
+        evaluationBucketOptions={[]}
+      />
+    );
+
     const actionGroup = screen.getByRole("group", {
       name: "Development tab actions",
     });
@@ -190,36 +321,29 @@ describe("DevelopmentTab", () => {
     fireEvent.click(
       within(actionGroup).getByRole("button", { name: "New Evaluation" })
     );
-    expect(
-      await screen.findByRole("heading", { name: "New Evaluation" })
-    ).toBeTruthy();
+
     expect(screen.getByLabelText("evaluation-form")).toBeTruthy();
-    expect(screen.getByText("Basic Information")).toBeTruthy();
-    fireEvent.click(screen.getByRole("button", { name: "Close drawer" }));
+
+    fireEvent.click(screen.getByRole("button", { name: "Trigger evaluation continue" }));
+
     await waitFor(() => {
       expect(
-        screen.queryByRole("heading", { name: "New Evaluation" })
-      ).toBeNull();
+        screen.getByRole("heading", { name: "New Development Plan" })
+      ).toBeTruthy();
     });
 
-    fireEvent.click(
-      within(actionGroup).getByRole("button", { name: "New Development Plan" })
-    );
-    expect(
-      await screen.findByRole("heading", { name: "New Development Plan" })
-    ).toBeTruthy();
-    fireEvent.click(screen.getByRole("button", { name: "Close drawer" }));
+    expect(screen.queryByLabelText("evaluation-form")).toBeNull();
+    expect(screen.getByText("initial:eval-from-save")).toBeTruthy();
+    expect(screen.getByText("locked:true")).toBeTruthy();
+
+    fireEvent.click(screen.getByRole("button", { name: "Trigger plan save" }));
+
     await waitFor(() => {
       expect(
         screen.queryByRole("heading", { name: "New Development Plan" })
       ).toBeNull();
     });
 
-    fireEvent.click(
-      within(actionGroup).getByRole("button", { name: "New Routine" })
-    );
-    expect(
-      await screen.findByRole("heading", { name: "New Routine" })
-    ).toBeTruthy();
+    expect(refresh).toHaveBeenCalled();
   });
 });

@@ -13,12 +13,18 @@ interface ActivePlanPanelProps {
   activePlan: DevelopmentPlanRow | null;
   latestEvaluation: EvaluationRow | null;
   disciplineKey?: string;
+  onCreatePlanFromLatestEvaluation?: () => void;
+  onOpenEvaluation?: () => void;
+  onOpenRoutine?: () => void;
 }
 
 export function ActivePlanPanel({
   activePlan,
   latestEvaluation,
   disciplineKey,
+  onCreatePlanFromLatestEvaluation,
+  onOpenEvaluation,
+  onOpenRoutine,
 }: ActivePlanPanelProps) {
   if (!activePlan) {
     return (
@@ -32,11 +38,15 @@ export function ActivePlanPanel({
           </p>
           <div className="flex flex-wrap gap-2">
             {latestEvaluation ? (
-              <Button size="sm" color="primary" isDisabled>
+              <Button
+                size="sm"
+                color="primary"
+                onPress={onCreatePlanFromLatestEvaluation}
+              >
                 Create Plan from Latest Evaluation
               </Button>
             ) : (
-              <Button size="sm" color="primary" isDisabled>
+              <Button size="sm" color="primary" onPress={onOpenEvaluation}>
                 New Evaluation
               </Button>
             )}
@@ -102,7 +112,7 @@ export function ActivePlanPanel({
             <Button size="sm" variant="flat" isDisabled>
               Edit Plan
             </Button>
-            <Button size="sm" color="primary" isDisabled>
+            <Button size="sm" color="primary" onPress={onOpenRoutine}>
               Create Routine
             </Button>
           </div>

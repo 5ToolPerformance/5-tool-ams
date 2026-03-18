@@ -68,8 +68,8 @@ export function serializeDevelopmentPlanFormToPayload(
 ): DevelopmentPlanFormSubmitPayload {
   return {
     playerId: context.playerId,
-    disciplineId: context.disciplineId,
-    evaluationId: context.evaluationId,
+    disciplineId: context.evaluation.disciplineId,
+    evaluationId: context.evaluation.id,
     createdBy: context.createdBy,
     status: values.status,
     startDate: parseOptionalDateInput(values.startDate),

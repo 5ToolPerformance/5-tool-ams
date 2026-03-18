@@ -1,126 +1,108 @@
-import { DevelopmentPlanDocumentV1 } from "@/domain/development-plans/types";
+import type {
+  DevelopmentPlanFormListItem,
+  DevelopmentPlanFormMeasurableIndicator,
+  DevelopmentPlanFormRecord,
+  DevelopmentPlanFormValues,
+} from "./developmentPlanForm.types";
 
-export type DevelopmentPlanStatus =
-  | "draft"
-  | "active"
-  | "completed"
-  | "archived";
+function createId(prefix: string) {
+  return `${prefix}_${Math.random().toString(36).slice(2, 10)}`;
+}
 
-export type DevelopmentPlanSubmitAction = "save" | "save-and-routine";
-export type DevelopmentPlanFormMode = "create" | "edit";
+function toDateInputValue(date: Date | string | null | undefined): string {
+  if (!date) return "";
 
-export type DevelopmentPlanFormListItem = {
-  id: string;
-  title: string;
-  description: string;
-};
+  const parsed = date instanceof Date ? date : new Date(date);
+  if (Number.isNaN(parsed.getTime())) return "";
 
-export type DevelopmentPlanFormMeasurableIndicator = {
-  id: string;
-  title: string;
-  description: string;
-  metricType: string;
-};
+  const year = parsed.getFullYear();
+  const month = `${parsed.getMonth() + 1}`.padStart(2, "0");
+  const day = `${parsed.getDate()}`.padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
 
-export type DevelopmentPlanFormValues = {
-  status: DevelopmentPlanStatus;
-  startDate: string;
-  targetEndDate: string;
+export function createEmptyDevelopmentPlanFormValues(
+  initialEvaluationId = ""
+): DevelopmentPlanFormValues {
+  return {
+    evaluationId: initialEvaluationId,
+    status: "draft",
+    startDate: "",
+    targetEndDate: "",
+    summary: "",
+    currentPriority: "",
+    shortTermGoals: [],
+    longTermGoals: [],
+    focusAreas: [],
+    measurableIndicators: [],
+  };
+}
 
-  summary: string;
-  currentPriority: string;
+export function createDevelopmentPlanFormValuesFromRecord(
+  developmentPlan: DevelopmentPlanFormRecord
+): DevelopmentPlanFormValues {
+  const doc = developmentPlan.documentData;
 
-  shortTermGoals: DevelopmentPlanFormListItem[];
-  longTermGoals: DevelopmentPlanFormListItem[];
-  focusAreas: DevelopmentPlanFormListItem[];
-  measurableIndicators: DevelopmentPlanFormMeasurableIndicator[];
-};
+  return {
+    evaluationId: developmentPlan.evaluationId,
+    status: developmentPlan.status,
+    startDate: toDateInputValue(developmentPlan.startDate),
+    targetEndDate: toDateInputValue(developmentPlan.targetEndDate),
+    summary: doc?.summary ?? "",
+    currentPriority: doc?.currentPriority ?? "",
+    shortTermGoals: (doc?.shortTermGoals ?? []).map((item) => ({
+      id: createId("stg"),
+      title: item.title ?? "",
+      description: item.description ?? "",
+    })),
+    longTermGoals: (doc?.longTermGoals ?? []).map((item) => ({
+      id: createId("ltg"),
+      title: item.title ?? "",
+      description: item.description ?? "",
+    })),
+    focusAreas: (doc?.focusAreas ?? []).map((item) => ({
+      id: createId("focus"),
+      title: item.title ?? "",
+      description: item.description ?? "",
+    })),
+    measurableIndicators: (doc?.measurableIndicators ?? []).map((item) => ({
+      id: createId("metric"),
+      title: item.title ?? "",
+      description: item.description ?? "",
+      metricType: item.metricType ?? "",
+    })),
+  };
+}
 
-export type DevelopmentPlanFormErrorMap = Partial<Record<string, string>>;
+export function cloneDevelopmentPlanFormValues(
+  values: DevelopmentPlanFormValues
+): DevelopmentPlanFormValues {
+  return {
+    ...values,
+    shortTermGoals: values.shortTermGoals.map((item) => ({ ...item })),
+    longTermGoals: values.longTermGoals.map((item) => ({ ...item })),
+    focusAreas: values.focusAreas.map((item) => ({ ...item })),
+    measurableIndicators: values.measurableIndicators.map((item) => ({
+      ...item,
+    })),
+  };
+}
 
-export type DevelopmentPlanFormRecord = {
-  id: string;
-  playerId: string;
-  disciplineId: string;
-  evaluationId: string;
-  createdBy: string;
-  status: DevelopmentPlanStatus;
-  startDate: Date | string | null;
-  targetEndDate: Date | string | null;
-  documentData: DevelopmentPlanDocumentV1 | null;
-};
+export function createEmptyDevelopmentPlanListItem(
+  prefix = "item"
+): DevelopmentPlanFormListItem {
+  return {
+    id: createId(prefix),
+    title: "",
+    description: "",
+  };
+}
 
-export type DevelopmentPlanCreateContext = {
-  playerId: string;
-  disciplineId: string;
-  evaluationId: string;
-  createdBy: string;
-};
-
-export type DevelopmentPlanFormSubmitPayload = {
-  playerId: string;
-  disciplineId: string;
-  evaluationId: string;
-  createdBy: string;
-  status: DevelopmentPlanStatus;
-  startDate?: Date | null;
-  targetEndDate?: Date | null;
-  documentData: DevelopmentPlanDocumentV1;
-};
-
-export type DevelopmentPlanFormContextValue = {
-  mode: DevelopmentPlanFormMode;
-  values: DevelopmentPlanFormValues;
-  errors: DevelopmentPlanFormErrorMap;
-  isSubmitting: boolean;
-  submitAction: DevelopmentPlanSubmitAction | null;
-
-  setFieldValue: <K extends keyof DevelopmentPlanFormValues>(
-    key: K,
-    value: DevelopmentPlanFormValues[K]
-  ) => void;
-
-  addShortTermGoal: () => void;
-  updateShortTermGoal: (
-    index: number,
-    value: Partial<DevelopmentPlanFormListItem>
-  ) => void;
-  removeShortTermGoal: (index: number) => void;
-
-  addLongTermGoal: () => void;
-  updateLongTermGoal: (
-    index: number,
-    value: Partial<DevelopmentPlanFormListItem>
-  ) => void;
-  removeLongTermGoal: (index: number) => void;
-
-  addFocusArea: () => void;
-  updateFocusArea: (
-    index: number,
-    value: Partial<DevelopmentPlanFormListItem>
-  ) => void;
-  removeFocusArea: (index: number) => void;
-
-  addMeasurableIndicator: () => void;
-  updateMeasurableIndicator: (
-    index: number,
-    value: Partial<DevelopmentPlanFormMeasurableIndicator>
-  ) => void;
-  removeMeasurableIndicator: (index: number) => void;
-
-  handleSubmit: (action: DevelopmentPlanSubmitAction) => Promise<void>;
-  resetForm: () => void;
-};
-
-export type DevelopmentPlanFormProviderProps = {
-  mode: DevelopmentPlanFormMode;
-  playerId?: string;
-  disciplineId?: string;
-  evaluationId?: string;
-  createdBy: string;
-  initialDevelopmentPlan?: DevelopmentPlanFormRecord | null;
-  onCancel?: () => void;
-  onSaved?: (developmentPlanId: string) => void;
-  onSavedAndContinue?: (developmentPlanId: string) => void;
-  children: React.ReactNode;
-};
+export function createEmptyMeasurableIndicator(): DevelopmentPlanFormMeasurableIndicator {
+  return {
+    id: createId("metric"),
+    title: "",
+    description: "",
+    metricType: "",
+  };
+}

@@ -13,12 +13,14 @@ interface DevelopmentHistoryPanelProps {
   evaluationHistory: EvaluationRow[];
   developmentPlanHistory: DevelopmentPlanRow[];
   disciplineKey?: string;
+  onCreatePlanFromEvaluation?: (evaluationId: string) => void;
 }
 
 export function DevelopmentHistoryPanel({
   evaluationHistory,
   developmentPlanHistory,
   disciplineKey,
+  onCreatePlanFromEvaluation,
 }: DevelopmentHistoryPanelProps) {
   const accentClass = getDisciplineAccentClass(disciplineKey);
   const hasHistory =
@@ -70,7 +72,11 @@ export function DevelopmentHistoryPanel({
                       <Button size="sm" variant="flat" isDisabled>
                         Edit
                       </Button>
-                      <Button size="sm" color="primary" isDisabled>
+                      <Button
+                        size="sm"
+                        color="primary"
+                        onPress={() => onCreatePlanFromEvaluation?.(evaluation.id)}
+                      >
                         Create Plan from This
                       </Button>
                     </div>

@@ -10,12 +10,14 @@ interface RoutinesPanelProps {
   playerRoutines: RoutineRow[];
   universalRoutinesSupported: boolean;
   disciplineKey?: string;
+  onOpenRoutine?: () => void;
 }
 
 export function RoutinesPanel({
   playerRoutines,
   universalRoutinesSupported,
   disciplineKey,
+  onOpenRoutine,
 }: RoutinesPanelProps) {
   const accentClass = getDisciplineAccentClass(disciplineKey);
 
@@ -33,7 +35,7 @@ export function RoutinesPanel({
                 No routines are available for this athlete in the selected
                 discipline.
               </p>
-              <Button size="sm" color="primary" isDisabled>
+              <Button size="sm" color="primary" onPress={onOpenRoutine}>
                 New Routine
               </Button>
             </div>
