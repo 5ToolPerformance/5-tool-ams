@@ -1,9 +1,5 @@
 import { DomainError } from "@/lib/errors";
 
-import { EvaluationDocumentV1 } from "./types";
-
-export type EvaluationDocument = EvaluationDocumentV1 | null;
-
 export type ValidateEvaluationInput = {
   playerId: string;
   disciplineId: string;
@@ -27,7 +23,7 @@ export type ValidateEvaluationInput = {
   strengthProfileSummary: string;
   keyConstraintsSummary: string;
   injuryConsiderations?: string | null;
-  documentData?: EvaluationDocument;
+  documentData?: Record<string, unknown> | null;
 };
 
 export function validateEvaluationDocument(input: ValidateEvaluationInput) {

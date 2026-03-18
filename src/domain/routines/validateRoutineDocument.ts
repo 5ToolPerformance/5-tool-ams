@@ -1,9 +1,5 @@
 import { DomainError } from "@/lib/errors";
 
-import { RoutineDocumentV1 } from "./types";
-
-export type RoutineDocument = RoutineDocumentV1 | null;
-
 export type ValidateRoutineInput = {
   developmentPlanId: string;
   createdBy: string;
@@ -12,7 +8,7 @@ export type ValidateRoutineInput = {
   routineType: "partial_lesson" | "full_lesson" | "progression";
   sortOrder?: number;
   isActive?: boolean;
-  documentData?: RoutineDocument;
+  documentData?: Record<string, unknown> | null;
 };
 
 export function validateRoutineDocument(input: ValidateRoutineInput) {

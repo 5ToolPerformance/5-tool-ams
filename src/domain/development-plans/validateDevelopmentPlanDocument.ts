@@ -1,9 +1,5 @@
 import { DomainError } from "@/lib/errors";
 
-import { DevelopmentPlanDocumentV1 } from "./types";
-
-export type DevelopmentPlanDocument = DevelopmentPlanDocumentV1 | null;
-
 export type ValidateDevelopmentPlanInput = {
   playerId: string;
   disciplineId: string;
@@ -12,7 +8,7 @@ export type ValidateDevelopmentPlanInput = {
   status?: "draft" | "active" | "completed" | "archived";
   startDate?: Date | null;
   targetEndDate?: Date | null;
-  documentData?: DevelopmentPlanDocument;
+  documentData?: Record<string, unknown> | null;
 };
 
 export function validateDevelopmentPlanDocument(
