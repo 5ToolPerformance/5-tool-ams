@@ -3,6 +3,7 @@ import {
   DrillDiscipline,
   DrillWriteInput,
 } from "@/domain/drills/types";
+import { parseYouTubeVideoUrl } from "@/domain/drills/video";
 
 export function normalizeDrillWriteInput(input: DrillWriteInput): DrillWriteInput {
   const title = input.title?.trim();
@@ -33,10 +34,13 @@ export function normalizeDrillWriteInput(input: DrillWriteInput): DrillWriteInpu
     )
   );
 
+  const parsedVideo = parseYouTubeVideoUrl(input.videoUrl);
+
   return {
     title,
     description,
     discipline,
     tags,
+    videoUrl: parsedVideo?.videoUrl ?? null,
   };
 }

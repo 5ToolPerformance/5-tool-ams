@@ -19,6 +19,9 @@ export type Drill = {
   title: string;
   description: string;
   discipline: DrillDiscipline;
+  videoProvider: "youtube" | null;
+  videoId: string | null;
+  videoUrl: string | null;
   createdBy: {
     id: string;
     name: string | null;
@@ -34,6 +37,9 @@ export type DrillListItem = {
   title: string;
   description: string;
   discipline: DrillDiscipline;
+  videoProvider: "youtube" | null;
+  videoId: string | null;
+  videoUrl: string | null;
   createdBy: {
     id: string;
     name: string | null;

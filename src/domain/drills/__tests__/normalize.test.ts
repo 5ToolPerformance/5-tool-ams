@@ -21,9 +21,46 @@ describe("normalizeDrillWriteInput", () => {
       description: "B",
       discipline: "hitting",
       tags: [" Rotation ", "rotation", "Video", "video", ""],
+      videoUrl: "",
     });
 
     expect(normalized.tags).toEqual(["rotation", "video"]);
+  });
+
+  it("normalizes blank video url to null", () => {
+    const normalized = normalizeDrillWriteInput({
+      title: "A",
+      description: "B",
+      discipline: "hitting",
+      tags: [],
+      videoUrl: "   ",
+    });
+
+    expect(normalized.videoUrl).toBeNull();
+  });
+
+  it("accepts and preserves valid youtube urls", () => {
+    const normalized = normalizeDrillWriteInput({
+      title: "A",
+      description: "B",
+      discipline: "hitting",
+      tags: [],
+      videoUrl: "https://youtu.be/dQw4w9WgXcQ",
+    });
+
+    expect(normalized.videoUrl).toBe("https://youtu.be/dQw4w9WgXcQ");
+  });
+
+  it("throws for invalid video urls", () => {
+    expect(() =>
+      normalizeDrillWriteInput({
+        title: "title",
+        description: "desc",
+        discipline: "hitting",
+        tags: [],
+        videoUrl: "https://vimeo.com/123456",
+      })
+    ).toThrow("Video URL must be a valid YouTube link");
   });
 
   it("throws for empty title", () => {
@@ -33,6 +70,7 @@ describe("normalizeDrillWriteInput", () => {
         description: "desc",
         discipline: "hitting",
         tags: [],
+        videoUrl: null,
       })
     ).toThrow("Drill title is required");
   });
@@ -44,6 +82,7 @@ describe("normalizeDrillWriteInput", () => {
         description: "   ",
         discipline: "hitting",
         tags: [],
+        videoUrl: null,
       })
     ).toThrow("Drill description is required");
   });
@@ -55,6 +94,7 @@ describe("normalizeDrillWriteInput", () => {
         description: "desc",
         discipline: "speed" as never,
         tags: [],
+        videoUrl: null,
       })
     ).toThrow("Invalid drill discipline");
   });

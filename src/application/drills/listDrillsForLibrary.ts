@@ -14,6 +14,9 @@ export async function listDrillsForLibrary(
     title: drill.title,
     description: drill.description,
     discipline: assertDrillDiscipline(drill.discipline),
+    videoProvider: drill.videoProvider === "youtube" ? "youtube" : null,
+    videoId: drill.videoId ?? null,
+    videoUrl: drill.videoUrl ?? null,
     createdBy: {
       id: drill.createdBy,
       name: drill.creatorName,

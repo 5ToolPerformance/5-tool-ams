@@ -6,6 +6,9 @@ type CreateDrillValues = {
   title: string;
   description: string;
   discipline: "hitting" | "pitching" | "strength" | "fielding" | "catching" | "arm_care";
+  videoProvider: "youtube" | null;
+  videoId: string | null;
+  videoUrl: string | null;
   createdBy: string;
 };
 

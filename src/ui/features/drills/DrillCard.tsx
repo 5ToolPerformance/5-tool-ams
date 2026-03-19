@@ -4,11 +4,14 @@ import Link from "next/link";
 
 import { Button, Card, CardBody, Chip } from "@heroui/react";
 
+import { getYouTubeThumbnailUrl } from "@/domain/drills/video";
 import { DrillListItem } from "@/ui/features/drills/types";
 
 type DrillCardProps = {
   drill: DrillListItem;
   onView: (drillId: string) => void;
+  onDelete?: (drillId: string) => void;
+  isDeleting?: boolean;
   thumbnailUrl?: string | null;
 };
 
@@ -18,7 +21,16 @@ function formatDiscipline(value: DrillListItem["discipline"]) {
     : `${value.charAt(0).toUpperCase()}${value.slice(1)}`;
 }
 
-export function DrillCard({ drill, onView, thumbnailUrl }: DrillCardProps) {
+export function DrillCard({
+  drill,
+  onView,
+  onDelete,
+  isDeleting = false,
+  thumbnailUrl: thumbnailOverride,
+}: DrillCardProps) {
+  const thumbnailUrl =
+    thumbnailOverride ?? getYouTubeThumbnailUrl(drill.videoId);
+
   return (
     <Card className="h-full">
       <CardBody className="flex h-full flex-col gap-3">
@@ -55,9 +67,6 @@ export function DrillCard({ drill, onView, thumbnailUrl }: DrillCardProps) {
               {tag}
             </Chip>
           ))}
-          <Chip size="sm" color="primary" variant="flat">
-            {drill.mediaCount} media
-          </Chip>
         </div>
 
         <div className="mt-auto flex items-center gap-2">
@@ -65,7 +74,12 @@ export function DrillCard({ drill, onView, thumbnailUrl }: DrillCardProps) {
             View
           </Button>
           {drill.canEdit ? (
-            <Button as={Link} href={`/drills/${drill.id}/edit`} size="sm" variant="flat">
+            <Button
+              as={Link}
+              href={`/resources/drills/${drill.id}/edit`}
+              size="sm"
+              variant="flat"
+            >
               Edit
             </Button>
           ) : (
@@ -73,6 +87,17 @@ export function DrillCard({ drill, onView, thumbnailUrl }: DrillCardProps) {
               Read only
             </Chip>
           )}
+          {onDelete ? (
+            <Button
+              size="sm"
+              color="danger"
+              variant="flat"
+              isLoading={isDeleting}
+              onPress={() => onDelete(drill.id)}
+            >
+              Delete
+            </Button>
+          ) : null}
         </div>
       </CardBody>
     </Card>

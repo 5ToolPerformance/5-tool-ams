@@ -41,6 +41,7 @@ export async function POST(request: NextRequest) {
         | "catching"
         | "arm_care";
       tags?: string[];
+      videoUrl?: string | null;
     };
 
     const drill = await createDrill(
@@ -49,6 +50,7 @@ export async function POST(request: NextRequest) {
         description: body.description ?? "",
         discipline: body.discipline ?? "hitting",
         tags: body.tags ?? [],
+        videoUrl: body.videoUrl ?? null,
       },
       ctx.userId
     );

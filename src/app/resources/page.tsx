@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
 
-export default async function DrillsPage() {
+export default function ResourcesPage() {
   redirect("/resources/drills");
 }

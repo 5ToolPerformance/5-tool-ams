@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
+import { deleteDrill } from "@/application/drills/deleteDrill";
 import { getDrillForEdit } from "@/application/drills/getDrillForEdit";
 import { updateDrill } from "@/application/drills/updateDrill";
 import {
@@ -56,6 +57,7 @@ export async function PATCH(
         | "catching"
         | "arm_care";
       tags?: string[];
+      videoUrl?: string | null;
     };
 
     const drill = await updateDrill(id, {
@@ -63,6 +65,7 @@ export async function PATCH(
       description: body.description ?? "",
       discipline: body.discipline ?? "hitting",
       tags: body.tags ?? [],
+      videoUrl: body.videoUrl ?? null,
     });
 
     return NextResponse.json({ drill });
@@ -79,5 +82,27 @@ export async function PATCH(
 
     console.error("Error in PATCH /api/drills/[id]:", error);
     return NextResponse.json({ error: "Failed to update drill" }, { status: 500 });
+  }
+}
+
+export async function DELETE(
+  _request: NextRequest,
+  { params }: RouteParams<{ id: string }>
+) {
+  try {
+    const ctx = await getAuthContext();
+    requireRole(ctx, ["admin"]);
+
+    const { id } = await params;
+    await assertCanReadDrill(ctx, id);
+    await deleteDrill(id);
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    const authResponse = toAuthErrorResponse(error);
+    if (authResponse) return authResponse;
+
+    console.error("Error in DELETE /api/drills/[id]:", error);
+    return NextResponse.json({ error: "Failed to delete drill" }, { status: 500 });
   }
 }

@@ -6,6 +6,7 @@ import { syncDrillTags } from "@/db/queries/drills/syncDrillTags";
 import { normalizeDrillWriteInput } from "@/domain/drills/normalize";
 import { assertDrillDiscipline } from "@/domain/drills/rules";
 import { DrillReadModel, DrillWriteInput } from "@/domain/drills/types";
+import { parseYouTubeVideoUrl } from "@/domain/drills/video";
 
 function toReadModel(record: NonNullable<Awaited<ReturnType<typeof getDrillById>>>): DrillReadModel {
   return {
@@ -13,6 +14,9 @@ function toReadModel(record: NonNullable<Awaited<ReturnType<typeof getDrillById>
     title: record.title,
     description: record.description,
     discipline: assertDrillDiscipline(record.discipline),
+    videoProvider: record.videoProvider === "youtube" ? "youtube" : null,
+    videoId: record.videoId ?? null,
+    videoUrl: record.videoUrl ?? null,
     createdBy: {
       id: record.createdBy,
       name: record.creatorName,
@@ -36,6 +40,7 @@ export async function createDrill(
   createdBy: string
 ): Promise<DrillReadModel> {
   const normalized = normalizeDrillWriteInput(input);
+  const parsedVideo = parseYouTubeVideoUrl(normalized.videoUrl);
 
   return db.transaction(async (tx) => {
     const conn = tx as unknown as DB;
@@ -44,6 +49,9 @@ export async function createDrill(
         title: normalized.title,
         description: normalized.description,
         discipline: normalized.discipline,
+        videoProvider: parsedVideo?.videoProvider ?? null,
+        videoId: parsedVideo?.videoId ?? null,
+        videoUrl: parsedVideo?.videoUrl ?? null,
         createdBy,
       },
       conn

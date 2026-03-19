@@ -1,14 +1,18 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
-import { Button, Input, Select, SelectItem, Textarea } from "@heroui/react";
+import { Button, Card, CardBody, Input, Select, SelectItem, Textarea } from "@heroui/react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
-import { DrillMediaPicker, PendingUpload } from "@/ui/features/drills/DrillMediaPicker";
 import { DrillTagInput } from "@/ui/features/drills/DrillTagInput";
 import { Drill, DrillDiscipline } from "@/ui/features/drills/types";
+import {
+  getYouTubeEmbedUrl,
+  getYouTubeThumbnailUrl,
+  parseYouTubeVideoUrl,
+} from "@/domain/drills/video";
 
 type DrillFormProps = {
   mode: "create" | "edit";
@@ -19,15 +23,6 @@ type SaveDrillResponse = {
   drill: Drill;
 };
 
-function toPendingUploads(files: FileList | null): PendingUpload[] {
-  if (!files) return [];
-
-  return Array.from(files).map((file) => ({
-    id: `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
-    file,
-  }));
-}
-
 export function DrillForm({ mode, initialDrill }: DrillFormProps) {
   const router = useRouter();
 
@@ -37,26 +32,40 @@ export function DrillForm({ mode, initialDrill }: DrillFormProps) {
     initialDrill?.discipline ?? "hitting"
   );
   const [tags, setTags] = useState<string[]>(initialDrill?.tags ?? []);
-  const [existingMedia, setExistingMedia] = useState(initialDrill?.media ?? []);
-  const [removeFileIds, setRemoveFileIds] = useState<string[]>([]);
-  const [pendingUploads, setPendingUploads] = useState<PendingUpload[]>([]);
+  const [videoUrl, setVideoUrl] = useState(initialDrill?.videoUrl ?? "");
   const [isSaving, setIsSaving] = useState(false);
 
-  function toggleRemoveExisting(fileId: string) {
-    setRemoveFileIds((current) =>
-      current.includes(fileId)
-        ? current.filter((id) => id !== fileId)
-        : [...current, fileId]
-    );
-  }
+  const parsedVideo = useMemo(() => {
+    try {
+      return parseYouTubeVideoUrl(videoUrl);
+    } catch {
+      return null;
+    }
+  }, [videoUrl]);
 
-  function addPendingFiles(files: FileList | null) {
-    setPendingUploads((current) => [...current, ...toPendingUploads(files)]);
-  }
+  const videoError = useMemo(() => {
+    const normalized = videoUrl.trim();
+    if (!normalized) return null;
 
-  function removePending(id: string) {
-    setPendingUploads((current) => current.filter((item) => item.id !== id));
-  }
+    try {
+      parseYouTubeVideoUrl(normalized);
+      return null;
+    } catch (error) {
+      return error instanceof Error ? error.message : "Video URL must be a valid YouTube link";
+    }
+  }, [videoUrl]);
+
+  const resolvedVideoId = useMemo(() => {
+    const normalized = videoUrl.trim();
+    if (normalized) {
+      return parsedVideo?.videoId ?? null;
+    }
+
+    return initialDrill?.videoId ?? null;
+  }, [initialDrill?.videoId, parsedVideo?.videoId, videoUrl]);
+
+  const thumbnailUrl = getYouTubeThumbnailUrl(resolvedVideoId);
+  const embedUrl = getYouTubeEmbedUrl(resolvedVideoId);
 
   async function saveDrillMeta(): Promise<Drill> {
     const endpoint = mode === "create" ? "/api/drills" : `/api/drills/${initialDrill?.id}`;
@@ -72,6 +81,7 @@ export function DrillForm({ mode, initialDrill }: DrillFormProps) {
         description,
         discipline,
         tags,
+        videoUrl,
       }),
     });
 
@@ -88,154 +98,19 @@ export function DrillForm({ mode, initialDrill }: DrillFormProps) {
     return data.drill;
   }
 
-  async function deleteMarkedFiles(drillId: string) {
-    if (removeFileIds.length === 0) return;
-
-    const results = await Promise.allSettled(
-      removeFileIds.map(async (fileId) => {
-        const res = await fetch(`/api/drills/${drillId}/files/${fileId}`, {
-          method: "DELETE",
-        });
-
-        if (!res.ok) {
-          const data = await res.json().catch(() => null);
-          throw new Error(data?.error ?? "Failed to remove media");
-        }
-      })
-    );
-
-    const failed = results.filter((result) => result.status === "rejected");
-    if (failed.length > 0) {
-      throw new Error(`${failed.length} media item(s) failed to remove`);
-    }
-
-    setExistingMedia((current) =>
-      current.filter((media) => !removeFileIds.includes(media.fileId))
-    );
-    setRemoveFileIds([]);
-  }
-
-  async function uploadPendingFiles(drillId: string) {
-    if (pendingUploads.length === 0) return;
-
-    const results = await Promise.allSettled(
-      pendingUploads.map(async (pending) => {
-        const prepareRes = await fetch(`/api/drills/${drillId}/files`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            originalFileName: pending.file.name,
-            mimeType: pending.file.type || "application/octet-stream",
-            size: pending.file.size,
-          }),
-        });
-
-        const prepareData = (await prepareRes
-          .json()
-          .catch(() => null)) as
-          | {
-              upload?: {
-                fileId: string;
-                storageKey: string;
-                uploadUrl: string;
-                headers?: Record<string, string>;
-              };
-              error?: string;
-            }
-          | null;
-
-        if (!prepareRes.ok || !prepareData?.upload) {
-          const data = prepareData;
-          throw new Error(data?.error ?? "Upload failed");
-        }
-
-        const uploadRes = await fetch(prepareData.upload.uploadUrl, {
-          method: "PUT",
-          headers: {
-            ...(prepareData.upload.headers ?? {}),
-          },
-          body: pending.file,
-        });
-
-        if (!uploadRes.ok) {
-          throw new Error("Direct upload failed");
-        }
-
-        const linkRes = await fetch(`/api/drills/${drillId}/files/link`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            fileId: prepareData.upload.fileId,
-            storageKey: prepareData.upload.storageKey,
-            originalName: pending.file.name,
-            mimeType: pending.file.type || "application/octet-stream",
-            size: pending.file.size,
-          }),
-        });
-
-        if (!linkRes.ok) {
-          const linkData = await linkRes.json().catch(() => null);
-          throw new Error(linkData?.error ?? "Link failed");
-        }
-
-        return (await linkRes.json()) as { media: Drill["media"][number] };
-      })
-    );
-
-    const createdMedia: Drill["media"] = [];
-    const erroredByUploadId = new Map<string, string>();
-
-    results.forEach((result, index) => {
-      const pending = pendingUploads[index];
-      if (result.status === "fulfilled") {
-        createdMedia.push(result.value.media);
-      } else {
-        const errorText =
-          result.reason instanceof Error ? result.reason.message : "Upload failed";
-        erroredByUploadId.set(pending.id, errorText);
-      }
-    });
-
-    if (createdMedia.length > 0) {
-      setExistingMedia((current) => [...current, ...createdMedia]);
-    }
-
-    if (erroredByUploadId.size === 0) {
-      setPendingUploads([]);
+  async function handleSubmit() {
+    if (videoError) {
+      toast.error(videoError);
       return;
     }
 
-    setPendingUploads((current) => {
-      const next: PendingUpload[] = [];
-      for (const upload of current) {
-        const error = erroredByUploadId.get(upload.id);
-        if (error) {
-          next.push({
-            ...upload,
-            error,
-          });
-        }
-      }
-      return next;
-    });
-
-    throw new Error(`${erroredByUploadId.size} media file(s) failed to upload`);
-  }
-
-  async function handleSubmit() {
     setIsSaving(true);
 
     try {
-      const savedDrill = await saveDrillMeta();
-      await deleteMarkedFiles(savedDrill.id);
-      await uploadPendingFiles(savedDrill.id);
+      await saveDrillMeta();
 
       toast.success(mode === "create" ? "Drill created" : "Drill updated");
-      router.push("/drills");
+      router.push("/resources/drills");
       router.refresh();
     } catch (error) {
       const message = error instanceof Error ? error.message : "Failed to save drill";
@@ -252,7 +127,7 @@ export function DrillForm({ mode, initialDrill }: DrillFormProps) {
           {mode === "create" ? "Create Drill" : "Edit Drill"}
         </h1>
         <p className="text-sm text-foreground-500">
-          Add drill details and media for coaches in your facility.
+          Add drill details and a YouTube video reference for coaches in your facility.
         </p>
       </div>
 
@@ -292,18 +167,60 @@ export function DrillForm({ mode, initialDrill }: DrillFormProps) {
 
       <DrillTagInput tags={tags} onChange={setTags} />
 
-      <DrillMediaPicker
-        drillId={initialDrill?.id}
-        existingMedia={existingMedia}
-        removeFileIds={removeFileIds}
-        onToggleRemoveExisting={toggleRemoveExisting}
-        pendingUploads={pendingUploads}
-        onAddFiles={addPendingFiles}
-        onRemovePending={removePending}
-      />
+      <div className="space-y-4">
+        <Input
+          label="YouTube Video URL"
+          placeholder="https://www.youtube.com/watch?v=..."
+          value={videoUrl}
+          onValueChange={setVideoUrl}
+          isInvalid={!!videoError}
+          errorMessage={videoError ?? undefined}
+        />
+
+        {thumbnailUrl ? (
+          <Card className="border border-default-200">
+            <CardBody className="space-y-4">
+              <div className="space-y-2">
+                <p className="text-sm font-semibold">Video Preview</p>
+                <div className="overflow-hidden rounded-md border border-default-200">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={thumbnailUrl}
+                    alt="YouTube thumbnail preview"
+                    className="h-auto w-full object-cover"
+                  />
+                </div>
+              </div>
+
+              {embedUrl ? (
+                <div className="space-y-2">
+                  <p className="text-sm font-semibold">
+                    {mode === "create" ? "Playback Preview" : "Current Video"}
+                  </p>
+                  <div className="aspect-video overflow-hidden rounded-md border border-default-200 bg-black">
+                    <iframe
+                      src={embedUrl}
+                      title="YouTube drill preview"
+                      className="h-full w-full"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                    />
+                  </div>
+                </div>
+              ) : null}
+            </CardBody>
+          </Card>
+        ) : null}
+
+        {mode === "edit" && initialDrill?.media.length ? (
+          <p className="text-xs text-foreground-500">
+            Legacy uploaded drill media remains available in the drill viewer until it is migrated.
+          </p>
+        ) : null}
+      </div>
 
       <div className="flex justify-end gap-2">
-        <Button variant="flat" onPress={() => router.push("/drills")}>
+        <Button variant="flat" onPress={() => router.push("/resources/drills")}>
           Cancel
         </Button>
         <Button color="primary" onPress={handleSubmit} isLoading={isSaving}>

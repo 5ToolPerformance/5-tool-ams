@@ -13,6 +13,7 @@ import {
 } from "@heroui/react";
 
 import { Drill } from "@/ui/features/drills/types";
+import { getYouTubeEmbedUrl } from "@/domain/drills/video";
 
 type DrillViewModalProps = {
   isOpen: boolean;
@@ -50,6 +51,8 @@ export function DrillViewModal({
     return videos.find((video) => video.fileId === selectedVideoFileId) ?? videos[0];
   }, [drill, selectedVideoFileId]);
 
+  const youtubeEmbedUrl = getYouTubeEmbedUrl(drill?.videoId);
+
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="4xl" scrollBehavior="inside">
       <ModalContent>
@@ -79,7 +82,20 @@ export function DrillViewModal({
 
               <div className="space-y-2">
                 <p className="text-sm font-semibold">Video Viewer</p>
-                {drill.media.filter((media) => media.mimeType.startsWith("video/")).length > 1 && (
+                {drill.videoProvider === "youtube" && youtubeEmbedUrl ? (
+                  <div className="aspect-video overflow-hidden rounded-md border border-default-200 bg-black">
+                    <iframe
+                      src={youtubeEmbedUrl}
+                      title={`${drill.title} video`}
+                      className="h-full w-full"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                    />
+                  </div>
+                ) : null}
+
+                {drill.videoProvider !== "youtube" &&
+                  drill.media.filter((media) => media.mimeType.startsWith("video/")).length > 1 && (
                   <div className="flex flex-wrap gap-2">
                     {drill.media
                       .filter((media) => media.mimeType.startsWith("video/"))
@@ -96,18 +112,20 @@ export function DrillViewModal({
                   </div>
                 )}
 
-                {selectedVideo ? (
+                {drill.videoProvider !== "youtube" && selectedVideo ? (
                   <video controls className="max-h-[60vh] w-full rounded-md bg-black">
                     <source
                       src={`/api/drills/${drill.id}/files/${selectedVideo.fileId}/stream`}
                       type={selectedVideo.mimeType}
                     />
                   </video>
-                ) : (
+                ) : null}
+
+                {drill.videoProvider !== "youtube" && !selectedVideo ? (
                   <p className="text-sm text-foreground-500">
                     No video media is attached to this drill.
                   </p>
-                )}
+                ) : null}
               </div>
             </div>
           )}
