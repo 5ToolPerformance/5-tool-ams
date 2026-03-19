@@ -137,7 +137,7 @@ export function DrillsLibraryPageClient({
           <div>
             <h1 className="text-2xl font-semibold">Drills</h1>
             <p className="text-sm text-foreground-500">
-              Create and maintain drills with media, discipline filters, and tags.
+              Create and maintain drills with YouTube video references, discipline filters, and tags.
             </p>
           </div>
 

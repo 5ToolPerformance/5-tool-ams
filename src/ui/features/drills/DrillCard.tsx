@@ -4,6 +4,7 @@ import Link from "next/link";
 
 import { Button, Card, CardBody, Chip } from "@heroui/react";
 
+import { getYouTubeThumbnailUrl } from "@/domain/drills/video";
 import { DrillListItem } from "@/ui/features/drills/types";
 
 type DrillCardProps = {
@@ -25,8 +26,11 @@ export function DrillCard({
   onView,
   onDelete,
   isDeleting = false,
-  thumbnailUrl,
+  thumbnailUrl: thumbnailOverride,
 }: DrillCardProps) {
+  const thumbnailUrl =
+    thumbnailOverride ?? getYouTubeThumbnailUrl(drill.videoId);
+
   return (
     <Card className="h-full">
       <CardBody className="flex h-full flex-col gap-3">
@@ -63,9 +67,6 @@ export function DrillCard({
               {tag}
             </Chip>
           ))}
-          <Chip size="sm" color="primary" variant="flat">
-            {drill.mediaCount} media
-          </Chip>
         </div>
 
         <div className="mt-auto flex items-center gap-2">

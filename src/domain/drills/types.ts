@@ -14,6 +14,7 @@ export type DrillWriteInput = {
   description: string;
   discipline: DrillDiscipline;
   tags: string[];
+  videoUrl?: string | null;
 };
 
 export type DrillMediaItem = {
@@ -30,6 +31,9 @@ export type DrillReadModel = {
   title: string;
   description: string;
   discipline: DrillDiscipline;
+  videoProvider: "youtube" | null;
+  videoId: string | null;
+  videoUrl: string | null;
   createdBy: {
     id: string;
     name: string | null;
@@ -45,6 +49,9 @@ export type DrillListItem = {
   title: string;
   description: string;
   discipline: DrillDiscipline;
+  videoProvider: "youtube" | null;
+  videoId: string | null;
+  videoUrl: string | null;
   createdBy: {
     id: string;
     name: string | null;

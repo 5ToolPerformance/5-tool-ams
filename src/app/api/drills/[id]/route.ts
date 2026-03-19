@@ -57,6 +57,7 @@ export async function PATCH(
         | "catching"
         | "arm_care";
       tags?: string[];
+      videoUrl?: string | null;
     };
 
     const drill = await updateDrill(id, {
@@ -64,6 +65,7 @@ export async function PATCH(
       description: body.description ?? "",
       discipline: body.discipline ?? "hitting",
       tags: body.tags ?? [],
+      videoUrl: body.videoUrl ?? null,
     });
 
     return NextResponse.json({ drill });
