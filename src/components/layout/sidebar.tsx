@@ -59,8 +59,8 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
       ...(session?.user?.role === "coach" || session?.user?.role === "admin"
         ? [
             {
-              label: "Drills",
-              href: "/drills",
+              label: "Resources",
+              href: "/resources/drills",
               icon: IconCone2,
               target: "_self" as const,
             },

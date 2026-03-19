@@ -235,7 +235,7 @@ export function DrillForm({ mode, initialDrill }: DrillFormProps) {
       await uploadPendingFiles(savedDrill.id);
 
       toast.success(mode === "create" ? "Drill created" : "Drill updated");
-      router.push("/drills");
+      router.push("/resources/drills");
       router.refresh();
     } catch (error) {
       const message = error instanceof Error ? error.message : "Failed to save drill";
@@ -303,7 +303,7 @@ export function DrillForm({ mode, initialDrill }: DrillFormProps) {
       />
 
       <div className="flex justify-end gap-2">
-        <Button variant="flat" onPress={() => router.push("/drills")}>
+        <Button variant="flat" onPress={() => router.push("/resources/drills")}>
           Cancel
         </Button>
         <Button color="primary" onPress={handleSubmit} isLoading={isSaving}>

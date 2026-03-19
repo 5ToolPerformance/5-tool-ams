@@ -9,6 +9,8 @@ import { DrillListItem } from "@/ui/features/drills/types";
 type DrillCardProps = {
   drill: DrillListItem;
   onView: (drillId: string) => void;
+  onDelete?: (drillId: string) => void;
+  isDeleting?: boolean;
   thumbnailUrl?: string | null;
 };
 
@@ -18,7 +20,13 @@ function formatDiscipline(value: DrillListItem["discipline"]) {
     : `${value.charAt(0).toUpperCase()}${value.slice(1)}`;
 }
 
-export function DrillCard({ drill, onView, thumbnailUrl }: DrillCardProps) {
+export function DrillCard({
+  drill,
+  onView,
+  onDelete,
+  isDeleting = false,
+  thumbnailUrl,
+}: DrillCardProps) {
   return (
     <Card className="h-full">
       <CardBody className="flex h-full flex-col gap-3">
@@ -65,7 +73,12 @@ export function DrillCard({ drill, onView, thumbnailUrl }: DrillCardProps) {
             View
           </Button>
           {drill.canEdit ? (
-            <Button as={Link} href={`/drills/${drill.id}/edit`} size="sm" variant="flat">
+            <Button
+              as={Link}
+              href={`/resources/drills/${drill.id}/edit`}
+              size="sm"
+              variant="flat"
+            >
               Edit
             </Button>
           ) : (
@@ -73,6 +86,17 @@ export function DrillCard({ drill, onView, thumbnailUrl }: DrillCardProps) {
               Read only
             </Chip>
           )}
+          {onDelete ? (
+            <Button
+              size="sm"
+              color="danger"
+              variant="flat"
+              isLoading={isDeleting}
+              onPress={() => onDelete(drill.id)}
+            >
+              Delete
+            </Button>
+          ) : null}
         </div>
       </CardBody>
     </Card>

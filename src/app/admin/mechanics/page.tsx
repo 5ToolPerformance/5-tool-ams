@@ -1,5 +1,5 @@
-import { MechanicsTable } from "@/ui/features/mechanics/MechanicsTable";
+import { redirect } from "next/navigation";
 
 export default function MechanicsPage() {
-  return <MechanicsTable />;
+  redirect("/resources/mechanics");
 }
