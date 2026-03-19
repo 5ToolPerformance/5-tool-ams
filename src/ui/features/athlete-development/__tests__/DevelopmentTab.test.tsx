@@ -12,9 +12,10 @@ import { DevelopmentTab } from "@/ui/features/athlete-development/DevelopmentTab
 import type { RoutineFormConfig } from "@/application/routines/getRoutineFormConfig";
 
 const refresh = jest.fn();
+const push = jest.fn();
 
 jest.mock("next/navigation", () => ({
-  useRouter: () => ({ push: jest.fn(), refresh }),
+  useRouter: () => ({ push, refresh }),
   usePathname: () => "/players/player-1/development",
   useSearchParams: () => new URLSearchParams("discipline=disc-1"),
 }));
@@ -162,6 +163,48 @@ jest.mock("@/ui/features/development/forms/routines/RoutineForm", () => ({
   ),
 }));
 
+jest.mock(
+  "@/ui/features/athlete-development/DevelopmentReportOptionsModal",
+  () => ({
+    DevelopmentReportOptionsModal: ({
+      isOpen,
+      routines,
+      onClose,
+      onPreview,
+    }: {
+      isOpen: boolean;
+      routines: Array<{ id: string }>;
+      onClose: () => void;
+      onPreview: (options: {
+        includeEvidence: boolean;
+        routineIds: string[];
+      }) => void;
+    }) =>
+      isOpen ? (
+        <div aria-label="report-options-modal" role="dialog">
+          <div>{`routine-options:${routines.length}`}</div>
+          <button onClick={() => onPreview({ includeEvidence: false, routineIds: [] })} type="button">
+            Preview report without routines
+          </button>
+          <button
+            onClick={() =>
+              onPreview({
+                includeEvidence: true,
+                routineIds: routines.map((routine) => routine.id),
+              })
+            }
+            type="button"
+          >
+            Preview report with selections
+          </button>
+          <button onClick={onClose} type="button">
+            Close report modal
+          </button>
+        </div>
+      ) : null,
+  })
+);
+
 const baseData = {
   selectedDiscipline: { id: "disc-1", key: "pitching", label: "Pitching" },
   disciplineOptions: [{ id: "disc-1", key: "pitching", label: "Pitching" }],
@@ -191,6 +234,7 @@ const baseData = {
   ],
   activePlan: {
     id: "plan-1",
+    evaluationId: "eval-1",
     status: "active",
     startDate: new Date("2026-01-01"),
     targetEndDate: new Date("2026-02-01"),
@@ -200,6 +244,10 @@ const baseData = {
   playerRoutines: [],
   universalRoutines: [],
   universalRoutinesSupported: false,
+  report: {
+    linkedEvaluationId: "eval-1",
+    canGenerate: true,
+  },
   flags: {
     hasAnyDisciplineData: true,
     hasEvaluations: true,
@@ -227,6 +275,7 @@ const baseRoutineFormConfig: RoutineFormConfig = {
 describe("DevelopmentTab", () => {
   beforeEach(() => {
     refresh.mockReset();
+    push.mockReset();
   });
 
   it("renders expected sections for populated state", () => {
@@ -272,6 +321,11 @@ describe("DevelopmentTab", () => {
         }) as HTMLButtonElement
       ).disabled
     ).toBe(false);
+    expect(
+      within(actionGroup).getByRole("button", {
+        name: "Generate PDF Report",
+      })
+    ).toBeTruthy();
   });
 
   it("disables plan creation when no evaluation exists for the selected discipline", () => {
@@ -283,6 +337,10 @@ describe("DevelopmentTab", () => {
           ...baseData,
           latestEvaluation: null,
           evaluationHistory: [],
+          report: {
+            linkedEvaluationId: null,
+            canGenerate: false,
+          },
           flags: { ...baseData.flags, hasEvaluations: false },
         }}
         evaluationDisciplineOptions={[
@@ -315,6 +373,10 @@ describe("DevelopmentTab", () => {
           ...baseData,
           selectedDiscipline: null,
           disciplineOptions: [],
+          report: {
+            linkedEvaluationId: null,
+            canGenerate: false,
+          },
           flags: { ...baseData.flags, hasAnyDisciplineData: false },
         }}
         evaluationDisciplineOptions={[
@@ -493,5 +555,71 @@ describe("DevelopmentTab", () => {
     });
 
     expect(refresh).toHaveBeenCalled();
+  });
+
+  it("hides the report action when the active-plan evaluation cannot be resolved", () => {
+    render(
+      <DevelopmentTab
+        playerId="player-1"
+        createdBy="coach-1"
+        data={{
+          ...baseData,
+          report: {
+            linkedEvaluationId: null,
+            canGenerate: false,
+          },
+        }}
+        evaluationDisciplineOptions={[
+          { id: "disc-1", key: "pitching", label: "Pitching" },
+        ]}
+        evaluationBucketOptions={[]}
+        routineFormConfig={baseRoutineFormConfig}
+      />
+    );
+
+    const actionGroup = screen.getByRole("group", {
+      name: "Development tab actions",
+    });
+
+    expect(
+      within(actionGroup).queryByRole("button", {
+        name: "Generate PDF Report",
+      })
+    ).toBeNull();
+  });
+
+  it("opens the report options flow and routes to the printable preview", async () => {
+    render(
+      <DevelopmentTab
+        playerId="player-1"
+        createdBy="coach-1"
+        data={{
+          ...baseData,
+          playerRoutines: [
+            {
+              id: "routine-1",
+              title: "Reset",
+              routineType: "partial_lesson",
+            },
+          ],
+        }}
+        evaluationDisciplineOptions={[
+          { id: "disc-1", key: "pitching", label: "Pitching" },
+        ]}
+        evaluationBucketOptions={[]}
+        routineFormConfig={baseRoutineFormConfig}
+      />
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "Generate PDF Report" }));
+
+    expect(await screen.findByRole("dialog", { name: "report-options-modal" })).toBeTruthy();
+    expect(screen.getByText("routine-options:1")).toBeTruthy();
+
+    fireEvent.click(screen.getByRole("button", { name: "Preview report with selections" }));
+
+    expect(push).toHaveBeenCalledWith(
+      "/reports/development/player-1?discipline=disc-1&includeEvidence=1&routineIds=routine-1"
+    );
   });
 });

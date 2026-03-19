@@ -82,7 +82,7 @@
 
 @media print {
   @page {
-    margin: 0.75in;
+    margin: 0.5in;
     size: letter;
   }
 
@@ -187,5 +187,284 @@
   /* Tables and grids */
   [class*="grid"] {
     display: grid !important;
+  }
+
+  .development-report-page {
+    background: white !important;
+    padding: 0 !important;
+  }
+
+  .development-report-document {
+    box-shadow: none !important;
+    border: none !important;
+    margin: 0 !important;
+    max-width: none !important;
+    padding: 0.1in 0 !important;
+  }
+
+  .development-report-header {
+    padding-bottom: 0.18in !important;
+  }
+
+  .development-report-title-row,
+  .development-report-section-heading,
+  .development-report-detail-header,
+  .development-report-routine-header {
+    flex-direction: row !important;
+  }
+
+  .development-report-title-aside {
+    text-align: right !important;
+  }
+
+  .development-report-section {
+    margin-top: 0.22in !important;
+    padding-top: 0.18in !important;
+  }
+
+  .development-report-meta-grid,
+  .development-report-summary-grid {
+    gap: 0.12in !important;
+  }
+
+  .development-report-meta-grid {
+    grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+  }
+
+  .development-report-summary-card,
+  .development-report-callout,
+  .development-report-detail,
+  .development-report-routine,
+  .development-report-meta-item {
+    padding: 0.14in !important;
+  }
+
+  .development-report-section,
+  .development-report-header,
+  .development-report-routine,
+  .development-report-detail,
+  .development-report-callout,
+  .development-report-summary-card {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+}
+
+.development-report-document {
+  background: #fffdf8;
+  border: 1px solid #e7e1d6;
+  box-shadow: 0 18px 50px rgba(33, 24, 12, 0.08);
+  color: #201910;
+  margin: 0 auto;
+  max-width: 960px;
+  padding: 48px 56px;
+}
+
+.development-report-header {
+  border-bottom: 1px solid #d9cfbf;
+  padding-bottom: 24px;
+}
+
+.development-report-eyebrow {
+  color: #8b6d42;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.24em;
+  margin-bottom: 12px;
+  text-transform: uppercase;
+}
+
+.development-report-title-row {
+  align-items: flex-start;
+  display: flex;
+  gap: 24px;
+  justify-content: space-between;
+}
+
+.development-report-title-row h1 {
+  font-size: 2.35rem;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  margin: 0;
+}
+
+.development-report-title-row p {
+  color: #5f5240;
+  font-size: 1rem;
+  margin: 8px 0 0;
+}
+
+.development-report-title-aside {
+  color: #5f5240;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  font-size: 0.95rem;
+  gap: 8px;
+  text-align: right;
+}
+
+.development-report-meta-grid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  margin-top: 24px;
+}
+
+.development-report-meta-item {
+  background: #f7f1e5;
+  border: 1px solid #e4d8c5;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-height: 72px;
+  padding: 14px 16px;
+}
+
+.development-report-meta-item span {
+  color: #7a6750;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.development-report-meta-item strong {
+  color: #201910;
+  font-size: 0.98rem;
+  font-weight: 600;
+}
+
+.development-report-section {
+  border-top: 1px solid #e7dfd1;
+  margin-top: 32px;
+  padding-top: 28px;
+}
+
+.development-report-section-heading {
+  align-items: center;
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.development-report-section-heading h2 {
+  font-size: 1.35rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+.development-report-pill-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.development-report-pill {
+  background: #f7f0e4;
+  border: 1px solid #dfd0b8;
+  border-radius: 999px;
+  color: #6c5737;
+  display: inline-flex;
+  font-size: 0.78rem;
+  font-weight: 600;
+  line-height: 1;
+  padding: 8px 12px;
+  text-transform: capitalize;
+}
+
+.development-report-summary-card,
+.development-report-callout,
+.development-report-detail,
+.development-report-routine {
+  background: #fff;
+  border: 1px solid #e5dccd;
+  border-radius: 14px;
+  padding: 18px 20px;
+}
+
+.development-report-summary-card h3,
+.development-report-callout h3,
+.development-report-block h3,
+.development-report-routine h3,
+.development-report-detail h4 {
+  color: #2e2418;
+  margin: 0 0 8px;
+}
+
+.development-report-summary-card p,
+.development-report-callout p,
+.development-report-detail p,
+.development-report-routine p {
+  color: #4f4335;
+  line-height: 1.65;
+  margin: 0;
+}
+
+.development-report-block {
+  margin-top: 20px;
+}
+
+.development-report-list {
+  color: #453829;
+  margin: 0;
+  padding-left: 20px;
+}
+
+.development-report-list li + li {
+  margin-top: 8px;
+}
+
+.development-report-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.development-report-stack-sm {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.development-report-detail-header,
+.development-report-routine-header {
+  align-items: flex-start;
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+}
+
+.development-report-routine-copy {
+  margin-top: 12px !important;
+}
+
+.development-report-muted {
+  color: #726454 !important;
+}
+
+@media (max-width: 768px) {
+  .development-report-document {
+    padding: 28px 20px;
+  }
+
+  .development-report-title-row,
+  .development-report-section-heading,
+  .development-report-detail-header,
+  .development-report-routine-header {
+    flex-direction: column;
+  }
+
+  .development-report-title-aside {
+    text-align: left;
+  }
+
+  .development-report-meta-grid,
+  .development-report-summary-grid {
+    grid-template-columns: 1fr;
   }
 }

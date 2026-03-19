@@ -1,5 +1,6 @@
 import db from "@/db";
 import { getActiveDevelopmentPlanForPlayerDiscipline } from "@/db/queries/development-plans/getActiveDevelopmentPlanForPlayerDiscipline";
+import { getEvaluationById } from "@/db/queries/evaluations/getEvaluationById";
 import { getDevelopmentPlansForPlayer } from "@/db/queries/development-plans/getDevelopmentPlansForPlayers";
 import { getEvaluationsForPlayer } from "@/db/queries/evaluations/getEvaluationsForPlayer";
 import { getDisciplinesByIds } from "@/db/queries/players/getDisciplinesByIds";
@@ -33,6 +34,10 @@ export type PlayerDevelopmentTabData = {
   playerRoutines: RoutineRow[];
   universalRoutines: RoutineRow[];
   universalRoutinesSupported: boolean;
+  report: {
+    linkedEvaluationId: string | null;
+    canGenerate: boolean;
+  };
   flags: {
     hasAnyDisciplineData: boolean;
     hasEvaluations: boolean;
@@ -81,6 +86,10 @@ export async function getPlayerDevelopmentTabData(
       playerRoutines: [],
       universalRoutines: [],
       universalRoutinesSupported: false,
+      report: {
+        linkedEvaluationId: null,
+        canGenerate: false,
+      },
       flags: {
         hasAnyDisciplineData: false,
         hasEvaluations: false,
@@ -108,9 +117,12 @@ export async function getPlayerDevelopmentTabData(
       }),
     ]);
 
-  const playerRoutines = activePlan
-    ? await getRoutinesForDevelopmentPlan(db, activePlan.id)
-    : [];
+  const [playerRoutines, linkedEvaluation] = await Promise.all([
+    activePlan ? getRoutinesForDevelopmentPlan(db, activePlan.id) : Promise.resolve([]),
+    activePlan
+      ? getEvaluationById(db, activePlan.evaluationId).catch(() => null)
+      : Promise.resolve(null),
+  ]);
 
   const latestEvaluation = disciplineEvaluations[0] ?? null;
 
@@ -126,6 +138,10 @@ export async function getPlayerDevelopmentTabData(
     playerRoutines,
     universalRoutines: [],
     universalRoutinesSupported: false,
+    report: {
+      linkedEvaluationId: linkedEvaluation?.id ?? null,
+      canGenerate: Boolean(activePlan && linkedEvaluation),
+    },
     flags: {
       hasAnyDisciplineData: disciplineOptions.length > 0,
       hasEvaluations: disciplineEvaluations.length > 0,

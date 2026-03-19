@@ -2,30 +2,35 @@
 
 import { Button } from "@heroui/react";
 
-type DevelopmentAction = "evaluation" | "plan" | "routine";
+type DevelopmentAction = "evaluation" | "plan" | "routine" | "report";
 
 const ACTION_LABELS: Record<DevelopmentAction, string> = {
   evaluation: "New Evaluation",
   plan: "New Development Plan",
   routine: "New Routine",
+  report: "Generate PDF Report",
 };
 
 interface DevelopmentActionButtonsProps {
   primaryAction?: DevelopmentAction;
   canCreatePlan: boolean;
   canCreateRoutine: boolean;
+  canGenerateReport?: boolean;
   onOpenEvaluation: () => void;
   onOpenPlan: () => void;
   onOpenRoutine: () => void;
+  onOpenReport?: () => void;
 }
 
 export function DevelopmentActionButtons({
   primaryAction = "evaluation",
   canCreatePlan,
   canCreateRoutine,
+  canGenerateReport = false,
   onOpenEvaluation,
   onOpenPlan,
   onOpenRoutine,
+  onOpenReport,
 }: DevelopmentActionButtonsProps) {
   return (
     <div
@@ -62,6 +67,17 @@ export function DevelopmentActionButtons({
       >
         {ACTION_LABELS.routine}
       </Button>
+      {canGenerateReport ? (
+        <Button
+          size="sm"
+          color={primaryAction === "report" ? "primary" : "default"}
+          disableRipple
+          variant={primaryAction === "report" ? "solid" : "flat"}
+          onPress={onOpenReport}
+        >
+          {ACTION_LABELS.report}
+        </Button>
+      ) : null}
     </div>
   );
 }

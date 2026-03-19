@@ -25,6 +25,7 @@ import { CurrentSnapshotPanel } from "./CurrentSnapshotPanel";
 import { DevelopmentActionButtons } from "./DevelopmentActionButtons";
 import { DevelopmentDisciplineSelector } from "./DevelopmentDisciplineSelector";
 import { DevelopmentHistoryPanel } from "./DevelopmentHistoryPanel";
+import { DevelopmentReportOptionsModal } from "./DevelopmentReportOptionsModal";
 import { RoutinesPanel } from "./RoutinesPanel";
 
 interface DevelopmentTabProps {
@@ -62,6 +63,7 @@ export function DevelopmentTab({
   const [initialRoutineDevelopmentPlanId, setInitialRoutineDevelopmentPlanId] =
     useState("");
   const [isRoutinePlanLocked, setIsRoutinePlanLocked] = useState(false);
+  const [isReportOptionsOpen, setIsReportOptionsOpen] = useState(false);
 
   const selectedDiscipline = data.selectedDiscipline;
 
@@ -99,6 +101,22 @@ export function DevelopmentTab({
 
   const canCreatePlan = evaluationOptions.length > 0;
   const canCreateRoutine = Boolean(selectedDiscipline);
+  const canGenerateReport = data.report.canGenerate && Boolean(selectedDiscipline);
+  const playerName = useMemo(() => {
+    const source = data.activePlan ?? data.latestEvaluation ?? data.evaluationHistory[0];
+    if (!source || typeof source !== "object") return "this player";
+
+    const firstName =
+      "firstName" in source && typeof source.firstName === "string"
+        ? source.firstName
+        : null;
+    const lastName =
+      "lastName" in source && typeof source.lastName === "string"
+        ? source.lastName
+        : null;
+
+    return [firstName, lastName].filter(Boolean).join(" ") || "this player";
+  }, [data.activePlan, data.evaluationHistory, data.latestEvaluation]);
 
   const closeDrawer = () => {
     setActiveAction(null);
@@ -114,6 +132,39 @@ export function DevelopmentTab({
     setIsPlanEvaluationLocked(false);
     setInitialRoutineDevelopmentPlanId("");
     setIsRoutinePlanLocked(false);
+  };
+
+  const openReportOptions = () => {
+    if (!canGenerateReport || !selectedDiscipline) {
+      return;
+    }
+
+    setIsReportOptionsOpen(true);
+  };
+
+  const closeReportOptions = () => {
+    setIsReportOptionsOpen(false);
+  };
+
+  const openReportPreview = (options: {
+    includeEvidence: boolean;
+    routineIds: string[];
+  }) => {
+    if (!selectedDiscipline) {
+      return;
+    }
+
+    const params = new URLSearchParams();
+    params.set("discipline", selectedDiscipline.id);
+    if (options.includeEvidence) {
+      params.set("includeEvidence", "1");
+    }
+    if (options.routineIds.length > 0) {
+      params.set("routineIds", options.routineIds.join(","));
+    }
+
+    closeReportOptions();
+    router.push(`/reports/development/${playerId}?${params.toString()}`);
   };
 
   const openPlanDrawer = (
@@ -162,9 +213,11 @@ export function DevelopmentTab({
             <DevelopmentActionButtons
               canCreatePlan={false}
               canCreateRoutine={false}
+              canGenerateReport={false}
               onOpenEvaluation={openEvaluationDrawer}
               onOpenPlan={() => openPlanDrawer()}
               onOpenRoutine={() => openRoutineDrawer()}
+              onOpenReport={openReportOptions}
             />
           </CardBody>
         </Card>
@@ -216,9 +269,11 @@ export function DevelopmentTab({
             <DevelopmentActionButtons
               canCreatePlan={canCreatePlan}
               canCreateRoutine={canCreateRoutine}
+              canGenerateReport={canGenerateReport}
               onOpenEvaluation={openEvaluationDrawer}
               onOpenPlan={() => openPlanDrawer()}
               onOpenRoutine={() => openRoutineDrawer()}
+              onOpenReport={openReportOptions}
             />
           </CardBody>
         </Card>
@@ -324,6 +379,18 @@ export function DevelopmentTab({
           </div>
         ) : null}
       </RightSideDrawer>
+
+      <DevelopmentReportOptionsModal
+        isOpen={isReportOptionsOpen}
+        playerName={playerName}
+        routines={data.playerRoutines.map((routine) => ({
+          id: routine.id,
+          title: routine.title,
+          routineType: routine.routineType,
+        }))}
+        onClose={closeReportOptions}
+        onPreview={openReportPreview}
+      />
     </>
   );
 }

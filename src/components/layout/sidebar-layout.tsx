@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 
 import { Button } from "@heroui/react";
 import { IconMenu2 } from "@tabler/icons-react";
+import { usePathname } from "next/navigation";
 
 import Sidebar from "./sidebar";
 import UniversalBackButton from "./universal-back-button";
@@ -14,6 +15,8 @@ interface SidebarLayoutProps {
 
 export default function SidebarLayout({ children }: SidebarLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const pathname = usePathname();
+  const isDevelopmentReportRoute = pathname.startsWith("/reports/development/");
 
   // Close sidebar on route change (mobile)
   useEffect(() => {
@@ -30,6 +33,10 @@ export default function SidebarLayout({ children }: SidebarLayoutProps) {
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
   };
+
+  if (isDevelopmentReportRoute) {
+    return <div className="min-h-screen bg-background">{children}</div>;
+  }
 
   return (
     <div className="flex h-screen bg-background">
