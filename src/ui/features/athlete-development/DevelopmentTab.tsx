@@ -164,7 +164,11 @@ export function DevelopmentTab({
     }
 
     closeReportOptions();
-    router.push(`/reports/development/${playerId}?${params.toString()}`);
+    window.open(
+      `/reports/development/${playerId}?${params.toString()}`,
+      "_blank",
+      "noopener,noreferrer"
+    );
   };
 
   const openPlanDrawer = (

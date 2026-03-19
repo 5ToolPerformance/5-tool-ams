@@ -13,6 +13,7 @@ import type { RoutineFormConfig } from "@/application/routines/getRoutineFormCon
 
 const refresh = jest.fn();
 const push = jest.fn();
+const open = jest.fn();
 
 jest.mock("next/navigation", () => ({
   useRouter: () => ({ push, refresh }),
@@ -276,6 +277,11 @@ describe("DevelopmentTab", () => {
   beforeEach(() => {
     refresh.mockReset();
     push.mockReset();
+    open.mockReset();
+    Object.defineProperty(window, "open", {
+      configurable: true,
+      value: open,
+    });
   });
 
   it("renders expected sections for populated state", () => {
@@ -588,7 +594,7 @@ describe("DevelopmentTab", () => {
     ).toBeNull();
   });
 
-  it("opens the report options flow and routes to the printable preview", async () => {
+  it("opens the report options flow and opens the printable preview in a new tab", async () => {
     render(
       <DevelopmentTab
         playerId="player-1"
@@ -618,8 +624,10 @@ describe("DevelopmentTab", () => {
 
     fireEvent.click(screen.getByRole("button", { name: "Preview report with selections" }));
 
-    expect(push).toHaveBeenCalledWith(
-      "/reports/development/player-1?discipline=disc-1&includeEvidence=1&routineIds=routine-1"
+    expect(open).toHaveBeenCalledWith(
+      "/reports/development/player-1?discipline=disc-1&includeEvidence=1&routineIds=routine-1",
+      "_blank",
+      "noopener,noreferrer"
     );
   });
 });
