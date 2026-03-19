@@ -15,6 +15,10 @@ export const drills = pgTable("drills", {
   description: text("description").notNull(),
   discipline: text("discipline").default("hitting").notNull(),
 
+  videoProvider: text("video_provider"),
+  videoId: text("video_id"),
+  videoUrl: text("video_url"),
+
   createdBy: uuid("created_by")
     .notNull()
     .references(() => users.id),
