@@ -7,6 +7,7 @@ import { AthleteTabs } from "./AthleteTabs";
 const TAB_KEYS = [
   "overview",
   "training",
+  "development",
   "performance",
   "context",
   "health",
