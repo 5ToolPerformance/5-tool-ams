@@ -1,9 +1,9 @@
 import { getPlayerDevelopmentTabData } from "@/application/players/development/getPlayerDevelopmentTabData";
+import { listActiveDisciplines } from "@/db/queries/config/listActiveDisciplines";
 import { getActiveDevelopmentPlanForPlayerDiscipline } from "@/db/queries/development-plans/getActiveDevelopmentPlanForPlayerDiscipline";
 import { getDevelopmentPlansForPlayer } from "@/db/queries/development-plans/getDevelopmentPlansForPlayers";
 import { getEvaluationById } from "@/db/queries/evaluations/getEvaluationById";
 import { getEvaluationsForPlayer } from "@/db/queries/evaluations/getEvaluationsForPlayer";
-import { getDisciplinesByIds } from "@/db/queries/players/getDisciplinesByIds";
 import { getRoutinesForDevelopmentPlan } from "@/db/queries/routines/getRoutinesForDevelopmentPlan";
 
 jest.mock("@/db", () => ({
@@ -33,8 +33,8 @@ jest.mock(
   })
 );
 
-jest.mock("@/db/queries/players/getDisciplinesByIds", () => ({
-  getDisciplinesByIds: jest.fn(),
+jest.mock("@/db/queries/config/listActiveDisciplines", () => ({
+  listActiveDisciplines: jest.fn(),
 }));
 
 jest.mock("@/db/queries/routines/getRoutinesForDevelopmentPlan", () => ({
@@ -64,7 +64,7 @@ describe("getPlayerDevelopmentTabData", () => {
         { id: "plan-1", disciplineId: "disc-1", status: "active" },
       ]);
 
-    (getDisciplinesByIds as jest.Mock).mockResolvedValue([
+    (listActiveDisciplines as jest.Mock).mockResolvedValue([
       { id: "disc-1", key: "pitching", label: "Pitching" },
     ]);
     (getActiveDevelopmentPlanForPlayerDiscipline as jest.Mock).mockResolvedValue({
@@ -104,7 +104,7 @@ describe("getPlayerDevelopmentTabData", () => {
       .mockResolvedValueOnce([])
       .mockResolvedValueOnce([]);
 
-    (getDisciplinesByIds as jest.Mock).mockResolvedValue([
+    (listActiveDisciplines as jest.Mock).mockResolvedValue([
       { id: "disc-1", key: "pitching", label: "Pitching" },
     ]);
     (getActiveDevelopmentPlanForPlayerDiscipline as jest.Mock).mockResolvedValue(null);
@@ -126,7 +126,7 @@ describe("getPlayerDevelopmentTabData", () => {
     (getDevelopmentPlansForPlayer as jest.Mock)
       .mockResolvedValueOnce([])
       .mockResolvedValueOnce([]);
-    (getDisciplinesByIds as jest.Mock).mockResolvedValue([
+    (listActiveDisciplines as jest.Mock).mockResolvedValue([
       { id: "disc-1", key: "pitching", label: "Pitching" },
     ]);
     (getActiveDevelopmentPlanForPlayerDiscipline as jest.Mock).mockResolvedValue(null);
@@ -144,7 +144,7 @@ describe("getPlayerDevelopmentTabData", () => {
     (getDevelopmentPlansForPlayer as jest.Mock)
       .mockResolvedValueOnce([{ id: "plan-1", disciplineId: "disc-1" }])
       .mockResolvedValueOnce([{ id: "plan-1", disciplineId: "disc-1" }]);
-    (getDisciplinesByIds as jest.Mock).mockResolvedValue([
+    (listActiveDisciplines as jest.Mock).mockResolvedValue([
       { id: "disc-1", key: "pitching", label: "Pitching" },
     ]);
     (getActiveDevelopmentPlanForPlayerDiscipline as jest.Mock).mockResolvedValue({
@@ -162,5 +162,31 @@ describe("getPlayerDevelopmentTabData", () => {
       linkedEvaluationId: null,
       canGenerate: false,
     });
+  });
+
+  it("shows active disciplines even when the selected one has no evaluations yet", async () => {
+    (getEvaluationsForPlayer as jest.Mock)
+      .mockResolvedValueOnce([{ id: "eval-1", disciplineId: "disc-1" }])
+      .mockResolvedValueOnce([]);
+    (getDevelopmentPlansForPlayer as jest.Mock)
+      .mockResolvedValueOnce([])
+      .mockResolvedValueOnce([]);
+    (listActiveDisciplines as jest.Mock).mockResolvedValue([
+      { id: "disc-1", key: "pitching", label: "Pitching" },
+      { id: "disc-2", key: "hitting", label: "Hitting" },
+    ]);
+    (getActiveDevelopmentPlanForPlayerDiscipline as jest.Mock).mockResolvedValue(null);
+    (getEvaluationById as jest.Mock).mockResolvedValue(null);
+
+    const result = await getPlayerDevelopmentTabData("player-1", "disc-2");
+
+    expect(result.disciplineOptions.map((row) => row.id)).toEqual([
+      "disc-1",
+      "disc-2",
+    ]);
+    expect(result.selectedDiscipline?.id).toBe("disc-2");
+    expect(result.latestEvaluation).toBeNull();
+    expect(result.flags.hasAnyDisciplineData).toBe(true);
+    expect(result.flags.hasEvaluations).toBe(false);
   });
 });

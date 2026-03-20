@@ -1,9 +1,9 @@
 import db from "@/db";
 import { getActiveDevelopmentPlanForPlayerDiscipline } from "@/db/queries/development-plans/getActiveDevelopmentPlanForPlayerDiscipline";
+import { listActiveDisciplines } from "@/db/queries/config/listActiveDisciplines";
 import { getEvaluationById } from "@/db/queries/evaluations/getEvaluationById";
 import { getDevelopmentPlansForPlayer } from "@/db/queries/development-plans/getDevelopmentPlansForPlayers";
 import { getEvaluationsForPlayer } from "@/db/queries/evaluations/getEvaluationsForPlayer";
-import { getDisciplinesByIds } from "@/db/queries/players/getDisciplinesByIds";
 import { getRoutinesForDevelopmentPlan } from "@/db/queries/routines/getRoutinesForDevelopmentPlan";
 
 const MAX_READ_ROWS = 250;
@@ -50,21 +50,13 @@ export async function getPlayerDevelopmentTabData(
   playerId: string,
   disciplineId?: string
 ): Promise<PlayerDevelopmentTabData> {
-  const [evaluationRows, developmentPlanRows] = await Promise.all([
+  const [evaluationRows, developmentPlanRows, activeDisciplineRows] = await Promise.all([
     getEvaluationsForPlayer(db, { playerId, limit: MAX_READ_ROWS }),
     getDevelopmentPlansForPlayer(db, { playerId, limit: MAX_READ_ROWS }),
+    listActiveDisciplines(db),
   ]);
 
-  const disciplineIds = Array.from(
-    new Set([
-      ...evaluationRows.map((row) => row.disciplineId),
-      ...developmentPlanRows.map((row) => row.disciplineId),
-    ])
-  );
-
-  const disciplineOptions = (
-    await getDisciplinesByIds(db, disciplineIds)
-  ).map((row) => ({
+  const disciplineOptions = activeDisciplineRows.map((row) => ({
     id: row.id,
     key: row.key,
     label: row.label,

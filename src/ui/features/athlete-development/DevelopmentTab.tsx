@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 
-import { Card, CardBody } from "@heroui/react";
+import { Button, Card, CardBody } from "@heroui/react";
 import { useRouter } from "next/navigation";
 
 import type { PlayerDevelopmentTabData } from "@/application/players/development/getPlayerDevelopmentTabData";
@@ -103,6 +103,7 @@ export function DevelopmentTab({
   const canCreatePlan = evaluationOptions.length > 0;
   const canCreateRoutine = Boolean(selectedDiscipline);
   const canGenerateReport = data.report.canGenerate && Boolean(selectedDiscipline);
+  const hasEvaluationForSelectedDiscipline = Boolean(data.latestEvaluation);
   const playerName = useMemo(() => {
     const source = data.activePlan ?? data.latestEvaluation ?? data.evaluationHistory[0];
     if (!source || typeof source !== "object") return "this player";
@@ -267,53 +268,81 @@ export function DevelopmentTab({
               selectedDisciplineId={selectedDiscipline.id}
               disciplines={data.disciplineOptions}
             />
-            <DevelopmentActionButtons
-              canCreatePlan={canCreatePlan}
-              canCreateRoutine={canCreateRoutine}
-              canGenerateReport={canGenerateReport}
-              onOpenEvaluation={openEvaluationDrawer}
-              onOpenPlan={() => openPlanDrawer()}
-              onOpenRoutine={() => openRoutineDrawer()}
-              onOpenReport={openReportOptions}
-            />
+            {hasEvaluationForSelectedDiscipline ? (
+              <DevelopmentActionButtons
+                canCreatePlan={canCreatePlan}
+                canCreateRoutine={canCreateRoutine}
+                canGenerateReport={canGenerateReport}
+                onOpenEvaluation={openEvaluationDrawer}
+                onOpenPlan={() => openPlanDrawer()}
+                onOpenRoutine={() => openRoutineDrawer()}
+                onOpenReport={openReportOptions}
+              />
+            ) : null}
           </CardBody>
         </Card>
 
-        <CurrentSnapshotPanel
-          latestEvaluation={data.latestEvaluation}
-          disciplineKey={selectedDiscipline.key}
-          onOpenEvaluation={openEvaluationDrawer}
-          onOpenPlan={() => openPlanDrawer()}
-          onOpenRoutine={() => openRoutineDrawer()}
-          canCreatePlan={canCreatePlan}
-        />
+        {!hasEvaluationForSelectedDiscipline ? (
+          <Card shadow="sm">
+            <CardBody className="flex min-h-[300px] items-center justify-center px-6 py-12 text-center">
+              <div className="max-w-md space-y-4">
+                <div className="space-y-2">
+                  <h2 className="text-xl font-semibold">
+                    No {selectedDiscipline.label.toLowerCase()} evaluation yet
+                  </h2>
+                  <p className="text-sm text-muted-foreground">
+                    This discipline is available, but no evaluation has been
+                    created for this player yet. Create the first evaluation to
+                    start the development workflow for this tab.
+                  </p>
+                </div>
+                <div className="flex justify-center">
+                  <Button color="primary" size="lg" onPress={openEvaluationDrawer}>
+                    Create Evaluation
+                  </Button>
+                </div>
+              </div>
+            </CardBody>
+          </Card>
+        ) : (
+          <>
+            <CurrentSnapshotPanel
+              latestEvaluation={data.latestEvaluation}
+              disciplineKey={selectedDiscipline.key}
+              onOpenEvaluation={openEvaluationDrawer}
+              onOpenPlan={() => openPlanDrawer()}
+              onOpenRoutine={() => openRoutineDrawer()}
+              canCreatePlan={canCreatePlan}
+            />
 
-        <ActivePlanPanel
-          activePlan={data.activePlan}
-          latestEvaluation={data.latestEvaluation}
-          disciplineKey={selectedDiscipline.key}
-          onCreatePlanFromLatestEvaluation={() =>
-            openPlanDrawer(data.latestEvaluation?.id ?? "")
-          }
-          onOpenEvaluation={openEvaluationDrawer}
-          onOpenRoutine={() => openRoutineDrawer(data.activePlan?.id ?? "", true)}
-        />
+            <ActivePlanPanel
+              activePlan={data.activePlan}
+              latestEvaluation={data.latestEvaluation}
+              disciplineKey={selectedDiscipline.key}
+              onCreatePlanFromLatestEvaluation={() =>
+                openPlanDrawer(data.latestEvaluation?.id ?? "")
+              }
+              onOpenEvaluation={openEvaluationDrawer}
+              onOpenRoutine={() => openRoutineDrawer(data.activePlan?.id ?? "", true)}
+            />
 
-        <RoutinesPanel
-          playerRoutines={data.playerRoutines}
-          universalRoutinesSupported={data.universalRoutinesSupported}
-          disciplineKey={selectedDiscipline.key}
-          onOpenRoutine={() => openRoutineDrawer()}
-        />
+            <RoutinesPanel
+              playerRoutines={data.playerRoutines}
+              universalRoutinesSupported={data.universalRoutinesSupported}
+              disciplineKey={selectedDiscipline.key}
+              onOpenRoutine={() => openRoutineDrawer()}
+            />
 
-        <DevelopmentHistoryPanel
-          evaluationHistory={data.evaluationHistory}
-          developmentPlanHistory={data.developmentPlanHistory}
-          disciplineKey={selectedDiscipline.key}
-          onCreatePlanFromEvaluation={(evaluationId) =>
-            openPlanDrawer(evaluationId)
-          }
-        />
+            <DevelopmentHistoryPanel
+              evaluationHistory={data.evaluationHistory}
+              developmentPlanHistory={data.developmentPlanHistory}
+              disciplineKey={selectedDiscipline.key}
+              onCreatePlanFromEvaluation={(evaluationId) =>
+                openPlanDrawer(evaluationId)
+              }
+            />
+          </>
+        )}
       </div>
 
       <RightSideDrawer
