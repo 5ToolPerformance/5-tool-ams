@@ -266,10 +266,10 @@
 }
 
 .development-report-document {
-  background: #fffdf8;
-  border: 1px solid #e7e1d6;
-  box-shadow: 0 18px 50px rgba(33, 24, 12, 0.08);
-  color: #201910;
+  background: #fdfefe;
+  border: 1px solid #d4def0;
+  box-shadow: 0 18px 50px rgba(19, 35, 63, 0.08);
+  color: #13233f;
   margin: 0 auto;
   max-width: 960px;
   overflow: hidden;
@@ -298,12 +298,12 @@
 }
 
 .development-report-header {
-  border-bottom: 1px solid #d9cfbf;
+  border-bottom: 1px solid #9ab0d4;
   padding-bottom: 24px;
 }
 
 .development-report-eyebrow {
-  color: #8b6d42;
+  color: #274a7f;
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.24em;
@@ -327,13 +327,13 @@
 }
 
 .development-report-title-row p {
-  color: #5f5240;
+  color: #3d5478;
   font-size: 1rem;
   margin: 8px 0 0;
 }
 
 .development-report-title-aside {
-  color: #5f5240;
+  color: #3d5478;
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
@@ -354,8 +354,8 @@
 }
 
 .development-report-meta-item {
-  background: #f7f1e5;
-  border: 1px solid #e4d8c5;
+  background: #eef3fb;
+  border: 1px solid #c8d4e7;
   border-radius: 12px;
   display: flex;
   flex-direction: column;
@@ -365,7 +365,7 @@
 }
 
 .development-report-meta-item span {
-  color: #7a6750;
+  color: #355886;
   font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -373,13 +373,13 @@
 }
 
 .development-report-meta-item strong {
-  color: #201910;
+  color: #13233f;
   font-size: 0.98rem;
   font-weight: 600;
 }
 
 .development-report-section {
-  border-top: 1px solid #e7dfd1;
+  border-top: 1px solid #d9e2f2;
   margin-top: 32px;
   padding-top: 28px;
 }
@@ -406,10 +406,10 @@
 }
 
 .development-report-pill {
-  background: #f7f0e4;
-  border: 1px solid #dfd0b8;
+  background: #dde8f7;
+  border: 1px solid #9db2d5;
   border-radius: 999px;
-  color: #6c5737;
+  color: #23436d;
   display: inline-flex;
   font-size: 0.78rem;
   font-weight: 600;
@@ -423,7 +423,7 @@
 .development-report-detail,
 .development-report-routine {
   background: #fff;
-  border: 1px solid #e5dccd;
+  border: 1px solid #d4deef;
   border-radius: 14px;
   padding: 18px 20px;
 }
@@ -433,7 +433,7 @@
 .development-report-block h3,
 .development-report-routine h3,
 .development-report-detail h4 {
-  color: #2e2418;
+  color: #17325a;
   margin: 0 0 8px;
 }
 
@@ -441,7 +441,7 @@
 .development-report-callout p,
 .development-report-detail p,
 .development-report-routine p {
-  color: #4f4335;
+  color: #243956;
   line-height: 1.65;
   margin: 0;
 }
@@ -451,7 +451,7 @@
 }
 
 .development-report-list {
-  color: #453829;
+  color: #223752;
   margin: 0;
   padding-left: 20px;
 }
@@ -485,7 +485,7 @@
 }
 
 .development-report-muted {
-  color: #726454 !important;
+  color: #4b6387 !important;
 }
 
 @media (max-width: 768px) {

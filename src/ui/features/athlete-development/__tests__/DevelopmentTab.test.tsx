@@ -625,7 +625,7 @@ describe("DevelopmentTab", () => {
     fireEvent.click(screen.getByRole("button", { name: "Preview report with selections" }));
 
     expect(open).toHaveBeenCalledWith(
-      "/reports/development/player-1?discipline=disc-1&includeEvidence=1&routineIds=routine-1",
+      "/reports/development/player-1/pdf?discipline=disc-1&includeEvidence=1&routineIds=routine-1",
       "_blank",
       "noopener,noreferrer"
     );

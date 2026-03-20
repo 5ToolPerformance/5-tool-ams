@@ -19,6 +19,7 @@ import type {
 } from "@/ui/features/development/forms/evaluation/evaluationForm.types";
 import { RoutineForm } from "@/ui/features/development/forms/routines/RoutineForm";
 import { RoutineFormProvider } from "@/ui/features/development/forms/routines/RoutineFormProvider";
+import { buildDevelopmentReportPdfPath } from "@/lib/reports/developmentReportQuery";
 
 import { ActivePlanPanel } from "./ActivePlanPanel";
 import { CurrentSnapshotPanel } from "./CurrentSnapshotPanel";
@@ -154,18 +155,14 @@ export function DevelopmentTab({
       return;
     }
 
-    const params = new URLSearchParams();
-    params.set("discipline", selectedDiscipline.id);
-    if (options.includeEvidence) {
-      params.set("includeEvidence", "1");
-    }
-    if (options.routineIds.length > 0) {
-      params.set("routineIds", options.routineIds.join(","));
-    }
-
     closeReportOptions();
     window.open(
-      `/reports/development/${playerId}?${params.toString()}`,
+      buildDevelopmentReportPdfPath({
+        playerId,
+        disciplineId: selectedDiscipline.id,
+        includeEvidence: options.includeEvidence,
+        routineIds: options.routineIds,
+      }),
       "_blank",
       "noopener,noreferrer"
     );
