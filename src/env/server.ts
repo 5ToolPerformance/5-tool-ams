@@ -30,7 +30,6 @@ export const env = createEnv({
     AZURE_STORAGE_ACCOUNT_NAME: z.string(),
     AZURE_STORAGE_CONNECTION_STRING: z.string(),
     AZURE_STORAGE_CONTAINER_NAME: z.string(),
-    CHROMIUM_PACK_URL: z.string().url().optional(),
     PUPPETEER_EXECUTABLE_PATH: z.string().optional(),
   },
   onValidationError: (error) => {

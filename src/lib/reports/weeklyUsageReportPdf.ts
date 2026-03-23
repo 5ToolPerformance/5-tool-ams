@@ -99,34 +99,34 @@ export function getWeeklyUsageReportPdfHtml(
         <style>
           @page { size: letter; margin: 0.5in; }
           * { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-          html, body { margin: 0; padding: 0; background: #fffdf8; color: #172033; font-family: Georgia, "Times New Roman", serif; }
+          html, body { margin: 0; padding: 0; background: #f4f7fc; color: #10233f; font-family: Georgia, "Times New Roman", serif; }
           body { font-size: 12px; line-height: 1.5; }
           .weekly-usage-document { position: relative; padding: 0.05in 0; }
-          .weekly-usage-watermark { position: fixed; inset: 50% auto auto 50%; transform: translate(-50%, -50%); opacity: 0.07; pointer-events: none; }
-          .weekly-usage-watermark img { width: 320px; display: block; }
+          .weekly-usage-watermark { position: fixed; inset: 50% auto auto 50%; transform: translate(-50%, -50%); opacity: 0.08; pointer-events: none; }
+          .weekly-usage-watermark img { width: 340px; display: block; }
           .weekly-usage-content { position: relative; z-index: 1; }
           .weekly-usage-header, .weekly-usage-summary-card, .weekly-usage-panel, .weekly-usage-table { break-inside: avoid; page-break-inside: avoid; }
-          .weekly-usage-header { border-bottom: 1px solid #d4d0c8; padding-bottom: 18px; }
-          .weekly-usage-eyebrow { margin-bottom: 10px; color: #7b5e37; font-size: 10px; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; }
+          .weekly-usage-header { border-bottom: 1px solid #bccbe0; padding-bottom: 18px; }
+          .weekly-usage-eyebrow { margin-bottom: 10px; color: #224d86; font-size: 10px; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; }
           .weekly-usage-title-row, .weekly-usage-meta-grid, .weekly-usage-summary-grid { display: flex; gap: 14px; }
           .weekly-usage-title-row { align-items: flex-start; justify-content: space-between; }
           .weekly-usage-title-row h1 { margin: 0; font-size: 30px; line-height: 1; letter-spacing: -0.04em; }
-          .weekly-usage-title-row p, .weekly-usage-generated { color: #5b6474; }
+          .weekly-usage-title-row p, .weekly-usage-generated { color: #425d86; }
           .weekly-usage-title-row p { margin: 8px 0 0; font-size: 14px; }
           .weekly-usage-generated { text-align: right; font-size: 12px; }
           .weekly-usage-meta-grid, .weekly-usage-summary-grid { flex-wrap: wrap; margin-top: 18px; }
-          .weekly-usage-panel, .weekly-usage-summary-card { border: 1px solid #d8cfbe; border-radius: 14px; background: rgba(245, 240, 230, 0.7); }
+          .weekly-usage-panel, .weekly-usage-summary-card { border: 1px solid #c2d2ea; border-radius: 14px; background: rgba(229, 238, 251, 0.82); }
           .weekly-usage-panel { padding: 14px 16px; margin-top: 18px; }
           .weekly-usage-meta-item, .weekly-usage-summary-card { flex: 1 1 0; min-width: 120px; padding: 12px 14px; }
-          .weekly-usage-meta-item span, .weekly-usage-summary-card span { display: block; color: #7b5e37; font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
-          .weekly-usage-meta-item strong, .weekly-usage-summary-card strong { display: block; margin-top: 6px; font-size: 22px; color: #172033; }
+          .weekly-usage-meta-item span, .weekly-usage-summary-card span { display: block; color: #224d86; font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
+          .weekly-usage-meta-item strong, .weekly-usage-summary-card strong { display: block; margin-top: 6px; font-size: 22px; color: #10233f; }
           .weekly-usage-section-title { margin: 0 0 10px; font-size: 20px; }
           .weekly-usage-notes { margin: 10px 0 0; padding-left: 18px; }
           .weekly-usage-table { width: 100%; border-collapse: collapse; margin-top: 14px; }
-          .weekly-usage-table th, .weekly-usage-table td { border-bottom: 1px solid #ddd2c0; padding: 10px 8px; text-align: left; vertical-align: top; }
-          .weekly-usage-table th { color: #7b5e37; font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
+          .weekly-usage-table th, .weekly-usage-table td { border-bottom: 1px solid #d1ddee; padding: 10px 8px; text-align: left; vertical-align: top; }
+          .weekly-usage-table th { color: #224d86; font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
           .weekly-usage-number { text-align: right !important; white-space: nowrap; }
-          .weekly-usage-empty { color: #5b6474; text-align: center; padding: 18px 8px; }
+          .weekly-usage-empty { color: #425d86; text-align: center; padding: 18px 8px; }
         </style>
       </head>
       <body>
@@ -190,7 +190,7 @@ export function getWeeklyUsageReportPdfHtml(
                     <th class="weekly-usage-number">Pitching</th>
                     <th class="weekly-usage-number">Fielding</th>
                     <th class="weekly-usage-number">Catching</th>
-                    <th class="weekly-usage-number">Other</th>
+                    <th class="weekly-usage-number">Strength</th>
                   </tr>
                 </thead>
                 <tbody>

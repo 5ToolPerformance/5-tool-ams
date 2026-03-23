@@ -1,4 +1,4 @@
-import chromium from "@sparticuz/chromium-min";
+import chromium from "@sparticuz/chromium";
 import puppeteer from "puppeteer-core";
 
 import { env } from "@/env/server";
@@ -19,11 +19,7 @@ export async function launchPdfBrowser() {
   let headless: boolean | "shell" = true;
 
   if (isRemote) {
-    if (!env.CHROMIUM_PACK_URL) {
-      throw new Error("CHROMIUM_PACK_URL is required for remote PDF generation.");
-    }
-
-    executablePath = await chromium.executablePath(env.CHROMIUM_PACK_URL);
+    executablePath = await chromium.executablePath();
     args = puppeteer.defaultArgs({
       args: chromium.args,
       headless: "shell",

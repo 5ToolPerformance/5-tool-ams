@@ -29,9 +29,15 @@ type CoachRow = {
   coachName: string | null;
   lessonsLogged: number;
   playersWorkedWith: number;
+};
+
+type CoachLessonTypeRow = {
+  coachId: string;
   lessonType: string;
   lessonTypeCount: number;
 };
+
+type CoachSnapshot = WeeklyUsageReportDocument["coaches"]["items"][number];
 
 function createLessonTypeCounts(): Record<LessonTypeKey, number> {
   return {
@@ -207,7 +213,8 @@ async function buildWeeklyUsageReportDocument(
     injuryTotalsRow,
     lessonActivePlayerRows,
     injuryActivePlayerRows,
-    coachRows,
+    coachTotalRows,
+    coachLessonTypeRows,
   ] = await Promise.all([
     conn
       .select({
@@ -255,6 +262,16 @@ async function buildWeeklyUsageReportDocument(
         coachName: users.name,
         lessonsLogged: sql<number>`count(${lesson.id})::int`,
         playersWorkedWith: sql<number>`count(distinct ${lesson.playerId})::int`,
+      })
+      .from(lesson)
+      .innerJoin(playerInformation, eq(lesson.playerId, playerInformation.id))
+      .innerJoin(users, eq(lesson.coachId, users.id))
+      .where(facilityLessonsWhere)
+      .groupBy(lesson.coachId, users.name)
+      .orderBy(sql`count(${lesson.id}) desc`),
+    conn
+      .select({
+        coachId: lesson.coachId,
         lessonType: lesson.lessonType,
         lessonTypeCount: sql<number>`count(${lesson.id})::int`,
       })
@@ -262,7 +279,7 @@ async function buildWeeklyUsageReportDocument(
       .innerJoin(playerInformation, eq(lesson.playerId, playerInformation.id))
       .innerJoin(users, eq(lesson.coachId, users.id))
       .where(facilityLessonsWhere)
-      .groupBy(lesson.coachId, users.name, lesson.lessonType)
+      .groupBy(lesson.coachId, lesson.lessonType)
       .orderBy(sql`count(${lesson.id}) desc`),
   ]);
 
@@ -270,10 +287,10 @@ async function buildWeeklyUsageReportDocument(
   lessonActivePlayerRows.forEach((row) => activePlayerIds.add(row.playerId));
   injuryActivePlayerRows.forEach((row) => activePlayerIds.add(row.playerId));
 
-  const coachMap = new Map<string, WeeklyUsageReportDocument["coaches"]["items"][number]>();
+  const coachMap = new Map<string, CoachSnapshot>();
 
-  for (const row of coachRows as CoachRow[]) {
-    const existing = coachMap.get(row.coachId) ?? {
+  for (const row of coachTotalRows as CoachRow[]) {
+    coachMap.set(row.coachId, {
       coachId: row.coachId,
       coachName: row.coachName?.trim() || "Unknown Coach",
       totals: {
@@ -281,10 +298,16 @@ async function buildWeeklyUsageReportDocument(
         playersWorkedWith: row.playersWorkedWith,
       },
       lessonsByType: createLessonTypeCounts(),
-    };
+    });
+  }
+
+  for (const row of coachLessonTypeRows as CoachLessonTypeRow[]) {
+    const existing = coachMap.get(row.coachId);
+    if (!existing) {
+      continue;
+    }
 
     existing.lessonsByType[mapLessonTypeKey(row.lessonType)] += row.lessonTypeCount;
-    coachMap.set(row.coachId, existing);
   }
 
   const coachItems = Array.from(coachMap.values()).sort(
