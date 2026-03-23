@@ -20,17 +20,23 @@ function DisabledTabTitle({ title }: { title: string }) {
 
 export function DashboardTabs({ activeKey, onChange }: DashboardTabsProps) {
   return (
-    <Tabs
-      selectedKey={activeKey}
-      onSelectionChange={(key) => onChange(String(key) as DashboardTabKey)}
-      variant="underlined"
-      className="border-b border-divider"
-    >
-      <Tab key="overview" title="Overview" />
-      <Tab key="coaches" title="Coaches" />
-      <Tab key="players" title="Players" />
-      <Tab key="systems" title={<DisabledTabTitle title="Systems" />} isDisabled />
-    </Tabs>
+    <div className="overflow-x-auto border-b border-divider">
+      <Tabs
+        selectedKey={activeKey}
+        onSelectionChange={(key) => onChange(String(key) as DashboardTabKey)}
+        variant="underlined"
+        classNames={{
+          base: "min-w-max",
+          tabList: "min-w-max flex-nowrap",
+        }}
+      >
+        <Tab key="overview" title="Overview" />
+        <Tab key="coaches" title="Coaches" />
+        <Tab key="players" title="Players" />
+        <Tab key="reports" title="Reports" />
+        <Tab key="systems" title={<DisabledTabTitle title="Systems" />} isDisabled />
+      </Tabs>
+    </div>
   );
 }
 

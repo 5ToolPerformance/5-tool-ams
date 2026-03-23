@@ -1,4 +1,6 @@
-export type DashboardTabKey = "overview" | "coaches" | "players" | "systems";
+import { WeeklyUsageReportDocument } from "@/domain/admin/weeklyUsageReport/types";
+
+export type DashboardTabKey = "overview" | "coaches" | "players" | "reports" | "systems";
 export type DashboardRangeKey = "7d" | "30d" | "90d" | "all";
 
 export type DashboardLessonType =
@@ -81,5 +83,24 @@ export interface DashboardPlayersData {
   avgLessonsPerPlayer: number;
   playerRows: DashboardPlayerMetricRow[];
   incompleteProfiles: IncompletePlayerProfile[];
+}
+
+export interface DashboardWeeklyReportRow {
+  id: string;
+  status: "pending" | "complete" | "failed";
+  weekStart: string;
+  weekEnd: string;
+  label: string;
+  generatedAt: string | null;
+  failedAt: string | null;
+  errorMessage: string | null;
+  summary: WeeklyUsageReportDocument["summary"];
+  totalCoachesIncluded: number;
+  viewHref: string | null;
+  downloadHref: string | null;
+}
+
+export interface DashboardReportsData {
+  reportRows: DashboardWeeklyReportRow[];
 }
 

@@ -6,8 +6,8 @@ import { DashboardTabKey } from "@/domain/dashboard/types";
 
 import { DashboardTabs } from "./DashboardTabs";
 
-const TAB_KEYS: DashboardTabKey[] = ["overview", "coaches", "players", "systems"];
-const ENABLED_TAB_KEYS: DashboardTabKey[] = ["overview", "coaches", "players"];
+const TAB_KEYS: DashboardTabKey[] = ["overview", "coaches", "players", "reports", "systems"];
+const ENABLED_TAB_KEYS: DashboardTabKey[] = ["overview", "coaches", "players", "reports"];
 
 export function DashboardTabsController() {
   const router = useRouter();

@@ -3,15 +3,17 @@ import { notFound, redirect } from "next/navigation";
 import { getDashboardCoachesData } from "@/application/dashboard/getDashboardCoachesData";
 import { getDashboardOverviewData } from "@/application/dashboard/getDashboardOverviewData";
 import { getDashboardPlayersData } from "@/application/dashboard/getDashboardPlayersData";
+import { getDashboardReportsData } from "@/application/dashboard/getDashboardReportsData";
 import { getDashboardRangeWindow } from "@/domain/dashboard/range";
 import { DashboardTabKey } from "@/domain/dashboard/types";
 import { getAuthContext } from "@/lib/auth/auth-context";
 import { DashboardCoachesTab } from "@/ui/features/dashboard/DashboardCoachesTab";
 import { DashboardOverviewTab } from "@/ui/features/dashboard/DashboardOverviewTab";
 import { DashboardPlayersTab } from "@/ui/features/dashboard/DashboardPlayersTab";
+import { DashboardReportsTab } from "@/ui/features/dashboard/DashboardReportsTab";
 import { DashboardRangeSelector } from "@/ui/features/dashboard/DashboardRangeSelector";
 
-const ENABLED_TABS: DashboardTabKey[] = ["overview", "coaches", "players"];
+const ENABLED_TABS: DashboardTabKey[] = ["overview", "coaches", "players", "reports"];
 const ALL_TABS: DashboardTabKey[] = [...ENABLED_TABS, "systems"];
 
 function toSingleValue(value: string | string[] | undefined): string | undefined {
@@ -57,6 +59,11 @@ export default async function DashboardTabPage({
 
   if (!ENABLED_TABS.includes(tab as DashboardTabKey)) {
     notFound();
+  }
+
+  if (tab === "reports") {
+    const data = await getDashboardReportsData(ctx.facilityId);
+    return <DashboardReportsTab data={data} />;
   }
 
   if (tab === "overview") {
