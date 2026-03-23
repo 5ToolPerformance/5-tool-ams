@@ -113,6 +113,7 @@ export * from "./performance/performanceIngestJob";
 export * from "./performance/performanceSession";
 
 // Auditing and misc domain exports
+export * from "./analytics/weeklyUsageReports";
 export {
   playerAccountLinkActionEnum,
   playerAccountLinkAudit,
