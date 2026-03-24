@@ -34,7 +34,7 @@ export type EvaluationFormFocusArea = {
 export type EvaluationFormBucket = {
   id: string;
   bucketId: string;
-  status: EvaluationBucketStatus;
+  status: EvaluationBucketStatus | "";
   notes: string;
 };
 

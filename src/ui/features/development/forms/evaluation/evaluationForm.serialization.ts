@@ -6,6 +6,11 @@ import type {
   EvaluationFormValues,
 } from "./evaluationForm.types";
 
+const EMPTY_FOCUS_AREAS = Array.from({ length: 3 }, () => ({
+  title: "",
+  description: "",
+}));
+
 function emptyToUndefined(value: string): string | undefined {
   const trimmed = value.trim();
   return trimmed ? trimmed : undefined;
@@ -29,18 +34,11 @@ function parseDateInput(value: string): Date {
 export function serializeEvaluationFormToDocumentData(
   values: EvaluationFormValues
 ): EvaluationDocumentV1 {
-  const focusAreas = values.focusAreas
-    .map((item) => ({
-      title: item.title.trim(),
-      description: emptyToUndefined(item.description),
-    }))
-    .filter((item) => item.title);
-
   const buckets = values.buckets
-    .filter((item) => item.bucketId)
+    .filter((item) => item.bucketId && item.status)
     .map((item) => ({
       bucketId: item.bucketId,
-      status: item.status,
+      status: item.status!,
       notes: emptyToUndefined(item.notes),
     }));
 
@@ -64,7 +62,7 @@ export function serializeEvaluationFormToDocumentData(
       notes: emptyToUndefined(values.constraintsNotes),
       constraints: compactStrings(values.constraints),
     },
-    focusAreas: focusAreas.length ? focusAreas : undefined,
+    focusAreas: EMPTY_FOCUS_AREAS.map((item) => ({ ...item })),
     buckets: buckets.length ? buckets : undefined,
     evidence: evidence.length ? evidence : undefined,
   };

@@ -12,6 +12,21 @@ const EvaluationFormContext = createContext<EvaluationFormContextValue | null>(
   null
 );
 
+function sortBucketOptions<
+  T extends { label: string; sortOrder: number | null }
+>(options: T[]) {
+  return [...options].sort((a, b) => {
+    const sortOrderA = a.sortOrder ?? Number.MAX_SAFE_INTEGER;
+    const sortOrderB = b.sortOrder ?? Number.MAX_SAFE_INTEGER;
+
+    if (sortOrderA !== sortOrderB) {
+      return sortOrderA - sortOrderB;
+    }
+
+    return a.label.localeCompare(b.label);
+  });
+}
+
 export function EvaluationFormProvider({
   mode,
   playerId,
@@ -27,6 +42,7 @@ export function EvaluationFormProvider({
     mode,
     playerId,
     createdBy,
+    bucketOptions,
     initialEvaluation,
     onSaved,
     onSavedAndContinue,
@@ -36,9 +52,11 @@ export function EvaluationFormProvider({
     () => ({
       mode: form.mode,
       disciplineOptions,
-      bucketOptions,
-      availableBucketOptions: bucketOptions.filter(
-        (bucket) => bucket.disciplineId === form.values.disciplineId
+      bucketOptions: sortBucketOptions(bucketOptions),
+      availableBucketOptions: sortBucketOptions(
+        bucketOptions.filter(
+          (bucket) => bucket.disciplineId === form.values.disciplineId
+        )
       ),
       values: form.values,
       errors: form.errors,

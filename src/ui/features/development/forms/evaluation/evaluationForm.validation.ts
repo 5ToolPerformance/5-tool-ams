@@ -36,19 +36,13 @@ export function validateEvaluationForm(
     errors.keyConstraintsSummary = "Key constraints summary is required.";
   }
 
-  if (values.focusAreas.length > 3) {
-    errors.focusAreas = "No more than 3 focus areas are allowed.";
-  }
-
-  values.focusAreas.forEach((item, index) => {
-    if (!item.title.trim()) {
-      errors[`focusAreas.${index}.title`] = "Focus area title is required.";
-    }
-  });
-
   values.buckets.forEach((item, index) => {
     if (!item.bucketId) {
       errors[`buckets.${index}.bucketId`] = "Bucket is required.";
+    }
+
+    if (!item.status) {
+      errors[`buckets.${index}.status`] = "Status is required.";
     }
   });
 

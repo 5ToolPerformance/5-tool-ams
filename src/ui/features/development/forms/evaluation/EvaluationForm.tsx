@@ -8,7 +8,6 @@ import { EvaluationBasicInfoStep } from "./EvaluationBasicInfoStep";
 import { EvaluationBucketsStep } from "./EvaluationBucketsStep";
 import { EvaluationConstraintsStep } from "./EvaluationConstraintsStep";
 import { EvaluationEvidenceStep } from "./EvaluationEvidenceStep";
-import { EvaluationFocusAreasStep } from "./EvaluationFocusAreasStep";
 import { useEvaluationFormContext } from "./EvaluationFormProvider";
 import { EvaluationFormStepHeader } from "./EvaluationFormStepHeader";
 import { EvaluationSnapshotStep } from "./EvaluationSnapshotStep";
@@ -21,10 +20,9 @@ type EvaluationFormProps = {
 const STEP_TITLES = [
   "Basic Info",
   "Snapshot",
+  "Buckets",
   "Strength Profile",
   "Constraints",
-  "Focus Areas",
-  "Buckets",
   "Evidence",
 ] as const;
 
@@ -42,14 +40,12 @@ export function EvaluationForm({ onCancel }: EvaluationFormProps) {
       case 1:
         return EvaluationSnapshotStep;
       case 2:
-        return EvaluationStrengthProfileStep;
-      case 3:
-        return EvaluationConstraintsStep;
-      case 4:
-        return EvaluationFocusAreasStep;
-      case 5:
         return EvaluationBucketsStep;
-      case 6:
+      case 3:
+        return EvaluationStrengthProfileStep;
+      case 4:
+        return EvaluationConstraintsStep;
+      case 5:
         return EvaluationEvidenceStep;
       default:
         return EvaluationBasicInfoStep;

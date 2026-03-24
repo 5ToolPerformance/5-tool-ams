@@ -13,6 +13,7 @@ import type {
   EvaluationCreateContext,
   EvaluationFormErrorMap,
   EvaluationFormMode,
+  EvaluationBucketOption,
   EvaluationFormRecord,
   EvaluationFormSubmitPayload,
   EvaluationFormValues,
@@ -27,19 +28,65 @@ type UseEvaluationFormParams = {
   mode: EvaluationFormMode;
   playerId?: string;
   createdBy: string;
+  bucketOptions: EvaluationBucketOption[];
   initialEvaluation?: EvaluationFormRecord | null;
   onSaved?: (evaluationId: string) => void;
   onSavedAndContinue?: (evaluationId: string) => void;
 };
 
+function getAvailableBucketOptions(
+  bucketOptions: EvaluationBucketOption[],
+  disciplineId: string
+) {
+  return bucketOptions
+    .filter((bucket) => bucket.disciplineId === disciplineId)
+    .sort((a, b) => {
+      const sortOrderA = a.sortOrder ?? Number.MAX_SAFE_INTEGER;
+      const sortOrderB = b.sortOrder ?? Number.MAX_SAFE_INTEGER;
+
+      if (sortOrderA !== sortOrderB) {
+        return sortOrderA - sortOrderB;
+      }
+
+      return a.label.localeCompare(b.label);
+    });
+}
+
+function syncBucketsWithDiscipline(
+  values: EvaluationFormValues,
+  bucketOptions: EvaluationBucketOption[]
+): EvaluationFormValues {
+  if (!values.disciplineId) {
+    return { ...values, buckets: [] };
+  }
+
+  const availableBucketOptions = getAvailableBucketOptions(
+    bucketOptions,
+    values.disciplineId
+  );
+  const existingBuckets = new Map(
+    values.buckets.map((bucket) => [bucket.bucketId, bucket])
+  );
+
+  return {
+    ...values,
+    buckets: availableBucketOptions.map((option) => {
+      const existingBucket = existingBuckets.get(option.id);
+
+      return existingBucket ?? createEmptyBucket(option.id);
+    }),
+  };
+}
+
 function getInitialValues(
   params: UseEvaluationFormParams
 ): EvaluationFormValues {
-  if (params.mode === "edit" && params.initialEvaluation) {
-    return createEvaluationFormValuesFromRecord(params.initialEvaluation);
-  }
+  const baseValues =
+    params.mode === "edit" && params.initialEvaluation
+      ? createEvaluationFormValuesFromRecord(params.initialEvaluation)
+      : createEmptyEvaluationFormValues();
 
-  return createEmptyEvaluationFormValues();
+  return syncBucketsWithDiscipline(baseValues, params.bucketOptions);
 }
 
 export function useEvaluationForm(params: UseEvaluationFormParams) {
@@ -63,11 +110,13 @@ export function useEvaluationForm(params: UseEvaluationFormParams) {
     ) => {
       setValues((prev) => {
         if (key === "disciplineId" && prev.disciplineId !== value) {
-          return {
-            ...prev,
-            disciplineId: value as EvaluationFormValues["disciplineId"],
-            buckets: params.mode === "create" ? [] : prev.buckets,
-          };
+          return syncBucketsWithDiscipline(
+            {
+              ...prev,
+              disciplineId: value as EvaluationFormValues["disciplineId"],
+            },
+            params.bucketOptions
+          );
         }
 
         return {
@@ -76,7 +125,7 @@ export function useEvaluationForm(params: UseEvaluationFormParams) {
         };
       });
     },
-    [params.mode]
+    [params.bucketOptions]
   );
 
   const addStrength = useCallback(() => {
@@ -152,11 +201,25 @@ export function useEvaluationForm(params: UseEvaluationFormParams) {
   }, []);
 
   const addBucket = useCallback(() => {
-    setValues((prev) => ({
-      ...prev,
-      buckets: [...prev.buckets, createEmptyBucket()],
-    }));
-  }, []);
+    setValues((prev) => {
+      const nextBucketOptions = getAvailableBucketOptions(
+        params.bucketOptions,
+        prev.disciplineId
+      );
+      const nextBucketOption = nextBucketOptions.find(
+        (option) => !prev.buckets.some((bucket) => bucket.bucketId === option.id)
+      );
+
+      if (!nextBucketOption) {
+        return prev;
+      }
+
+      return {
+        ...prev,
+        buckets: [...prev.buckets, createEmptyBucket(nextBucketOption.id)],
+      };
+    });
+  }, [params.bucketOptions]);
 
   const updateBucket = useCallback(
     (

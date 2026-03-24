@@ -1,4 +1,5 @@
 import type {
+  EvaluationBucketStatus,
   EvaluationFormRecord,
   EvaluationFormValues,
 } from "./evaluationForm.types";
@@ -111,11 +112,14 @@ export function createEmptyFocusArea() {
   };
 }
 
-export function createEmptyBucket() {
+export function createEmptyBucket(
+  bucketId = "",
+  status: EvaluationBucketStatus | "" = ""
+) {
   return {
     id: createId("bucket"),
-    bucketId: "",
-    status: "developing" as const,
+    bucketId,
+    status,
     notes: "",
   };
 }
