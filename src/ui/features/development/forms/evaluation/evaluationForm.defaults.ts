@@ -1,4 +1,8 @@
+import type { EvaluationEvidenceType } from "@/domain/evaluations/evidence";
+
 import type {
+  EvaluationBucketStatus,
+  EvaluationFormEvidence,
   EvaluationFormRecord,
   EvaluationFormValues,
 } from "./evaluationForm.types";
@@ -17,6 +21,21 @@ function toDateInputValue(date: Date | string | null | undefined): string {
   const month = `${parsed.getMonth() + 1}`.padStart(2, "0");
   const day = `${parsed.getDate()}`.padStart(2, "0");
   return `${year}-${month}-${day}`;
+}
+
+function toDateTimeInputValue(date: Date | string | null | undefined): string {
+  if (!date) return "";
+
+  const parsed = date instanceof Date ? date : new Date(date);
+  if (Number.isNaN(parsed.getTime())) return "";
+
+  const year = parsed.getFullYear();
+  const month = `${parsed.getMonth() + 1}`.padStart(2, "0");
+  const day = `${parsed.getDate()}`.padStart(2, "0");
+  const hours = `${parsed.getHours()}`.padStart(2, "0");
+  const minutes = `${parsed.getMinutes()}`.padStart(2, "0");
+
+  return `${year}-${month}-${day}T${hours}:${minutes}`;
 }
 
 export function createEmptyEvaluationFormValues(): EvaluationFormValues {
@@ -82,9 +101,10 @@ export function createEvaluationFormValuesFromRecord(
       notes: item.notes ?? "",
     })),
 
-    evidence: (doc?.evidence ?? []).map((item) => ({
+    evidence: (evaluation.evidenceForms ?? []).map((item) => ({
+      ...item,
       id: createId("evidence"),
-      performanceSessionId: item.performanceSessionId ?? "",
+      recordedAt: toDateTimeInputValue(item.recordedAt),
       notes: item.notes ?? "",
     })),
   };
@@ -111,19 +131,64 @@ export function createEmptyFocusArea() {
   };
 }
 
-export function createEmptyBucket() {
+export function createEmptyBucket(
+  bucketId = "",
+  status: EvaluationBucketStatus | "" = ""
+) {
   return {
     id: createId("bucket"),
-    bucketId: "",
-    status: "developing" as const,
+    bucketId,
+    status,
     notes: "",
   };
 }
 
 export function createEmptyEvidence() {
-  return {
+  return createEmptyEvidenceOfType("hittrax");
+}
+
+export function createEmptyEvidenceOfType(
+  type: EvaluationEvidenceType
+): EvaluationFormEvidence {
+  const base = {
     id: createId("evidence"),
-    performanceSessionId: "",
+    recordedAt: "",
     notes: "",
   };
+
+  switch (type) {
+    case "hittrax":
+      return {
+        ...base,
+        type,
+        exitVelocityMax: "",
+        exitVelocityAvg: "",
+        hardHitPercent: "",
+        launchAngleAvg: "",
+        lineDriveAvg: "",
+      };
+    case "blast":
+      return {
+        ...base,
+        type,
+        batSpeedMax: "",
+        batSpeedAvg: "",
+        rotAccMax: "",
+        rotAccAvg: "",
+        onPlanePercent: "",
+        attackAngleAvg: "",
+        earltConnAvg: "",
+        connAtImpactAvg: "",
+        verticalBatAngleAvg: "",
+        timeToContactAvg: "",
+        handSpeedMax: "",
+        handSpeedAvg: "",
+      };
+    case "strength":
+      return {
+        ...base,
+        type,
+        powerRating: "",
+      };
+  }
 }

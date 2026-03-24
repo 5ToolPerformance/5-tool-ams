@@ -36,19 +36,13 @@ export function validateEvaluationForm(
     errors.keyConstraintsSummary = "Key constraints summary is required.";
   }
 
-  if (values.focusAreas.length > 3) {
-    errors.focusAreas = "No more than 3 focus areas are allowed.";
-  }
-
-  values.focusAreas.forEach((item, index) => {
-    if (!item.title.trim()) {
-      errors[`focusAreas.${index}.title`] = "Focus area title is required.";
-    }
-  });
-
   values.buckets.forEach((item, index) => {
     if (!item.bucketId) {
       errors[`buckets.${index}.bucketId`] = "Bucket is required.";
+    }
+
+    if (!item.status) {
+      errors[`buckets.${index}.status`] = "Status is required.";
     }
   });
 
@@ -61,11 +55,16 @@ export function validateEvaluationForm(
   }
 
   values.evidence.forEach((item, index) => {
-    if (!item.performanceSessionId.trim()) {
-      errors[`evidence.${index}.performanceSessionId`] =
-        "Performance session is required.";
+    if (!item.recordedAt.trim()) {
+      errors[`evidence.${index}.recordedAt`] = "Recorded at is required.";
     }
   });
+
+  const selectedEvidenceTypes = values.evidence.map((item) => item.type);
+
+  if (new Set(selectedEvidenceTypes).size !== selectedEvidenceTypes.length) {
+    errors.evidence = "Each evidence type can only be added once.";
+  }
 
   return errors;
 }

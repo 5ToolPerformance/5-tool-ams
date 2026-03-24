@@ -1,9 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { createEvaluation } from "@/application/evaluations/createEvaluation";
+import {
+  createEvaluation,
+  type CreateEvaluationInput,
+} from "@/application/evaluations/createEvaluation";
 import db from "@/db";
 import { listBucketsByIds } from "@/db/queries/config/listBucketsByIds";
-import type { CreateEvaluationRowInput } from "@/db/queries/evaluations/createEvaluation";
 import {
   assertPlayerAccess,
   getAuthContext,
@@ -17,10 +19,7 @@ export async function POST(request: NextRequest) {
     const ctx = await getAuthContext();
     requireRole(ctx, ["coach", "admin"]);
 
-    const body = (await request.json()) as Omit<
-      CreateEvaluationRowInput,
-      "createdBy"
-    > & {
+    const body = (await request.json()) as Omit<CreateEvaluationInput, "createdBy"> & {
       createdBy?: string;
       evaluationDate: string | Date;
       documentData?: {

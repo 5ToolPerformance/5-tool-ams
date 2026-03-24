@@ -16,14 +16,12 @@ describe("EvaluationBucketsStep", () => {
     jest.clearAllMocks();
   });
 
-  it("disables adding buckets until a discipline is selected", () => {
+  it("prompts for a discipline before loading buckets", () => {
     useEvaluationFormContext.mockReturnValue({
       availableBucketOptions: [],
       values: { disciplineId: "", buckets: [] },
       errors: {},
-      addBucket: jest.fn(),
       updateBucket: jest.fn(),
-      removeBucket: jest.fn(),
     });
 
     render(<EvaluationBucketsStep />);
@@ -33,13 +31,9 @@ describe("EvaluationBucketsStep", () => {
         "Select a discipline in Basic Information to load bucket options."
       )
     ).toBeTruthy();
-    expect(
-      (screen.getByRole("button", { name: "Add Bucket" }) as HTMLButtonElement)
-        .disabled
-    ).toBe(true);
   });
 
-  it("shows configured bucket options for the selected discipline", () => {
+  it("renders each configured bucket with all status choices", () => {
     useEvaluationFormContext.mockReturnValue({
       availableBucketOptions: [
         {
@@ -51,6 +45,15 @@ describe("EvaluationBucketsStep", () => {
           sortOrder: 1,
           active: true,
         },
+        {
+          id: "bucket-2",
+          disciplineId: "disc-1",
+          key: "command",
+          label: "Command",
+          description: "Strike quality",
+          sortOrder: 2,
+          active: true,
+        },
       ],
       values: {
         disciplineId: "disc-1",
@@ -58,19 +61,28 @@ describe("EvaluationBucketsStep", () => {
           {
             id: "row-1",
             bucketId: "bucket-1",
-            status: "developing",
+            status: "strength",
+            notes: "",
+          },
+          {
+            id: "row-2",
+            bucketId: "bucket-2",
+            status: "",
             notes: "",
           },
         ],
       },
       errors: {},
-      addBucket: jest.fn(),
       updateBucket: jest.fn(),
-      removeBucket: jest.fn(),
     });
 
     render(<EvaluationBucketsStep />);
 
-    expect(screen.getAllByText("Velocity").length).toBeGreaterThan(0);
+    expect(screen.getByText("Velocity")).toBeTruthy();
+    expect(screen.getByText("Command")).toBeTruthy();
+    expect(screen.getAllByRole("radio", { name: "Strength" })).toHaveLength(2);
+    expect(screen.getAllByRole("radio", { name: "Developing" })).toHaveLength(2);
+    expect(screen.getAllByRole("radio", { name: "Constraint" })).toHaveLength(2);
+    expect(screen.getAllByRole("radio", { name: "Not Relevant" })).toHaveLength(2);
   });
 });

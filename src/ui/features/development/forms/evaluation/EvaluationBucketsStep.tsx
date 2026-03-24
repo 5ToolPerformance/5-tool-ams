@@ -1,12 +1,11 @@
 "use client";
 
 import {
-  Button,
   Card,
   CardBody,
   CardHeader,
-  Select,
-  SelectItem,
+  Radio,
+  RadioGroup,
   Textarea,
 } from "@heroui/react";
 
@@ -20,14 +19,8 @@ const BUCKET_STATUSES = [
 ] as const;
 
 export function EvaluationBucketsStep() {
-  const {
-    availableBucketOptions,
-    values,
-    errors,
-    addBucket,
-    updateBucket,
-    removeBucket,
-  } = useEvaluationFormContext();
+  const { availableBucketOptions, values, errors, updateBucket } =
+    useEvaluationFormContext();
   const hasSelectedDiscipline = Boolean(values.disciplineId);
   const hasBucketOptions = availableBucketOptions.length > 0;
 
@@ -41,22 +34,13 @@ export function EvaluationBucketsStep() {
       </CardHeader>
 
       <CardBody className="gap-4">
-        <div className="flex items-center justify-between gap-3">
+        <div>
           <div>
             <p className="text-sm font-medium">Bucket Assessments</p>
             <p className="text-xs text-default-500">
-              Add only the buckets relevant to this evaluation.
+              Review each discipline bucket and select the most accurate status.
             </p>
           </div>
-
-          <Button
-            size="sm"
-            variant="flat"
-            onPress={addBucket}
-            isDisabled={!hasSelectedDiscipline || !hasBucketOptions}
-          >
-            Add Bucket
-          </Button>
         </div>
 
         {errors.buckets ? (
@@ -71,81 +55,44 @@ export function EvaluationBucketsStep() {
           <div className="rounded-medium border border-dashed px-4 py-6 text-sm text-default-500">
             No active buckets are configured for this discipline.
           </div>
-        ) : values.buckets.length === 0 ? (
-          <div className="rounded-medium border border-dashed px-4 py-6 text-sm text-default-500">
-            No buckets added yet.
-          </div>
         ) : (
           <div className="space-y-4">
             {values.buckets.map((bucket, index) => (
               <Card key={bucket.id} shadow="none" className="border">
                 <CardBody className="gap-3">
-                  <div className="flex items-center justify-between gap-3">
-                    <p className="text-sm font-medium">Bucket {index + 1}</p>
-                    <Button
-                      color="danger"
-                      variant="light"
-                      onPress={() => removeBucket(index)}
-                    >
-                      Remove
-                    </Button>
+                  <div className="space-y-1">
+                    <p className="text-sm font-medium">
+                      {availableBucketOptions[index]?.label ??
+                        `Bucket ${index + 1}`}
+                    </p>
+                    {availableBucketOptions[index]?.description ? (
+                      <p className="text-xs text-default-500">
+                        {availableBucketOptions[index]?.description}
+                      </p>
+                    ) : null}
                   </div>
 
-                  <Select
-                    label="Bucket"
-                    labelPlacement="outside"
-                    placeholder="Select a bucket"
-                    selectedKeys={bucket.bucketId ? [bucket.bucketId] : []}
-                    onSelectionChange={(keys) => {
-                      const selected = Array.from(keys)[0];
-                      if (typeof selected === "string") {
-                        updateBucket(index, { bucketId: selected });
-                      }
-                    }}
-                    isDisabled={!hasBucketOptions}
-                    isInvalid={!!errors[`buckets.${index}.bucketId`]}
-                    errorMessage={errors[`buckets.${index}.bucketId`]}
-                    description={
-                      bucket.bucketId
-                        ? availableBucketOptions.find(
-                            (option) => option.id === bucket.bucketId
-                          )?.description ?? undefined
-                        : undefined
-                    }
-                  >
-                    {availableBucketOptions
-                      .filter((option) => {
-                        if (option.id === bucket.bucketId) {
-                          return true;
-                        }
-
-                        return !values.buckets.some(
-                          (entry, entryIndex) =>
-                            entryIndex !== index && entry.bucketId === option.id
-                        );
-                      })
-                      .map((option) => (
-                        <SelectItem key={option.id}>{option.label}</SelectItem>
-                      ))}
-                  </Select>
-
-                  <Select
+                  <RadioGroup
                     label="Status"
-                    labelPlacement="outside"
-                    selectedKeys={[bucket.status]}
-                    onSelectionChange={(keys) => {
-                      const selected = Array.from(keys)[0];
-                      if (typeof selected === "string") {
-                        updateBucket(index, {
-                          status: selected as typeof bucket.status,
-                        });
-                      }
+                    orientation="horizontal"
+                    value={bucket.status}
+                    onValueChange={(value) =>
+                      updateBucket(index, {
+                        status: value as typeof bucket.status,
+                      })
+                    }
+                    isInvalid={!!errors[`buckets.${index}.status`]}
+                    errorMessage={errors[`buckets.${index}.status`]}
+                    classNames={{
+                      wrapper: "gap-3",
                     }}
                   >
                     {BUCKET_STATUSES.map((item) => (
-                      <SelectItem key={item.key}>{item.label}</SelectItem>
+                      <Radio key={item.key} value={item.key}>
+                        {item.label}
+                      </Radio>
                     ))}
-                  </Select>
+                  </RadioGroup>
 
                   <Textarea
                     label="Notes"

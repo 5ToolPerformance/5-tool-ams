@@ -16,6 +16,7 @@ import playerInformation from "../players/playerInformation";
 export const performanceSource = pgEnum("performance_source", [
   "hittrax",
   "blast",
+  "strength",
   "trackman",
 ]);
 

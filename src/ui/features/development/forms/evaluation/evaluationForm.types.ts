@@ -1,4 +1,8 @@
 import { EvaluationDocumentV1 } from "@/domain/evaluations/types";
+import type {
+  EvaluationEvidenceType,
+  EvaluationEvidenceWriteInput,
+} from "@/domain/evaluations/evidence";
 
 export type EvaluationType =
   | "baseline"
@@ -34,14 +38,16 @@ export type EvaluationFormFocusArea = {
 export type EvaluationFormBucket = {
   id: string;
   bucketId: string;
-  status: EvaluationBucketStatus;
+  status: EvaluationBucketStatus | "";
   notes: string;
 };
 
-export type EvaluationFormEvidence = {
+export type EvaluationFormEvidence = EvaluationEvidenceWriteInput & {
   id: string;
-  performanceSessionId: string;
+  recordedAt: string;
   notes: string;
+  performanceSessionId?: string;
+  evidenceId?: string;
 };
 
 export type EvaluationDisciplineOption = {
@@ -99,6 +105,7 @@ export type EvaluationFormRecord = {
   strengthProfileSummary: string;
   keyConstraintsSummary: string;
   documentData: EvaluationDocumentV1 | null;
+  evidenceForms?: EvaluationFormEvidence[];
 };
 
 export type EvaluationCreateContext = {
@@ -119,11 +126,13 @@ export type EvaluationFormSubmitPayload = {
   strengthProfileSummary: string;
   keyConstraintsSummary: string;
   documentData: EvaluationDocumentV1;
+  evidenceForms: EvaluationEvidenceWriteInput[];
 };
 
 export type EvaluationFormContextValue = {
   mode: EvaluationFormMode;
   disciplineOptions: EvaluationDisciplineOption[];
+  selectedDiscipline: EvaluationDisciplineOption | null;
   bucketOptions: EvaluationBucketOption[];
   availableBucketOptions: EvaluationBucketOption[];
   values: EvaluationFormValues;
@@ -155,7 +164,7 @@ export type EvaluationFormContextValue = {
   updateBucket: (index: number, value: Partial<EvaluationFormBucket>) => void;
   removeBucket: (index: number) => void;
 
-  addEvidence: () => void;
+  addEvidence: (type: EvaluationEvidenceType) => void;
   updateEvidence: (
     index: number,
     value: Partial<EvaluationFormEvidence>

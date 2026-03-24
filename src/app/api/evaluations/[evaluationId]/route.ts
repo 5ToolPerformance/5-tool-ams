@@ -1,9 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { updateEvaluation } from "@/application/evaluations/updateEvaluation";
+import {
+  updateEvaluation,
+  type UpdateEvaluationInput,
+} from "@/application/evaluations/updateEvaluation";
 import db from "@/db";
 import { listBucketsByIds } from "@/db/queries/config/listBucketsByIds";
-import type { UpdateEvaluationRowInput } from "@/db/queries/evaluations/updateEvaluation";
 import {
   assertPlayerAccess,
   getAuthContext,
@@ -25,9 +27,8 @@ export async function PATCH(
     requireRole(ctx, ["coach", "admin"]);
 
     const { evaluationId } = await params;
-    const body = (await request.json()) as UpdateEvaluationRowInput & {
+    const body = (await request.json()) as UpdateEvaluationInput & {
       playerId: string;
-      disciplineId: string;
       createdBy?: string;
       evaluationDate: string | Date;
       documentData?: {

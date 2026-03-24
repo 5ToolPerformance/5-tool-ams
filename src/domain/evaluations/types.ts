@@ -1,3 +1,5 @@
+import type { EvaluationEvidenceSummary } from "./evidence";
+
 export type EvaluationDocumentV1 = {
   version: 1;
   snapshot?: {
@@ -20,8 +22,5 @@ export type EvaluationDocumentV1 = {
     status: "strength" | "developing" | "constraint" | "not_relevant";
     notes?: string;
   }>;
-  evidence?: Array<{
-    performanceSessionId?: string;
-    notes?: string;
-  }>;
+  evidence?: EvaluationEvidenceSummary[];
 };
