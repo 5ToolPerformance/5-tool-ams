@@ -477,6 +477,13 @@
       "when": 1774281119441,
       "tag": "0067_fresh_marten_broadcloak",
       "breakpoints": true
+    },
+    {
+      "idx": 68,
+      "version": "7",
+      "when": 1774372289566,
+      "tag": "0068_elite_mojo",
+      "breakpoints": true
     }
   ]
 }

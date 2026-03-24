@@ -136,6 +136,9 @@ export * from "./evaluations/evaluationBuckets";
 export * from "./evaluations/evaluationEvidence";
 export * from "./evaluations/evaluationFocusAreas";
 export * from "./evaluations/evaluations";
+export * from "./evaluations/evidence/evaluationsBlast";
+export * from "./evaluations/evidence/evaluationsHittrax";
+export * from "./evaluations/evidence/evaluationStrength";
 
 // Routines
 export * from "./routines/routineItems";
