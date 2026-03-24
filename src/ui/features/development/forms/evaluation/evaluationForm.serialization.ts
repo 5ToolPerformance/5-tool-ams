@@ -1,4 +1,5 @@
 import { EvaluationDocumentV1 } from "@/domain/evaluations/types";
+import type { EvaluationEvidenceWriteInput } from "@/domain/evaluations/evidence";
 
 import type {
   EvaluationCreateContext,
@@ -31,21 +32,85 @@ function parseDateInput(value: string): Date {
   return parsed;
 }
 
+function parseDateTimeInput(value: string): Date {
+  return new Date(value);
+}
+
+function emptyMetricToNull(value: string | null | undefined): string | null {
+  if (!value) {
+    return null;
+  }
+
+  const trimmed = value.trim();
+  return trimmed ? trimmed : null;
+}
+
+export function serializeEvaluationEvidenceForms(
+  values: EvaluationFormValues
+): EvaluationEvidenceWriteInput[] {
+  return values.evidence
+    .filter((item) => item.recordedAt)
+    .map((item) => {
+      const base = {
+        type: item.type,
+        recordedAt: parseDateTimeInput(item.recordedAt),
+        notes: emptyToNull(item.notes),
+        performanceSessionId: item.performanceSessionId,
+        evidenceId: item.evidenceId,
+      };
+
+      switch (item.type) {
+        case "hittrax":
+          return {
+            ...base,
+            type: "hittrax" as const,
+            exitVelocityMax: emptyMetricToNull(item.exitVelocityMax),
+            exitVelocityAvg: emptyMetricToNull(item.exitVelocityAvg),
+            hardHitPercent: emptyMetricToNull(item.hardHitPercent),
+            launchAngleAvg: emptyMetricToNull(item.launchAngleAvg),
+            lineDriveAvg: emptyMetricToNull(item.lineDriveAvg),
+          };
+        case "blast":
+          return {
+            ...base,
+            type: "blast" as const,
+            batSpeedMax: emptyMetricToNull(item.batSpeedMax),
+            batSpeedAvg: emptyMetricToNull(item.batSpeedAvg),
+            rotAccMax: emptyMetricToNull(item.rotAccMax),
+            rotAccAvg: emptyMetricToNull(item.rotAccAvg),
+            onPlanePercent: emptyMetricToNull(item.onPlanePercent),
+            attackAngleAvg: emptyMetricToNull(item.attackAngleAvg),
+            earltConnAvg: emptyMetricToNull(item.earltConnAvg),
+            connAtImpactAvg: emptyMetricToNull(item.connAtImpactAvg),
+            verticalBatAngleAvg: emptyMetricToNull(item.verticalBatAngleAvg),
+            timeToContactAvg: emptyMetricToNull(item.timeToContactAvg),
+            handSpeedMax: emptyMetricToNull(item.handSpeedMax),
+            handSpeedAvg: emptyMetricToNull(item.handSpeedAvg),
+          };
+        case "strength":
+          return {
+            ...base,
+            type: "strength" as const,
+            powerRating: emptyMetricToNull(item.powerRating),
+          };
+      }
+    });
+}
+
 export function serializeEvaluationFormToDocumentData(
   values: EvaluationFormValues
 ): EvaluationDocumentV1 {
   const buckets = values.buckets
-    .filter((item) => item.bucketId && item.status)
+    .filter(
+      (
+        item
+      ): item is typeof item & {
+        status: Exclude<typeof item.status, "">;
+      } => Boolean(item.bucketId && item.status)
+    )
     .map((item) => ({
       bucketId: item.bucketId,
-      status: item.status!,
-      notes: emptyToUndefined(item.notes),
-    }));
-
-  const evidence = values.evidence
-    .filter((item) => item.performanceSessionId)
-    .map((item) => ({
-      performanceSessionId: item.performanceSessionId,
+      status: item.status,
       notes: emptyToUndefined(item.notes),
     }));
 
@@ -64,7 +129,6 @@ export function serializeEvaluationFormToDocumentData(
     },
     focusAreas: EMPTY_FOCUS_AREAS.map((item) => ({ ...item })),
     buckets: buckets.length ? buckets : undefined,
-    evidence: evidence.length ? evidence : undefined,
   };
 }
 
@@ -84,5 +148,6 @@ export function serializeEvaluationFormToPayload(
     strengthProfileSummary: values.strengthProfileSummary.trim(),
     keyConstraintsSummary: values.keyConstraintsSummary.trim(),
     documentData: serializeEvaluationFormToDocumentData(values),
+    evidenceForms: serializeEvaluationEvidenceForms(values),
   };
 }

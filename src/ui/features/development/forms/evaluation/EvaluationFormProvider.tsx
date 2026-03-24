@@ -42,6 +42,7 @@ export function EvaluationFormProvider({
     mode,
     playerId,
     createdBy,
+    disciplineOptions,
     bucketOptions,
     initialEvaluation,
     onSaved,
@@ -52,6 +53,9 @@ export function EvaluationFormProvider({
     () => ({
       mode: form.mode,
       disciplineOptions,
+      selectedDiscipline:
+        disciplineOptions.find((option) => option.id === form.values.disciplineId) ??
+        null,
       bucketOptions: sortBucketOptions(bucketOptions),
       availableBucketOptions: sortBucketOptions(
         bucketOptions.filter(

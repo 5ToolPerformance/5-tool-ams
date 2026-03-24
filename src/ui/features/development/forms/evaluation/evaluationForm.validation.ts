@@ -55,11 +55,16 @@ export function validateEvaluationForm(
   }
 
   values.evidence.forEach((item, index) => {
-    if (!item.performanceSessionId.trim()) {
-      errors[`evidence.${index}.performanceSessionId`] =
-        "Performance session is required.";
+    if (!item.recordedAt.trim()) {
+      errors[`evidence.${index}.recordedAt`] = "Recorded at is required.";
     }
   });
+
+  const selectedEvidenceTypes = values.evidence.map((item) => item.type);
+
+  if (new Set(selectedEvidenceTypes).size !== selectedEvidenceTypes.length) {
+    errors.evidence = "Each evidence type can only be added once.";
+  }
 
   return errors;
 }

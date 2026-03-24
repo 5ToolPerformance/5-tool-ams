@@ -1,10 +1,12 @@
 import { useCallback, useMemo, useState } from "react";
 
+import { getSupportedEvidenceTypesForDisciplineKey } from "@/domain/evaluations/evidence";
+
 import {
   cloneEvaluationFormValues,
   createEmptyBucket,
   createEmptyEvaluationFormValues,
-  createEmptyEvidence,
+  createEmptyEvidenceOfType,
   createEmptyFocusArea,
   createEvaluationFormValuesFromRecord,
 } from "./evaluationForm.defaults";
@@ -14,6 +16,7 @@ import type {
   EvaluationFormErrorMap,
   EvaluationFormMode,
   EvaluationBucketOption,
+  EvaluationDisciplineOption,
   EvaluationFormRecord,
   EvaluationFormSubmitPayload,
   EvaluationFormValues,
@@ -28,6 +31,7 @@ type UseEvaluationFormParams = {
   mode: EvaluationFormMode;
   playerId?: string;
   createdBy: string;
+  disciplineOptions: EvaluationDisciplineOption[];
   bucketOptions: EvaluationBucketOption[];
   initialEvaluation?: EvaluationFormRecord | null;
   onSaved?: (evaluationId: string) => void;
@@ -78,6 +82,21 @@ function syncBucketsWithDiscipline(
   };
 }
 
+function syncEvidenceWithDiscipline(
+  values: EvaluationFormValues,
+  disciplineOptions: EvaluationDisciplineOption[]
+): EvaluationFormValues {
+  const disciplineKey =
+    disciplineOptions.find((option) => option.id === values.disciplineId)?.key ??
+    null;
+  const supportedTypes = getSupportedEvidenceTypesForDisciplineKey(disciplineKey);
+
+  return {
+    ...values,
+    evidence: values.evidence.filter((item) => supportedTypes.includes(item.type)),
+  };
+}
+
 function getInitialValues(
   params: UseEvaluationFormParams
 ): EvaluationFormValues {
@@ -86,7 +105,10 @@ function getInitialValues(
       ? createEvaluationFormValuesFromRecord(params.initialEvaluation)
       : createEmptyEvaluationFormValues();
 
-  return syncBucketsWithDiscipline(baseValues, params.bucketOptions);
+  return syncEvidenceWithDiscipline(
+    syncBucketsWithDiscipline(baseValues, params.bucketOptions),
+    params.disciplineOptions
+  );
 }
 
 export function useEvaluationForm(params: UseEvaluationFormParams) {
@@ -110,22 +132,27 @@ export function useEvaluationForm(params: UseEvaluationFormParams) {
     ) => {
       setValues((prev) => {
         if (key === "disciplineId" && prev.disciplineId !== value) {
-          return syncBucketsWithDiscipline(
-            {
-              ...prev,
-              disciplineId: value as EvaluationFormValues["disciplineId"],
-            },
-            params.bucketOptions
+          return syncEvidenceWithDiscipline(
+            syncBucketsWithDiscipline(
+              {
+                ...prev,
+                disciplineId: value as EvaluationFormValues["disciplineId"],
+              },
+              params.bucketOptions
+            ),
+            params.disciplineOptions
           );
         }
 
-        return {
+        const nextValues = {
           ...prev,
           [key]: value,
         };
+
+        return syncEvidenceWithDiscipline(nextValues, params.disciplineOptions);
       });
     },
-    [params.bucketOptions]
+    [params.bucketOptions, params.disciplineOptions]
   );
 
   const addStrength = useCallback(() => {
@@ -242,10 +269,12 @@ export function useEvaluationForm(params: UseEvaluationFormParams) {
     }));
   }, []);
 
-  const addEvidence = useCallback(() => {
+  const addEvidence = useCallback((type: EvaluationFormValues["evidence"][number]["type"]) => {
     setValues((prev) => ({
       ...prev,
-      evidence: [...prev.evidence, createEmptyEvidence()],
+      evidence: prev.evidence.some((item) => item.type === type)
+        ? prev.evidence
+        : [...prev.evidence, createEmptyEvidenceOfType(type)],
     }));
   }, []);
 

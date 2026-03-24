@@ -3,6 +3,11 @@ import { renderHook, act } from "@testing-library/react";
 import { useEvaluationForm } from "@/ui/features/development/forms/evaluation/useEvaluationForm";
 
 describe("useEvaluationForm", () => {
+  const disciplineOptions = [
+    { id: "disc-1", key: "hitting", label: "Hitting" },
+    { id: "disc-2", key: "strength", label: "Strength" },
+  ];
+
   const bucketOptions = [
     {
       id: "bucket-1",
@@ -39,6 +44,7 @@ describe("useEvaluationForm", () => {
         mode: "create",
         playerId: "player-1",
         createdBy: "coach-1",
+        disciplineOptions,
         bucketOptions,
       })
     );
@@ -62,6 +68,7 @@ describe("useEvaluationForm", () => {
       useEvaluationForm({
         mode: "edit",
         createdBy: "coach-1",
+        disciplineOptions,
         bucketOptions,
         initialEvaluation: {
           id: "eval-1",
@@ -97,5 +104,25 @@ describe("useEvaluationForm", () => {
       bucketId: "bucket-1",
       status: "developing",
     });
+  });
+
+  it("removes unsupported evidence forms when the discipline changes", () => {
+    const { result } = renderHook(() =>
+      useEvaluationForm({
+        mode: "create",
+        playerId: "player-1",
+        createdBy: "coach-1",
+        disciplineOptions,
+        bucketOptions,
+      })
+    );
+
+    act(() => {
+      result.current.setFieldValue("disciplineId", "disc-1");
+      result.current.addEvidence("hittrax");
+      result.current.setFieldValue("disciplineId", "disc-2");
+    });
+
+    expect(result.current.values.evidence).toEqual([]);
   });
 });
