@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
+import { getEvaluationDetail } from "@/application/players/development/getDevelopmentDocumentDetails";
 import {
   updateEvaluation,
   type UpdateEvaluationInput,
@@ -12,10 +13,39 @@ import {
   requireRole,
 } from "@/lib/auth/auth-context";
 import { toAuthErrorResponse } from "@/lib/auth/http";
-import { DomainError } from "@/lib/errors";
+import { DomainError, NotFoundError } from "@/lib/errors";
 
 interface UpdateEvaluationRouteProps {
   params: Promise<{ evaluationId: string }>;
+}
+
+export async function GET(
+  request: NextRequest,
+  { params }: UpdateEvaluationRouteProps
+) {
+  try {
+    const ctx = await getAuthContext();
+    const { evaluationId } = await params;
+    const evaluation = await getEvaluationDetail(evaluationId);
+
+    await assertPlayerAccess(ctx, evaluation.playerId);
+
+    return NextResponse.json(evaluation);
+  } catch (error) {
+    const authResponse = toAuthErrorResponse(error);
+    if (authResponse) return authResponse;
+
+    if (error instanceof NotFoundError) {
+      return NextResponse.json({ error: error.message }, { status: 404 });
+    }
+
+    console.error("Error in GET /api/evaluations/[evaluationId]:", error);
+
+    return NextResponse.json(
+      { error: "Failed to load evaluation." },
+      { status: 500 }
+    );
+  }
 }
 
 export async function PATCH(

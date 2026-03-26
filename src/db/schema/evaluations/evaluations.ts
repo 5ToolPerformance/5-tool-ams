@@ -16,6 +16,7 @@ export const evaluationTypeEnum = pgEnum("evaluation_type", [
   "season_review",
   "injury_return",
   "general",
+  "tests_only",
 ]);
 
 export const athletePhaseEnum = pgEnum("athlete_phase", [

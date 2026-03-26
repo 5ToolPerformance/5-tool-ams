@@ -4,6 +4,7 @@ import { DB } from "@/db";
 import { evaluations } from "@/db/schema";
 import { NotFoundError } from "@/lib/errors";
 
+import { getEvaluationAttachmentsByEvaluationId } from "./getEvaluationAttachmentsByEvaluationId";
 import { getEvaluationEvidenceByEvaluationId } from "./getEvaluationEvidenceByEvaluationId";
 
 export async function getEvaluationById(db: DB, evaluationId: string) {
@@ -17,10 +18,14 @@ export async function getEvaluationById(db: DB, evaluationId: string) {
     throw new NotFoundError("Evaluation not found.");
   }
 
-  const evidenceForms = await getEvaluationEvidenceByEvaluationId(db, row.id);
+  const [evidenceForms, mediaAttachments] = await Promise.all([
+    getEvaluationEvidenceByEvaluationId(db, row.id),
+    getEvaluationAttachmentsByEvaluationId(db, row.id),
+  ]);
 
   return {
     ...row,
     evidenceForms,
+    mediaAttachments,
   };
 }

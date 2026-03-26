@@ -300,12 +300,17 @@ describe("DevelopmentTab", () => {
     const actionGroup = screen.getByRole("group", {
       name: "Development tab actions",
     });
+    const tablist = screen.getByRole("tablist");
 
     expect(screen.getByText("Development")).toBeTruthy();
     expect(screen.getByText("Current Snapshot")).toBeTruthy();
     expect(screen.getByText("Active Plan")).toBeTruthy();
     expect(screen.getByText("Routines")).toBeTruthy();
     expect(screen.getByText("History")).toBeTruthy();
+    expect(
+      actionGroup.compareDocumentPosition(tablist) &
+        Node.DOCUMENT_POSITION_FOLLOWING
+    ).toBeTruthy();
     expect(
       (
         within(actionGroup).getByRole("button", {
@@ -334,7 +339,34 @@ describe("DevelopmentTab", () => {
     ).toBeTruthy();
   });
 
-  it("disables plan creation when no evaluation exists for the selected discipline", () => {
+  it("renders tabs only for evaluated disciplines", () => {
+    render(
+      <DevelopmentTab
+        playerId="player-1"
+        createdBy="coach-1"
+        data={{
+          ...baseData,
+          disciplineOptions: [
+            { id: "disc-1", key: "pitching", label: "Pitching" },
+            { id: "disc-3", key: "strength", label: "Strength" },
+          ],
+        }}
+        evaluationDisciplineOptions={[
+          { id: "disc-1", key: "pitching", label: "Pitching" },
+          { id: "disc-2", key: "hitting", label: "Hitting" },
+          { id: "disc-3", key: "strength", label: "Strength" },
+        ]}
+        evaluationBucketOptions={[]}
+        routineFormConfig={baseRoutineFormConfig}
+      />
+    );
+
+    expect(screen.getByRole("tab", { name: "Pitching" })).toBeTruthy();
+    expect(screen.getByRole("tab", { name: "Strength" })).toBeTruthy();
+    expect(screen.queryByRole("tab", { name: "Hitting" })).toBeNull();
+  });
+
+  it("shows the zero-evaluation empty state when the player has no evaluations", () => {
     render(
       <DevelopmentTab
         playerId="player-1"
@@ -347,7 +379,13 @@ describe("DevelopmentTab", () => {
             linkedEvaluationId: null,
             canGenerate: false,
           },
-          flags: { ...baseData.flags, hasEvaluations: false },
+          disciplineOptions: [],
+          selectedDiscipline: null,
+          flags: {
+            ...baseData.flags,
+            hasAnyDisciplineData: false,
+            hasEvaluations: false,
+          },
         }}
         evaluationDisciplineOptions={[
           { id: "disc-1", key: "pitching", label: "Pitching" },
@@ -357,17 +395,8 @@ describe("DevelopmentTab", () => {
       />
     );
 
-    const actionGroup = screen.getByRole("group", {
-      name: "Development tab actions",
-    });
-
-    expect(
-      (
-        within(actionGroup).getByRole("button", {
-          name: "New Development Plan",
-        }) as HTMLButtonElement
-      ).disabled
-    ).toBe(true);
+    expect(screen.queryByRole("tablist")).toBeNull();
+    expect(screen.getByRole("button", { name: "Create Evaluation" })).toBeTruthy();
   });
 
   it("renders empty state when no discipline data exists", () => {
@@ -392,22 +421,14 @@ describe("DevelopmentTab", () => {
         routineFormConfig={baseRoutineFormConfig}
       />
     );
-    const actionGroup = screen.getByRole("group", {
-      name: "Development tab actions",
-    });
 
     expect(
       screen.getByText(
         "No development data exists yet for this athlete. Add an evaluation to begin the development workflow."
       )
     ).toBeTruthy();
-    expect(
-      (
-        within(actionGroup).getByRole("button", {
-          name: "New Evaluation",
-        }) as HTMLButtonElement
-      ).disabled
-    ).toBe(false);
+    expect(screen.queryByRole("tablist")).toBeNull();
+    expect(screen.getByRole("button", { name: "Create Evaluation" })).toBeTruthy();
   });
 
   it("opens the manual plan drawer with current-discipline evaluation options", async () => {

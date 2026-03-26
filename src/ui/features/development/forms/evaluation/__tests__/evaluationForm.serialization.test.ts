@@ -1,6 +1,6 @@
 import {
-  serializeEvaluationFormToDocumentData,
   serializeEvaluationFormToPayload,
+  serializeEvaluationFormToDocumentData,
 } from "@/ui/features/development/forms/evaluation/evaluationForm.serialization";
 
 import { createEmptyEvaluationFormValues } from "../evaluationForm.defaults";
@@ -88,5 +88,22 @@ describe("evaluationForm.serialization", () => {
         launchAngleAvg: "12.1",
       }),
     ]);
+  });
+
+  it("injects placeholder summaries for tests-only evaluations", () => {
+    const values = createEmptyEvaluationFormValues();
+    values.disciplineId = "disc-1";
+    values.evaluationDate = "2026-03-24";
+    values.evaluationType = "tests_only";
+
+    const payload = serializeEvaluationFormToPayload(values, {
+      playerId: "player-1",
+      disciplineId: "disc-1",
+      createdBy: "coach-1",
+    });
+
+    expect(payload.snapshotSummary).toBe("Tests-only evaluation");
+    expect(payload.strengthProfileSummary).toBe("Tests-only evaluation");
+    expect(payload.keyConstraintsSummary).toBe("Tests-only evaluation");
   });
 });

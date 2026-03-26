@@ -1,5 +1,6 @@
 import {
   date,
+  index,
   pgEnum,
   pgTable,
   real,
@@ -9,6 +10,7 @@ import {
 } from "drizzle-orm/pg-core";
 
 import { lessonPlayers, playerInformation, users } from "@/db/schema";
+import { evaluations } from "@/db/schema/evaluations/evaluations";
 import { facilities } from "@/db/schema/facilities";
 
 export const attachmentTypesEnum = pgEnum("attachment_types", [
@@ -31,34 +33,43 @@ export const attachmentDocumentTypesEnum = pgEnum(
   ["medical", "pt", "external", "eval", "general", "other"]
 );
 
-export const attachments = pgTable("attachments", {
-  id: uuid("id").defaultRandom().primaryKey(),
-  athleteId: uuid("athlete_id").references(() => playerInformation.id, {
-    onDelete: "cascade",
-  }),
-  facilityId: uuid("facility_id").references(() => facilities.id, {
-    onDelete: "cascade",
-  }),
-  lessonPlayerId: uuid("lesson_player_id").references(() => lessonPlayers.id, {
-    onDelete: "cascade",
-  }),
-  type: attachmentTypesEnum("type").notNull(),
-  source: text("source").notNull(),
-  evidenceCategory: text("evidence_category"),
-  visibility: attachmentVisibilityEnum("visibility")
-    .notNull()
-    .default("internal"),
-  documentType: attachmentDocumentTypesEnum("document_type"),
-  notes: text("notes"),
-  createdBy: uuid("created_by").references(() => users.id, {
-    onDelete: "set null",
-  }),
-  effectiveDate: date("effective_date", { mode: "string" })
-    .notNull()
-    .defaultNow(),
-  createdAt: timestamp("created_at", { mode: "string" }).defaultNow().notNull(),
-  deletedAt: timestamp("deleted_at", { mode: "string" }),
-});
+export const attachments = pgTable(
+  "attachments",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    athleteId: uuid("athlete_id").references(() => playerInformation.id, {
+      onDelete: "cascade",
+    }),
+    facilityId: uuid("facility_id").references(() => facilities.id, {
+      onDelete: "cascade",
+    }),
+    lessonPlayerId: uuid("lesson_player_id").references(() => lessonPlayers.id, {
+      onDelete: "cascade",
+    }),
+    evaluationId: uuid("evaluation_id").references(() => evaluations.id, {
+      onDelete: "cascade",
+    }),
+    type: attachmentTypesEnum("type").notNull(),
+    source: text("source").notNull(),
+    evidenceCategory: text("evidence_category"),
+    visibility: attachmentVisibilityEnum("visibility")
+      .notNull()
+      .default("internal"),
+    documentType: attachmentDocumentTypesEnum("document_type"),
+    notes: text("notes"),
+    createdBy: uuid("created_by").references(() => users.id, {
+      onDelete: "set null",
+    }),
+    effectiveDate: date("effective_date", { mode: "string" })
+      .notNull()
+      .defaultNow(),
+    createdAt: timestamp("created_at", { mode: "string" })
+      .defaultNow()
+      .notNull(),
+    deletedAt: timestamp("deleted_at", { mode: "string" }),
+  },
+  (table) => [index("attachments_evaluation_id_idx").on(table.evaluationId)]
+);
 
 export const attachmentFiles = pgTable("attachment_files", {
   attachmentId: uuid("attachment_id")

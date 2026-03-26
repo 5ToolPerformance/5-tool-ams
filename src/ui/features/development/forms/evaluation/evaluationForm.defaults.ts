@@ -1,8 +1,10 @@
 import type { EvaluationEvidenceType } from "@/domain/evaluations/evidence";
+import type { AttachmentViewerAttachment } from "@/ui/features/attachments/types";
 
 import type {
   EvaluationBucketStatus,
   EvaluationFormEvidence,
+  EvaluationMediaAttachment,
   EvaluationFormRecord,
   EvaluationFormValues,
 } from "./evaluationForm.types";
@@ -61,6 +63,26 @@ export function createEmptyEvaluationFormValues(): EvaluationFormValues {
     focusAreas: [],
     buckets: [],
     evidence: [],
+    mediaAttachments: [],
+  };
+}
+
+function createMediaAttachmentFromRecord(
+  attachment: AttachmentViewerAttachment
+): EvaluationMediaAttachment | null {
+  if (attachment.type !== "file_image" && attachment.type !== "file_video") {
+    return null;
+  }
+
+  return {
+    id: createId("media"),
+    status: "uploaded",
+    type: attachment.type,
+    fileName:
+      attachment.file?.originalFileName ?? attachment.source ?? "Attachment",
+    mimeType: attachment.file?.mimeType ?? "application/octet-stream",
+    createdAt: attachment.createdAt,
+    attachmentId: attachment.id,
   };
 }
 
@@ -107,6 +129,9 @@ export function createEvaluationFormValuesFromRecord(
       recordedAt: toDateTimeInputValue(item.recordedAt),
       notes: item.notes ?? "",
     })),
+    mediaAttachments: (evaluation.mediaAttachments ?? [])
+      .map(createMediaAttachmentFromRecord)
+      .filter((item): item is EvaluationMediaAttachment => Boolean(item)),
   };
 }
 
@@ -120,6 +145,7 @@ export function cloneEvaluationFormValues(
     focusAreas: values.focusAreas.map((item) => ({ ...item })),
     buckets: values.buckets.map((item) => ({ ...item })),
     evidence: values.evidence.map((item) => ({ ...item })),
+    mediaAttachments: values.mediaAttachments.map((item) => ({ ...item })),
   };
 }
 

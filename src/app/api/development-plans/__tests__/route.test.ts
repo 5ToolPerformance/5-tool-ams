@@ -1,4 +1,5 @@
 import { createDevelopmentPlan } from "@/application/development-plans/createDevelopmentPlan";
+import { getDevelopmentPlanDetail } from "@/application/players/development/getDevelopmentDocumentDetails";
 import { updateDevelopmentPlan } from "@/application/development-plans/updateDevelopmentPlan";
 import { getDevelopmentPlanById } from "@/db/queries/development-plans/getDevelopmentPlanById";
 import {
@@ -24,6 +25,9 @@ jest.mock("@/db", () => ({
 jest.mock("@/application/development-plans/createDevelopmentPlan", () => ({
   createDevelopmentPlan: jest.fn(),
 }));
+jest.mock("@/application/players/development/getDevelopmentDocumentDetails", () => ({
+  getDevelopmentPlanDetail: jest.fn(),
+}));
 jest.mock("@/application/development-plans/updateDevelopmentPlan", () => ({
   updateDevelopmentPlan: jest.fn(),
 }));
@@ -45,7 +49,10 @@ jest.mock("@/lib/auth/auth-context", () => ({
 }));
 
 const { POST } = require("@/app/api/development-plans/route");
-const { PATCH } = require("@/app/api/development-plans/[developmentPlanId]/route");
+const {
+  GET,
+  PATCH,
+} = require("@/app/api/development-plans/[developmentPlanId]/route");
 
 describe("development plan routes", () => {
   function createJsonRequest(body: unknown) {
@@ -153,6 +160,43 @@ describe("development plan routes", () => {
       "plan-1",
       expect.objectContaining({
         status: "active",
+      })
+    );
+  });
+
+  it("returns a development plan detail payload for GET", async () => {
+    (getDevelopmentPlanDetail as jest.Mock).mockResolvedValue({
+      id: "plan-1",
+      playerId: "player-1",
+      disciplineId: "disc-1",
+      evaluationId: "eval-1",
+      status: "active",
+      startDate: new Date("2026-03-18T00:00:00.000Z"),
+      targetEndDate: null,
+      details: {
+        summary: "Summary",
+        currentPriority: "Priority",
+        shortTermGoals: [],
+        longTermGoals: [],
+        focusAreas: [],
+        measurableIndicators: [],
+      },
+      linkedEvaluation: null,
+    });
+
+    const response = await GET({} as any, {
+      params: Promise.resolve({ developmentPlanId: "plan-1" }),
+    });
+
+    expect(response.status).toBe(200);
+    expect(assertPlayerAccess).toHaveBeenCalledWith(
+      expect.anything(),
+      "player-1"
+    );
+    await expect(response.json()).resolves.toEqual(
+      expect.objectContaining({
+        id: "plan-1",
+        playerId: "player-1",
       })
     );
   });

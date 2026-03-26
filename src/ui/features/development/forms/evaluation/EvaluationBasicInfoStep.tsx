@@ -17,6 +17,7 @@ const EVALUATION_TYPES = [
   { key: "season_review", label: "Season Review" },
   { key: "injury_return", label: "Injury Return" },
   { key: "general", label: "General" },
+  { key: "tests_only", label: "Tests Only" },
 ] as const;
 
 const PHASES = [

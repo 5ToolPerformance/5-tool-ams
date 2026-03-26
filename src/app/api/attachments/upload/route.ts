@@ -37,6 +37,7 @@ export async function POST(request: NextRequest) {
     const file = formData.get("file") as File | null;
     const athleteId = formData.get("athleteId") as string | null;
     const lessonPlayerId = formData.get("lessonPlayerId") as string | null;
+    const evaluationId = formData.get("evaluationId") as string | null;
     const type = formData.get("type") as
       | "file_csv"
       | "file_video"
@@ -180,6 +181,7 @@ export async function POST(request: NextRequest) {
       facilityId: ctx.facilityId,
       createdBy: ctx.userId,
       lessonPlayerId: lessonPlayerId ?? undefined,
+      evaluationId: evaluationId ?? undefined,
       type,
       source,
       evidenceCategory: evidenceCategory ?? undefined,

@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { Button } from "@heroui/react";
 
@@ -17,47 +17,45 @@ type EvaluationFormProps = {
   onCancel?: () => void;
 };
 
-const STEP_TITLES = [
-  "Basic Info",
-  "Snapshot",
-  "Buckets",
-  "Strength Profile",
-  "Constraints",
-  "Evidence",
+const STANDARD_STEPS = [
+  { title: "Basic Info", component: EvaluationBasicInfoStep },
+  { title: "Snapshot", component: EvaluationSnapshotStep },
+  { title: "Buckets", component: EvaluationBucketsStep },
+  { title: "Strength Profile", component: EvaluationStrengthProfileStep },
+  { title: "Constraints", component: EvaluationConstraintsStep },
+  { title: "Evidence", component: EvaluationEvidenceStep },
+] as const;
+
+const TESTS_ONLY_STEPS = [
+  { title: "Basic Info", component: EvaluationBasicInfoStep },
+  { title: "Evidence", component: EvaluationEvidenceStep },
 ] as const;
 
 export function EvaluationForm({ onCancel }: EvaluationFormProps) {
-  const { mode, isSubmitting, handleSubmit, errors } = useEvaluationFormContext();
+  const { mode, values, isSubmitting, handleSubmit, errors } =
+    useEvaluationFormContext();
   const [stepIndex, setStepIndex] = useState(0);
+  const steps =
+    values.evaluationType === "tests_only" ? TESTS_ONLY_STEPS : STANDARD_STEPS;
+
+  useEffect(() => {
+    setStepIndex((prev) => Math.min(prev, steps.length - 1));
+  }, [steps.length]);
 
   const isFirstStep = stepIndex === 0;
-  const isLastStep = stepIndex === STEP_TITLES.length - 1;
+  const isLastStep = stepIndex === steps.length - 1;
 
-  const CurrentStep = useMemo(() => {
-    switch (stepIndex) {
-      case 0:
-        return EvaluationBasicInfoStep;
-      case 1:
-        return EvaluationSnapshotStep;
-      case 2:
-        return EvaluationBucketsStep;
-      case 3:
-        return EvaluationStrengthProfileStep;
-      case 4:
-        return EvaluationConstraintsStep;
-      case 5:
-        return EvaluationEvidenceStep;
-      default:
-        return EvaluationBasicInfoStep;
-    }
-  }, [stepIndex]);
+  const CurrentStep = useMemo(
+    () => steps[stepIndex]?.component ?? EvaluationBasicInfoStep,
+    [stepIndex, steps]
+  );
 
   return (
     <div className="flex h-full flex-col">
       <EvaluationFormStepHeader
         stepIndex={stepIndex}
-        totalSteps={STEP_TITLES.length}
-        title={STEP_TITLES[stepIndex]}
+        totalSteps={steps.length}
+        title={steps[stepIndex]?.title ?? steps[0].title}
         mode={mode}
       />
 

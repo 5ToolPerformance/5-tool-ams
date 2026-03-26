@@ -10,7 +10,8 @@ export type ValidateEvaluationInput = {
     | "monthly"
     | "season_review"
     | "injury_return"
-    | "general";
+    | "general"
+    | "tests_only";
   phase:
     | "offseason"
     | "preseason"

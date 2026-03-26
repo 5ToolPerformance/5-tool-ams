@@ -125,4 +125,52 @@ describe("useEvaluationForm", () => {
 
     expect(result.current.values.evidence).toEqual([]);
   });
+
+  it("hydrates uploaded media attachments in edit mode", () => {
+    const { result } = renderHook(() =>
+      useEvaluationForm({
+        mode: "edit",
+        createdBy: "coach-1",
+        disciplineOptions,
+        bucketOptions,
+        initialEvaluation: {
+          id: "eval-1",
+          playerId: "player-1",
+          disciplineId: "disc-1",
+          createdBy: "coach-1",
+          evaluationDate: "2026-03-16",
+          evaluationType: "tests_only",
+          phase: "general",
+          injuryConsiderations: null,
+          snapshotSummary: "Tests-only evaluation",
+          strengthProfileSummary: "Tests-only evaluation",
+          keyConstraintsSummary: "Tests-only evaluation",
+          documentData: { version: 1 },
+          mediaAttachments: [
+            {
+              id: "attachment-1",
+              type: "file_image",
+              source: "evaluation_media",
+              createdAt: "2026-03-16T12:00:00.000Z",
+              file: {
+                originalFileName: "capture.png",
+                mimeType: "image/png",
+                fileSizeBytes: 123,
+                storageKey: "storage-key",
+              },
+            },
+          ],
+        },
+      })
+    );
+
+    expect(result.current.values.mediaAttachments).toEqual([
+      expect.objectContaining({
+        status: "uploaded",
+        attachmentId: "attachment-1",
+        fileName: "capture.png",
+        type: "file_image",
+      }),
+    ]);
+  });
 });

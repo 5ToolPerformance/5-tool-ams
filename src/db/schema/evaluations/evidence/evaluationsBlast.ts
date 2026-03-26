@@ -16,7 +16,7 @@ export const evaluationBlast = pgTable(
     rotAccAvg: numeric("rot_acc_avg"),
     onPlanePercent: numeric("on_plane_percent"),
     attackAngleAvg: numeric("attack_angle"),
-    earltConnAvg: numeric("early_connection_avg"),
+    earlyConnAvg: numeric("early_connection_avg"),
     connAtImpactAvg: numeric("connection_at_impact_avg"),
     verticalBatAngleAvg: numeric("vertical_bat_angle_avg"),
     timeToContactAvg: numeric("time_to_contact_avg"),

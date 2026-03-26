@@ -7,6 +7,7 @@ import type {
   EvaluationFormValues,
 } from "./evaluationForm.types";
 
+const TESTS_ONLY_PLACEHOLDER_SUMMARY = "Tests-only evaluation";
 const EMPTY_FOCUS_AREAS = Array.from({ length: 3 }, () => ({
   title: "",
   description: "",
@@ -136,6 +137,11 @@ export function serializeEvaluationFormToPayload(
   values: EvaluationFormValues,
   context: EvaluationCreateContext
 ): EvaluationFormSubmitPayload {
+  const summaryFallback =
+    values.evaluationType === "tests_only"
+      ? TESTS_ONLY_PLACEHOLDER_SUMMARY
+      : "";
+
   return {
     playerId: context.playerId,
     disciplineId: values.disciplineId,
@@ -144,9 +150,10 @@ export function serializeEvaluationFormToPayload(
     evaluationType: values.evaluationType,
     phase: values.phase,
     injuryConsiderations: emptyToNull(values.injuryConsiderations),
-    snapshotSummary: values.snapshotSummary.trim(),
-    strengthProfileSummary: values.strengthProfileSummary.trim(),
-    keyConstraintsSummary: values.keyConstraintsSummary.trim(),
+    snapshotSummary: values.snapshotSummary.trim() || summaryFallback,
+    strengthProfileSummary:
+      values.strengthProfileSummary.trim() || summaryFallback,
+    keyConstraintsSummary: values.keyConstraintsSummary.trim() || summaryFallback,
     documentData: serializeEvaluationFormToDocumentData(values),
     evidenceForms: serializeEvaluationEvidenceForms(values),
   };

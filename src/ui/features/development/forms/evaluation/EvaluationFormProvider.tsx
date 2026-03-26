@@ -82,6 +82,8 @@ export function EvaluationFormProvider({
       addEvidence: form.addEvidence,
       updateEvidence: form.updateEvidence,
       removeEvidence: form.removeEvidence,
+      addMediaAttachments: form.addMediaAttachments,
+      removeMediaAttachment: form.removeMediaAttachment,
       handleSubmit: form.handleSubmit,
       resetForm: form.resetForm,
     }),

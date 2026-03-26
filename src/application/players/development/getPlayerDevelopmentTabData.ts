@@ -50,17 +50,29 @@ export async function getPlayerDevelopmentTabData(
   playerId: string,
   disciplineId?: string
 ): Promise<PlayerDevelopmentTabData> {
-  const [evaluationRows, developmentPlanRows, activeDisciplineRows] = await Promise.all([
+  const [evaluationRows, activeDisciplineRows] = await Promise.all([
     getEvaluationsForPlayer(db, { playerId, limit: MAX_READ_ROWS }),
-    getDevelopmentPlansForPlayer(db, { playerId, limit: MAX_READ_ROWS }),
     listActiveDisciplines(db),
   ]);
 
-  const disciplineOptions = activeDisciplineRows.map((row) => ({
-    id: row.id,
-    key: row.key,
-    label: row.label,
-  }));
+  const activeDisciplineMap = new Map(
+    activeDisciplineRows.map((row) => [
+      row.id,
+      {
+        id: row.id,
+        key: row.key,
+        label: row.label,
+      },
+    ])
+  );
+
+  const evaluatedDisciplineIds = Array.from(
+    new Set(evaluationRows.map((row) => row.disciplineId))
+  );
+
+  const disciplineOptions = evaluatedDisciplineIds
+    .map((id) => activeDisciplineMap.get(id))
+    .filter((option): option is DevelopmentDisciplineOption => Boolean(option));
 
   const selectedDiscipline =
     disciplineOptions.find((option) => option.id === disciplineId) ??

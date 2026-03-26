@@ -19,27 +19,32 @@ describe("EvaluationEvidenceStep", () => {
   it("shows discipline-specific evidence actions for hitting", () => {
     useEvaluationFormContext.mockReturnValue({
       selectedDiscipline: { id: "disc-1", key: "hitting", label: "Hitting" },
-      values: { evidence: [] },
+      values: { evidence: [], mediaAttachments: [] },
       errors: {},
       addEvidence: jest.fn(),
       updateEvidence: jest.fn(),
       removeEvidence: jest.fn(),
+      addMediaAttachments: jest.fn(),
+      removeMediaAttachment: jest.fn(),
     });
 
     render(<EvaluationEvidenceStep />);
 
     expect(screen.getByRole("button", { name: "Add HitTrax" })).toBeTruthy();
     expect(screen.getByRole("button", { name: "Add Blast" })).toBeTruthy();
+    expect(screen.getByText("Media Uploads")).toBeTruthy();
   });
 
   it("renders an empty state for unsupported disciplines", () => {
     useEvaluationFormContext.mockReturnValue({
       selectedDiscipline: { id: "disc-2", key: "pitching", label: "Pitching" },
-      values: { evidence: [] },
+      values: { evidence: [], mediaAttachments: [] },
       errors: {},
       addEvidence: jest.fn(),
       updateEvidence: jest.fn(),
       removeEvidence: jest.fn(),
+      addMediaAttachments: jest.fn(),
+      removeMediaAttachment: jest.fn(),
     });
 
     render(<EvaluationEvidenceStep />);

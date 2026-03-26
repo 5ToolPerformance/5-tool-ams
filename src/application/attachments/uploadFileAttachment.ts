@@ -10,6 +10,7 @@ interface UploadFileAttachmentParams {
     facilityId: string;
     createdBy: string;
     lessonPlayerId?: string;
+    evaluationId?: string;
 
     file: {
         buffer: Buffer;
@@ -41,6 +42,7 @@ export async function uploadFileAttachment(
         facilityId,
         createdBy,
         lessonPlayerId,
+        evaluationId,
         file,
         type,
         source,
@@ -82,6 +84,7 @@ export async function uploadFileAttachment(
         athleteId,
         facilityId,
         lessonPlayerId: lessonPlayerId ?? null,
+        evaluationId: evaluationId ?? null,
         type,
         source,
         evidenceCategory: evidenceCategory ?? null,
@@ -107,6 +110,7 @@ export async function uploadFileAttachment(
         id: attachmentId,
         athleteId,
         lessonPlayerId: lessonPlayerId ?? null,
+        evaluationId: evaluationId ?? null,
         type,
         source,
         evidenceCategory: evidenceCategory ?? null,

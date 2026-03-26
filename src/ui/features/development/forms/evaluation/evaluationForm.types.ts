@@ -3,13 +3,15 @@ import type {
   EvaluationEvidenceType,
   EvaluationEvidenceWriteInput,
 } from "@/domain/evaluations/evidence";
+import type { AttachmentViewerAttachment } from "@/ui/features/attachments/types";
 
 export type EvaluationType =
   | "baseline"
   | "monthly"
   | "season_review"
   | "injury_return"
-  | "general";
+  | "general"
+  | "tests_only";
 
 export type AthletePhase =
   | "offseason"
@@ -50,6 +52,17 @@ export type EvaluationFormEvidence = EvaluationEvidenceWriteInput & {
   evidenceId?: string;
 };
 
+export type EvaluationMediaAttachment = {
+  id: string;
+  status: "pending" | "uploaded";
+  type: "file_image" | "file_video";
+  fileName: string;
+  mimeType: string;
+  createdAt?: string;
+  attachmentId?: string;
+  file?: File;
+};
+
 export type EvaluationDisciplineOption = {
   id: string;
   key: string;
@@ -88,6 +101,7 @@ export type EvaluationFormValues = {
   focusAreas: EvaluationFormFocusArea[];
   buckets: EvaluationFormBucket[];
   evidence: EvaluationFormEvidence[];
+  mediaAttachments: EvaluationMediaAttachment[];
 };
 
 export type EvaluationFormErrorMap = Partial<Record<string, string>>;
@@ -106,6 +120,7 @@ export type EvaluationFormRecord = {
   keyConstraintsSummary: string;
   documentData: EvaluationDocumentV1 | null;
   evidenceForms?: EvaluationFormEvidence[];
+  mediaAttachments?: AttachmentViewerAttachment[];
 };
 
 export type EvaluationCreateContext = {
@@ -170,6 +185,9 @@ export type EvaluationFormContextValue = {
     value: Partial<EvaluationFormEvidence>
   ) => void;
   removeEvidence: (index: number) => void;
+
+  addMediaAttachments: (files: File[]) => void;
+  removeMediaAttachment: (index: number) => void;
 
   handleSubmit: (action: EvaluationSubmitAction) => Promise<void>;
   resetForm: () => void;

@@ -24,6 +24,7 @@ import { buildDevelopmentReportPdfPath } from "@/lib/reports/developmentReportQu
 import { ActivePlanPanel } from "./ActivePlanPanel";
 import { CurrentSnapshotPanel } from "./CurrentSnapshotPanel";
 import { DevelopmentActionButtons } from "./DevelopmentActionButtons";
+import { DevelopmentDocumentModal } from "./DevelopmentDocumentModal";
 import { DevelopmentDisciplineSelector } from "./DevelopmentDisciplineSelector";
 import { DevelopmentHistoryPanel } from "./DevelopmentHistoryPanel";
 import { DevelopmentReportOptionsModal } from "./DevelopmentReportOptionsModal";
@@ -39,6 +40,9 @@ interface DevelopmentTabProps {
 }
 
 type DevelopmentDrawerAction = "evaluation" | "plan" | "routine" | null;
+type DevelopmentDocumentViewState =
+  | { id: string; type: "evaluation" | "development-plan" }
+  | null;
 
 function formatEvaluationSummary(
   summary: string | null | undefined,
@@ -65,6 +69,8 @@ export function DevelopmentTab({
     useState("");
   const [isRoutinePlanLocked, setIsRoutinePlanLocked] = useState(false);
   const [isReportOptionsOpen, setIsReportOptionsOpen] = useState(false);
+  const [viewDocument, setViewDocument] =
+    useState<DevelopmentDocumentViewState>(null);
 
   const selectedDiscipline = data.selectedDiscipline;
 
@@ -104,6 +110,7 @@ export function DevelopmentTab({
   const canCreateRoutine = Boolean(selectedDiscipline);
   const canGenerateReport = data.report.canGenerate && Boolean(selectedDiscipline);
   const hasEvaluationForSelectedDiscipline = Boolean(data.latestEvaluation);
+  const hasAnyEvaluations = data.flags.hasEvaluations;
   const playerName = useMemo(() => {
     const source = data.activePlan ?? data.latestEvaluation ?? data.evaluationHistory[0];
     if (!source || typeof source !== "object") return "this player";
@@ -146,6 +153,14 @@ export function DevelopmentTab({
 
   const closeReportOptions = () => {
     setIsReportOptionsOpen(false);
+  };
+
+  const openEvaluationView = (evaluationId: string) => {
+    setViewDocument({ id: evaluationId, type: "evaluation" });
+  };
+
+  const openDevelopmentPlanView = (developmentPlanId: string) => {
+    setViewDocument({ id: developmentPlanId, type: "development-plan" });
   };
 
   const openReportPreview = (options: {
@@ -202,25 +217,25 @@ export function DevelopmentTab({
       ? "New Routine"
       : "";
 
-  if (!data.flags.hasAnyDisciplineData || !selectedDiscipline) {
+  if (!hasAnyEvaluations || !selectedDiscipline) {
     return (
       <>
         <Card shadow="sm">
-          <CardBody className="space-y-3">
-            <h2 className="text-lg font-semibold">Development</h2>
-            <p className="text-sm text-muted-foreground">
-              No development data exists yet for this athlete. Add an
-              evaluation to begin the development workflow.
-            </p>
-            <DevelopmentActionButtons
-              canCreatePlan={false}
-              canCreateRoutine={false}
-              canGenerateReport={false}
-              onOpenEvaluation={openEvaluationDrawer}
-              onOpenPlan={() => openPlanDrawer()}
-              onOpenRoutine={() => openRoutineDrawer()}
-              onOpenReport={openReportOptions}
-            />
+          <CardBody className="flex min-h-[320px] items-center justify-center px-6 py-12 text-center">
+            <div className="max-w-md space-y-4">
+              <div className="space-y-2">
+                <h2 className="text-xl font-semibold">Development</h2>
+                <p className="text-sm text-muted-foreground">
+                  No development data exists yet for this athlete. Add an
+                  evaluation to begin the development workflow.
+                </p>
+              </div>
+              <div className="flex justify-center">
+                <Button color="primary" size="lg" onPress={openEvaluationDrawer}>
+                  Create Evaluation
+                </Button>
+              </div>
+            </div>
           </CardBody>
         </Card>
         <RightSideDrawer
@@ -258,27 +273,23 @@ export function DevelopmentTab({
       <div className="space-y-6">
         <Card shadow="sm">
           <CardBody className="space-y-3">
-            <div>
-              <h1 className="text-xl font-semibold">Development</h1>
-              <p className="text-sm text-muted-foreground">
-                Evaluation, development plan, and routine context for coaches.
-              </p>
-            </div>
+            <h2 className="text-lg font-semibold">Development</h2>
+            <p className="text-sm text-muted-foreground">
+              Evaluation, development plan, and routine context for coaches.
+            </p>
+            <DevelopmentActionButtons
+              canCreatePlan={canCreatePlan}
+              canCreateRoutine={canCreateRoutine}
+              canGenerateReport={canGenerateReport}
+              onOpenEvaluation={openEvaluationDrawer}
+              onOpenPlan={() => openPlanDrawer()}
+              onOpenRoutine={() => openRoutineDrawer()}
+              onOpenReport={openReportOptions}
+            />
             <DevelopmentDisciplineSelector
               selectedDisciplineId={selectedDiscipline.id}
               disciplines={data.disciplineOptions}
             />
-            {hasEvaluationForSelectedDiscipline ? (
-              <DevelopmentActionButtons
-                canCreatePlan={canCreatePlan}
-                canCreateRoutine={canCreateRoutine}
-                canGenerateReport={canGenerateReport}
-                onOpenEvaluation={openEvaluationDrawer}
-                onOpenPlan={() => openPlanDrawer()}
-                onOpenRoutine={() => openRoutineDrawer()}
-                onOpenReport={openReportOptions}
-              />
-            ) : null}
           </CardBody>
         </Card>
 
@@ -309,10 +320,7 @@ export function DevelopmentTab({
             <CurrentSnapshotPanel
               latestEvaluation={data.latestEvaluation}
               disciplineKey={selectedDiscipline.key}
-              onOpenEvaluation={openEvaluationDrawer}
-              onOpenPlan={() => openPlanDrawer()}
-              onOpenRoutine={() => openRoutineDrawer()}
-              canCreatePlan={canCreatePlan}
+              onViewEvaluation={openEvaluationView}
             />
 
             <ActivePlanPanel
@@ -322,8 +330,7 @@ export function DevelopmentTab({
               onCreatePlanFromLatestEvaluation={() =>
                 openPlanDrawer(data.latestEvaluation?.id ?? "")
               }
-              onOpenEvaluation={openEvaluationDrawer}
-              onOpenRoutine={() => openRoutineDrawer(data.activePlan?.id ?? "", true)}
+              onViewPlan={openDevelopmentPlanView}
             />
 
             <RoutinesPanel
@@ -340,6 +347,8 @@ export function DevelopmentTab({
               onCreatePlanFromEvaluation={(evaluationId) =>
                 openPlanDrawer(evaluationId)
               }
+              onViewEvaluation={openEvaluationView}
+              onViewPlan={openDevelopmentPlanView}
             />
           </>
         )}
@@ -420,6 +429,13 @@ export function DevelopmentTab({
         }))}
         onClose={closeReportOptions}
         onPreview={openReportPreview}
+      />
+
+      <DevelopmentDocumentModal
+        isOpen={viewDocument !== null}
+        documentId={viewDocument?.id ?? null}
+        documentType={viewDocument?.type ?? null}
+        onClose={() => setViewDocument(null)}
       />
     </>
   );

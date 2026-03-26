@@ -5,6 +5,7 @@ import type {
   DevelopmentPlanRow,
   EvaluationRow,
 } from "@/application/players/development/getPlayerDevelopmentTabData";
+import FormattedText from "@/components/ui/formattedText";
 import { SectionShell } from "@/ui/core/athletes/SectionShell";
 
 import { formatDate, getDisciplineAccentClass } from "./utils";
@@ -14,6 +15,8 @@ interface DevelopmentHistoryPanelProps {
   developmentPlanHistory: DevelopmentPlanRow[];
   disciplineKey?: string;
   onCreatePlanFromEvaluation?: (evaluationId: string) => void;
+  onViewEvaluation?: (evaluationId: string) => void;
+  onViewPlan?: (developmentPlanId: string) => void;
 }
 
 export function DevelopmentHistoryPanel({
@@ -21,6 +24,8 @@ export function DevelopmentHistoryPanel({
   developmentPlanHistory,
   disciplineKey,
   onCreatePlanFromEvaluation,
+  onViewEvaluation,
+  onViewPlan,
 }: DevelopmentHistoryPanelProps) {
   const accentClass = getDisciplineAccentClass(disciplineKey);
   const hasHistory =
@@ -50,28 +55,58 @@ export function DevelopmentHistoryPanel({
                   shadow="none"
                   className={`border border-l-4 border-zinc-200 dark:border-zinc-700 ${accentClass}`}
                 >
-                  <CardBody className="space-y-2">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <Chip size="sm" variant="flat">
-                        {formatDate(evaluation.evaluationDate)}
-                      </Chip>
-                      <Chip size="sm" variant="flat">
-                        {evaluation.evaluationType}
-                      </Chip>
-                      <Chip size="sm" variant="flat">
-                        {evaluation.phase}
-                      </Chip>
-                    </div>
-                    <p className="text-sm text-muted-foreground line-clamp-2">
-                      {evaluation.snapshotSummary}
-                    </p>
-                    <div className="flex flex-wrap gap-2">
-                      <Button size="sm" variant="flat" isDisabled>
+                  <CardBody className="space-y-3">
+                    <div className="flex flex-wrap items-center justify-between gap-3">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <Chip size="sm" variant="flat">
+                          {formatDate(evaluation.evaluationDate)}
+                        </Chip>
+                        <Chip size="sm" variant="flat">
+                          {evaluation.evaluationType}
+                        </Chip>
+                        <Chip size="sm" variant="flat">
+                          {evaluation.phase}
+                        </Chip>
+                      </div>
+                      <Button
+                        size="sm"
+                        variant="flat"
+                        onPress={() => onViewEvaluation?.(evaluation.id)}
+                      >
                         View
                       </Button>
-                      <Button size="sm" variant="flat" isDisabled>
-                        Edit
-                      </Button>
+                    </div>
+
+                    <div className="grid gap-3 md:grid-cols-2">
+                      <div className="rounded-lg border border-default-200 bg-default-50/40 p-3">
+                        <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                          Snapshot
+                        </p>
+                        <div className="mt-2 text-sm text-muted-foreground">
+                          <FormattedText text={evaluation.snapshotSummary} isShort />
+                        </div>
+                      </div>
+                      <div className="rounded-lg border border-default-200 bg-default-50/40 p-3">
+                        <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                          Evidence
+                        </p>
+                        <p className="mt-2 text-sm text-muted-foreground">
+                          {Array.isArray(
+                            (
+                              evaluation.documentData as { evidence?: unknown[] } | null
+                            )?.evidence
+                          )
+                            ? `${
+                                (
+                                  evaluation.documentData as { evidence?: unknown[] }
+                                ).evidence?.length ?? 0
+                              } documented evidence item(s)`
+                            : "No evidence documented."}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex flex-wrap gap-2">
                       <Button
                         size="sm"
                         color="primary"
@@ -101,30 +136,61 @@ export function DevelopmentHistoryPanel({
                     shadow="none"
                     className={`border border-l-4 border-zinc-200 dark:border-zinc-700 ${accentClass}`}
                   >
-                    <CardBody className="space-y-2">
-                      <div className="flex flex-wrap items-center gap-2">
-                        <Chip size="sm" variant="flat">
-                          {plan.status}
-                        </Chip>
-                        <Chip size="sm" variant="flat">
-                          Start: {formatDate(plan.startDate)}
-                        </Chip>
-                        <Chip size="sm" variant="flat">
-                          End: {formatDate(plan.targetEndDate)}
-                        </Chip>
-                      </div>
-                      {parsed.summary && (
-                        <p className="text-sm text-muted-foreground line-clamp-2">
-                          {parsed.summary}
-                        </p>
-                      )}
-                      <div className="flex flex-wrap gap-2">
-                        <Button size="sm" variant="flat" isDisabled>
+                    <CardBody className="space-y-3">
+                      <div className="flex flex-wrap items-center justify-between gap-3">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <Chip size="sm" variant="flat">
+                            {plan.status}
+                          </Chip>
+                          <Chip size="sm" variant="flat">
+                            Start: {formatDate(plan.startDate)}
+                          </Chip>
+                          <Chip size="sm" variant="flat">
+                            End: {formatDate(plan.targetEndDate)}
+                          </Chip>
+                        </div>
+                        <Button
+                          size="sm"
+                          variant="flat"
+                          onPress={() => onViewPlan?.(plan.id)}
+                        >
                           View
                         </Button>
-                        <Button size="sm" variant="flat" isDisabled>
-                          Edit
-                        </Button>
+                      </div>
+
+                      <div className="grid gap-3 md:grid-cols-2">
+                        <div className="rounded-lg border border-default-200 bg-default-50/40 p-3">
+                          <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                            Summary
+                          </p>
+                          <div className="mt-2 text-sm text-muted-foreground">
+                            <FormattedText
+                              text={parsed.summary ?? "No summary provided."}
+                              isShort
+                            />
+                          </div>
+                        </div>
+                        <div className="rounded-lg border border-default-200 bg-default-50/40 p-3">
+                          <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                            Current Priority
+                          </p>
+                          <div className="mt-2 text-sm text-muted-foreground">
+                            <FormattedText
+                              text={parsed.currentPriority ?? "No priority specified."}
+                              isShort
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="flex flex-wrap gap-2">
+                        {[...parsed.shortTermGoalTitles, ...parsed.longTermGoalTitles]
+                          .slice(0, 4)
+                          .map((goal) => (
+                            <Chip key={goal} size="sm" variant="bordered">
+                              {goal}
+                            </Chip>
+                          ))}
                       </div>
                     </CardBody>
                   </Card>

@@ -27,6 +27,8 @@ import {
   validateEvaluationForm,
 } from "./evaluationForm.validation";
 
+const EVALUATION_MEDIA_SOURCE = "evaluation_media";
+
 type UseEvaluationFormParams = {
   mode: EvaluationFormMode;
   playerId?: string;
@@ -109,6 +111,26 @@ function getInitialValues(
     syncBucketsWithDiscipline(baseValues, params.bucketOptions),
     params.disciplineOptions
   );
+}
+
+function inferMediaAttachmentType(file: File): "file_image" | "file_video" | null {
+  if (file.type.startsWith("image/")) {
+    return "file_image";
+  }
+
+  if (file.type.startsWith("video/")) {
+    return "file_video";
+  }
+
+  const lowerName = file.name.toLowerCase();
+  if (/\.(png|jpe?g|gif|webp|bmp|svg|heic|heif)$/.test(lowerName)) {
+    return "file_image";
+  }
+  if (/\.(mp4|mov|avi|m4v|webm|mkv)$/.test(lowerName)) {
+    return "file_video";
+  }
+
+  return null;
 }
 
 export function useEvaluationForm(params: UseEvaluationFormParams) {
@@ -299,6 +321,53 @@ export function useEvaluationForm(params: UseEvaluationFormParams) {
     }));
   }, []);
 
+  const addMediaAttachments = useCallback((files: File[]) => {
+    const nextMediaAttachments = files
+      .map((file) => {
+        const type = inferMediaAttachmentType(file);
+
+        if (!type) {
+          return null;
+        }
+
+        return {
+          id: `media_${Math.random().toString(36).slice(2, 10)}`,
+          status: "pending" as const,
+          type,
+          fileName: file.name,
+          mimeType: file.type || "application/octet-stream",
+          file,
+        };
+      })
+      .filter((item): item is NonNullable<typeof item> => Boolean(item));
+
+    if (nextMediaAttachments.length === 0) {
+      setErrors((prev) => ({
+        ...prev,
+        mediaAttachments: "Only image and video files are supported.",
+      }));
+      return;
+    }
+
+    setErrors((prev) => {
+      const next = { ...prev };
+      delete next.mediaAttachments;
+      return next;
+    });
+
+    setValues((prev) => ({
+      ...prev,
+      mediaAttachments: [...prev.mediaAttachments, ...nextMediaAttachments],
+    }));
+  }, []);
+
+  const removeMediaAttachment = useCallback((index: number) => {
+    setValues((prev) => ({
+      ...prev,
+      mediaAttachments: prev.mediaAttachments.filter((_, i) => i !== index),
+    }));
+  }, []);
+
   const buildContext = useCallback((): EvaluationCreateContext => {
     if (params.mode === "edit" && params.initialEvaluation) {
       return {
@@ -376,6 +445,66 @@ export function useEvaluationForm(params: UseEvaluationFormParams) {
           savedId = created.id;
         }
 
+        const pendingMedia = values.mediaAttachments.filter(
+          (item) => item.status === "pending" && item.file
+        );
+
+        if (pendingMedia.length > 0) {
+          const uploadedMedia = [] as EvaluationFormValues["mediaAttachments"];
+
+          for (const media of pendingMedia) {
+            const file = media.file;
+            if (!file) {
+              continue;
+            }
+
+            const formData = new FormData();
+            formData.set("file", file);
+            formData.set("athleteId", context.playerId);
+            formData.set("evaluationId", savedId);
+            formData.set("type", media.type);
+            formData.set("source", EVALUATION_MEDIA_SOURCE);
+            formData.set("evidenceCategory", "media");
+            formData.set("documentType", "eval");
+
+            const uploadResponse = await fetch("/api/attachments/upload", {
+              method: "POST",
+              body: formData,
+            });
+
+            if (!uploadResponse.ok) {
+              const result = (await uploadResponse.json().catch(() => null)) as
+                | { error?: string }
+                | null;
+              throw new Error(
+                result?.error ?? `Failed to upload ${media.fileName}.`
+              );
+            }
+
+            const uploaded = (await uploadResponse.json()) as {
+              attachment: { id: string; createdAt: string };
+            };
+
+            uploadedMedia.push({
+              id: media.id,
+              status: "uploaded",
+              type: media.type,
+              fileName: media.fileName,
+              mimeType: media.mimeType,
+              attachmentId: uploaded.attachment.id,
+              createdAt: uploaded.attachment.createdAt,
+            });
+          }
+
+          setValues((prev) => ({
+            ...prev,
+            mediaAttachments: [
+              ...prev.mediaAttachments.filter((item) => item.status === "uploaded"),
+              ...uploadedMedia,
+            ],
+          }));
+        }
+
         if (action === "save-and-plan") {
           params.onSavedAndContinue?.(savedId);
         } else {
@@ -416,8 +545,10 @@ export function useEvaluationForm(params: UseEvaluationFormParams) {
     updateBucket,
     removeBucket,
     addEvidence,
+    addMediaAttachments,
     updateEvidence,
     removeEvidence,
+    removeMediaAttachment,
     handleSubmit,
     resetForm,
   };

@@ -164,10 +164,10 @@ describe("getPlayerDevelopmentTabData", () => {
     });
   });
 
-  it("shows active disciplines even when the selected one has no evaluations yet", async () => {
+  it("filters tabs to evaluated disciplines and falls back when a hidden discipline is requested", async () => {
     (getEvaluationsForPlayer as jest.Mock)
       .mockResolvedValueOnce([{ id: "eval-1", disciplineId: "disc-1" }])
-      .mockResolvedValueOnce([]);
+      .mockResolvedValueOnce([{ id: "eval-1", disciplineId: "disc-1" }]);
     (getDevelopmentPlansForPlayer as jest.Mock)
       .mockResolvedValueOnce([])
       .mockResolvedValueOnce([]);
@@ -180,13 +180,10 @@ describe("getPlayerDevelopmentTabData", () => {
 
     const result = await getPlayerDevelopmentTabData("player-1", "disc-2");
 
-    expect(result.disciplineOptions.map((row) => row.id)).toEqual([
-      "disc-1",
-      "disc-2",
-    ]);
-    expect(result.selectedDiscipline?.id).toBe("disc-2");
-    expect(result.latestEvaluation).toBeNull();
+    expect(result.disciplineOptions.map((row) => row.id)).toEqual(["disc-1"]);
+    expect(result.selectedDiscipline?.id).toBe("disc-1");
+    expect(result.latestEvaluation?.id).toBe("eval-1");
     expect(result.flags.hasAnyDisciplineData).toBe(true);
-    expect(result.flags.hasEvaluations).toBe(false);
+    expect(result.flags.hasEvaluations).toBe(true);
   });
 });
