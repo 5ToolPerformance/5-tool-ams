@@ -32,7 +32,7 @@ export type EvaluationBlastEvidenceInput = EvaluationEvidenceBaseInput & {
   rotAccAvg?: string | null;
   onPlanePercent?: string | null;
   attackAngleAvg?: string | null;
-  earltConnAvg?: string | null;
+  earlyConnAvg?: string | null;
   connAtImpactAvg?: string | null;
   verticalBatAngleAvg?: string | null;
   timeToContactAvg?: string | null;

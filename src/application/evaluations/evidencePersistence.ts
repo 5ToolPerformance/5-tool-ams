@@ -1,22 +1,21 @@
 import { and, eq, inArray } from "drizzle-orm";
 
 import type { DB } from "@/db";
+import { getDisciplinesByIds } from "@/db/queries/players/getDisciplinesByIds";
 import {
   evaluationBlast,
   evaluationEvidence,
   evaluationHittrax,
-  evaluations,
   evaluationsStrength,
   performanceSession,
 } from "@/db/schema";
 import {
-  getSupportedEvidenceTypesForDisciplineKey,
-  isSupportedEvidenceTypeForDisciplineKey,
   type EvaluationEvidenceSummary,
   type EvaluationEvidenceWriteInput,
+  getSupportedEvidenceTypesForDisciplineKey,
+  isSupportedEvidenceTypeForDisciplineKey,
 } from "@/domain/evaluations/evidence";
 import type { EvaluationDocumentV1 } from "@/domain/evaluations/types";
-import { getDisciplinesByIds } from "@/db/queries/players/getDisciplinesByIds";
 import { DomainError } from "@/lib/errors";
 
 type Transaction = Parameters<Parameters<DB["transaction"]>[0]>[0];
@@ -59,7 +58,9 @@ export async function validateEvidenceFormsForDiscipline(
     throw new DomainError("Discipline not found.");
   }
 
-  const supportedTypes = getSupportedEvidenceTypesForDisciplineKey(discipline.key);
+  const supportedTypes = getSupportedEvidenceTypesForDisciplineKey(
+    discipline.key
+  );
   const submittedTypes = evidenceForms.map((item) => item.type);
 
   if (new Set(submittedTypes).size !== submittedTypes.length) {
@@ -95,8 +96,12 @@ export async function replaceEvaluationEvidence({
     evidenceForms
   );
 
-  await tx.delete(evaluationHittrax).where(eq(evaluationHittrax.evaluationId, evaluationId));
-  await tx.delete(evaluationBlast).where(eq(evaluationBlast.evaluationId, evaluationId));
+  await tx
+    .delete(evaluationHittrax)
+    .where(eq(evaluationHittrax.evaluationId, evaluationId));
+  await tx
+    .delete(evaluationBlast)
+    .where(eq(evaluationBlast.evaluationId, evaluationId));
   await tx
     .delete(evaluationsStrength)
     .where(eq(evaluationsStrength.evaluationId, evaluationId));
@@ -156,7 +161,7 @@ export async function replaceEvaluationEvidence({
           rotAccAvg: normalizeMetricValue(evidenceForm.rotAccAvg),
           onPlanePercent: normalizeMetricValue(evidenceForm.onPlanePercent),
           attackAngleAvg: normalizeMetricValue(evidenceForm.attackAngleAvg),
-          earltConnAvg: normalizeMetricValue(evidenceForm.earltConnAvg),
+          earlyConnAvg: normalizeMetricValue(evidenceForm.earlyConnAvg),
           connAtImpactAvg: normalizeMetricValue(evidenceForm.connAtImpactAvg),
           verticalBatAngleAvg: normalizeMetricValue(
             evidenceForm.verticalBatAngleAvg

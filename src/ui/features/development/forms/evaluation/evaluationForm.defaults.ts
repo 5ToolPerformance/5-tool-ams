@@ -203,7 +203,7 @@ export function createEmptyEvidenceOfType(
         rotAccAvg: "",
         onPlanePercent: "",
         attackAngleAvg: "",
-        earltConnAvg: "",
+        earlyConnAvg: "",
         connAtImpactAvg: "",
         verticalBatAngleAvg: "",
         timeToContactAvg: "",

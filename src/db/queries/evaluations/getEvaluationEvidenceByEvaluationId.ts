@@ -54,7 +54,7 @@ export async function getEvaluationEvidenceByEvaluationId(
       rotAccAvg: blast.rotAccAvg,
       onPlanePercent: blast.onPlanePercent,
       attackAngleAvg: blast.attackAngleAvg,
-      earltConnAvg: blast.earltConnAvg,
+      earlyConnAvg: blast.earlyConnAvg,
       connAtImpactAvg: blast.connAtImpactAvg,
       verticalBatAngleAvg: blast.verticalBatAngleAvg,
       timeToContactAvg: blast.timeToContactAvg,

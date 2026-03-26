@@ -40,7 +40,7 @@ const EVIDENCE_FIELDS: Record<
     { key: "rotAccAvg", label: "Rotational Acceleration Avg" },
     { key: "onPlanePercent", label: "On Plane %" },
     { key: "attackAngleAvg", label: "Attack Angle Avg" },
-    { key: "earltConnAvg", label: "Early Connection Avg" },
+    { key: "earlyConnAvg", label: "Early Connection Avg" },
     { key: "connAtImpactAvg", label: "Connection At Impact Avg" },
     { key: "verticalBatAngleAvg", label: "Vertical Bat Angle Avg" },
     { key: "timeToContactAvg", label: "Time To Contact Avg" },

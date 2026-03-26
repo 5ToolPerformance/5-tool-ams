@@ -81,7 +81,7 @@ export function serializeEvaluationEvidenceForms(
             rotAccAvg: emptyMetricToNull(item.rotAccAvg),
             onPlanePercent: emptyMetricToNull(item.onPlanePercent),
             attackAngleAvg: emptyMetricToNull(item.attackAngleAvg),
-            earltConnAvg: emptyMetricToNull(item.earltConnAvg),
+            earlyConnAvg: emptyMetricToNull(item.earlyConnAvg),
             connAtImpactAvg: emptyMetricToNull(item.connAtImpactAvg),
             verticalBatAngleAvg: emptyMetricToNull(item.verticalBatAngleAvg),
             timeToContactAvg: emptyMetricToNull(item.timeToContactAvg),
