@@ -26,7 +26,7 @@ export default async function ResourcesLayout({
       <div className="space-y-2">
         <h1 className="text-2xl font-semibold">Resources</h1>
         <p className="text-default-500">
-          Shared drills, mechanics, and internal reference material for coaches.
+          Shared drills, mechanics, routines, and internal reference material for coaches.
         </p>
       </div>
       <ResourcesTabsController />

@@ -11,10 +11,12 @@ function createId(prefix: string) {
 }
 
 export function createEmptyRoutineFormValues(
-  initialDevelopmentPlanId = ""
+  initialDevelopmentPlanId = "",
+  initialDisciplineId = ""
 ): RoutineFormValues {
   return {
     developmentPlanId: initialDevelopmentPlanId,
+    disciplineId: initialDisciplineId,
     title: "",
     description: "",
     routineType: "partial_lesson",
@@ -33,7 +35,8 @@ export function createRoutineFormValuesFromRecord(
   const doc = routine.documentData;
 
   return {
-    developmentPlanId: routine.developmentPlanId,
+    developmentPlanId: routine.developmentPlanId ?? "",
+    disciplineId: routine.disciplineId,
     title: routine.title ?? "",
     description: routine.description ?? "",
     routineType: routine.routineType,

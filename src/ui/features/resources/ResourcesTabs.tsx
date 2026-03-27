@@ -28,6 +28,7 @@ export function ResourcesTabs({ activeKey, onChange }: ResourcesTabsProps) {
     >
       <Tab key="drills" title="Drills" />
       <Tab key="mechanics" title="Mechanics" />
+      <Tab key="routines" title="Routines" />
       <Tab
         key="documentation"
         title={<DisabledTabTitle title="Documentation" />}

@@ -2,6 +2,7 @@ import { RoutineDocumentV1 } from "@/domain/routines/types";
 
 import type {
   RoutineDevelopmentPlanOption,
+  RoutineDisciplineOption,
   RoutineDrillOption,
   RoutineMechanicOption,
 } from "@/application/routines/getRoutineFormConfig";
@@ -9,6 +10,7 @@ import type {
 export type RoutineType = "partial_lesson" | "full_lesson" | "progression";
 export type RoutineFormMode = "create" | "edit";
 export type RoutineSubmitAction = "save";
+export type RoutineFormContextType = "development-plan" | "universal";
 
 export type RoutineFormMechanic = {
   id: string;
@@ -34,6 +36,7 @@ export type RoutineFormBlock = {
 
 export type RoutineFormValues = {
   developmentPlanId: string;
+  disciplineId: string;
   title: string;
   description: string;
   routineType: RoutineType;
@@ -49,10 +52,12 @@ export type RoutineFormErrorMap = Partial<Record<string, string>>;
 
 export type RoutineFormRecord = {
   id: string;
-  developmentPlanId: string;
-  playerId: string;
+  contextType: RoutineFormContextType;
+  developmentPlanId?: string;
+  playerId?: string | null;
   disciplineId: string;
   disciplineKey: string;
+  disciplineLabel: string;
   createdBy: string;
   title: string;
   description: string | null;
@@ -62,13 +67,21 @@ export type RoutineFormRecord = {
   documentData: RoutineDocumentV1 | null;
 };
 
-export type RoutineCreateContext = {
-  developmentPlan: RoutineDevelopmentPlanOption;
-  createdBy: string;
-};
+export type RoutineCreateContext =
+  | {
+      contextType: "development-plan";
+      developmentPlan: RoutineDevelopmentPlanOption;
+      createdBy: string;
+    }
+  | {
+      contextType: "universal";
+      discipline: RoutineDisciplineOption;
+      createdBy: string;
+    };
 
 export type RoutineFormSubmitPayload = {
-  developmentPlanId: string;
+  developmentPlanId?: string;
+  disciplineId?: string;
   createdBy: string;
   title: string;
   description?: string | null;
@@ -80,8 +93,11 @@ export type RoutineFormSubmitPayload = {
 
 export type RoutineFormContextValue = {
   mode: RoutineFormMode;
+  contextType: RoutineFormContextType;
   developmentPlanOptions: RoutineDevelopmentPlanOption[];
+  disciplineOptions: RoutineDisciplineOption[];
   selectedDevelopmentPlan: RoutineDevelopmentPlanOption | null;
+  selectedDiscipline: RoutineDisciplineOption | null;
   isDevelopmentPlanSelectionLocked: boolean;
   mechanicOptions: RoutineMechanicOption[];
   drillOptions: RoutineDrillOption[];
@@ -117,11 +133,14 @@ export type RoutineFormContextValue = {
 
 export type RoutineFormProviderProps = {
   mode: RoutineFormMode;
+  contextType?: RoutineFormContextType;
   createdBy: string;
   developmentPlanOptions?: RoutineDevelopmentPlanOption[];
+  disciplineOptions?: RoutineDisciplineOption[];
   mechanicOptions?: RoutineMechanicOption[];
   drillOptions?: RoutineDrillOption[];
   initialDevelopmentPlanId?: string;
+  initialDisciplineId?: string;
   isDevelopmentPlanSelectionLocked?: boolean;
   initialRoutine?: RoutineFormRecord | null;
   onCancel?: () => void;

@@ -1,16 +1,26 @@
 import type {
+  RoutineFormContextType,
   RoutineFormErrorMap,
   RoutineFormValues,
 } from "./routineForm.types";
 
 export function validateRoutineForm(
   values: RoutineFormValues,
-  options: { mode: "create" | "edit" }
+  options: { mode: "create" | "edit"; contextType: RoutineFormContextType }
 ): RoutineFormErrorMap {
   const errors: RoutineFormErrorMap = {};
 
-  if (options.mode === "create" && !values.developmentPlanId) {
-    errors.developmentPlanId = "Development plan is required.";
+  if (options.mode === "create") {
+    if (
+      options.contextType === "development-plan" &&
+      !values.developmentPlanId
+    ) {
+      errors.developmentPlanId = "Development plan is required.";
+    }
+
+    if (options.contextType === "universal" && !values.disciplineId) {
+      errors.disciplineId = "Discipline is required.";
+    }
   }
 
   if (!values.title.trim()) {

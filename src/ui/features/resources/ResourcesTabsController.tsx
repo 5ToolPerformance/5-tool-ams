@@ -6,8 +6,8 @@ import { ResourcesTabKey } from "@/domain/resources/types";
 
 import { ResourcesTabs } from "./ResourcesTabs";
 
-const TAB_KEYS: ResourcesTabKey[] = ["drills", "mechanics", "documentation"];
-const ENABLED_TAB_KEYS: ResourcesTabKey[] = ["drills", "mechanics"];
+const TAB_KEYS: ResourcesTabKey[] = ["drills", "mechanics", "routines", "documentation"];
+const ENABLED_TAB_KEYS: ResourcesTabKey[] = ["drills", "mechanics", "routines"];
 
 export function ResourcesTabsController() {
   const router = useRouter();

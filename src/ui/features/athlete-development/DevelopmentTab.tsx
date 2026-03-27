@@ -335,7 +335,9 @@ export function DevelopmentTab({
 
             <RoutinesPanel
               playerRoutines={data.playerRoutines}
+              universalRoutines={data.universalRoutines}
               universalRoutinesSupported={data.universalRoutinesSupported}
+              activePlanId={data.activePlan?.id}
               disciplineKey={selectedDiscipline.key}
               onOpenRoutine={() => openRoutineDrawer()}
             />
@@ -404,6 +406,7 @@ export function DevelopmentTab({
               mode="create"
               createdBy={createdBy}
               developmentPlanOptions={developmentPlanOptions}
+              disciplineOptions={routineFormConfig.disciplineOptions}
               mechanicOptions={routineFormConfig.mechanicOptions}
               drillOptions={routineFormConfig.drillOptions}
               initialDevelopmentPlanId={initialRoutineDevelopmentPlanId}
@@ -440,3 +443,5 @@ export function DevelopmentTab({
     </>
   );
 }
+
+

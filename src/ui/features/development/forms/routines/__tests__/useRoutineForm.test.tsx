@@ -49,8 +49,10 @@ describe("useRoutineForm", () => {
     const { result } = renderHook(() =>
       useRoutineForm({
         mode: "create",
+        contextType: "development-plan",
         createdBy: "coach-1",
         developmentPlanOptions,
+        disciplineOptions: [],
         mechanicOptions,
         drillOptions,
       })
@@ -75,8 +77,10 @@ describe("useRoutineForm", () => {
     const { result } = renderHook(() =>
       useRoutineForm({
         mode: "create",
+        contextType: "development-plan",
         createdBy: "coach-1",
         developmentPlanOptions,
+        disciplineOptions: [],
         mechanicOptions,
         drillOptions,
         initialDevelopmentPlanId: "plan-1",
@@ -145,8 +149,10 @@ describe("useRoutineForm", () => {
     const { result } = renderHook(() =>
       useRoutineForm({
         mode: "create",
+        contextType: "development-plan",
         createdBy: "coach-1",
         developmentPlanOptions,
+        disciplineOptions: [],
         mechanicOptions,
         drillOptions,
         initialDevelopmentPlanId: "plan-1",
@@ -178,3 +184,5 @@ describe("useRoutineForm", () => {
     });
   });
 });
+
+

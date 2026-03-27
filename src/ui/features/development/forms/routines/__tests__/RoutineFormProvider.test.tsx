@@ -18,6 +18,7 @@ describe("RoutineFormProvider", () => {
   const baseProps = {
     mode: "create" as const,
     createdBy: "coach-1",
+    disciplineOptions: [],
     developmentPlanOptions: [
       {
         id: "plan-1",
@@ -99,3 +100,5 @@ describe("RoutineFormProvider", () => {
     expect(screen.getByText("mechanics:mech-1,mech-2")).toBeTruthy();
   });
 });
+
+

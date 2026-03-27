@@ -1,10 +1,11 @@
 import db from "@/db";
-import { getActiveDevelopmentPlanForPlayerDiscipline } from "@/db/queries/development-plans/getActiveDevelopmentPlanForPlayerDiscipline";
 import { listActiveDisciplines } from "@/db/queries/config/listActiveDisciplines";
-import { getEvaluationById } from "@/db/queries/evaluations/getEvaluationById";
+import { getActiveDevelopmentPlanForPlayerDiscipline } from "@/db/queries/development-plans/getActiveDevelopmentPlanForPlayerDiscipline";
 import { getDevelopmentPlansForPlayer } from "@/db/queries/development-plans/getDevelopmentPlansForPlayers";
+import { getEvaluationById } from "@/db/queries/evaluations/getEvaluationById";
 import { getEvaluationsForPlayer } from "@/db/queries/evaluations/getEvaluationsForPlayer";
 import { getRoutinesForDevelopmentPlan } from "@/db/queries/routines/getRoutinesForDevelopmentPlan";
+import { listUniversalRoutines } from "@/db/queries/routines/listUniversalRoutines";
 
 const MAX_READ_ROWS = 250;
 
@@ -23,6 +24,9 @@ export type DevelopmentPlanRow = Awaited<
 export type RoutineRow = Awaited<
   ReturnType<typeof getRoutinesForDevelopmentPlan>
 >[number];
+export type UniversalRoutineRow = Awaited<
+  ReturnType<typeof listUniversalRoutines>
+>[number];
 
 export type PlayerDevelopmentTabData = {
   selectedDiscipline: DevelopmentDisciplineOption | null;
@@ -32,7 +36,7 @@ export type PlayerDevelopmentTabData = {
   activePlan: DevelopmentPlanRow | null;
   developmentPlanHistory: DevelopmentPlanRow[];
   playerRoutines: RoutineRow[];
-  universalRoutines: RoutineRow[];
+  universalRoutines: UniversalRoutineRow[];
   universalRoutinesSupported: boolean;
   report: {
     linkedEvaluationId: string | null;
@@ -48,7 +52,8 @@ export type PlayerDevelopmentTabData = {
 
 export async function getPlayerDevelopmentTabData(
   playerId: string,
-  disciplineId?: string
+  disciplineId?: string,
+  facilityId?: string
 ): Promise<PlayerDevelopmentTabData> {
   const [evaluationRows, activeDisciplineRows] = await Promise.all([
     getEvaluationsForPlayer(db, { playerId, limit: MAX_READ_ROWS }),
@@ -89,7 +94,7 @@ export async function getPlayerDevelopmentTabData(
       developmentPlanHistory: [],
       playerRoutines: [],
       universalRoutines: [],
-      universalRoutinesSupported: false,
+      universalRoutinesSupported: Boolean(facilityId),
       report: {
         linkedEvaluationId: null,
         canGenerate: false,
@@ -103,7 +108,7 @@ export async function getPlayerDevelopmentTabData(
     };
   }
 
-  const [disciplineEvaluations, disciplinePlanHistory, activePlan] =
+  const [disciplineEvaluations, disciplinePlanHistory, activePlan, universalRoutines] =
     await Promise.all([
       getEvaluationsForPlayer(db, {
         playerId,
@@ -119,6 +124,12 @@ export async function getPlayerDevelopmentTabData(
         playerId,
         disciplineId: selectedDiscipline.id,
       }),
+      facilityId
+        ? listUniversalRoutines({
+            facilityId,
+            disciplineId: selectedDiscipline.id,
+          })
+        : Promise.resolve([]),
     ]);
 
   const [playerRoutines, linkedEvaluation] = await Promise.all([
@@ -140,8 +151,8 @@ export async function getPlayerDevelopmentTabData(
     activePlan,
     developmentPlanHistory: disciplinePlanHistory,
     playerRoutines,
-    universalRoutines: [],
-    universalRoutinesSupported: false,
+    universalRoutines,
+    universalRoutinesSupported: Boolean(facilityId),
     report: {
       linkedEvaluationId: linkedEvaluation?.id ?? null,
       canGenerate: Boolean(activePlan && linkedEvaluation),

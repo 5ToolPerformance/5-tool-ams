@@ -1,1 +1,1 @@
-export type ResourcesTabKey = "drills" | "mechanics" | "documentation";
+export type ResourcesTabKey = "drills" | "mechanics" | "routines" | "documentation";

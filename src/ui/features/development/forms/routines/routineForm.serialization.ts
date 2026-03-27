@@ -44,6 +44,20 @@ export function serializeRoutineFormToDocumentData(
         })),
     }));
 
+  if (context.contextType === "universal") {
+    return {
+      version: 1,
+      visibility: "universal",
+      disciplineId: context.discipline.id,
+      overview: {
+        summary: emptyToUndefined(values.summary),
+        usageNotes: emptyToUndefined(values.usageNotes),
+      },
+      mechanics,
+      blocks,
+    };
+  }
+
   return {
     version: 1,
     visibility: "player",
@@ -63,7 +77,12 @@ export function serializeRoutineFormToPayload(
   context: RoutineCreateContext
 ): RoutineFormSubmitPayload {
   return {
-    developmentPlanId: context.developmentPlan.id,
+    developmentPlanId:
+      context.contextType === "development-plan"
+        ? context.developmentPlan.id
+        : undefined,
+    disciplineId:
+      context.contextType === "universal" ? context.discipline.id : undefined,
     createdBy: context.createdBy,
     title: values.title.trim(),
     description: emptyToNull(values.description),

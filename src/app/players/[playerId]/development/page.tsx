@@ -17,9 +17,9 @@ export default async function DevelopmentPage({
 }: DevelopmentPageProps) {
   const { playerId } = await params;
   const { discipline } = await searchParams;
-  const [data, authContext, evaluationFormConfig] = await Promise.all([
-    getPlayerDevelopmentTabData(playerId, discipline),
-    getAuthContext(),
+  const authContext = await getAuthContext();
+  const [data, evaluationFormConfig] = await Promise.all([
+    getPlayerDevelopmentTabData(playerId, discipline, authContext.facilityId),
     getEvaluationFormConfig(),
   ]);
   const routineFormConfig = data.selectedDiscipline
@@ -36,6 +36,7 @@ export default async function DevelopmentPage({
       })
     : {
         developmentPlanOptions: [],
+        disciplineOptions: [],
         mechanicOptions: [],
         drillOptions: [],
       };

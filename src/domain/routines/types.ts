@@ -3,6 +3,11 @@ export type RoutineDocumentV1 = {
   visibility: "player" | "universal";
   playerId?: string | null;
   disciplineId: string;
+  templateSource?: {
+    type: "universal_routine";
+    universalRoutineId: string;
+    copiedAt: string;
+  };
 
   overview: {
     summary?: string;

@@ -8,6 +8,7 @@ import {
   injury,
   lesson,
   playerInformation,
+  universalRoutines,
   users,
 } from "@/db/schema";
 
@@ -261,6 +262,59 @@ export async function assertCanEditDrill(ctx: AuthContext, drillId: string) {
   }
 
   assertFacilityAccess(ctx, record.creatorFacilityId);
+
+  if (ctx.role === "coach" && record.createdBy !== ctx.userId) {
+    throw new AuthError(403, "Forbidden");
+  }
+}
+
+export async function assertCanReadUniversalRoutine(
+  ctx: AuthContext,
+  routineId: string
+) {
+  const [record] = await db
+    .select({
+      routineId: universalRoutines.id,
+      facilityId: universalRoutines.facilityId,
+    })
+    .from(universalRoutines)
+    .where(eq(universalRoutines.id, routineId))
+    .limit(1);
+
+  if (!record) {
+    throw new AuthError(404, "Resource not found");
+  }
+
+  if (ctx.role === "player") {
+    throw new AuthError(403, "Forbidden");
+  }
+
+  assertFacilityAccess(ctx, record.facilityId);
+}
+
+export async function assertCanEditUniversalRoutine(
+  ctx: AuthContext,
+  routineId: string
+) {
+  const [record] = await db
+    .select({
+      routineId: universalRoutines.id,
+      facilityId: universalRoutines.facilityId,
+      createdBy: universalRoutines.createdBy,
+    })
+    .from(universalRoutines)
+    .where(eq(universalRoutines.id, routineId))
+    .limit(1);
+
+  if (!record) {
+    throw new AuthError(404, "Resource not found");
+  }
+
+  if (ctx.role === "player") {
+    throw new AuthError(403, "Forbidden");
+  }
+
+  assertFacilityAccess(ctx, record.facilityId);
 
   if (ctx.role === "coach" && record.createdBy !== ctx.userId) {
     throw new AuthError(403, "Forbidden");

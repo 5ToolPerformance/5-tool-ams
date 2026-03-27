@@ -1,5 +1,6 @@
 import { listDrillsForLibrary } from "@/application/drills/listDrillsForLibrary";
 import db from "@/db";
+import { listActiveDisciplines } from "@/db/queries/config/listActiveDisciplines";
 import { getDevelopmentPlansForPlayer } from "@/db/queries/development-plans/getDevelopmentPlansForPlayers";
 import { mechanicsRepository } from "@/lib/services/repository/mechanics";
 
@@ -11,6 +12,12 @@ export type RoutineDevelopmentPlanOption = {
   disciplineLabel: string;
   status: "draft" | "active" | "completed" | "archived";
   title: string;
+};
+
+export type RoutineDisciplineOption = {
+  id: string;
+  key: string;
+  label: string;
 };
 
 export type RoutineMechanicOption = {
@@ -37,6 +44,7 @@ export type RoutineDrillOption = {
 
 export type RoutineFormConfig = {
   developmentPlanOptions: RoutineDevelopmentPlanOption[];
+  disciplineOptions: RoutineDisciplineOption[];
   mechanicOptions: RoutineMechanicOption[];
   drillOptions: RoutineDrillOption[];
 };
@@ -67,12 +75,13 @@ export async function getRoutineFormConfig(params: {
     userId: string;
   };
 }): Promise<RoutineFormConfig> {
-  const [developmentPlans, mechanics, drills] = await Promise.all([
+  const [developmentPlans, disciplineOptions, mechanics, drills] = await Promise.all([
     getDevelopmentPlansForPlayer(db, {
       playerId: params.playerId,
       disciplineId: params.disciplineId,
       limit: 50,
     }),
+    listActiveDisciplines(db),
     mechanicsRepository.findAllForLessonForm(),
     listDrillsForLibrary(params.facilityId, params.viewer),
   ]);
@@ -86,6 +95,11 @@ export async function getRoutineFormConfig(params: {
       disciplineLabel: params.disciplineLabel,
       status: plan.status,
       title: summarizePlan(plan),
+    })),
+    disciplineOptions: disciplineOptions.map((discipline) => ({
+      id: discipline.id,
+      key: discipline.key,
+      label: discipline.label,
     })),
     mechanicOptions: mechanics.map((mechanic) => ({
       id: mechanic.id,

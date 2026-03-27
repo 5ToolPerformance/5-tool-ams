@@ -12,11 +12,14 @@ const RoutineFormContext = createContext<RoutineFormContextValue | null>(null);
 
 export function RoutineFormProvider({
   mode,
+  contextType = "development-plan",
   createdBy,
   developmentPlanOptions = [],
+  disciplineOptions = [],
   mechanicOptions = [],
   drillOptions = [],
   initialDevelopmentPlanId,
+  initialDisciplineId,
   isDevelopmentPlanSelectionLocked = false,
   initialRoutine,
   onSaved,
@@ -24,11 +27,14 @@ export function RoutineFormProvider({
 }: RoutineFormProviderProps) {
   const form = useRoutineForm({
     mode,
+    contextType,
     createdBy,
     developmentPlanOptions,
+    disciplineOptions,
     mechanicOptions,
     drillOptions,
     initialDevelopmentPlanId,
+    initialDisciplineId,
     initialRoutine,
     onSaved,
   });
@@ -36,8 +42,11 @@ export function RoutineFormProvider({
   const value = useMemo<RoutineFormContextValue>(
     () => ({
       mode: form.mode,
+      contextType: form.contextType,
       developmentPlanOptions,
+      disciplineOptions,
       selectedDevelopmentPlan: form.selectedDevelopmentPlan,
+      selectedDiscipline: form.selectedDiscipline,
       isDevelopmentPlanSelectionLocked,
       mechanicOptions,
       drillOptions,
@@ -62,6 +71,7 @@ export function RoutineFormProvider({
     }),
     [
       developmentPlanOptions,
+      disciplineOptions,
       drillOptions,
       form,
       isDevelopmentPlanSelectionLocked,

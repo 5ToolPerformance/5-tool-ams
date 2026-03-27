@@ -269,6 +269,7 @@ const baseRoutineFormConfig: RoutineFormConfig = {
       title: "Active plan",
     },
   ],
+  disciplineOptions: [{ id: "disc-1", key: "pitching", label: "Pitching" }],
   mechanicOptions: [],
   drillOptions: [],
 };
@@ -493,6 +494,7 @@ describe("DevelopmentTab", () => {
               title: "Older plan",
             },
           ],
+          disciplineOptions: [{ id: "disc-1", key: "pitching", label: "Pitching" }],
           mechanicOptions: [],
           drillOptions: [],
         }}
@@ -536,6 +538,7 @@ describe("DevelopmentTab", () => {
               title: "Active plan",
             },
           ],
+          disciplineOptions: [{ id: "disc-1", key: "pitching", label: "Pitching" }],
           mechanicOptions: [],
           drillOptions: [],
         }}
@@ -652,3 +655,5 @@ describe("DevelopmentTab", () => {
     );
   });
 });
+
+

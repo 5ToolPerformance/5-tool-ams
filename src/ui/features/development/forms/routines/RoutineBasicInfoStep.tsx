@@ -21,8 +21,11 @@ const ROUTINE_TYPES = [
 export function RoutineBasicInfoStep() {
   const {
     mode,
+    contextType,
     developmentPlanOptions,
+    disciplineOptions,
     selectedDevelopmentPlan,
+    selectedDiscipline,
     isDevelopmentPlanSelectionLocked,
     values,
     errors,
@@ -34,12 +37,14 @@ export function RoutineBasicInfoStep() {
       <CardHeader className="flex flex-col items-start gap-1">
         <h3 className="text-base font-semibold">Basic Information</h3>
         <p className="text-sm text-default-500">
-          Select the plan context and define the routine&apos;s basic identity.
+          {contextType === "universal"
+            ? "Choose a discipline and define the shared routine coaches can reuse across plans."
+            : "Select the plan context and define the routine's basic identity."}
         </p>
       </CardHeader>
 
       <CardBody className="grid grid-cols-1 gap-4 md:grid-cols-2">
-        {mode === "create" ? (
+        {contextType === "development-plan" && mode === "create" ? (
           isDevelopmentPlanSelectionLocked ? (
             <div className="md:col-span-2">
               <Input
@@ -81,14 +86,40 @@ export function RoutineBasicInfoStep() {
           )
         ) : null}
 
-        <Input
-          label="Discipline"
-          labelPlacement="outside"
-          isReadOnly
-          value={
-            selectedDevelopmentPlan?.disciplineLabel ?? "Inherited from plan"
-          }
-        />
+        {contextType === "universal" ? (
+          <div className="md:col-span-2">
+            <Select
+              label="Discipline"
+              labelPlacement="outside"
+              placeholder={
+                disciplineOptions.length > 0
+                  ? "Select a discipline"
+                  : "No disciplines available"
+              }
+              selectedKeys={values.disciplineId ? [values.disciplineId] : []}
+              onSelectionChange={(keys) => {
+                const selected = Array.from(keys)[0];
+                if (typeof selected === "string") {
+                  setFieldValue("disciplineId", selected);
+                }
+              }}
+              isDisabled={mode === "edit" || disciplineOptions.length === 0}
+              isInvalid={!!errors.disciplineId}
+              errorMessage={errors.disciplineId}
+            >
+              {disciplineOptions.map((option) => (
+                <SelectItem key={option.id}>{option.label}</SelectItem>
+              ))}
+            </Select>
+          </div>
+        ) : (
+          <Input
+            label="Discipline"
+            labelPlacement="outside"
+            isReadOnly
+            value={selectedDiscipline?.label ?? "Inherited from plan"}
+          />
+        )}
 
         <Input
           label="Routine Title"

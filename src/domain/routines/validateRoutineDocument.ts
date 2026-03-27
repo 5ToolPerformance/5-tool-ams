@@ -1,7 +1,6 @@
 import { DomainError } from "@/lib/errors";
 
 export type ValidateRoutineInput = {
-  developmentPlanId: string;
   createdBy: string;
   title: string;
   description?: string | null;
@@ -9,19 +8,21 @@ export type ValidateRoutineInput = {
   sortOrder?: number;
   isActive?: boolean;
   documentData?: Record<string, unknown> | null;
+  developmentPlanId?: string;
+  disciplineId?: string;
 };
 
 export function validateRoutineDocument(input: ValidateRoutineInput) {
-  if (!input.developmentPlanId) {
-    throw new DomainError("developmentPlanId is required.");
-  }
-
   if (!input.createdBy) {
     throw new DomainError("createdBy is required.");
   }
 
   if (!input.title?.trim()) {
     throw new DomainError("title is required.");
+  }
+
+  if (!input.developmentPlanId && !input.disciplineId) {
+    throw new DomainError("Either developmentPlanId or disciplineId is required.");
   }
 
   if (

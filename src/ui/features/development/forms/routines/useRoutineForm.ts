@@ -4,6 +4,7 @@ import { useCallback, useMemo, useState } from "react";
 
 import type {
   RoutineDevelopmentPlanOption,
+  RoutineDisciplineOption,
   RoutineDrillOption,
   RoutineMechanicOption,
 } from "@/application/routines/getRoutineFormConfig";
@@ -19,6 +20,7 @@ import {
 import { serializeRoutineFormToPayload } from "./routineForm.serialization";
 import type {
   RoutineCreateContext,
+  RoutineFormContextType,
   RoutineFormErrorMap,
   RoutineFormMode,
   RoutineFormRecord,
@@ -33,11 +35,14 @@ import {
 
 type UseRoutineFormParams = {
   mode: RoutineFormMode;
+  contextType: RoutineFormContextType;
   createdBy: string;
   developmentPlanOptions: RoutineDevelopmentPlanOption[];
+  disciplineOptions: RoutineDisciplineOption[];
   mechanicOptions: RoutineMechanicOption[];
   drillOptions: RoutineDrillOption[];
   initialDevelopmentPlanId?: string;
+  initialDisciplineId?: string;
   initialRoutine?: RoutineFormRecord | null;
   onSaved?: (routineId: string) => void;
 };
@@ -47,7 +52,10 @@ function getInitialValues(params: UseRoutineFormParams): RoutineFormValues {
     return createRoutineFormValuesFromRecord(params.initialRoutine);
   }
 
-  return createEmptyRoutineFormValues(params.initialDevelopmentPlanId);
+  return createEmptyRoutineFormValues(
+    params.initialDevelopmentPlanId,
+    params.initialDisciplineId
+  );
 }
 
 function matchesMechanicDiscipline(
@@ -82,25 +90,45 @@ export function useRoutineForm(params: UseRoutineFormParams) {
     [params.developmentPlanOptions, values.developmentPlanId]
   );
 
+  const selectedDiscipline = useMemo(() => {
+    if (params.contextType === "development-plan") {
+      if (!selectedDevelopmentPlan) {
+        return null;
+      }
+
+      return {
+        id: selectedDevelopmentPlan.disciplineId,
+        key: selectedDevelopmentPlan.disciplineKey,
+        label: selectedDevelopmentPlan.disciplineLabel,
+      };
+    }
+
+    return (
+      params.disciplineOptions.find(
+        (discipline) => discipline.id === values.disciplineId
+      ) ?? null
+    );
+  }, [params.contextType, params.disciplineOptions, selectedDevelopmentPlan, values.disciplineId]);
+
   const availableMechanicOptions = useMemo(() => {
-    if (!selectedDevelopmentPlan) {
+    if (!selectedDiscipline) {
       return [];
     }
 
     return params.mechanicOptions.filter((mechanic) =>
-      matchesMechanicDiscipline(mechanic, selectedDevelopmentPlan.disciplineKey)
+      matchesMechanicDiscipline(mechanic, selectedDiscipline.key)
     );
-  }, [params.mechanicOptions, selectedDevelopmentPlan]);
+  }, [params.mechanicOptions, selectedDiscipline]);
 
   const availableDrillOptions = useMemo(() => {
-    if (!selectedDevelopmentPlan) {
+    if (!selectedDiscipline) {
       return [];
     }
 
     return params.drillOptions.filter((drill) =>
-      matchesDrillDiscipline(drill, selectedDevelopmentPlan.disciplineKey)
+      matchesDrillDiscipline(drill, selectedDiscipline.key)
     );
-  }, [params.drillOptions, selectedDevelopmentPlan]);
+  }, [params.drillOptions, selectedDiscipline]);
 
   const resetForm = useCallback(() => {
     setValues(cloneRoutineFormValues(initialValues));
@@ -115,6 +143,15 @@ export function useRoutineForm(params: UseRoutineFormParams) {
           return {
             ...prev,
             developmentPlanId: value as RoutineFormValues["developmentPlanId"],
+            mechanics: [],
+            blocks: [],
+          };
+        }
+
+        if (key === "disciplineId" && prev.disciplineId !== value) {
+          return {
+            ...prev,
+            disciplineId: value as RoutineFormValues["disciplineId"],
             mechanics: [],
             blocks: [],
           };
@@ -233,19 +270,43 @@ export function useRoutineForm(params: UseRoutineFormParams) {
 
   const buildContext = useCallback((): RoutineCreateContext => {
     if (params.mode === "edit" && params.initialRoutine) {
+      if (params.initialRoutine.contextType === "universal") {
+        return {
+          contextType: "universal",
+          createdBy: params.initialRoutine.createdBy,
+          discipline: {
+            id: params.initialRoutine.disciplineId,
+            key: params.initialRoutine.disciplineKey,
+            label: params.initialRoutine.disciplineLabel,
+          },
+        };
+      }
+
       return {
+        contextType: "development-plan",
         createdBy: params.initialRoutine.createdBy,
         developmentPlan: {
-          id: params.initialRoutine.developmentPlanId,
-          playerId: params.initialRoutine.playerId,
+          id: params.initialRoutine.developmentPlanId ?? "",
+          playerId: params.initialRoutine.playerId ?? "",
           disciplineId: params.initialRoutine.disciplineId,
           disciplineKey: params.initialRoutine.disciplineKey,
-          disciplineLabel:
-            selectedDevelopmentPlan?.disciplineLabel ??
-            params.initialRoutine.disciplineId,
+          disciplineLabel: params.initialRoutine.disciplineLabel,
           status: "active",
-          title: selectedDevelopmentPlan?.title ?? params.initialRoutine.title,
+          title:
+            selectedDevelopmentPlan?.title ?? params.initialRoutine.title,
         },
+      };
+    }
+
+    if (params.contextType === "universal") {
+      if (!selectedDiscipline) {
+        throw new Error("A discipline is required for universal routine creation.");
+      }
+
+      return {
+        contextType: "universal",
+        createdBy: params.createdBy,
+        discipline: selectedDiscipline,
       };
     }
 
@@ -254,10 +315,11 @@ export function useRoutineForm(params: UseRoutineFormParams) {
     }
 
     return {
+      contextType: "development-plan",
       createdBy: params.createdBy,
       developmentPlan: selectedDevelopmentPlan,
     };
-  }, [params, selectedDevelopmentPlan]);
+  }, [params, selectedDevelopmentPlan, selectedDiscipline]);
 
   const handleSubmit = useCallback(
     async (action: RoutineSubmitAction) => {
@@ -265,6 +327,10 @@ export function useRoutineForm(params: UseRoutineFormParams) {
 
       const nextErrors = validateRoutineForm(values, {
         mode: params.mode,
+        contextType:
+          params.mode === "edit" && params.initialRoutine
+            ? params.initialRoutine.contextType
+            : params.contextType,
       });
       setErrors(nextErrors);
 
@@ -281,15 +347,20 @@ export function useRoutineForm(params: UseRoutineFormParams) {
           context
         );
 
+        const baseEndpoint =
+          context.contextType === "universal"
+            ? "/api/universal-routines"
+            : "/api/routines";
+
         let response: Response;
         if (params.mode === "edit" && params.initialRoutine) {
-          response = await fetch(`/api/routines/${params.initialRoutine.id}`, {
+          response = await fetch(`${baseEndpoint}/${params.initialRoutine.id}`, {
             method: "PATCH",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload),
           });
         } else {
-          response = await fetch("/api/routines", {
+          response = await fetch(baseEndpoint, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload),
@@ -320,7 +391,11 @@ export function useRoutineForm(params: UseRoutineFormParams) {
 
   return {
     mode: params.mode,
+    contextType: params.mode === "edit" && params.initialRoutine
+      ? params.initialRoutine.contextType
+      : params.contextType,
     selectedDevelopmentPlan,
+    selectedDiscipline,
     availableMechanicOptions,
     availableDrillOptions,
     values,

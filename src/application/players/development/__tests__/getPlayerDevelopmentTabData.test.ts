@@ -5,6 +5,7 @@ import { getDevelopmentPlansForPlayer } from "@/db/queries/development-plans/get
 import { getEvaluationById } from "@/db/queries/evaluations/getEvaluationById";
 import { getEvaluationsForPlayer } from "@/db/queries/evaluations/getEvaluationsForPlayer";
 import { getRoutinesForDevelopmentPlan } from "@/db/queries/routines/getRoutinesForDevelopmentPlan";
+import { listUniversalRoutines } from "@/db/queries/routines/listUniversalRoutines";
 
 jest.mock("@/db", () => ({
   __esModule: true,
@@ -41,9 +42,14 @@ jest.mock("@/db/queries/routines/getRoutinesForDevelopmentPlan", () => ({
   getRoutinesForDevelopmentPlan: jest.fn(),
 }));
 
+jest.mock("@/db/queries/routines/listUniversalRoutines", () => ({
+  listUniversalRoutines: jest.fn(),
+}));
+
 describe("getPlayerDevelopmentTabData", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    (listUniversalRoutines as jest.Mock).mockResolvedValue([]);
   });
 
   it("defaults to first data-backed discipline and computes latest + history", async () => {
@@ -82,7 +88,11 @@ describe("getPlayerDevelopmentTabData", () => {
       { id: "routine-1", developmentPlanId: "plan-1" },
     ]);
 
-    const result = await getPlayerDevelopmentTabData("player-1");
+    const result = await getPlayerDevelopmentTabData(
+      "player-1",
+      undefined,
+      "facility-1"
+    );
 
     expect(result.selectedDiscipline?.id).toBe("disc-1");
     expect(result.latestEvaluation?.id).toBe("eval-2");
@@ -93,6 +103,10 @@ describe("getPlayerDevelopmentTabData", () => {
       linkedEvaluationId: "eval-2",
       canGenerate: true,
     });
+    expect(result.universalRoutinesSupported).toBe(true);
+    expect(listUniversalRoutines).toHaveBeenCalledWith(
+      { facilityId: "facility-1", disciplineId: "disc-1" }
+    );
   });
 
   it("falls back to first discipline when provided discipline is invalid", async () => {
@@ -132,7 +146,7 @@ describe("getPlayerDevelopmentTabData", () => {
     (getActiveDevelopmentPlanForPlayerDiscipline as jest.Mock).mockResolvedValue(null);
     (getEvaluationById as jest.Mock).mockResolvedValue(null);
 
-    await getPlayerDevelopmentTabData("player-1", "disc-1");
+    await getPlayerDevelopmentTabData("player-1", "disc-1", "facility-1");
 
     expect(getRoutinesForDevelopmentPlan).not.toHaveBeenCalled();
   });
