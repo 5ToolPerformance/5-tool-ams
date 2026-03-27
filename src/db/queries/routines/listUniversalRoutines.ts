@@ -7,6 +7,7 @@ export type ListUniversalRoutinesParams = {
   facilityId: string;
   disciplineId?: string;
   query?: string;
+  includeInactive?: boolean;
 };
 
 export async function listUniversalRoutines(
@@ -42,6 +43,7 @@ export async function listUniversalRoutines(
         params.disciplineId
           ? eq(universalRoutines.disciplineId, params.disciplineId)
           : undefined,
+        params.includeInactive ? undefined : eq(universalRoutines.isActive, true),
         normalizedQuery
           ? or(
               ilike(universalRoutines.title, `%${normalizedQuery}%`),

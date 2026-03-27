@@ -149,21 +149,7 @@ export function RoutineBasicInfoStep() {
           ))}
         </Select>
 
-        <Input
-          type="number"
-          label="Sort Order"
-          labelPlacement="outside"
-          value={String(values.sortOrder)}
-          onValueChange={(value) =>
-            setFieldValue(
-              "sortOrder",
-              Number.isNaN(Number(value)) ? 0 : Number(value)
-            )
-          }
-          min={0}
-        />
-
-        <div className="flex items-end">
+        <div className="flex items-end md:col-span-2">
           <Switch
             isSelected={values.isActive}
             onValueChange={(value) => setFieldValue("isActive", value)}

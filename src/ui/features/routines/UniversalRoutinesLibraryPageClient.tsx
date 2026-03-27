@@ -3,8 +3,18 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 
-import { Button, Card, CardBody, Chip, Input, Tab, Tabs } from "@heroui/react";
+import {
+  Button,
+  Card,
+  CardBody,
+  Chip,
+  Input,
+  Switch,
+  Tab,
+  Tabs,
+} from "@heroui/react";
 import { Search } from "lucide-react";
+import { toast } from "sonner";
 
 import { parseRoutineSummary } from "@/application/players/development/documentDataParsers";
 import type { AppRole } from "@/lib/auth/auth-context";
@@ -43,17 +53,20 @@ export function UniversalRoutinesLibraryPageClient({
   viewerRole,
   viewerUserId,
 }: UniversalRoutinesLibraryPageClientProps) {
+  const [libraryRoutines, setLibraryRoutines] = useState(routines);
   const [query, setQuery] = useState("");
-  const [activeDiscipline, setActiveDiscipline] =
-    useState<string>("all");
+  const [activeDiscipline, setActiveDiscipline] = useState<string>("all");
+  const [showInactive, setShowInactive] = useState(false);
+  const [isHidingId, setIsHidingId] = useState<string | null>(null);
 
   const filtered = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase();
 
-    return routines.filter((routine) => {
+    return libraryRoutines.filter((routine) => {
       const summary = parseRoutineSummary(routine.documentData);
       const matchesDiscipline =
         activeDiscipline === "all" || routine.disciplineId === activeDiscipline;
+      const matchesActivity = showInactive || routine.isActive;
       const matchesQuery =
         normalizedQuery.length === 0 ||
         routine.title.toLowerCase().includes(normalizedQuery) ||
@@ -63,9 +76,44 @@ export function UniversalRoutinesLibraryPageClient({
           mechanic.toLowerCase().includes(normalizedQuery)
         );
 
-      return matchesDiscipline && matchesQuery;
+      return matchesDiscipline && matchesActivity && matchesQuery;
     });
-  }, [activeDiscipline, query, routines]);
+  }, [activeDiscipline, libraryRoutines, query, showInactive]);
+
+  async function hideRoutine(routineId: string) {
+    const confirmed = window.confirm("Hide this universal routine from the active library?");
+    if (!confirmed) {
+      return;
+    }
+
+    setIsHidingId(routineId);
+
+    try {
+      const response = await fetch(`/api/universal-routines/${routineId}`, {
+        method: "DELETE",
+      });
+      const result = (await response.json().catch(() => null)) as
+        | { error?: string }
+        | null;
+
+      if (!response.ok) {
+        throw new Error(result?.error ?? "Failed to hide universal routine.");
+      }
+
+      setLibraryRoutines((current) =>
+        current.map((routine) =>
+          routine.id === routineId ? { ...routine, isActive: false } : routine
+        )
+      );
+      toast.success("Universal routine hidden from the active library.");
+    } catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : "Failed to hide universal routine."
+      );
+    } finally {
+      setIsHidingId(null);
+    }
+  }
 
   return (
     <div className="space-y-6">
@@ -94,12 +142,21 @@ export function UniversalRoutinesLibraryPageClient({
         ))}
       </Tabs>
 
-      <Input
-        placeholder="Search routines by title, summary, or mechanic"
-        startContent={<Search className="h-4 w-4 text-foreground-500" />}
-        value={query}
-        onValueChange={setQuery}
-      />
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <Input
+          placeholder="Search routines by title, summary, or mechanic"
+          startContent={<Search className="h-4 w-4 text-foreground-500" />}
+          value={query}
+          onValueChange={setQuery}
+          className="sm:max-w-md"
+        />
+
+        {viewerRole === "admin" ? (
+          <Switch isSelected={showInactive} onValueChange={setShowInactive}>
+            Show hidden routines
+          </Switch>
+        ) : null}
+      </div>
 
       <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
         {filtered.map((routine) => {
@@ -129,7 +186,7 @@ export function UniversalRoutinesLibraryPageClient({
                     {routine.disciplineLabel}
                   </Chip>
                   <Chip size="sm" variant="bordered">
-                    {routine.isActive ? "Active" : "Inactive"}
+                    {routine.isActive ? "Active" : "Hidden"}
                   </Chip>
                   <Chip size="sm" variant="bordered">
                     Blocks: {summary.blockCount}
@@ -153,7 +210,7 @@ export function UniversalRoutinesLibraryPageClient({
                   </div>
                 ) : null}
 
-                <div className="flex gap-2">
+                <div className="flex flex-wrap gap-2">
                   <Button
                     as={Link}
                     href={`/resources/routines/${routine.id}/edit`}
@@ -162,6 +219,16 @@ export function UniversalRoutinesLibraryPageClient({
                   >
                     Edit Routine
                   </Button>
+                  {viewerRole === "admin" && routine.isActive ? (
+                    <Button
+                      color="danger"
+                      variant="flat"
+                      onPress={() => hideRoutine(routine.id)}
+                      isLoading={isHidingId === routine.id}
+                    >
+                      Hide Routine
+                    </Button>
+                  ) : null}
                 </div>
               </CardBody>
             </Card>

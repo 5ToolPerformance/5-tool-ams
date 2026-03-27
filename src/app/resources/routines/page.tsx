@@ -6,7 +6,10 @@ import { UniversalRoutinesLibraryPageClient } from "@/ui/features/routines/Unive
 export default async function ResourcesRoutinesPage() {
   const ctx = await getAuthContext();
   const [routines, disciplineOptions] = await Promise.all([
-    listUniversalRoutines({ facilityId: ctx.facilityId }),
+    listUniversalRoutines({
+      facilityId: ctx.facilityId,
+      includeInactive: ctx.role === "admin",
+    }),
     listActiveDisciplines(),
   ]);
 

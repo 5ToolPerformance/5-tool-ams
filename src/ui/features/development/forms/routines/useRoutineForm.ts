@@ -73,6 +73,31 @@ function matchesDrillDiscipline(drill: RoutineDrillOption, disciplineKey: string
   return drill.discipline === disciplineKey;
 }
 
+function reorderItems<T extends { sortOrder: number }>(
+  items: T[],
+  fromIndex: number,
+  toIndex: number
+): T[] {
+  if (
+    fromIndex === toIndex ||
+    fromIndex < 0 ||
+    toIndex < 0 ||
+    fromIndex >= items.length ||
+    toIndex >= items.length
+  ) {
+    return items;
+  }
+
+  const next = [...items];
+  const [movedItem] = next.splice(fromIndex, 1);
+  next.splice(toIndex, 0, movedItem);
+
+  return next.map((item, index) => ({
+    ...item,
+    sortOrder: index,
+  }));
+}
+
 export function useRoutineForm(params: UseRoutineFormParams) {
   const initialValues = useMemo(() => getInitialValues(params), [params]);
   const [values, setValues] = useState<RoutineFormValues>(initialValues);
@@ -108,7 +133,12 @@ export function useRoutineForm(params: UseRoutineFormParams) {
         (discipline) => discipline.id === values.disciplineId
       ) ?? null
     );
-  }, [params.contextType, params.disciplineOptions, selectedDevelopmentPlan, values.disciplineId]);
+  }, [
+    params.contextType,
+    params.disciplineOptions,
+    selectedDevelopmentPlan,
+    values.disciplineId,
+  ]);
 
   const availableMechanicOptions = useMemo(() => {
     if (!selectedDiscipline) {
@@ -212,6 +242,13 @@ export function useRoutineForm(params: UseRoutineFormParams) {
     []
   );
 
+  const reorderBlocks = useCallback((fromIndex: number, toIndex: number) => {
+    setValues((prev) => ({
+      ...prev,
+      blocks: reorderItems(prev.blocks, fromIndex, toIndex),
+    }));
+  }, []);
+
   const removeBlock = useCallback((index: number) => {
     setValues((prev) => ({
       ...prev,
@@ -245,6 +282,21 @@ export function useRoutineForm(params: UseRoutineFormParams) {
         const nextDrills = [...block.drills];
         nextDrills[drillIndex] = { ...nextDrills[drillIndex], ...value };
         nextBlocks[blockIndex] = { ...block, drills: nextDrills };
+        return { ...prev, blocks: nextBlocks };
+      });
+    },
+    []
+  );
+
+  const reorderDrillsInBlock = useCallback(
+    (blockIndex: number, fromIndex: number, toIndex: number) => {
+      setValues((prev) => {
+        const nextBlocks = [...prev.blocks];
+        const block = nextBlocks[blockIndex];
+        nextBlocks[blockIndex] = {
+          ...block,
+          drills: reorderItems(block.drills, fromIndex, toIndex),
+        };
         return { ...prev, blocks: nextBlocks };
       });
     },
@@ -292,8 +344,7 @@ export function useRoutineForm(params: UseRoutineFormParams) {
           disciplineKey: params.initialRoutine.disciplineKey,
           disciplineLabel: params.initialRoutine.disciplineLabel,
           status: "active",
-          title:
-            selectedDevelopmentPlan?.title ?? params.initialRoutine.title,
+          title: selectedDevelopmentPlan?.title ?? params.initialRoutine.title,
         },
       };
     }
@@ -391,9 +442,10 @@ export function useRoutineForm(params: UseRoutineFormParams) {
 
   return {
     mode: params.mode,
-    contextType: params.mode === "edit" && params.initialRoutine
-      ? params.initialRoutine.contextType
-      : params.contextType,
+    contextType:
+      params.mode === "edit" && params.initialRoutine
+        ? params.initialRoutine.contextType
+        : params.contextType,
     selectedDevelopmentPlan,
     selectedDiscipline,
     availableMechanicOptions,
@@ -408,9 +460,11 @@ export function useRoutineForm(params: UseRoutineFormParams) {
     removeMechanic,
     addBlock,
     updateBlock,
+    reorderBlocks,
     removeBlock,
     addDrillToBlock,
     updateDrillInBlock,
+    reorderDrillsInBlock,
     removeDrillFromBlock,
     handleSubmit,
     resetForm,

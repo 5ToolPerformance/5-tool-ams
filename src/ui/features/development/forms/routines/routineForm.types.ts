@@ -119,12 +119,18 @@ export type RoutineFormContextValue = {
     index: number,
     value: Partial<Omit<RoutineFormBlock, "drills">>
   ) => void;
+  reorderBlocks: (fromIndex: number, toIndex: number) => void;
   removeBlock: (index: number) => void;
   addDrillToBlock: (blockIndex: number) => void;
   updateDrillInBlock: (
     blockIndex: number,
     drillIndex: number,
     value: Partial<RoutineFormDrill>
+  ) => void;
+  reorderDrillsInBlock: (
+    blockIndex: number,
+    fromIndex: number,
+    toIndex: number
   ) => void;
   removeDrillFromBlock: (blockIndex: number, drillIndex: number) => void;
   handleSubmit: (action: RoutineSubmitAction) => Promise<void>;

@@ -58,3 +58,50 @@ export async function PATCH(
     );
   }
 }
+
+export async function DELETE(
+  _request: NextRequest,
+  { params }: UpdateUniversalRoutineRouteProps
+) {
+  try {
+    const ctx = await getAuthContext();
+    requireRole(ctx, ["admin"]);
+
+    const { routineId } = await params;
+    await assertCanEditUniversalRoutine(ctx, routineId);
+
+    const existingRoutine = await getUniversalRoutineById(db, routineId);
+    const routine = await updateUniversalRoutine(db, routineId, {
+      title: existingRoutine.title,
+      description: existingRoutine.description,
+      routineType: existingRoutine.routineType,
+      disciplineId: existingRoutine.disciplineId,
+      sortOrder: existingRoutine.sortOrder,
+      isActive: false,
+      documentData:
+        existingRoutine.documentData && typeof existingRoutine.documentData === "object"
+          ? (existingRoutine.documentData as Record<string, unknown>)
+          : null,
+      createdBy: ctx.userId,
+    });
+
+    return NextResponse.json(routine);
+  } catch (error) {
+    const authResponse = toAuthErrorResponse(error);
+    if (authResponse) return authResponse;
+
+    if (error instanceof NotFoundError) {
+      return NextResponse.json({ error: error.message }, { status: 404 });
+    }
+
+    if (error instanceof DomainError) {
+      return NextResponse.json({ error: error.message }, { status: 400 });
+    }
+
+    console.error("Error in DELETE /api/universal-routines/[routineId]:", error);
+    return NextResponse.json(
+      { error: "Failed to hide universal routine." },
+      { status: 500 }
+    );
+  }
+}

@@ -33,14 +33,14 @@ export function serializeRoutineFormToDocumentData(
       id: block.id,
       title: block.title.trim(),
       notes: emptyToUndefined(block.notes),
-      sortOrder: block.sortOrder ?? blockIndex,
+      sortOrder: blockIndex,
       drills: block.drills
         .filter((drill) => drill.drillId.trim())
         .map((drill, drillIndex) => ({
           drillId: drill.drillId.trim(),
           title: emptyToUndefined(drill.title),
           notes: emptyToUndefined(drill.notes),
-          sortOrder: drill.sortOrder ?? drillIndex,
+          sortOrder: drillIndex,
         })),
     }));
 

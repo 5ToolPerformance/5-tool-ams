@@ -45,7 +45,10 @@ jest.mock("@/lib/auth/auth-context", () => ({
 }));
 
 const { POST } = require("@/app/api/universal-routines/route");
-const { PATCH } = require("@/app/api/universal-routines/[routineId]/route");
+const {
+  PATCH,
+  DELETE,
+} = require("@/app/api/universal-routines/[routineId]/route");
 
 describe("universal routine routes", () => {
   function createJsonRequest(body: unknown) {
@@ -128,6 +131,33 @@ describe("universal routine routes", () => {
       expect.anything(),
       "routine-1",
       expect.objectContaining({ createdBy: "coach-1" })
+    );
+  });
+
+  it("hides a universal routine successfully for admins", async () => {
+    (getUniversalRoutineById as jest.Mock).mockResolvedValue({
+      id: "routine-1",
+      title: "Routine",
+      description: "desc",
+      disciplineId: "disc-1",
+      routineType: "partial_lesson",
+      sortOrder: 0,
+      documentData: { version: 1 },
+    });
+    (updateUniversalRoutine as jest.Mock).mockResolvedValue({
+      id: "routine-1",
+      isActive: false,
+    });
+
+    const response = await DELETE({} as any, {
+      params: Promise.resolve({ routineId: "routine-1" }),
+    });
+
+    expect(response.status).toBe(200);
+    expect(updateUniversalRoutine).toHaveBeenCalledWith(
+      expect.anything(),
+      "routine-1",
+      expect.objectContaining({ isActive: false })
     );
   });
 
