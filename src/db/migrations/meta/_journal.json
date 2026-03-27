@@ -498,6 +498,13 @@
       "when": 1774532563555,
       "tag": "0070_elite_mindworm",
       "breakpoints": true
+    },
+    {
+      "idx": 71,
+      "version": "7",
+      "when": 1774633653933,
+      "tag": "0071_careful_squirrel_girl",
+      "breakpoints": true
     }
   ]
 }
