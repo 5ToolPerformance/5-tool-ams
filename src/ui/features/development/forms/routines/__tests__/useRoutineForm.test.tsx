@@ -103,11 +103,7 @@ describe("useRoutineForm", () => {
       });
       result.current.addBlock();
       result.current.updateBlock(0, { title: "Block 1" });
-      result.current.addDrillToBlock(0);
-      result.current.updateDrillInBlock(0, 0, {
-        drillId: "drill-1",
-        title: "Stride timing drill",
-      });
+      result.current.addDrillsToBlock(0, ["drill-1"]);
     });
 
     await act(async () => {
@@ -163,23 +159,10 @@ describe("useRoutineForm", () => {
       });
       result.current.addBlock();
       result.current.updateBlock(0, { title: "First block" });
-      result.current.addDrillToBlock(0);
-      result.current.updateDrillInBlock(0, 0, {
-        drillId: "drill-1",
-        title: "Stride timing drill",
-      });
-      result.current.addDrillToBlock(0);
-      result.current.updateDrillInBlock(0, 1, {
-        drillId: "drill-2",
-        title: "Balance drill",
-      });
+      result.current.addDrillsToBlock(0, ["drill-1", "drill-2"]);
       result.current.addBlock();
       result.current.updateBlock(1, { title: "Second block" });
-      result.current.addDrillToBlock(1);
-      result.current.updateDrillInBlock(1, 0, {
-        drillId: "drill-1",
-        title: "Stride timing drill",
-      });
+      result.current.addDrillsToBlock(1, ["drill-1"]);
       result.current.reorderBlocks(1, 0);
       result.current.reorderDrillsInBlock(1, 1, 0);
     });
@@ -191,10 +174,12 @@ describe("useRoutineForm", () => {
     const [, request] = (global.fetch as jest.Mock).mock.calls[0];
     const payload = JSON.parse(request.body as string);
 
-    expect(payload.documentData.blocks.map((block: { title: string; sortOrder: number }) => ({
-      title: block.title,
-      sortOrder: block.sortOrder,
-    }))).toEqual([
+    expect(
+      payload.documentData.blocks.map((block: { title: string; sortOrder: number }) => ({
+        title: block.title,
+        sortOrder: block.sortOrder,
+      }))
+    ).toEqual([
       { title: "Second block", sortOrder: 0 },
       { title: "First block", sortOrder: 1 },
     ]);
@@ -239,11 +224,7 @@ describe("useRoutineForm", () => {
       });
       result.current.addBlock();
       result.current.updateBlock(0, { title: "Block 1" });
-      result.current.addDrillToBlock(0);
-      result.current.updateDrillInBlock(0, 0, {
-        drillId: "drill-1",
-        title: "Stride timing drill",
-      });
+      result.current.addDrillsToBlock(0, ["drill-1"]);
     });
 
     await act(async () => {
@@ -253,5 +234,39 @@ describe("useRoutineForm", () => {
     await waitFor(() => {
       expect(result.current.errors.form).toBe("Routine create failed.");
     });
+  });
+
+  it("adds multiple drills to a block with hydrated titles and stable sort order", () => {
+    const { result } = renderHook(() =>
+      useRoutineForm({
+        mode: "create",
+        contextType: "development-plan",
+        createdBy: "coach-1",
+        developmentPlanOptions,
+        disciplineOptions: [],
+        mechanicOptions,
+        drillOptions,
+        initialDevelopmentPlanId: "plan-1",
+      })
+    );
+
+    act(() => {
+      result.current.addBlock();
+      result.current.addDrillsToBlock(0, ["drill-2", "drill-1"]);
+      result.current.addDrillsToBlock(0, ["drill-1"]);
+    });
+
+    expect(result.current.values.blocks[0].drills.map((drill) => drill.drillId)).toEqual([
+      "drill-2",
+      "drill-1",
+    ]);
+    expect(result.current.values.blocks[0].drills.map((drill) => drill.title)).toEqual([
+      "Balance drill",
+      "Stride timing drill",
+    ]);
+    expect(result.current.values.blocks[0].drills.map((drill) => drill.sortOrder)).toEqual([
+      0,
+      1,
+    ]);
   });
 });

@@ -121,7 +121,7 @@ export type RoutineFormContextValue = {
   ) => void;
   reorderBlocks: (fromIndex: number, toIndex: number) => void;
   removeBlock: (index: number) => void;
-  addDrillToBlock: (blockIndex: number) => void;
+  addDrillsToBlock: (blockIndex: number, drillIds: string[]) => void;
   updateDrillInBlock: (
     blockIndex: number,
     drillIndex: number,

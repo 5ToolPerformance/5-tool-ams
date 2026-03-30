@@ -73,6 +73,10 @@ function matchesDrillDiscipline(drill: RoutineDrillOption, disciplineKey: string
   return drill.discipline === disciplineKey;
 }
 
+function buildDrillMap(drillOptions: RoutineDrillOption[]) {
+  return new Map(drillOptions.map((drill) => [drill.id, drill]));
+}
+
 function reorderItems<T extends { sortOrder: number }>(
   items: T[],
   fromIndex: number,
@@ -159,6 +163,11 @@ export function useRoutineForm(params: UseRoutineFormParams) {
       matchesDrillDiscipline(drill, selectedDiscipline.key)
     );
   }, [params.drillOptions, selectedDiscipline]);
+
+  const availableDrillOptionsById = useMemo(
+    () => buildDrillMap(availableDrillOptions),
+    [availableDrillOptions]
+  );
 
   const resetForm = useCallback(() => {
     setValues(cloneRoutineFormValues(initialValues));
@@ -258,17 +267,47 @@ export function useRoutineForm(params: UseRoutineFormParams) {
     }));
   }, []);
 
-  const addDrillToBlock = useCallback((blockIndex: number) => {
-    setValues((prev) => {
-      const nextBlocks = [...prev.blocks];
-      const block = nextBlocks[blockIndex];
-      nextBlocks[blockIndex] = {
-        ...block,
-        drills: [...block.drills, createEmptyDrill(block.drills.length)],
-      };
-      return { ...prev, blocks: nextBlocks };
-    });
-  }, []);
+  const addDrillsToBlock = useCallback(
+    (blockIndex: number, drillIds: string[]) => {
+      if (drillIds.length === 0) {
+        return;
+      }
+
+      setValues((prev) => {
+        const nextBlocks = [...prev.blocks];
+        const block = nextBlocks[blockIndex];
+
+        if (!block) {
+          return prev;
+        }
+
+        const existingIds = new Set(block.drills.map((drill) => drill.drillId));
+        const drillsToAdd = drillIds
+          .filter((drillId) => !existingIds.has(drillId))
+          .map((drillId, index) => {
+            const option = availableDrillOptionsById.get(drillId);
+
+            return {
+              ...createEmptyDrill(block.drills.length + index),
+              drillId,
+              title: option?.title ?? "",
+            };
+          });
+
+        if (drillsToAdd.length === 0) {
+          return prev;
+        }
+
+        nextBlocks[blockIndex] = {
+          ...block,
+          drills: [...block.drills, ...drillsToAdd],
+        };
+
+        return { ...prev, blocks: nextBlocks };
+      });
+    },
+    [availableDrillOptionsById]
+  );
 
   const updateDrillInBlock = useCallback(
     (
@@ -462,7 +501,7 @@ export function useRoutineForm(params: UseRoutineFormParams) {
     updateBlock,
     reorderBlocks,
     removeBlock,
-    addDrillToBlock,
+    addDrillsToBlock,
     updateDrillInBlock,
     reorderDrillsInBlock,
     removeDrillFromBlock,

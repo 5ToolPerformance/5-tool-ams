@@ -64,7 +64,7 @@ export function RoutineFormProvider({
       updateBlock: form.updateBlock,
       reorderBlocks: form.reorderBlocks,
       removeBlock: form.removeBlock,
-      addDrillToBlock: form.addDrillToBlock,
+      addDrillsToBlock: form.addDrillsToBlock,
       updateDrillInBlock: form.updateDrillInBlock,
       reorderDrillsInBlock: form.reorderDrillsInBlock,
       removeDrillFromBlock: form.removeDrillFromBlock,
