@@ -37,10 +37,23 @@ jest.mock("@/ui/features/attachments/AttachmentViewerProvider", () => ({
   }),
 }));
 
+jest.mock("sonner", () => ({
+  toast: {
+    success: jest.fn(),
+    error: jest.fn(),
+  },
+}));
+
 describe("DevelopmentDocumentModal", () => {
   beforeEach(() => {
     openAttachment.mockReset();
     global.fetch = jest.fn();
+    Object.defineProperty(navigator, "clipboard", {
+      configurable: true,
+      value: {
+        writeText: jest.fn().mockResolvedValue(undefined),
+      },
+    });
   });
 
   it("renders formatted evaluation details and opens attachments", async () => {
@@ -50,12 +63,15 @@ describe("DevelopmentDocumentModal", () => {
         id: "eval-1",
         playerId: "player-1",
         disciplineId: "disc-1",
+        createdBy: "coach-1",
         evaluationDate: "2026-03-18T00:00:00.000Z",
         evaluationType: "monthly",
         phase: "preseason",
+        injuryConsiderations: null,
         snapshotSummary: "Snapshot summary",
         strengthProfileSummary: "Strength summary",
         keyConstraintsSummary: "Constraint summary",
+        documentData: null,
         details: {
           strengths: ["Explosive lower half"],
           focusAreas: [{ title: "Lead leg", description: "Brace earlier" }],
@@ -72,6 +88,10 @@ describe("DevelopmentDocumentModal", () => {
             file: { originalFileName: "evidence.mp4" },
           },
         ],
+        mediaAttachments: [],
+        copyPayload: {
+          id: "eval-1",
+        },
       }),
     });
 
@@ -104,9 +124,11 @@ describe("DevelopmentDocumentModal", () => {
         playerId: "player-1",
         disciplineId: "disc-1",
         evaluationId: "eval-1",
+        createdBy: "coach-1",
         status: "active",
         startDate: "2026-03-18T00:00:00.000Z",
         targetEndDate: "2026-04-18T00:00:00.000Z",
+        documentData: null,
         details: {
           summary: "Plan summary",
           currentPriority: "Get down the mound earlier",
@@ -125,12 +147,15 @@ describe("DevelopmentDocumentModal", () => {
           id: "eval-1",
           playerId: "player-1",
           disciplineId: "disc-1",
+          createdBy: "coach-1",
           evaluationDate: "2026-03-01T00:00:00.000Z",
           evaluationType: "baseline",
           phase: "preseason",
+          injuryConsiderations: null,
           snapshotSummary: "Eval snapshot",
           strengthProfileSummary: "Eval strength",
           keyConstraintsSummary: "Eval constraint",
+          documentData: null,
           details: {
             strengths: [],
             focusAreas: [],
@@ -139,6 +164,13 @@ describe("DevelopmentDocumentModal", () => {
           },
           evidenceForms: [],
           attachments: [],
+          mediaAttachments: [],
+          copyPayload: {
+            id: "eval-1",
+          },
+        },
+        copyPayload: {
+          id: "plan-1",
         },
       }),
     });
@@ -161,5 +193,70 @@ describe("DevelopmentDocumentModal", () => {
     await waitFor(() => {
       expect(global.fetch).toHaveBeenCalledWith("/api/development-plans/plan-1");
     });
+  });
+
+  it("copies json and exposes edit action", async () => {
+    const onEditDocument = jest.fn();
+
+    (global.fetch as jest.Mock).mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        id: "eval-1",
+        playerId: "player-1",
+        disciplineId: "disc-1",
+        createdBy: "coach-1",
+        evaluationDate: "2026-03-18T00:00:00.000Z",
+        evaluationType: "monthly",
+        phase: "preseason",
+        injuryConsiderations: null,
+        snapshotSummary: "Snapshot summary",
+        strengthProfileSummary: "Strength summary",
+        keyConstraintsSummary: "Constraint summary",
+        documentData: null,
+        details: {
+          strengths: [],
+          focusAreas: [],
+          constraints: [],
+          evidence: [],
+        },
+        evidenceForms: [],
+        attachments: [],
+        mediaAttachments: [],
+        copyPayload: {
+          playerId: "player-1",
+          disciplineId: "disc-1",
+        },
+      }),
+    });
+
+    render(
+      <DevelopmentDocumentModal
+        isOpen
+        documentId="eval-1"
+        documentType="evaluation"
+        onEditDocument={onEditDocument}
+        onClose={() => undefined}
+      />
+    );
+
+    expect(await screen.findByText("Evaluation Details")).toBeTruthy();
+    expect(await screen.findByText("Snapshot summary")).toBeTruthy();
+
+    fireEvent.click(screen.getByRole("button", { name: "Copy JSON" }));
+    await waitFor(() => {
+      expect(navigator.clipboard.writeText).toHaveBeenCalledWith(
+        JSON.stringify(
+          {
+            playerId: "player-1",
+            disciplineId: "disc-1",
+          },
+          null,
+          2
+        )
+      );
+    });
+
+    fireEvent.click(screen.getByRole("button", { name: "Edit" }));
+    expect(onEditDocument).toHaveBeenCalledWith("eval-1", "evaluation");
   });
 });

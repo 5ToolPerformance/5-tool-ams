@@ -16,6 +16,7 @@ interface ActivePlanPanelProps {
   disciplineKey?: string;
   onCreatePlanFromLatestEvaluation?: () => void;
   onViewPlan?: (developmentPlanId: string) => void;
+  onEditPlan?: (developmentPlanId: string) => void;
 }
 
 export function ActivePlanPanel({
@@ -24,6 +25,7 @@ export function ActivePlanPanel({
   disciplineKey,
   onCreatePlanFromLatestEvaluation,
   onViewPlan,
+  onEditPlan,
 }: ActivePlanPanelProps) {
   if (!activePlan) {
     return (
@@ -80,13 +82,22 @@ export function ActivePlanPanel({
                 {parsed.shortTermGoalTitles.length === 1 ? "" : "s"}
               </Chip>
             </div>
-            <Button
-              size="sm"
-              variant="flat"
-              onPress={() => onViewPlan?.(activePlan.id)}
-            >
-              View Plan
-            </Button>
+            <div className="flex flex-wrap gap-2">
+              <Button
+                size="sm"
+                variant="flat"
+                onPress={() => onViewPlan?.(activePlan.id)}
+              >
+                View Plan
+              </Button>
+              <Button
+                size="sm"
+                variant="flat"
+                onPress={() => onEditPlan?.(activePlan.id)}
+              >
+                Edit Plan
+              </Button>
+            </div>
           </div>
 
           <div className="grid gap-3 md:grid-cols-2">

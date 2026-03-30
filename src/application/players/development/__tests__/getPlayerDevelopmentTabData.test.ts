@@ -1,6 +1,5 @@
 import { getPlayerDevelopmentTabData } from "@/application/players/development/getPlayerDevelopmentTabData";
 import { listActiveDisciplines } from "@/db/queries/config/listActiveDisciplines";
-import { getActiveDevelopmentPlanForPlayerDiscipline } from "@/db/queries/development-plans/getActiveDevelopmentPlanForPlayerDiscipline";
 import { getDevelopmentPlansForPlayer } from "@/db/queries/development-plans/getDevelopmentPlansForPlayers";
 import { getEvaluationById } from "@/db/queries/evaluations/getEvaluationById";
 import { getEvaluationsForPlayer } from "@/db/queries/evaluations/getEvaluationsForPlayer";
@@ -27,13 +26,6 @@ jest.mock(
   })
 );
 
-jest.mock(
-  "@/db/queries/development-plans/getActiveDevelopmentPlanForPlayerDiscipline",
-  () => ({
-    getActiveDevelopmentPlanForPlayerDiscipline: jest.fn(),
-  })
-);
-
 jest.mock("@/db/queries/config/listActiveDisciplines", () => ({
   listActiveDisciplines: jest.fn(),
 }));
@@ -52,7 +44,7 @@ describe("getPlayerDevelopmentTabData", () => {
     (listUniversalRoutines as jest.Mock).mockResolvedValue([]);
   });
 
-  it("defaults to first data-backed discipline and computes latest + history", async () => {
+  it("defaults to the first data-backed discipline and computes latest evaluation history", async () => {
     (getEvaluationsForPlayer as jest.Mock)
       .mockResolvedValueOnce([
         { id: "eval-1", disciplineId: "disc-1", evaluationDate: new Date("2026-01-05") },
@@ -62,28 +54,28 @@ describe("getPlayerDevelopmentTabData", () => {
         { id: "eval-1", disciplineId: "disc-1", evaluationDate: new Date("2026-01-05") },
       ]);
 
-    (getDevelopmentPlansForPlayer as jest.Mock)
-      .mockResolvedValueOnce([
-        { id: "plan-1", disciplineId: "disc-1", status: "active" },
-      ])
-      .mockResolvedValueOnce([
-        { id: "plan-1", disciplineId: "disc-1", status: "active" },
-      ]);
+    (getDevelopmentPlansForPlayer as jest.Mock).mockResolvedValue([
+      {
+        id: "plan-1",
+        disciplineId: "disc-1",
+        evaluationId: "eval-2",
+        status: "active",
+        startDate: new Date("2026-03-01"),
+        targetEndDate: new Date("2026-04-01"),
+        createdOn: new Date("2026-02-01"),
+      },
+    ]);
 
     (listActiveDisciplines as jest.Mock).mockResolvedValue([
       { id: "disc-1", key: "pitching", label: "Pitching" },
     ]);
-    (getActiveDevelopmentPlanForPlayerDiscipline as jest.Mock).mockResolvedValue({
-      id: "plan-1",
-      disciplineId: "disc-1",
-      evaluationId: "eval-2",
-      status: "active",
-    });
+
     (getEvaluationById as jest.Mock).mockResolvedValue({
       id: "eval-2",
       playerId: "player-1",
       disciplineId: "disc-1",
     });
+
     (getRoutinesForDevelopmentPlan as jest.Mock).mockResolvedValue([
       { id: "routine-1", developmentPlanId: "plan-1" },
     ]);
@@ -97,6 +89,8 @@ describe("getPlayerDevelopmentTabData", () => {
     expect(result.selectedDiscipline?.id).toBe("disc-1");
     expect(result.latestEvaluation?.id).toBe("eval-2");
     expect(result.evaluationHistory.map((row) => row.id)).toEqual(["eval-1"]);
+    expect(result.activePlan?.id).toBe("plan-1");
+    expect(result.developmentPlanHistory).toEqual([]);
     expect(result.flags.hasActivePlan).toBe(true);
     expect(result.flags.hasRoutines).toBe(true);
     expect(result.report).toEqual({
@@ -104,24 +98,23 @@ describe("getPlayerDevelopmentTabData", () => {
       canGenerate: true,
     });
     expect(result.universalRoutinesSupported).toBe(true);
-    expect(listUniversalRoutines).toHaveBeenCalledWith(
-      { facilityId: "facility-1", disciplineId: "disc-1" }
-    );
+    expect(listUniversalRoutines).toHaveBeenCalledWith({
+      facilityId: "facility-1",
+      disciplineId: "disc-1",
+    });
   });
 
-  it("falls back to first discipline when provided discipline is invalid", async () => {
+  it("falls back to the first visible discipline when the requested discipline is invalid", async () => {
     (getEvaluationsForPlayer as jest.Mock)
       .mockResolvedValueOnce([{ id: "eval-1", disciplineId: "disc-1" }])
       .mockResolvedValueOnce([{ id: "eval-1", disciplineId: "disc-1" }]);
 
-    (getDevelopmentPlansForPlayer as jest.Mock)
-      .mockResolvedValueOnce([])
-      .mockResolvedValueOnce([]);
+    (getDevelopmentPlansForPlayer as jest.Mock).mockResolvedValue([]);
 
     (listActiveDisciplines as jest.Mock).mockResolvedValue([
       { id: "disc-1", key: "pitching", label: "Pitching" },
     ]);
-    (getActiveDevelopmentPlanForPlayerDiscipline as jest.Mock).mockResolvedValue(null);
+
     (getEvaluationById as jest.Mock).mockResolvedValue(null);
 
     const result = await getPlayerDevelopmentTabData("player-1", "missing-discipline");
@@ -133,70 +126,158 @@ describe("getPlayerDevelopmentTabData", () => {
     );
   });
 
-  it("does not query routines when there is no active plan", async () => {
+  it("uses an eligible draft plan as the active plan when no eligible active plan exists", async () => {
     (getEvaluationsForPlayer as jest.Mock)
       .mockResolvedValueOnce([{ id: "eval-1", disciplineId: "disc-1" }])
       .mockResolvedValueOnce([{ id: "eval-1", disciplineId: "disc-1" }]);
-    (getDevelopmentPlansForPlayer as jest.Mock)
-      .mockResolvedValueOnce([])
-      .mockResolvedValueOnce([]);
+
+    (getDevelopmentPlansForPlayer as jest.Mock).mockResolvedValue([
+      {
+        id: "plan-draft",
+        disciplineId: "disc-1",
+        evaluationId: "eval-1",
+        status: "draft",
+        startDate: new Date("2099-03-30"),
+        targetEndDate: new Date("2099-04-30"),
+        createdOn: new Date("2026-01-15"),
+      },
+      {
+        id: "plan-completed",
+        disciplineId: "disc-1",
+        evaluationId: "eval-1",
+        status: "completed",
+        startDate: new Date("2025-01-01"),
+        targetEndDate: new Date("2025-02-01"),
+        createdOn: new Date("2025-01-01"),
+      },
+    ]);
+
     (listActiveDisciplines as jest.Mock).mockResolvedValue([
       { id: "disc-1", key: "pitching", label: "Pitching" },
     ]);
-    (getActiveDevelopmentPlanForPlayerDiscipline as jest.Mock).mockResolvedValue(null);
-    (getEvaluationById as jest.Mock).mockResolvedValue(null);
+
+    (getEvaluationById as jest.Mock).mockResolvedValue({ id: "eval-1" });
+    (getRoutinesForDevelopmentPlan as jest.Mock).mockResolvedValue([]);
+
+    const result = await getPlayerDevelopmentTabData("player-1", "disc-1");
+
+    expect(result.activePlan?.id).toBe("plan-draft");
+    expect(result.developmentPlanHistory.map((row) => row.id)).toEqual([
+      "plan-completed",
+    ]);
+    expect(result.flags.hasActivePlan).toBe(true);
+  });
+
+  it("prefers an eligible active plan over an eligible draft plan", async () => {
+    (getEvaluationsForPlayer as jest.Mock)
+      .mockResolvedValueOnce([{ id: "eval-1", disciplineId: "disc-1" }])
+      .mockResolvedValueOnce([{ id: "eval-1", disciplineId: "disc-1" }]);
+
+    (getDevelopmentPlansForPlayer as jest.Mock).mockResolvedValue([
+      {
+        id: "plan-draft",
+        disciplineId: "disc-1",
+        evaluationId: "eval-1",
+        status: "draft",
+        startDate: new Date("2099-05-01"),
+        targetEndDate: new Date("2099-06-01"),
+        createdOn: new Date("2026-02-01"),
+      },
+      {
+        id: "plan-active",
+        disciplineId: "disc-1",
+        evaluationId: "eval-1",
+        status: "active",
+        startDate: new Date("2026-03-01"),
+        targetEndDate: new Date("2026-04-01"),
+        createdOn: new Date("2026-01-01"),
+      },
+    ]);
+
+    (listActiveDisciplines as jest.Mock).mockResolvedValue([
+      { id: "disc-1", key: "pitching", label: "Pitching" },
+    ]);
+
+    (getEvaluationById as jest.Mock).mockResolvedValue({ id: "eval-1" });
+    (getRoutinesForDevelopmentPlan as jest.Mock).mockResolvedValue([]);
+
+    const result = await getPlayerDevelopmentTabData("player-1", "disc-1");
+
+    expect(result.activePlan?.id).toBe("plan-active");
+    expect(result.developmentPlanHistory.map((row) => row.id)).toEqual([
+      "plan-draft",
+    ]);
+  });
+
+  it("does not query routines when there is no eligible active plan", async () => {
+    (getEvaluationsForPlayer as jest.Mock)
+      .mockResolvedValueOnce([{ id: "eval-1", disciplineId: "disc-1" }])
+      .mockResolvedValueOnce([{ id: "eval-1", disciplineId: "disc-1" }]);
+
+    (getDevelopmentPlansForPlayer as jest.Mock).mockResolvedValue([
+      {
+        id: "plan-archived",
+        disciplineId: "disc-1",
+        evaluationId: "eval-1",
+        status: "archived",
+        startDate: new Date("2025-01-01"),
+        targetEndDate: new Date("2025-02-01"),
+        createdOn: new Date("2025-01-01"),
+      },
+      {
+        id: "plan-old-draft",
+        disciplineId: "disc-1",
+        evaluationId: "eval-1",
+        status: "draft",
+        startDate: new Date("2024-01-01"),
+        targetEndDate: new Date("2024-02-01"),
+        createdOn: new Date("2024-01-01"),
+      },
+    ]);
+
+    (listActiveDisciplines as jest.Mock).mockResolvedValue([
+      { id: "disc-1", key: "pitching", label: "Pitching" },
+    ]);
 
     await getPlayerDevelopmentTabData("player-1", "disc-1", "facility-1");
 
     expect(getRoutinesForDevelopmentPlan).not.toHaveBeenCalled();
+    expect(getEvaluationById).not.toHaveBeenCalled();
   });
 
   it("disables report generation when the linked evaluation cannot be loaded", async () => {
     (getEvaluationsForPlayer as jest.Mock)
       .mockResolvedValueOnce([{ id: "eval-1", disciplineId: "disc-1" }])
       .mockResolvedValueOnce([{ id: "eval-1", disciplineId: "disc-1" }]);
-    (getDevelopmentPlansForPlayer as jest.Mock)
-      .mockResolvedValueOnce([{ id: "plan-1", disciplineId: "disc-1" }])
-      .mockResolvedValueOnce([{ id: "plan-1", disciplineId: "disc-1" }]);
-    (listActiveDisciplines as jest.Mock).mockResolvedValue([
-      { id: "disc-1", key: "pitching", label: "Pitching" },
+
+    (getDevelopmentPlansForPlayer as jest.Mock).mockResolvedValue([
+      {
+        id: "plan-1",
+        disciplineId: "disc-1",
+        evaluationId: "missing-eval",
+        status: "active",
+        startDate: new Date("2026-03-01"),
+        targetEndDate: new Date("2026-04-01"),
+        createdOn: new Date("2026-01-01"),
+      },
     ]);
-    (getActiveDevelopmentPlanForPlayerDiscipline as jest.Mock).mockResolvedValue({
-      id: "plan-1",
-      disciplineId: "disc-1",
-      evaluationId: "missing-eval",
-      status: "active",
-    });
-    (getEvaluationById as jest.Mock).mockRejectedValue(new Error("missing"));
-    (getRoutinesForDevelopmentPlan as jest.Mock).mockResolvedValue([]);
 
-    const result = await getPlayerDevelopmentTabData("player-1", "disc-1");
-
-    expect(result.report).toEqual({
-      linkedEvaluationId: null,
-      canGenerate: false,
-    });
-  });
-
-  it("filters tabs to evaluated disciplines and falls back when a hidden discipline is requested", async () => {
-    (getEvaluationsForPlayer as jest.Mock)
-      .mockResolvedValueOnce([{ id: "eval-1", disciplineId: "disc-1" }])
-      .mockResolvedValueOnce([{ id: "eval-1", disciplineId: "disc-1" }]);
-    (getDevelopmentPlansForPlayer as jest.Mock)
-      .mockResolvedValueOnce([])
-      .mockResolvedValueOnce([]);
     (listActiveDisciplines as jest.Mock).mockResolvedValue([
       { id: "disc-1", key: "pitching", label: "Pitching" },
       { id: "disc-2", key: "hitting", label: "Hitting" },
     ]);
-    (getActiveDevelopmentPlanForPlayerDiscipline as jest.Mock).mockResolvedValue(null);
-    (getEvaluationById as jest.Mock).mockResolvedValue(null);
+
+    (getEvaluationById as jest.Mock).mockRejectedValue(new Error("missing"));
+    (getRoutinesForDevelopmentPlan as jest.Mock).mockResolvedValue([]);
 
     const result = await getPlayerDevelopmentTabData("player-1", "disc-2");
 
     expect(result.disciplineOptions.map((row) => row.id)).toEqual(["disc-1"]);
     expect(result.selectedDiscipline?.id).toBe("disc-1");
-    expect(result.latestEvaluation?.id).toBe("eval-1");
+    expect(result.report).toEqual({
+      linkedEvaluationId: null,
+      canGenerate: false,
+    });
     expect(result.flags.hasAnyDisciplineData).toBe(true);
     expect(result.flags.hasEvaluations).toBe(true);
   });

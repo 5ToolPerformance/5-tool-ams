@@ -1,37 +1,49 @@
 "use client";
 
-import { Button } from "@heroui/react";
+import {
+  Button,
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownTrigger,
+} from "@heroui/react";
 
-type DevelopmentAction = "evaluation" | "plan" | "routine" | "report";
+type DevelopmentAction = "evaluation" | "plan" | "routine" | "export";
 
 const ACTION_LABELS: Record<DevelopmentAction, string> = {
   evaluation: "New Evaluation",
   plan: "New Development Plan",
   routine: "New Routine",
-  report: "Generate PDF Report",
+  export: "Export",
 };
 
 interface DevelopmentActionButtonsProps {
   primaryAction?: DevelopmentAction;
   canCreatePlan: boolean;
   canCreateRoutine: boolean;
-  canGenerateReport?: boolean;
+  canExportPdf?: boolean;
+  canCopyRawJson?: boolean;
   onOpenEvaluation: () => void;
   onOpenPlan: () => void;
   onOpenRoutine: () => void;
-  onOpenReport?: () => void;
+  onExportPdf?: () => void;
+  onCopyRawJson?: () => void;
 }
 
 export function DevelopmentActionButtons({
   primaryAction = "evaluation",
   canCreatePlan,
   canCreateRoutine,
-  canGenerateReport = false,
+  canExportPdf = false,
+  canCopyRawJson = false,
   onOpenEvaluation,
   onOpenPlan,
   onOpenRoutine,
-  onOpenReport,
+  onExportPdf,
+  onCopyRawJson,
 }: DevelopmentActionButtonsProps) {
+  const canExport = canExportPdf || canCopyRawJson;
+
   return (
     <div
       aria-label="Development tab actions"
@@ -67,16 +79,35 @@ export function DevelopmentActionButtons({
       >
         {ACTION_LABELS.routine}
       </Button>
-      {canGenerateReport ? (
-        <Button
-          size="sm"
-          color={primaryAction === "report" ? "primary" : "default"}
-          disableRipple
-          variant={primaryAction === "report" ? "solid" : "flat"}
-          onPress={onOpenReport}
-        >
-          {ACTION_LABELS.report}
-        </Button>
+      {canExport ? (
+        <Dropdown>
+          <DropdownTrigger>
+            <Button
+              size="sm"
+              color={primaryAction === "export" ? "primary" : "default"}
+              disableRipple
+              variant={primaryAction === "export" ? "solid" : "flat"}
+            >
+              {ACTION_LABELS.export}
+            </Button>
+          </DropdownTrigger>
+          <DropdownMenu aria-label="Export options">
+            <DropdownItem
+              key="pdf"
+              isDisabled={!canExportPdf}
+              onPress={onExportPdf}
+            >
+              Generate PDF
+            </DropdownItem>
+            <DropdownItem
+              key="raw-json"
+              isDisabled={!canCopyRawJson}
+              onPress={onCopyRawJson}
+            >
+              Copy Raw JSON
+            </DropdownItem>
+          </DropdownMenu>
+        </Dropdown>
       ) : null}
     </div>
   );

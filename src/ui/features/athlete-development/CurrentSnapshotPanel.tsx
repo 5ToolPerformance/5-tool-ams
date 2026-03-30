@@ -11,12 +11,14 @@ interface CurrentSnapshotPanelProps {
   latestEvaluation: EvaluationRow | null;
   disciplineKey?: string;
   onViewEvaluation?: (evaluationId: string) => void;
+  onEditEvaluation?: (evaluationId: string) => void;
 }
 
 export function CurrentSnapshotPanel({
   latestEvaluation,
   disciplineKey,
   onViewEvaluation,
+  onEditEvaluation,
 }: CurrentSnapshotPanelProps) {
   if (!latestEvaluation) {
     return (
@@ -66,13 +68,22 @@ export function CurrentSnapshotPanel({
                 {evidenceCount} supporting item{evidenceCount === 1 ? "" : "s"}
               </Chip>
             </div>
-            <Button
-              size="sm"
-              variant="flat"
-              onPress={() => onViewEvaluation?.(latestEvaluation.id)}
-            >
-              View Evaluation
-            </Button>
+            <div className="flex flex-wrap gap-2">
+              <Button
+                size="sm"
+                variant="flat"
+                onPress={() => onViewEvaluation?.(latestEvaluation.id)}
+              >
+                View Evaluation
+              </Button>
+              <Button
+                size="sm"
+                variant="flat"
+                onPress={() => onEditEvaluation?.(latestEvaluation.id)}
+              >
+                Edit Evaluation
+              </Button>
+            </div>
           </div>
 
           <div className="grid gap-3 md:grid-cols-3">

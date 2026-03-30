@@ -17,6 +17,8 @@ interface DevelopmentHistoryPanelProps {
   onCreatePlanFromEvaluation?: (evaluationId: string) => void;
   onViewEvaluation?: (evaluationId: string) => void;
   onViewPlan?: (developmentPlanId: string) => void;
+  onEditEvaluation?: (evaluationId: string) => void;
+  onEditPlan?: (developmentPlanId: string) => void;
 }
 
 export function DevelopmentHistoryPanel({
@@ -26,6 +28,8 @@ export function DevelopmentHistoryPanel({
   onCreatePlanFromEvaluation,
   onViewEvaluation,
   onViewPlan,
+  onEditEvaluation,
+  onEditPlan,
 }: DevelopmentHistoryPanelProps) {
   const accentClass = getDisciplineAccentClass(disciplineKey);
   const hasHistory =
@@ -68,13 +72,22 @@ export function DevelopmentHistoryPanel({
                           {evaluation.phase}
                         </Chip>
                       </div>
-                      <Button
-                        size="sm"
-                        variant="flat"
-                        onPress={() => onViewEvaluation?.(evaluation.id)}
-                      >
-                        View
-                      </Button>
+                      <div className="flex flex-wrap gap-2">
+                        <Button
+                          size="sm"
+                          variant="flat"
+                          onPress={() => onViewEvaluation?.(evaluation.id)}
+                        >
+                          View
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="flat"
+                          onPress={() => onEditEvaluation?.(evaluation.id)}
+                        >
+                          Edit
+                        </Button>
+                      </div>
                     </div>
 
                     <div className="grid gap-3 md:grid-cols-2">
@@ -149,13 +162,22 @@ export function DevelopmentHistoryPanel({
                             End: {formatDate(plan.targetEndDate)}
                           </Chip>
                         </div>
-                        <Button
-                          size="sm"
-                          variant="flat"
-                          onPress={() => onViewPlan?.(plan.id)}
-                        >
-                          View
-                        </Button>
+                        <div className="flex flex-wrap gap-2">
+                          <Button
+                            size="sm"
+                            variant="flat"
+                            onPress={() => onViewPlan?.(plan.id)}
+                          >
+                            View
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="flat"
+                            onPress={() => onEditPlan?.(plan.id)}
+                          >
+                            Edit
+                          </Button>
+                        </div>
                       </div>
 
                       <div className="grid gap-3 md:grid-cols-2">

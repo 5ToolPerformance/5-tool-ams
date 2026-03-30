@@ -12,11 +12,13 @@ import {
   ModalHeader,
   Spinner,
 } from "@heroui/react";
+import { toast } from "sonner";
 
 import type {
   DevelopmentPlanDetailData,
   EvaluationDetailData,
 } from "@/application/players/development/getDevelopmentDocumentDetails";
+import { copyTextToClipboard } from "@/lib/clipboard";
 import FormattedText from "@/components/ui/formattedText";
 import { useAttachmentViewer } from "@/ui/features/attachments/AttachmentViewerProvider";
 
@@ -29,6 +31,10 @@ type DevelopmentDocumentModalProps = {
   documentId: string | null;
   documentType: DevelopmentDocumentType | null;
   onClose: () => void;
+  onEditDocument?: (
+    documentId: string,
+    documentType: DevelopmentDocumentType
+  ) => void;
 };
 
 type DocumentDetailResponse = EvaluationDetailData | DevelopmentPlanDetailData;
@@ -464,6 +470,7 @@ export function DevelopmentDocumentModal({
   documentId,
   documentType,
   onClose,
+  onEditDocument,
 }: DevelopmentDocumentModalProps) {
   const [data, setData] = useState<DocumentDetailResponse | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -535,6 +542,25 @@ export function DevelopmentDocumentModal({
     return "Document";
   }, [documentType]);
 
+  async function handleCopyJson() {
+    if (!data) {
+      return;
+    }
+
+    try {
+      const payload =
+        data.copyPayload && typeof data.copyPayload === "object"
+          ? data.copyPayload
+          : data;
+
+      await copyTextToClipboard(JSON.stringify(payload, null, 2));
+      toast.success(`${title} JSON copied.`);
+    } catch (error) {
+      console.error(error);
+      toast.error(`Unable to copy ${title.toLowerCase()} JSON.`);
+    }
+  }
+
   return (
     <Modal isOpen={isOpen} onOpenChange={onClose} placement="center" size="5xl">
       <ModalContent>
@@ -548,9 +574,31 @@ export function DevelopmentDocumentModal({
                     Full formatted content, evidence, and attachments.
                   </p>
                 </div>
-                <Button size="sm" variant="flat" onPress={onClose}>
-                  Close
-                </Button>
+                <div className="flex flex-wrap gap-2">
+                  <Button
+                    size="sm"
+                    variant="flat"
+                    onPress={() =>
+                      documentId && documentType
+                        ? onEditDocument?.(documentId, documentType)
+                        : undefined
+                    }
+                    isDisabled={!documentId || !documentType}
+                  >
+                    Edit
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="flat"
+                    onPress={handleCopyJson}
+                    isDisabled={!data}
+                  >
+                    Copy JSON
+                  </Button>
+                  <Button size="sm" variant="flat" onPress={onClose}>
+                    Close
+                  </Button>
+                </div>
               </div>
               <Divider />
             </ModalHeader>

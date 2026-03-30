@@ -8,8 +8,8 @@ import {
   within,
 } from "@testing-library/react";
 
-import { DevelopmentTab } from "@/ui/features/athlete-development/DevelopmentTab";
 import type { RoutineFormConfig } from "@/application/routines/getRoutineFormConfig";
+import { DevelopmentTab } from "@/ui/features/athlete-development/DevelopmentTab";
 
 const refresh = jest.fn();
 const push = jest.fn();
@@ -49,12 +49,20 @@ jest.mock(
   () => ({
     EvaluationFormProvider: ({
       children,
+      mode,
+      initialEvaluation,
       onSavedAndContinue,
     }: {
       children: ReactNode;
+      mode?: string;
+      initialEvaluation?: { id?: string } | null;
       onSavedAndContinue?: (evaluationId: string) => void;
     }) => (
       <div>
+        <div aria-label="evaluation-provider-meta">
+          <span>{`mode:${mode ?? ""}`}</span>
+          <span>{`initial-evaluation:${initialEvaluation?.id ?? ""}`}</span>
+        </div>
         {children}
         <button onClick={() => onSavedAndContinue?.("eval-from-save")} type="button">
           Trigger evaluation continue
@@ -80,20 +88,26 @@ jest.mock(
   () => ({
     DevelopmentPlanFormProvider: ({
       children,
+      mode,
       evaluationOptions,
       initialEvaluationId,
       isEvaluationSelectionLocked,
+      initialDevelopmentPlan,
       onSavedAndContinue,
     }: {
       children: ReactNode;
+      mode?: string;
       evaluationOptions?: Array<{ id: string }>;
       initialEvaluationId?: string;
       isEvaluationSelectionLocked?: boolean;
+      initialDevelopmentPlan?: { id?: string } | null;
       onSavedAndContinue?: (developmentPlanId: string) => void;
     }) => (
       <div>
         <div aria-label="development-plan-provider-meta">
+          <span>{`mode:${mode ?? ""}`}</span>
           <span>{`initial:${initialEvaluationId ?? ""}`}</span>
+          <span>{`initial-plan:${initialDevelopmentPlan?.id ?? ""}`}</span>
           <span>{`count:${evaluationOptions?.length ?? 0}`}</span>
           <span>{`locked:${String(Boolean(isEvaluationSelectionLocked))}`}</span>
         </div>
@@ -184,7 +198,10 @@ jest.mock(
       isOpen ? (
         <div aria-label="report-options-modal" role="dialog">
           <div>{`routine-options:${routines.length}`}</div>
-          <button onClick={() => onPreview({ includeEvidence: false, routineIds: [] })} type="button">
+          <button
+            onClick={() => onPreview({ includeEvidence: false, routineIds: [] })}
+            type="button"
+          >
             Preview report without routines
           </button>
           <button
@@ -205,6 +222,221 @@ jest.mock(
       ) : null,
   })
 );
+
+jest.mock("@/ui/features/athlete-development/DevelopmentDocumentModal", () => ({
+  DevelopmentDocumentModal: ({
+    isOpen,
+    documentId,
+    documentType,
+    onEditDocument,
+    onClose,
+  }: {
+    isOpen: boolean;
+    documentId: string | null;
+    documentType: "evaluation" | "development-plan" | null;
+    onEditDocument?: (
+      documentId: string,
+      documentType: "evaluation" | "development-plan"
+    ) => void;
+    onClose: () => void;
+  }) =>
+    isOpen ? (
+      <div aria-label="development-document-modal" role="dialog">
+        <div>{`document:${documentType ?? ""}:${documentId ?? ""}`}</div>
+        <button
+          onClick={() =>
+            documentId && documentType ? onEditDocument?.(documentId, documentType) : undefined
+          }
+          type="button"
+        >
+          Modal Edit
+        </button>
+        <button onClick={onClose} type="button">
+          Close document modal
+        </button>
+      </div>
+    ) : null,
+}));
+
+jest.mock("@/ui/features/athlete-development/CurrentSnapshotPanel", () => ({
+  CurrentSnapshotPanel: ({
+    latestEvaluation,
+    onViewEvaluation,
+    onEditEvaluation,
+  }: {
+    latestEvaluation: { id: string } | null;
+    onViewEvaluation?: (evaluationId: string) => void;
+    onEditEvaluation?: (evaluationId: string) => void;
+  }) => (
+    <section>
+      <h3>Current Snapshot</h3>
+      {latestEvaluation ? (
+        <div>
+          <button onClick={() => onViewEvaluation?.(latestEvaluation.id)} type="button">
+            View Evaluation
+          </button>
+          <button onClick={() => onEditEvaluation?.(latestEvaluation.id)} type="button">
+            Edit Evaluation
+          </button>
+        </div>
+      ) : (
+        <p>No evaluation exists yet for this discipline.</p>
+      )}
+    </section>
+  ),
+}));
+
+jest.mock("@/ui/features/athlete-development/ActivePlanPanel", () => ({
+  ActivePlanPanel: ({
+    activePlan,
+    latestEvaluation,
+    onCreatePlanFromLatestEvaluation,
+    onViewPlan,
+    onEditPlan,
+  }: {
+    activePlan: { id: string } | null;
+    latestEvaluation: { id: string } | null;
+    onCreatePlanFromLatestEvaluation?: () => void;
+    onViewPlan?: (developmentPlanId: string) => void;
+    onEditPlan?: (developmentPlanId: string) => void;
+  }) => (
+    <section>
+      <h3>Active Plan</h3>
+      {activePlan ? (
+        <div>
+          <button onClick={() => onViewPlan?.(activePlan.id)} type="button">
+            View Plan
+          </button>
+          <button onClick={() => onEditPlan?.(activePlan.id)} type="button">
+            Edit Plan
+          </button>
+        </div>
+      ) : latestEvaluation ? (
+        <button onClick={onCreatePlanFromLatestEvaluation} type="button">
+          Create Plan from Latest Evaluation
+        </button>
+      ) : (
+        <p>No active development plan exists for this discipline.</p>
+      )}
+    </section>
+  ),
+}));
+
+jest.mock("@/ui/features/athlete-development/DevelopmentHistoryPanel", () => ({
+  DevelopmentHistoryPanel: ({
+    evaluationHistory,
+    developmentPlanHistory,
+    onCreatePlanFromEvaluation,
+    onViewEvaluation,
+    onViewPlan,
+    onEditEvaluation,
+    onEditPlan,
+  }: {
+    evaluationHistory: Array<{ id: string }>;
+    developmentPlanHistory: Array<{ id: string }>;
+    onCreatePlanFromEvaluation?: (evaluationId: string) => void;
+    onViewEvaluation?: (evaluationId: string) => void;
+    onViewPlan?: (developmentPlanId: string) => void;
+    onEditEvaluation?: (evaluationId: string) => void;
+    onEditPlan?: (developmentPlanId: string) => void;
+  }) => (
+    <section>
+      <h3>History</h3>
+      {evaluationHistory.length === 0 && developmentPlanHistory.length === 0 ? (
+        <p>No evaluation or development plan history exists yet.</p>
+      ) : (
+        <div>
+          {evaluationHistory.map((evaluation) => (
+            <div key={evaluation.id}>
+              <span>{`evaluation:${evaluation.id}`}</span>
+              <button onClick={() => onViewEvaluation?.(evaluation.id)} type="button">
+                View Evaluation History
+              </button>
+              <button onClick={() => onEditEvaluation?.(evaluation.id)} type="button">
+                Edit Evaluation History
+              </button>
+              <button
+                onClick={() => onCreatePlanFromEvaluation?.(evaluation.id)}
+                type="button"
+              >
+                Create Plan from History
+              </button>
+            </div>
+          ))}
+          {developmentPlanHistory.map((plan) => (
+            <div key={plan.id}>
+              <span>{`plan:${plan.id}`}</span>
+              <button onClick={() => onViewPlan?.(plan.id)} type="button">
+                View Plan History
+              </button>
+              <button onClick={() => onEditPlan?.(plan.id)} type="button">
+                Edit Plan History
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+    </section>
+  ),
+}));
+
+jest.mock("@/ui/features/athlete-development/DevelopmentActionButtons", () => ({
+  DevelopmentActionButtons: ({
+    canCreatePlan,
+    canCreateRoutine,
+    canExportPdf,
+    canCopyRawJson,
+    onOpenEvaluation,
+    onOpenPlan,
+    onOpenRoutine,
+    onExportPdf,
+    onCopyRawJson,
+  }: {
+    canCreatePlan: boolean;
+    canCreateRoutine: boolean;
+    canExportPdf?: boolean;
+    canCopyRawJson?: boolean;
+    onOpenEvaluation: () => void;
+    onOpenPlan: () => void;
+    onOpenRoutine: () => void;
+    onExportPdf?: () => void;
+    onCopyRawJson?: () => void;
+  }) => (
+    <div aria-label="Development tab actions" role="group">
+      <button onClick={onOpenEvaluation} type="button">
+        New Evaluation
+      </button>
+      <button disabled={!canCreatePlan} onClick={onOpenPlan} type="button">
+        New Development Plan
+      </button>
+      <button disabled={!canCreateRoutine} onClick={onOpenRoutine} type="button">
+        New Routine
+      </button>
+      {canExportPdf || canCopyRawJson ? (
+        <>
+          <button type="button">Export</button>
+          {canExportPdf ? (
+            <button onClick={onExportPdf} type="button">
+              Generate PDF
+            </button>
+          ) : null}
+          {canCopyRawJson ? (
+            <button onClick={onCopyRawJson} type="button">
+              Copy Raw JSON
+            </button>
+          ) : null}
+        </>
+      ) : null}
+    </div>
+  ),
+}));
+
+jest.mock("sonner", () => ({
+  toast: {
+    success: jest.fn(),
+    error: jest.fn(),
+  },
+}));
 
 const baseData = {
   selectedDiscipline: { id: "disc-1", key: "pitching", label: "Pitching" },
@@ -279,6 +511,13 @@ describe("DevelopmentTab", () => {
     refresh.mockReset();
     push.mockReset();
     open.mockReset();
+    global.fetch = jest.fn();
+    Object.defineProperty(navigator, "clipboard", {
+      configurable: true,
+      value: {
+        writeText: jest.fn().mockResolvedValue(undefined),
+      },
+    });
     Object.defineProperty(window, "open", {
       configurable: true,
       value: open,
@@ -335,7 +574,7 @@ describe("DevelopmentTab", () => {
     ).toBe(false);
     expect(
       within(actionGroup).getByRole("button", {
-        name: "Generate PDF Report",
+        name: "Export",
       })
     ).toBeTruthy();
   });
@@ -587,7 +826,7 @@ describe("DevelopmentTab", () => {
     expect(refresh).toHaveBeenCalled();
   });
 
-  it("hides the report action when the active-plan evaluation cannot be resolved", () => {
+  it("keeps raw-json export available when PDF export is unavailable", () => {
     render(
       <DevelopmentTab
         playerId="player-1"
@@ -611,11 +850,17 @@ describe("DevelopmentTab", () => {
       name: "Development tab actions",
     });
 
+    expect(within(actionGroup).getByRole("button", { name: "Export" })).toBeTruthy();
     expect(
       within(actionGroup).queryByRole("button", {
-        name: "Generate PDF Report",
+        name: "Generate PDF",
       })
     ).toBeNull();
+    expect(
+      within(actionGroup).getByRole("button", {
+        name: "Copy Raw JSON",
+      })
+    ).toBeTruthy();
   });
 
   it("opens the report options flow and opens the printable preview in a new tab", async () => {
@@ -641,7 +886,7 @@ describe("DevelopmentTab", () => {
       />
     );
 
-    fireEvent.click(screen.getByRole("button", { name: "Generate PDF Report" }));
+    fireEvent.click(screen.getByRole("button", { name: "Generate PDF" }));
 
     expect(await screen.findByRole("dialog", { name: "report-options-modal" })).toBeTruthy();
     expect(screen.getByText("routine-options:1")).toBeTruthy();
@@ -654,6 +899,220 @@ describe("DevelopmentTab", () => {
       "noopener,noreferrer"
     );
   });
+
+  it("copies the active evaluation and active plan raw json from export actions", async () => {
+    (global.fetch as jest.Mock)
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          id: "eval-1",
+          copyPayload: {
+            playerId: "player-1",
+            disciplineId: "disc-1",
+          },
+        }),
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          id: "plan-1",
+          copyPayload: {
+            playerId: "player-1",
+            evaluationId: "eval-1",
+          },
+        }),
+      });
+
+    render(
+      <DevelopmentTab
+        playerId="player-1"
+        createdBy="coach-1"
+        data={baseData}
+        evaluationDisciplineOptions={[
+          { id: "disc-1", key: "pitching", label: "Pitching" },
+        ]}
+        evaluationBucketOptions={[]}
+        routineFormConfig={baseRoutineFormConfig}
+      />
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "Copy Raw JSON" }));
+
+    await waitFor(() => {
+      expect(global.fetch).toHaveBeenNthCalledWith(1, "/api/evaluations/eval-1");
+      expect(global.fetch).toHaveBeenNthCalledWith(
+        2,
+        "/api/development-plans/plan-1"
+      );
+    });
+
+    await waitFor(() => {
+      expect(navigator.clipboard.writeText).toHaveBeenCalledWith(
+        JSON.stringify(
+          {
+            evaluation: {
+              playerId: "player-1",
+              disciplineId: "disc-1",
+            },
+            developmentPlan: {
+              playerId: "player-1",
+              evaluationId: "eval-1",
+            },
+          },
+          null,
+          2
+        )
+      );
+    });
+  });
+
+  it("opens the evaluation edit drawer from the current snapshot card", async () => {
+    (global.fetch as jest.Mock).mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        id: "eval-1",
+        playerId: "player-1",
+        disciplineId: "disc-1",
+        createdBy: "coach-1",
+        evaluationDate: new Date("2026-01-01").toISOString(),
+        evaluationType: "monthly",
+        phase: "preseason",
+        injuryConsiderations: null,
+        snapshotSummary: "Snapshot",
+        strengthProfileSummary: "Strength",
+        keyConstraintsSummary: "Constraint",
+        documentData: null,
+        details: { strengths: [], focusAreas: [], constraints: [], evidence: [] },
+        evidenceForms: [],
+        attachments: [],
+        mediaAttachments: [],
+        copyPayload: {},
+      }),
+    });
+
+    render(
+      <DevelopmentTab
+        playerId="player-1"
+        createdBy="coach-1"
+        data={baseData}
+        evaluationDisciplineOptions={[
+          { id: "disc-1", key: "pitching", label: "Pitching" },
+        ]}
+        evaluationBucketOptions={[]}
+        routineFormConfig={baseRoutineFormConfig}
+      />
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "Edit Evaluation" }));
+
+    expect(await screen.findByRole("heading", { name: "Edit Evaluation" })).toBeTruthy();
+    expect(await screen.findByText("mode:edit")).toBeTruthy();
+    expect(await screen.findByText("initial-evaluation:eval-1")).toBeTruthy();
+    expect(global.fetch).toHaveBeenCalledWith("/api/evaluations/eval-1");
+  });
+
+  it("opens the development plan edit drawer from history cards", async () => {
+    (global.fetch as jest.Mock).mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        id: "plan-2",
+        playerId: "player-1",
+        disciplineId: "disc-1",
+        evaluationId: "eval-1",
+        createdBy: "coach-1",
+        status: "draft",
+        startDate: new Date("2026-01-02").toISOString(),
+        targetEndDate: new Date("2026-02-02").toISOString(),
+        documentData: null,
+        details: {
+          summary: "Plan",
+          currentPriority: "Priority",
+          shortTermGoals: [],
+          longTermGoals: [],
+          focusAreas: [],
+          measurableIndicators: [],
+        },
+        linkedEvaluation: null,
+        copyPayload: {},
+      }),
+    });
+
+    render(
+      <DevelopmentTab
+        playerId="player-1"
+        createdBy="coach-1"
+        data={{
+          ...baseData,
+          developmentPlanHistory: [
+            {
+              id: "plan-2",
+              evaluationId: "eval-1",
+              status: "draft",
+              startDate: new Date("2026-01-02"),
+              targetEndDate: new Date("2026-02-02"),
+              documentData: null,
+            },
+          ],
+        }}
+        evaluationDisciplineOptions={[
+          { id: "disc-1", key: "pitching", label: "Pitching" },
+        ]}
+        evaluationBucketOptions={[]}
+        routineFormConfig={baseRoutineFormConfig}
+      />
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "Edit Plan History" }));
+
+    expect(await screen.findByRole("heading", { name: "Edit Development Plan" })).toBeTruthy();
+    expect(await screen.findByText("mode:edit")).toBeTruthy();
+    expect(await screen.findByText("initial-plan:plan-2")).toBeTruthy();
+    expect(global.fetch).toHaveBeenCalledWith("/api/development-plans/plan-2");
+  });
+
+  it("opens edit from the document modal", async () => {
+    (global.fetch as jest.Mock).mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        id: "eval-2",
+        playerId: "player-1",
+        disciplineId: "disc-1",
+        createdBy: "coach-1",
+        evaluationDate: new Date("2025-12-01").toISOString(),
+        evaluationType: "baseline",
+        phase: "offseason",
+        injuryConsiderations: null,
+        snapshotSummary: "Older snapshot",
+        strengthProfileSummary: "Older strength",
+        keyConstraintsSummary: "Older constraint",
+        documentData: null,
+        details: { strengths: [], focusAreas: [], constraints: [], evidence: [] },
+        evidenceForms: [],
+        attachments: [],
+        mediaAttachments: [],
+        copyPayload: {},
+      }),
+    });
+
+    render(
+      <DevelopmentTab
+        playerId="player-1"
+        createdBy="coach-1"
+        data={baseData}
+        evaluationDisciplineOptions={[
+          { id: "disc-1", key: "pitching", label: "Pitching" },
+        ]}
+        evaluationBucketOptions={[]}
+        routineFormConfig={baseRoutineFormConfig}
+      />
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "View Evaluation History" }));
+    expect(await screen.findByRole("dialog", { name: "development-document-modal" })).toBeTruthy();
+
+    fireEvent.click(screen.getByRole("button", { name: "Modal Edit" }));
+
+    expect(await screen.findByRole("heading", { name: "Edit Evaluation" })).toBeTruthy();
+    expect(await screen.findByText("initial-evaluation:eval-2")).toBeTruthy();
+  });
 });
-
-

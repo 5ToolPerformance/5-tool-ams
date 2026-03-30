@@ -1,6 +1,5 @@
 import db from "@/db";
 import { listActiveDisciplines } from "@/db/queries/config/listActiveDisciplines";
-import { getActiveDevelopmentPlanForPlayerDiscipline } from "@/db/queries/development-plans/getActiveDevelopmentPlanForPlayerDiscipline";
 import { getDevelopmentPlansForPlayer } from "@/db/queries/development-plans/getDevelopmentPlansForPlayers";
 import { getEvaluationById } from "@/db/queries/evaluations/getEvaluationById";
 import { getEvaluationsForPlayer } from "@/db/queries/evaluations/getEvaluationsForPlayer";
@@ -49,6 +48,70 @@ export type PlayerDevelopmentTabData = {
     hasRoutines: boolean;
   };
 };
+
+function toTimestamp(value: Date | string | null | undefined) {
+  if (!value) {
+    return null;
+  }
+
+  const parsed = value instanceof Date ? value : new Date(value);
+  const timestamp = parsed.getTime();
+
+  return Number.isNaN(timestamp) ? null : timestamp;
+}
+
+function getEligibleActivePlan(plans: DevelopmentPlanRow[]) {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const todayTimestamp = today.getTime();
+
+  const eligiblePlans = plans.filter((plan) => {
+    if (plan.status === "active") {
+      return true;
+    }
+
+    if (plan.status !== "draft") {
+      return false;
+    }
+
+    const startTimestamp = toTimestamp(plan.startDate);
+    const endTimestamp = toTimestamp(plan.targetEndDate);
+
+    return (
+      (startTimestamp !== null && startTimestamp >= todayTimestamp) ||
+      (endTimestamp !== null && endTimestamp >= todayTimestamp)
+    );
+  });
+
+  if (eligiblePlans.length === 0) {
+    return null;
+  }
+
+  const activePlans = eligiblePlans.filter((plan) => plan.status === "active");
+  const candidatePlans = activePlans.length > 0 ? activePlans : eligiblePlans;
+
+  return [...candidatePlans].sort((a, b) => {
+    const relevantDateA =
+      toTimestamp(a.startDate) ??
+      toTimestamp(a.targetEndDate) ??
+      toTimestamp(a.createdOn) ??
+      0;
+    const relevantDateB =
+      toTimestamp(b.startDate) ??
+      toTimestamp(b.targetEndDate) ??
+      toTimestamp(b.createdOn) ??
+      0;
+
+    if (relevantDateA !== relevantDateB) {
+      return relevantDateB - relevantDateA;
+    }
+
+    const createdOnA = toTimestamp(a.createdOn) ?? 0;
+    const createdOnB = toTimestamp(b.createdOn) ?? 0;
+
+    return createdOnB - createdOnA;
+  })[0];
+}
 
 export async function getPlayerDevelopmentTabData(
   playerId: string,
@@ -108,7 +171,7 @@ export async function getPlayerDevelopmentTabData(
     };
   }
 
-  const [disciplineEvaluations, disciplinePlanHistory, activePlan, universalRoutines] =
+  const [disciplineEvaluations, disciplinePlanHistory, universalRoutines] =
     await Promise.all([
       getEvaluationsForPlayer(db, {
         playerId,
@@ -120,10 +183,6 @@ export async function getPlayerDevelopmentTabData(
         disciplineId: selectedDiscipline.id,
         limit: 25,
       }),
-      getActiveDevelopmentPlanForPlayerDiscipline(db, {
-        playerId,
-        disciplineId: selectedDiscipline.id,
-      }),
       facilityId
         ? listUniversalRoutines({
             facilityId,
@@ -131,6 +190,11 @@ export async function getPlayerDevelopmentTabData(
           })
         : Promise.resolve([]),
     ]);
+
+  const activePlan = getEligibleActivePlan(disciplinePlanHistory);
+  const developmentPlanHistory = activePlan
+    ? disciplinePlanHistory.filter((plan) => plan.id !== activePlan.id)
+    : disciplinePlanHistory;
 
   const [playerRoutines, linkedEvaluation] = await Promise.all([
     activePlan ? getRoutinesForDevelopmentPlan(db, activePlan.id) : Promise.resolve([]),
@@ -149,7 +213,7 @@ export async function getPlayerDevelopmentTabData(
       ? disciplineEvaluations.filter((row) => row.id !== latestEvaluation.id)
       : disciplineEvaluations,
     activePlan,
-    developmentPlanHistory: disciplinePlanHistory,
+    developmentPlanHistory,
     playerRoutines,
     universalRoutines,
     universalRoutinesSupported: Boolean(facilityId),

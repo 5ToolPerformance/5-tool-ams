@@ -2,23 +2,37 @@
 
 import { useMemo, useState } from "react";
 
-import { Button, Card, CardBody } from "@heroui/react";
+import { Button, Card, CardBody, Spinner } from "@heroui/react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
+import type {
+  DevelopmentPlanDetailData,
+  EvaluationDetailData,
+} from "@/application/players/development/getDevelopmentDocumentDetails";
 import type { PlayerDevelopmentTabData } from "@/application/players/development/getPlayerDevelopmentTabData";
 import type { RoutineFormConfig } from "@/application/routines/getRoutineFormConfig";
 import { RightSideDrawer } from "@/ui/core/RightSideDrawer";
 import { DevelopmentPlanForm } from "@/ui/features/development/forms/development-plan/DevelopmentPlanForm";
 import { DevelopmentPlanFormProvider } from "@/ui/features/development/forms/development-plan/DevelopmentPlanFormProvider";
-import type { DevelopmentPlanEvaluationOption } from "@/ui/features/development/forms/development-plan/developmentPlanForm.types";
+import type {
+  DevelopmentPlanEvaluationOption,
+  DevelopmentPlanFormRecord,
+  DevelopmentPlanStatus,
+} from "@/ui/features/development/forms/development-plan/developmentPlanForm.types";
 import { EvaluationForm } from "@/ui/features/development/forms/evaluation/EvaluationForm";
 import { EvaluationFormProvider } from "@/ui/features/development/forms/evaluation/EvaluationFormProvider";
 import type {
   EvaluationBucketOption,
   EvaluationDisciplineOption,
+  EvaluationFormEvidence,
+  EvaluationFormRecord,
+  EvaluationType,
+  AthletePhase,
 } from "@/ui/features/development/forms/evaluation/evaluationForm.types";
 import { RoutineForm } from "@/ui/features/development/forms/routines/RoutineForm";
 import { RoutineFormProvider } from "@/ui/features/development/forms/routines/RoutineFormProvider";
+import { copyTextToClipboard } from "@/lib/clipboard";
 import { buildDevelopmentReportPdfPath } from "@/lib/reports/developmentReportQuery";
 
 import { ActivePlanPanel } from "./ActivePlanPanel";
@@ -43,6 +57,62 @@ type DevelopmentDrawerAction = "evaluation" | "plan" | "routine" | null;
 type DevelopmentDocumentViewState =
   | { id: string; type: "evaluation" | "development-plan" }
   | null;
+type DevelopmentEditAction = "evaluation-edit" | "plan-edit";
+
+function isErrorPayload(
+  payload: EvaluationDetailData | DevelopmentPlanDetailData | { error?: string } | null
+): payload is { error?: string } {
+  return Boolean(payload && typeof payload === "object" && "error" in payload);
+}
+
+function toEvaluationFormRecord(
+  evaluation: EvaluationDetailData
+): EvaluationFormRecord {
+  const evidenceForms: EvaluationFormEvidence[] = evaluation.evidenceForms.map(
+    (item, index) => ({
+      ...item,
+      id: item.evidenceId ?? `evidence-${index}`,
+      recordedAt:
+        item.recordedAt instanceof Date
+          ? item.recordedAt.toISOString()
+          : item.recordedAt ?? "",
+      notes: item.notes ?? "",
+    })
+  );
+
+  return {
+    id: evaluation.id,
+    playerId: evaluation.playerId,
+    disciplineId: evaluation.disciplineId,
+    createdBy: evaluation.createdBy,
+    evaluationDate: evaluation.evaluationDate,
+    evaluationType: evaluation.evaluationType as EvaluationType,
+    phase: evaluation.phase as AthletePhase,
+    injuryConsiderations: evaluation.injuryConsiderations,
+    snapshotSummary: evaluation.snapshotSummary,
+    strengthProfileSummary: evaluation.strengthProfileSummary,
+    keyConstraintsSummary: evaluation.keyConstraintsSummary,
+    documentData: evaluation.documentData as EvaluationFormRecord["documentData"],
+    evidenceForms,
+    mediaAttachments: evaluation.mediaAttachments,
+  };
+}
+
+function toDevelopmentPlanFormRecord(
+  plan: DevelopmentPlanDetailData
+): DevelopmentPlanFormRecord {
+  return {
+    id: plan.id,
+    playerId: plan.playerId,
+    disciplineId: plan.disciplineId,
+    evaluationId: plan.evaluationId,
+    createdBy: plan.createdBy,
+    status: plan.status as DevelopmentPlanStatus,
+    startDate: plan.startDate,
+    targetEndDate: plan.targetEndDate,
+    documentData: plan.documentData as DevelopmentPlanFormRecord["documentData"],
+  };
+}
 
 function formatEvaluationSummary(
   summary: string | null | undefined,
@@ -71,6 +141,13 @@ export function DevelopmentTab({
   const [isReportOptionsOpen, setIsReportOptionsOpen] = useState(false);
   const [viewDocument, setViewDocument] =
     useState<DevelopmentDocumentViewState>(null);
+  const [editAction, setEditAction] = useState<DevelopmentEditAction | null>(null);
+  const [initialEvaluationRecord, setInitialEvaluationRecord] =
+    useState<EvaluationFormRecord | null>(null);
+  const [initialDevelopmentPlanRecord, setInitialDevelopmentPlanRecord] =
+    useState<DevelopmentPlanFormRecord | null>(null);
+  const [isEditLoading, setIsEditLoading] = useState(false);
+  const [editError, setEditError] = useState<string | null>(null);
 
   const selectedDiscipline = data.selectedDiscipline;
 
@@ -109,6 +186,7 @@ export function DevelopmentTab({
   const canCreatePlan = evaluationOptions.length > 0;
   const canCreateRoutine = Boolean(selectedDiscipline);
   const canGenerateReport = data.report.canGenerate && Boolean(selectedDiscipline);
+  const canCopyRawJson = Boolean(data.latestEvaluation && data.activePlan);
   const hasEvaluationForSelectedDiscipline = Boolean(data.latestEvaluation);
   const hasAnyEvaluations = data.flags.hasEvaluations;
   const playerName = useMemo(() => {
@@ -129,18 +207,28 @@ export function DevelopmentTab({
 
   const closeDrawer = () => {
     setActiveAction(null);
+    setEditAction(null);
     setInitialPlanEvaluationId("");
     setIsPlanEvaluationLocked(false);
     setInitialRoutineDevelopmentPlanId("");
     setIsRoutinePlanLocked(false);
+    setInitialEvaluationRecord(null);
+    setInitialDevelopmentPlanRecord(null);
+    setIsEditLoading(false);
+    setEditError(null);
   };
 
   const openEvaluationDrawer = () => {
     setActiveAction("evaluation");
+    setEditAction(null);
     setInitialPlanEvaluationId("");
     setIsPlanEvaluationLocked(false);
     setInitialRoutineDevelopmentPlanId("");
     setIsRoutinePlanLocked(false);
+    setInitialEvaluationRecord(null);
+    setInitialDevelopmentPlanRecord(null);
+    setIsEditLoading(false);
+    setEditError(null);
   };
 
   const openReportOptions = () => {
@@ -163,6 +251,80 @@ export function DevelopmentTab({
     setViewDocument({ id: developmentPlanId, type: "development-plan" });
   };
 
+  const openEvaluationEditDrawer = async (evaluationId: string) => {
+    setViewDocument(null);
+    setActiveAction(null);
+    setEditAction("evaluation-edit");
+    setInitialEvaluationRecord(null);
+    setInitialDevelopmentPlanRecord(null);
+    setIsEditLoading(true);
+    setEditError(null);
+
+    try {
+      const response = await fetch(`/api/evaluations/${evaluationId}`);
+      const payload = (await response.json().catch(() => null)) as
+        | EvaluationDetailData
+        | { error?: string }
+        | null;
+
+      if (!response.ok || !payload || isErrorPayload(payload)) {
+        throw new Error(
+          isErrorPayload(payload)
+            ? payload.error ?? "Unable to load evaluation."
+            : "Unable to load evaluation."
+        );
+      }
+
+      setInitialEvaluationRecord(toEvaluationFormRecord(payload));
+    } catch (error) {
+      console.error(error);
+      const message =
+        error instanceof Error ? error.message : "Unable to load evaluation.";
+      setEditError(message);
+      toast.error(message);
+    } finally {
+      setIsEditLoading(false);
+    }
+  };
+
+  const openDevelopmentPlanEditDrawer = async (developmentPlanId: string) => {
+    setViewDocument(null);
+    setActiveAction(null);
+    setEditAction("plan-edit");
+    setInitialEvaluationRecord(null);
+    setInitialDevelopmentPlanRecord(null);
+    setIsEditLoading(true);
+    setEditError(null);
+
+    try {
+      const response = await fetch(`/api/development-plans/${developmentPlanId}`);
+      const payload = (await response.json().catch(() => null)) as
+        | DevelopmentPlanDetailData
+        | { error?: string }
+        | null;
+
+      if (!response.ok || !payload || isErrorPayload(payload)) {
+        throw new Error(
+          isErrorPayload(payload)
+            ? payload.error ?? "Unable to load development plan."
+            : "Unable to load development plan."
+        );
+      }
+
+      setInitialDevelopmentPlanRecord(toDevelopmentPlanFormRecord(payload));
+    } catch (error) {
+      console.error(error);
+      const message =
+        error instanceof Error
+          ? error.message
+          : "Unable to load development plan.";
+      setEditError(message);
+      toast.error(message);
+    } finally {
+      setIsEditLoading(false);
+    }
+  };
+
   const openReportPreview = (options: {
     includeEvidence: boolean;
     routineIds: string[];
@@ -182,6 +344,59 @@ export function DevelopmentTab({
       "_blank",
       "noopener,noreferrer"
     );
+  };
+
+  const copyRawJson = async () => {
+    if (!data.latestEvaluation || !data.activePlan) {
+      return;
+    }
+
+    try {
+      const [evaluationResponse, planResponse] = await Promise.all([
+        fetch(`/api/evaluations/${data.latestEvaluation.id}`),
+        fetch(`/api/development-plans/${data.activePlan.id}`),
+      ]);
+
+      const [evaluationPayload, planPayload] = await Promise.all([
+        evaluationResponse.json().catch(() => null),
+        planResponse.json().catch(() => null),
+      ]);
+
+      if (
+        !evaluationResponse.ok ||
+        !planResponse.ok ||
+        !evaluationPayload ||
+        !planPayload ||
+        isErrorPayload(
+          evaluationPayload as EvaluationDetailData | { error?: string } | null
+        ) ||
+        isErrorPayload(
+          planPayload as DevelopmentPlanDetailData | { error?: string } | null
+        )
+      ) {
+        throw new Error("Unable to copy raw JSON.");
+      }
+
+      const payload = {
+        evaluation:
+          "copyPayload" in evaluationPayload &&
+          typeof evaluationPayload.copyPayload === "object"
+            ? evaluationPayload.copyPayload
+            : evaluationPayload,
+        developmentPlan:
+          "copyPayload" in planPayload && typeof planPayload.copyPayload === "object"
+            ? planPayload.copyPayload
+            : planPayload,
+      };
+
+      await copyTextToClipboard(JSON.stringify(payload, null, 2));
+      toast.success("Raw JSON copied.");
+    } catch (error) {
+      console.error(error);
+      const message =
+        error instanceof Error ? error.message : "Unable to copy raw JSON.";
+      toast.error(message);
+    }
   };
 
   const openPlanDrawer = (
@@ -215,6 +430,10 @@ export function DevelopmentTab({
       ? "New Development Plan"
       : activeAction === "routine"
       ? "New Routine"
+      : editAction === "evaluation-edit"
+      ? "Edit Evaluation"
+      : editAction === "plan-edit"
+      ? "Edit Development Plan"
       : "";
 
   if (!hasAnyEvaluations || !selectedDiscipline) {
@@ -280,11 +499,15 @@ export function DevelopmentTab({
             <DevelopmentActionButtons
               canCreatePlan={canCreatePlan}
               canCreateRoutine={canCreateRoutine}
-              canGenerateReport={canGenerateReport}
+              canExportPdf={canGenerateReport}
+              canCopyRawJson={canCopyRawJson}
               onOpenEvaluation={openEvaluationDrawer}
               onOpenPlan={() => openPlanDrawer()}
               onOpenRoutine={() => openRoutineDrawer()}
-              onOpenReport={openReportOptions}
+              onExportPdf={openReportOptions}
+              onCopyRawJson={() => {
+                void copyRawJson();
+              }}
             />
             <DevelopmentDisciplineSelector
               selectedDisciplineId={selectedDiscipline.id}
@@ -321,6 +544,7 @@ export function DevelopmentTab({
               latestEvaluation={data.latestEvaluation}
               disciplineKey={selectedDiscipline.key}
               onViewEvaluation={openEvaluationView}
+              onEditEvaluation={openEvaluationEditDrawer}
             />
 
             <ActivePlanPanel
@@ -331,6 +555,7 @@ export function DevelopmentTab({
                 openPlanDrawer(data.latestEvaluation?.id ?? "")
               }
               onViewPlan={openDevelopmentPlanView}
+              onEditPlan={openDevelopmentPlanEditDrawer}
             />
 
             <RoutinesPanel
@@ -351,13 +576,15 @@ export function DevelopmentTab({
               }
               onViewEvaluation={openEvaluationView}
               onViewPlan={openDevelopmentPlanView}
+              onEditEvaluation={openEvaluationEditDrawer}
+              onEditPlan={openDevelopmentPlanEditDrawer}
             />
           </>
         )}
       </div>
 
       <RightSideDrawer
-        isOpen={activeAction !== null}
+        isOpen={activeAction !== null || editAction !== null}
         onClose={closeDrawer}
         title={drawerTitle}
       >
@@ -380,6 +607,30 @@ export function DevelopmentTab({
               <EvaluationForm onCancel={closeDrawer} />
             </EvaluationFormProvider>
           </div>
+        ) : editAction === "evaluation-edit" ? (
+          <div className="-mx-6 -my-5 h-full">
+            {isEditLoading ? (
+              <div className="flex h-full items-center justify-center">
+                <Spinner label="Loading evaluation" />
+              </div>
+            ) : editError ? (
+              <div className="p-6 text-sm text-danger">{editError}</div>
+            ) : initialEvaluationRecord ? (
+              <EvaluationFormProvider
+                mode="edit"
+                createdBy={createdBy}
+                disciplineOptions={evaluationDisciplineOptions}
+                bucketOptions={evaluationBucketOptions}
+                initialEvaluation={initialEvaluationRecord}
+                onSaved={() => {
+                  closeDrawer();
+                  router.refresh();
+                }}
+              >
+                <EvaluationForm onCancel={closeDrawer} />
+              </EvaluationFormProvider>
+            ) : null}
+          </div>
         ) : activeAction === "plan" ? (
           <div className="-mx-6 -my-5 h-full">
             <DevelopmentPlanFormProvider
@@ -399,6 +650,29 @@ export function DevelopmentTab({
             >
               <DevelopmentPlanForm onCancel={closeDrawer} />
             </DevelopmentPlanFormProvider>
+          </div>
+        ) : editAction === "plan-edit" ? (
+          <div className="-mx-6 -my-5 h-full">
+            {isEditLoading ? (
+              <div className="flex h-full items-center justify-center">
+                <Spinner label="Loading development plan" />
+              </div>
+            ) : editError ? (
+              <div className="p-6 text-sm text-danger">{editError}</div>
+            ) : initialDevelopmentPlanRecord ? (
+              <DevelopmentPlanFormProvider
+                mode="edit"
+                createdBy={createdBy}
+                evaluationOptions={evaluationOptions}
+                initialDevelopmentPlan={initialDevelopmentPlanRecord}
+                onSaved={() => {
+                  closeDrawer();
+                  router.refresh();
+                }}
+              >
+                <DevelopmentPlanForm onCancel={closeDrawer} />
+              </DevelopmentPlanFormProvider>
+            ) : null}
           </div>
         ) : activeAction === "routine" ? (
           <div className="-mx-6 -my-5 h-full">
@@ -438,6 +712,14 @@ export function DevelopmentTab({
         isOpen={viewDocument !== null}
         documentId={viewDocument?.id ?? null}
         documentType={viewDocument?.type ?? null}
+        onEditDocument={(documentId, documentType) => {
+          if (documentType === "evaluation") {
+            void openEvaluationEditDrawer(documentId);
+            return;
+          }
+
+          void openDevelopmentPlanEditDrawer(documentId);
+        }}
         onClose={() => setViewDocument(null)}
       />
     </>
