@@ -1,5 +1,6 @@
 // Core auth and user access
 export { default as accounts } from "./accounts";
+export { verificationToken } from "./verificationTokens";
 export {
   allowedUsers,
   allowedUserStatusEnum,
