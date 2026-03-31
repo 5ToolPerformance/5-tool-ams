@@ -512,6 +512,13 @@
       "when": 1774981693609,
       "tag": "0072_right_puff_adder",
       "breakpoints": true
+    },
+    {
+      "idx": 73,
+      "version": "7",
+      "when": 1774986128297,
+      "tag": "0073_nervous_the_hunter",
+      "breakpoints": true
     }
   ]
 }
