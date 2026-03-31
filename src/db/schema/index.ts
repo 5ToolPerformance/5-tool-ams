@@ -145,3 +145,6 @@ export * from "./routines/routineItems";
 export * from "./routines/routineProgressionStageItems";
 export * from "./routines/routineProgressionStages";
 export * from "./routines/universalRoutines";
+
+// Client Portals
+export * from "./clients";
