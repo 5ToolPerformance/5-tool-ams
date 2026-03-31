@@ -17,6 +17,7 @@ export default function SidebarLayout({ children }: SidebarLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const pathname = usePathname();
   const isDevelopmentReportRoute = pathname.startsWith("/reports/development/");
+  const isPortalRoute = pathname.startsWith("/portal");
 
   // Close sidebar on route change (mobile)
   useEffect(() => {
@@ -34,7 +35,7 @@ export default function SidebarLayout({ children }: SidebarLayoutProps) {
     setSidebarOpen(!sidebarOpen);
   };
 
-  if (isDevelopmentReportRoute) {
+  if (isDevelopmentReportRoute || isPortalRoute) {
     return <div className="min-h-screen bg-background">{children}</div>;
   }
 

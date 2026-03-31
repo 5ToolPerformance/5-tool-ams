@@ -1,11 +1,18 @@
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import { and, eq } from "drizzle-orm";
 import NextAuth from "next-auth";
+import ResendProvider from "next-auth/providers/resend";
 import GoogleProvider from "next-auth/providers/google";
 import MicrosoftEntraID from "next-auth/providers/microsoft-entra-id";
 
 import db from "@/db";
-import { allowedUsers, playerInformation, users } from "@/db/schema";
+import {
+  allowedUsers,
+  clientInvites,
+  playerInformation,
+  userRoles,
+  users,
+} from "@/db/schema";
 import { env } from "@/env/server";
 
 import { DEFAULT_ORGANIZATION_ID } from "./lib/constants";
@@ -22,9 +29,50 @@ const normalizedRole = (
 const asString = (value: unknown): string | undefined =>
   typeof value === "string" ? value : undefined;
 
+async function canUsePortalMagicLink(email: string) {
+  const normalizedEmail = email.toLowerCase();
+
+  const [existingUser] = await db
+    .select({
+      id: users.id,
+      role: users.role,
+    })
+    .from(users)
+    .where(eq(users.email, normalizedEmail))
+    .limit(1);
+
+  if (existingUser?.role) {
+    return false;
+  }
+
+  const [existingClientRole] = existingUser
+    ? await db
+        .select({ id: userRoles.id })
+        .from(userRoles)
+        .where(and(eq(userRoles.userId, existingUser.id), eq(userRoles.role, "client")))
+        .limit(1)
+    : [];
+
+  if (existingClientRole) {
+    return true;
+  }
+
+  const [pendingInvite] = await db
+    .select({ id: clientInvites.id })
+    .from(clientInvites)
+    .where(and(eq(clientInvites.email, normalizedEmail), eq(clientInvites.status, "pending")))
+    .limit(1);
+
+  return Boolean(pendingInvite);
+}
+
 export const { auth, handlers, signIn, signOut } = NextAuth({
   adapter: DrizzleAdapter(db),
   providers: [
+    ResendProvider({
+      from: env.AUTH_RESEND_FROM,
+      apiKey: env.AUTH_RESEND_KEY,
+    }),
     GoogleProvider({
       clientId: env.GOOGLE_CLIENT_ID,
       clientSecret: env.GOOGLE_CLIENT_SECRET,
@@ -45,6 +93,10 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
       // Normalize email for comparisons
       const email = user?.email?.toLowerCase();
       if (!email) return false;
+
+      if (account.provider === "resend") {
+        return canUsePortalMagicLink(email);
+      }
 
       // Entra remains implicitly allowed (org boundary is the gate)
       if (account.provider === "microsoft-entra-id") {
@@ -79,6 +131,8 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
     async jwt({ token, user }) {
       if (user) {
         token.role = normalizedRole(user.role);
+        token.portalRole = user.portalRole;
+        token.isPortalClient = user.isPortalClient;
         token.id = asString(user.id);
         token.facilityId = asString(user.facilityId);
         token.playerId = asString(user.playerId) ?? null;
@@ -110,6 +164,18 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
       token.role = dbUser.role ?? undefined;
       token.facilityId = dbUser.facilityId ?? undefined;
 
+      const [clientRole] = await db
+        .select({
+          facilityId: userRoles.facilityId,
+        })
+        .from(userRoles)
+        .where(and(eq(userRoles.userId, dbUser.id), eq(userRoles.role, "client")))
+        .limit(1);
+
+      token.portalRole = clientRole ? "client" : undefined;
+      token.isPortalClient = Boolean(clientRole);
+      token.facilityId = dbUser.facilityId ?? clientRole?.facilityId ?? undefined;
+
       const [player] = await db
         .select({
           id: playerInformation.id,
@@ -131,6 +197,8 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
           session.user.id = sessionUserId;
         }
         session.user.role = normalizedRole(token.role);
+        session.user.portalRole = token.portalRole === "client" ? "client" : undefined;
+        session.user.isPortalClient = Boolean(token.isPortalClient);
         session.user.facilityId = asString(token.facilityId);
         session.user.playerId = asString(token.playerId) ?? null;
       }

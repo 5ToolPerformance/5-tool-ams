@@ -4,6 +4,8 @@ declare module "next-auth" {
   interface Session {
     user: {
       role?: "player" | "coach" | "admin";
+      portalRole?: "client";
+      isPortalClient?: boolean;
       id?: string;
       facilityId?: string;
       playerId?: string | null;
@@ -12,6 +14,8 @@ declare module "next-auth" {
 
   interface User extends DefaultUser {
     role?: "player" | "coach" | "admin";
+    portalRole?: "client";
+    isPortalClient?: boolean;
     id?: string;
     facilityId?: string;
     playerId?: string | null;
@@ -22,6 +26,8 @@ declare module "next-auth/jwt" {
   interface JWT {
     id?: string;
     role?: "player" | "coach" | "admin";
+    portalRole?: "client";
+    isPortalClient?: boolean;
     facilityId?: string;
     playerId?: string | null;
   }

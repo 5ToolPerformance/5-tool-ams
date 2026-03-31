@@ -96,6 +96,10 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
       label: "Allowed Users",
       href: "/admin/allowed-users",
     },
+    {
+      label: "Client Invites",
+      href: "/admin/client-invites",
+    },
   ];
 
   const adminHasActiveChild = adminLinks.some((link) =>
