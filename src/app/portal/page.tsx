@@ -1,8 +1,10 @@
+import { redirect } from "next/navigation";
 import Link from "next/link";
 
 import { Card, CardBody, Chip } from "@heroui/react";
 
 import {
+  acceptPendingClientInvitesForUser,
   getClientPlayerProfile,
   getClientPortalContext,
 } from "@/application/client-portal/service";
@@ -21,6 +23,18 @@ export default async function PortalHomePage({
   const session = await auth();
 
   if (!ctx) {
+    if (
+      session?.user?.id &&
+      session.user.email &&
+      !session.user.role
+    ) {
+      const acceptedCount = await acceptPendingClientInvitesForUser(session.user.id);
+
+      if (acceptedCount > 0) {
+        redirect("/portal");
+      }
+    }
+
     if (session?.user?.role) {
       return (
         <div className="mx-auto flex min-h-screen max-w-md items-center px-4 py-8">
@@ -29,6 +43,21 @@ export default async function PortalHomePage({
               <h1 className="text-2xl font-semibold">Portal access denied</h1>
               <p className="text-sm text-default-500">
                 Internal staff accounts cannot access the family portal.
+              </p>
+            </CardBody>
+          </Card>
+        </div>
+      );
+    }
+
+    if (session?.user?.id) {
+      return (
+        <div className="mx-auto flex min-h-screen max-w-md items-center px-4 py-8">
+          <Card className="w-full border border-white/50 bg-white/85 dark:border-white/10 dark:bg-default-100/70">
+            <CardBody className="space-y-2 p-5">
+              <h1 className="text-2xl font-semibold">Portal access pending</h1>
+              <p className="text-sm text-default-500">
+                Your sign-in worked, but there is no active portal invite linked to this email yet.
               </p>
             </CardBody>
           </Card>

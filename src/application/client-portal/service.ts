@@ -428,6 +428,115 @@ export async function acceptClientInvite({ token, userId }: AcceptClientInviteIn
   });
 }
 
+export async function acceptPendingClientInvitesForUser(userId: string) {
+  return db.transaction(async (tx) => {
+    const [dbUser] = await tx
+      .select({
+        id: users.id,
+        email: users.email,
+        role: users.role,
+      })
+      .from(users)
+      .where(eq(users.id, userId))
+      .limit(1);
+
+    if (!dbUser) {
+      throw new Error("Portal user not found");
+    }
+
+    assertPortalInviteUserIsExternal(dbUser.role);
+
+    const invites = await tx
+      .select()
+      .from(clientInvites)
+      .where(
+        and(eq(clientInvites.email, dbUser.email.toLowerCase()), eq(clientInvites.status, "pending"))
+      );
+
+    let acceptedCount = 0;
+
+    for (const invite of invites) {
+      if (new Date(invite.expiresAt) < new Date()) {
+        await tx
+          .update(clientInvites)
+          .set({ status: "expired" })
+          .where(eq(clientInvites.id, invite.id));
+        continue;
+      }
+
+      await tx
+        .insert(userRoles)
+        .values({
+          userId,
+          facilityId: invite.facilityId,
+          role: "client",
+        })
+        .onConflictDoNothing();
+
+      await tx
+        .insert(clientProfiles)
+        .values({
+          userId,
+          facilityId: invite.facilityId,
+          firstName: invite.firstName,
+          lastName: invite.lastName,
+          onboardingComplete: true,
+        })
+        .onConflictDoUpdate({
+          target: [clientProfiles.userId, clientProfiles.facilityId],
+          set: {
+            firstName: invite.firstName,
+            lastName: invite.lastName,
+            onboardingComplete: true,
+            updatedOn: new Date(),
+          },
+        });
+
+      const invitePlayers = await tx
+        .select({
+          playerId: clientInvitePlayers.playerId,
+        })
+        .from(clientInvitePlayers)
+        .where(eq(clientInvitePlayers.inviteId, invite.id));
+
+      for (const invitePlayer of invitePlayers) {
+        await tx
+          .insert(playerClientAccess)
+          .values({
+            facilityId: invite.facilityId,
+            playerId: invitePlayer.playerId,
+            userId,
+            relationshipType: invite.relationshipType,
+            createdBy: invite.createdBy,
+          })
+          .onConflictDoUpdate({
+            target: [playerClientAccess.playerId, playerClientAccess.userId],
+            set: {
+              facilityId: invite.facilityId,
+              relationshipType: invite.relationshipType,
+              status: "active",
+              revokedOn: null,
+              updatedOn: new Date(),
+            },
+          });
+      }
+
+      await tx
+        .update(clientInvites)
+        .set({
+          status: "accepted",
+          acceptedByUserId: userId,
+          acceptedOn: new Date(),
+        })
+        .where(eq(clientInvites.id, invite.id));
+
+      acceptedCount += 1;
+    }
+
+    return acceptedCount;
+  });
+}
+
 export async function getClientInvitePreviewByToken(token: string): Promise<ClientInvitePreview | null> {
   const tokenHash = hashClientInviteToken(token);
   const rows = await db
