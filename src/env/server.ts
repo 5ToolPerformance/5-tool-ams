@@ -5,6 +5,8 @@ import { z } from "zod";
 
 expand(config({ path: "./.env.local" }));
 
+const isTestEnv = process.env.NODE_ENV === "test";
+
 export const env = createEnv({
   server: {
     NODE_ENV: z.enum(["development", "production", "test"]),
@@ -15,6 +17,10 @@ export const env = createEnv({
     AUTH_MICROSOFT_ENTRA_ID_ID: z.string(),
     AUTH_MICROSOFT_ENTRA_ID_SECRET: z.string(),
     AUTH_MICROSOFT_ENTRA_ID_ISSUER: z.string(),
+    AUTH_RESEND_KEY: isTestEnv ? z.string().default("test-resend-key") : z.string(),
+    AUTH_RESEND_FROM: isTestEnv
+      ? z.string().email().default("portal@example.com")
+      : z.string().email(),
     DATABASE_URL: z.string().url(),
     //Cron
     CRON_SECRET: z.string(),

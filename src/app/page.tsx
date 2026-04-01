@@ -29,6 +29,10 @@ export default async function Home() {
     redirect(`/players/${session.user.playerId}/overview`);
   }
 
+  if (session.user?.isPortalClient) {
+    redirect("/portal");
+  }
+
   return (
     <Card className="mx-auto mt-4 max-w-md">
       <CardBody className="text-center">
