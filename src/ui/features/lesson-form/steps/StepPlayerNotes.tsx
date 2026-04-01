@@ -6,6 +6,7 @@ import { Card, CardBody, Textarea } from "@heroui/react";
 
 import { DrillSelector } from "@/ui/features/lesson-form/components/DrillSelector";
 import { FatigueCheckin } from "@/ui/features/lesson-form/components/FatigueCheckin";
+import { RoutineSelector } from "@/ui/features/lesson-form/components/RoutineSelector";
 
 import { useLessonFormContext } from "../LessonFormProvider";
 import { EvidenceUploadSection } from "../components/EvidenceUploadSection";
@@ -120,6 +121,11 @@ export function StepPlayerNotes() {
                     )}
 
                     {/* Mechanics */}
+                    <div className="space-y-2">
+                      <p className="text-sm font-medium">Routines</p>
+                      <RoutineSelector playerId={playerId} />
+                    </div>
+
                     {lessonImpl?.allowedMechanicTypes &&
                       lessonImpl.allowedMechanicTypes.length > 0 && (
                         <div className="space-y-2">

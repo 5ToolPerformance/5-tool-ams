@@ -12,6 +12,7 @@ import {
   fetchLessonDrillsBatch,
   fetchLessonFatigueBatch,
   fetchLessonMechanicsBatch,
+  fetchLessonPlayerRoutinesBatch,
   fetchLessonPlayersBatch,
   fetchPitchingLessonSpecificBatch,
   fetchStrengthLessonSpecificBatch,
@@ -83,11 +84,19 @@ export async function getLessonsWithFilters(
   const lessonPlayerIds = Array.from(playersMap.values())
     .flat()
     .map((row) => row.lessonPlayer.id);
-  const [drillsMap, fatigueMap, attachmentsMap, pitchingSpecificMap, strengthSpecificMap] =
+  const [
+    drillsMap,
+    fatigueMap,
+    attachmentsMap,
+    lessonPlayerRoutineMap,
+    pitchingSpecificMap,
+    strengthSpecificMap,
+  ] =
     await Promise.all([
       fetchLessonDrillsBatch(lessonPlayerIds),
       fetchLessonFatigueBatch(lessonPlayerIds),
       fetchLessonAttachmentsBatch(lessonPlayerIds),
+      fetchLessonPlayerRoutinesBatch(lessonPlayerIds),
       fetchPitchingLessonSpecificBatch(lessonPlayerIds),
       fetchStrengthLessonSpecificBatch(lessonPlayerIds),
     ]);
@@ -106,6 +115,7 @@ export async function getLessonsWithFilters(
       lessonDrillsData,
       fatigueMap,
       attachmentsMap,
+      lessonPlayerRoutineMap,
       pitchingSpecificMap,
       strengthSpecificMap
     );
@@ -139,11 +149,19 @@ export async function getLessonById(
   const lessonPlayerIds = Array.from(playersMap.values())
     .flat()
     .map((row) => row.lessonPlayer.id);
-  const [drillsMap, fatigueMap, attachmentsMap, pitchingSpecificMap, strengthSpecificMap] =
+  const [
+    drillsMap,
+    fatigueMap,
+    attachmentsMap,
+    lessonPlayerRoutineMap,
+    pitchingSpecificMap,
+    strengthSpecificMap,
+  ] =
     await Promise.all([
       fetchLessonDrillsBatch(lessonPlayerIds),
       fetchLessonFatigueBatch(lessonPlayerIds),
       fetchLessonAttachmentsBatch(lessonPlayerIds),
+      fetchLessonPlayerRoutinesBatch(lessonPlayerIds),
       fetchPitchingLessonSpecificBatch(lessonPlayerIds),
       fetchStrengthLessonSpecificBatch(lessonPlayerIds),
     ]);
@@ -161,6 +179,7 @@ export async function getLessonById(
     lessonDrillsData,
     fatigueMap,
     attachmentsMap,
+    lessonPlayerRoutineMap,
     pitchingSpecificMap,
     strengthSpecificMap
   );
@@ -232,11 +251,19 @@ export async function getAllLessonsForPlayer(
   const lessonPlayerIds = Array.from(playersMap.values())
     .flat()
     .map((row) => row.lessonPlayer.id);
-  const [drillsMap, fatigueMap, attachmentsMap, pitchingSpecificMap, strengthSpecificMap] =
+  const [
+    drillsMap,
+    fatigueMap,
+    attachmentsMap,
+    lessonPlayerRoutineMap,
+    pitchingSpecificMap,
+    strengthSpecificMap,
+  ] =
     await Promise.all([
       fetchLessonDrillsBatch(lessonPlayerIds),
       fetchLessonFatigueBatch(lessonPlayerIds),
       fetchLessonAttachmentsBatch(lessonPlayerIds),
+      fetchLessonPlayerRoutinesBatch(lessonPlayerIds),
       fetchPitchingLessonSpecificBatch(lessonPlayerIds),
       fetchStrengthLessonSpecificBatch(lessonPlayerIds),
     ]);
@@ -255,6 +282,7 @@ export async function getAllLessonsForPlayer(
       lessonDrillsData,
       fatigueMap,
       attachmentsMap,
+      lessonPlayerRoutineMap,
       pitchingSpecificMap,
       strengthSpecificMap
     );

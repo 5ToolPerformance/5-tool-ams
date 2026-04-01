@@ -104,6 +104,10 @@ export { lessonDrills } from "./lesson-logging-v2/lessonDrills";
 export { lessonPlayerFatigue } from "./lesson-logging-v2/lessonFatigue";
 export { lessonMechanics } from "./lesson-logging-v2/lessonMechanics";
 export { lessonPlayers } from "./lesson-logging-v2/lessonPlayers";
+export {
+  lessonPlayerRoutines,
+  lessonRoutineSourceEnum,
+} from "./lesson-logging-v2/lessonPlayerRoutines";
 export { pitchingLessonPlayers } from "./lesson-logging-v2/lessonTypes/pitching";
 export { mechanics, mechanicTypeEnum } from "./lesson-logging-v2/mechanics";
 

@@ -27,10 +27,35 @@ export function normalizeLessonForCreate(
 
   const participants = values.selectedPlayerIds.map((playerId) => {
     const player = values.players[playerId] ?? {};
+    const routineSelections = player.routineSelections ?? [];
+    const fullRoutineCount = routineSelections.filter(
+      (selection) => selection.routineType === "full_lesson"
+    ).length;
+    const hasPartialRoutine = routineSelections.some(
+      (selection) => selection.routineType === "partial_lesson"
+    );
+
+    if (fullRoutineCount > 1) {
+      throw new Error("Only one full lesson routine can be applied per player");
+    }
+
+    if (fullRoutineCount > 0 && hasPartialRoutine) {
+      throw new Error(
+        "Full lesson and partial lesson routines cannot be mixed for one player"
+      );
+    }
 
     return {
       playerId,
       notes: player.notes || undefined,
+      routineSelections: routineSelections.length
+        ? routineSelections.map((selection) => ({
+            source: selection.source,
+            routineId: selection.routineId,
+            routineType: selection.routineType,
+            title: selection.title,
+          }))
+        : undefined,
       lessonSpecific: player.lessonSpecific ?? undefined,
       fatigueReport: player.fatigueReport ?? undefined,
     };

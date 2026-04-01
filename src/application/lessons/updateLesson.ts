@@ -7,6 +7,7 @@ import {
   lessonDrills,
   lessonMechanics,
   lessonPlayerFatigue,
+  lessonPlayerRoutines,
   lessonPlayers,
   manualTsIso,
   pitchingLessonPlayers,
@@ -86,6 +87,10 @@ export async function updateLesson(
       await tx
         .delete(lessonDrills)
         .where(inArray(lessonDrills.lessonPlayerId, existingLessonPlayerIds));
+
+      await tx
+        .delete(lessonPlayerRoutines)
+        .where(inArray(lessonPlayerRoutines.lessonPlayerId, existingLessonPlayerIds));
     }
 
     /**
@@ -149,6 +154,21 @@ export async function updateLesson(
         insertedLessonPlayers.map((lp) => [lp.playerId, lp.id])
       ),
     };
+
+    const routineRows = payload.participants.flatMap((participant) =>
+      (participant.routineSelections ?? []).map((selection) => ({
+        lessonPlayerId: lessonPlayerByPlayerId[participant.playerId],
+        sourceRoutineId: selection.routineId,
+        sourceRoutineSource: selection.source,
+        sourceRoutineType: selection.routineType,
+        sourceRoutineTitle: selection.title,
+        sourceRoutineDocument: selection.document,
+      }))
+    );
+
+    if (routineRows.length > 0) {
+      await tx.insert(lessonPlayerRoutines).values(routineRows);
+    }
 
     /**
      * 4️⃣ Reinsert lesson_mechanics

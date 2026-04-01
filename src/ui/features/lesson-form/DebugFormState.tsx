@@ -55,7 +55,15 @@ export function DebugFormState() {
               type: normalized.lesson.type,
               sharedNotes: normalized.lesson.sharedNotes,
             },
-            participants: normalized.participants,
+            participants: normalized.participants.map((participant) => ({
+              ...participant,
+              routineSelections: participant.routineSelections?.filter(
+                (selection): selection is NonNullable<
+                  typeof participant.routineSelections
+                >[number] & { document: NonNullable<typeof selection.document> } =>
+                  Boolean(selection.document)
+              ),
+            })),
             mechanics: normalized.mechanics,
             drills: normalized.drills,
           });

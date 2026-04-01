@@ -1,8 +1,15 @@
 import { eq } from "drizzle-orm";
 
 import db from "@/db";
-import { lesson, lessonMechanics, lessonPlayers } from "@/db/schema";
+import {
+  lesson,
+  lessonDrills,
+  lessonMechanics,
+  lessonPlayerRoutines,
+  lessonPlayers,
+} from "@/db/schema";
 import type { LessonReadModel } from "@/domain/lessons/types";
+import type { RoutineDocumentV1 } from "@/domain/routines/types";
 import type { LessonType } from "@/hooks/lessons/lessonForm.types";
 
 export async function getLessonForEdit(
@@ -34,6 +41,26 @@ export async function getLessonForEdit(
     where: eq(lessonMechanics.lessonId, lessonId),
   });
 
+  const drillRows = lessonPlayerRows.length
+    ? await db.query.lessonDrills.findMany({
+        where: (ld, { inArray }) =>
+          inArray(
+            ld.lessonPlayerId,
+            lessonPlayerRows.map((item) => item.id)
+          ),
+      })
+    : [];
+
+  const routineRows = lessonPlayerRows.length
+    ? await db.query.lessonPlayerRoutines.findMany({
+        where: (lpr, { inArray }) =>
+          inArray(
+            lpr.lessonPlayerId,
+            lessonPlayerRows.map((item) => item.id)
+          ),
+      })
+    : [];
+
   /**
    * Resolve participants (legacy-safe)
    */
@@ -45,6 +72,15 @@ export async function getLessonForEdit(
       playerId: lp.playerId,
       lessonPlayerId: lp.id,
       notes: lp.notes ?? undefined,
+      routineSelections: routineRows
+        .filter((row) => row.lessonPlayerId === lp.id)
+        .map((row) => ({
+          source: row.sourceRoutineSource,
+          routineId: row.sourceRoutineId,
+          routineType: row.sourceRoutineType as "partial_lesson" | "full_lesson",
+          title: row.sourceRoutineTitle,
+          document: row.sourceRoutineDocument as RoutineDocumentV1,
+        })),
     }));
   } else {
     // Legacy system fallback
@@ -153,6 +189,18 @@ export async function getLessonForEdit(
       mechanicId: m.mechanicId,
       notes: m.notes ?? undefined,
     })),
-    drills: [],
+    drills: drillRows.map((d) => {
+      const lessonPlayer = lessonPlayerRows.find((lp) => lp.id === d.lessonPlayerId);
+
+      if (!lessonPlayer) {
+        throw new Error("Lesson drill is missing its lesson player.");
+      }
+
+      return {
+        playerId: lessonPlayer.playerId,
+        drillId: d.drillId,
+        notes: d.notes ?? undefined,
+      };
+    }),
   };
 }

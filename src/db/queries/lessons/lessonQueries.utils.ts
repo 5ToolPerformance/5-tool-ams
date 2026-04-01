@@ -8,6 +8,7 @@ import {
   LessonDrillData,
   LessonFatigueData,
   LessonMechanicData,
+  LessonPlayerRoutineData,
   LessonPlayerData,
   LessonQueryFilters,
   StrengthLessonData,
@@ -20,6 +21,7 @@ import {
   lesson,
   lessonDrills,
   lessonPlayerFatigue,
+  lessonPlayerRoutines,
   lessonMechanics,
   lessonPlayers,
   manualTsIso,
@@ -64,7 +66,11 @@ interface RawLessonAttachmentRow {
         fileSizeBytes: number | null;
         storageKey: string | null;
       }
-    | null;
+     | null;
+}
+
+interface RawLessonPlayerRoutineRow {
+  lessonPlayerRoutine: typeof lessonPlayerRoutines.$inferSelect;
 }
 
 type RawPitchingLessonSpecificRow = typeof pitchingLessonPlayers.$inferSelect;
@@ -270,6 +276,28 @@ export async function fetchLessonAttachmentsBatch(
   return attachmentMap;
 }
 
+export async function fetchLessonPlayerRoutinesBatch(
+  lessonPlayerIds: string[]
+): Promise<Map<string, RawLessonPlayerRoutineRow[]>> {
+  if (lessonPlayerIds.length === 0) return new Map();
+
+  const rows = await db
+    .select({
+      lessonPlayerRoutine: lessonPlayerRoutines,
+    })
+    .from(lessonPlayerRoutines)
+    .where(inArray(lessonPlayerRoutines.lessonPlayerId, lessonPlayerIds));
+
+  const routineMap = new Map<string, RawLessonPlayerRoutineRow[]>();
+  for (const row of rows) {
+    const existing = routineMap.get(row.lessonPlayerRoutine.lessonPlayerId) ?? [];
+    existing.push(row);
+    routineMap.set(row.lessonPlayerRoutine.lessonPlayerId, existing);
+  }
+
+  return routineMap;
+}
+
 export async function fetchPitchingLessonSpecificBatch(
   lessonPlayerIds: string[]
 ): Promise<Map<string, RawPitchingLessonSpecificRow>> {
@@ -322,6 +350,7 @@ export function transformToLessonCard(
   lessonDrillsData: RawLessonDrillRow[],
   fatigueMap: Map<string, RawLessonFatigueRow[]>,
   attachmentsMap: Map<string, RawLessonAttachmentRow[]>,
+  lessonPlayerRoutineMap: Map<string, RawLessonPlayerRoutineRow[]>,
   pitchingSpecificMap: Map<string, RawPitchingLessonSpecificRow>,
   strengthSpecificMap: Map<string, RawStrengthLessonSpecificRow>
 ): LessonCardData {
@@ -356,6 +385,7 @@ export function transformToLessonCard(
         notes: null,
         fatigueData: [],
         attachments: [],
+        appliedRoutines: [],
         lessonSpecific: {
           pitching: null,
           strength: null,
@@ -391,6 +421,19 @@ export function transformToLessonCard(
         effectiveDate: attachmentRow.attachment.effectiveDate,
         createdAt: attachmentRow.attachment.createdAt,
         file: attachmentRow.file,
+      }));
+
+      const appliedRoutines: LessonPlayerRoutineData[] = (
+        lessonPlayerRoutineMap.get(lessonPlayerId) ?? []
+      ).map((routineRow) => ({
+        id: routineRow.lessonPlayerRoutine.id,
+        sourceRoutineId: routineRow.lessonPlayerRoutine.sourceRoutineId,
+        sourceRoutineSource: routineRow.lessonPlayerRoutine.sourceRoutineSource,
+        sourceRoutineType: routineRow.lessonPlayerRoutine
+          .sourceRoutineType as "partial_lesson" | "full_lesson",
+        sourceRoutineTitle: routineRow.lessonPlayerRoutine.sourceRoutineTitle,
+        sourceRoutineDocument: routineRow.lessonPlayerRoutine
+          .sourceRoutineDocument as LessonPlayerRoutineData["sourceRoutineDocument"],
       }));
 
       const pitchingSpecific =
@@ -439,6 +482,7 @@ export function transformToLessonCard(
         notes: row.lessonPlayer.notes,
         fatigueData,
         attachments: attachmentsData,
+        appliedRoutines,
         lessonSpecific: {
           pitching: pitchingSpecific
             ? {

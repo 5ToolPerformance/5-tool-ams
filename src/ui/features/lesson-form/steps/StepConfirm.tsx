@@ -13,6 +13,7 @@ export function StepConfirm() {
     isSubmitting,
     playerById,
     mechanicById,
+    drillsById,
   } = useLessonFormContext();
 
   return (
@@ -71,11 +72,37 @@ export function StepConfirm() {
                 const playerName = playerById[playerId] ?? `Player ${playerId}`;
 
                 const mechanics = player.mechanics ?? {};
+                const drills = player.drills ?? {};
+                const routineSelections = player.routineSelections ?? [];
 
                 return (
                   <Card key={playerId} shadow="sm">
                     <CardBody className="space-y-4">
                       <h4 className="font-semibold">{playerName}</h4>
+
+                      {routineSelections.length > 0 && (
+                        <div>
+                          <p className="text-sm font-medium">Applied Routines</p>
+                          <ul className="space-y-1">
+                            {routineSelections.map((selection) => (
+                              <li
+                                key={`${selection.source}:${selection.routineId}`}
+                                className="text-sm text-foreground-600"
+                              >
+                                <strong>{selection.title}</strong> (
+                                {selection.source === "player"
+                                  ? "Player routine"
+                                  : "Universal routine"}
+                                ,{" "}
+                                {selection.routineType === "full_lesson"
+                                  ? "full lesson"
+                                  : "partial lesson"}
+                                )
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
 
                       {/* General Notes */}
                       <div>
@@ -118,6 +145,28 @@ export function StepConfirm() {
                               </li>
                             )
                           )}
+                        </ul>
+                      </div>
+
+                      <div>
+                        <p className="text-sm font-medium">Drills</p>
+
+                        {Object.keys(drills).length === 0 && (
+                          <p className="text-sm text-foreground-500">â€”</p>
+                        )}
+
+                        <ul className="space-y-2">
+                          {Object.entries(drills).map(([drillId, entry]) => (
+                            <li key={drillId} className="text-sm">
+                              <strong>{drillsById[drillId]?.title ?? drillId}</strong>
+
+                              {entry.notes && (
+                                <div className="ml-3 text-foreground-500">
+                                  {entry.notes}
+                                </div>
+                              )}
+                            </li>
+                          ))}
                         </ul>
                       </div>
                     </CardBody>

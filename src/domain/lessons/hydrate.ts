@@ -17,17 +17,25 @@ export function hydrateLessonForm(read: LessonReadModel): LessonFormValues {
   }
 
   for (const participant of read.participants) {
-    const { playerId, lessonPlayerId, notes, lessonSpecific, fatigueReport } =
+    const {
+      playerId,
+      lessonPlayerId,
+      notes,
+      routineSelections,
+      lessonSpecific,
+      fatigueReport,
+    } =
       participant;
 
     values.selectedPlayerIds.push(playerId);
 
-    values.players[playerId] = {
-      ...(lessonPlayerId ? { lessonPlayerId } : {}),
-      ...(notes ? { notes } : {}),
-      ...(lessonSpecific ? { lessonSpecific } : {}),
-      ...(fatigueReport ? { fatigueReport } : {}),
-    };
+      values.players[playerId] = {
+        ...(lessonPlayerId ? { lessonPlayerId } : {}),
+        ...(notes ? { notes } : {}),
+        ...(routineSelections?.length ? { routineSelections } : {}),
+        ...(lessonSpecific ? { lessonSpecific } : {}),
+        ...(fatigueReport ? { fatigueReport } : {}),
+      };
   }
 
   for (const mechanic of read.mechanics) {

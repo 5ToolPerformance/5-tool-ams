@@ -1,7 +1,9 @@
+import { getLessonRoutineOptions } from "@/application/lessons/routines";
 import db from "@/db";
 import { getDrillsForLessonForm } from "@/db/queries/drills/getDrillsForLessonForm";
 import { getInjuryBodyParts } from "@/db/queries/injuryTaxonomy/getInjuryBodyParts";
 import { env } from "@/env/server";
+import { getAuthContext } from "@/lib/auth/auth-context";
 import { mechanicsRepository } from "@/lib/services/repository/mechanics";
 import { playerRepository } from "@/lib/services/repository/players";
 import { DebugFormState } from "@/ui/features/lesson-form/DebugFormState";
@@ -18,6 +20,11 @@ export default async function NewLessonPage({
   const drills = await getDrillsForLessonForm(db);
   const bodyParts = await getInjuryBodyParts(db);
   const { playerId } = await searchParams;
+  const ctx = await getAuthContext();
+  const routines = await getLessonRoutineOptions({
+    playerIds: players.map((player) => player.id),
+    facilityId: ctx.facilityId,
+  });
 
   return (
     <LessonFormProvider
@@ -25,6 +32,7 @@ export default async function NewLessonPage({
       players={players}
       mechanics={mechanics}
       drills={drills}
+      routines={routines}
       initialPlayerId={playerId}
     >
       <LessonStepper />

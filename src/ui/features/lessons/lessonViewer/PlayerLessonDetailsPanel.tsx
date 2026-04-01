@@ -15,6 +15,7 @@ import { DrillsSection } from "./DrillsSection";
 import { FatigueSection } from "./FatigueSection";
 import { LessonSpecificSection } from "./LessonSpecificSection";
 import { MechanicsSection } from "./MechanicsSection";
+import { RoutineSections } from "./RoutineSections";
 
 interface Props {
   lesson: LessonCardData;
@@ -38,6 +39,22 @@ function PlayerLessonDetailContent({
         (drill) => drill.lessonPlayerId === player.lessonPlayerId
       )
     : [];
+  const routineMechanicIds = new Set(
+    player.appliedRoutines.flatMap((routine) =>
+      routine.sourceRoutineDocument.mechanics.map((mechanic) => mechanic.mechanicId)
+    )
+  );
+  const routineDrillIds = new Set(
+    player.appliedRoutines.flatMap((routine) =>
+      routine.sourceRoutineDocument.blocks.flatMap((block) =>
+        block.drills.map((drill) => drill.drillId)
+      )
+    )
+  );
+  const extraMechanics = mechanics.filter(
+    (mechanic) => !routineMechanicIds.has(mechanic.mechanicId)
+  );
+  const extraDrills = drills.filter((drill) => !routineDrillIds.has(drill.drillId));
   const sections: ReactNode[] = [];
 
   if (player.fatigueData.length > 0) {
@@ -67,12 +84,23 @@ function PlayerLessonDetailContent({
     );
   }
 
-  if (mechanics.length > 0) {
-    sections.push(<MechanicsSection key="mechanics" mechanics={mechanics} />);
+  if (player.appliedRoutines.length > 0) {
+    sections.push(
+      <RoutineSections
+        key="routines"
+        routines={player.appliedRoutines}
+        mechanics={mechanics}
+        drills={drills}
+      />
+    );
   }
 
-  if (drills.length > 0) {
-    sections.push(<DrillsSection key="drills" drills={drills} />);
+  if (extraMechanics.length > 0) {
+    sections.push(<MechanicsSection key="mechanics" mechanics={extraMechanics} />);
+  }
+
+  if (extraDrills.length > 0) {
+    sections.push(<DrillsSection key="drills" drills={extraDrills} />);
   }
 
   if (player.attachments.length > 0) {

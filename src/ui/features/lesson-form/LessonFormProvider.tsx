@@ -6,6 +6,7 @@ import { toast } from "sonner";
 
 import type { LessonType } from "@/hooks/lessons/lessonForm.types";
 import { LessonFormValues } from "@/hooks/lessons/lessonForm.types";
+import type { LessonRoutineOption } from "@/hooks/lessons/lessonRoutineOptions";
 import { useLessonForm } from "@/hooks/lessons/useLessonForm";
 import {
   EvidenceUploadDraft,
@@ -38,6 +39,8 @@ export type LessonFormDrill = {
   discipline: string;
 };
 
+export type LessonFormRoutine = LessonRoutineOption;
+
 type LessonFormContextValue = ReturnType<typeof useLessonForm> & {
   players: LessonFormPlayer[];
   playerById: Record<string, string>;
@@ -49,6 +52,11 @@ type LessonFormContextValue = ReturnType<typeof useLessonForm> & {
 
   drills: LessonFormDrill[];
   drillsById: Record<string, LessonFormDrill>;
+
+  routines: LessonFormRoutine[];
+  routinesByKey: Record<string, LessonFormRoutine>;
+  getAvailableRoutines: (playerId: string, lessonType?: LessonType) => LessonFormRoutine[];
+  toggleRoutineSelection: (playerId: string, routine: LessonFormRoutine) => void;
 
   evidenceDrafts: Record<string, EvidenceUploadDraft>;
   setEvidenceDrafts: React.Dispatch<
@@ -78,6 +86,7 @@ type LessonFormProviderProps = {
   mechanics: LessonFormMechanic[];
   bodyParts: LessonFormBodyPart[];
   drills: LessonFormDrill[];
+  routines?: LessonFormRoutine[];
   children: React.ReactNode;
   initialPlayerId?: string;
 };
@@ -90,6 +99,7 @@ export function LessonFormProvider({
   players = [],
   mechanics = [],
   drills = [],
+  routines = [],
   children,
   initialPlayerId,
 }: LessonFormProviderProps) {
@@ -121,6 +131,94 @@ export function LessonFormProvider({
   const drillsById = useMemo(() => {
     return Object.fromEntries(drills.map((d) => [d.id, d]));
   }, [drills]);
+
+  const routinesByKey = useMemo(() => {
+    return Object.fromEntries(routines.map((routine) => [routine.key, routine]));
+  }, [routines]);
+
+  function getAvailableRoutines(playerId: string, lessonType?: LessonType) {
+    return routines.filter((routine) => {
+      if (lessonType && routine.disciplineKey !== lessonType) {
+        return false;
+      }
+
+      return routine.playerId === null || routine.playerId === playerId;
+    });
+  }
+
+  function toggleRoutineSelection(playerId: string, routine: LessonFormRoutine) {
+    const selections = form.getFieldValue(`players.${playerId}.routineSelections`) ?? [];
+    const isSelected = selections.some(
+      (selection) =>
+        selection.source === routine.source && selection.routineId === routine.routineId
+    );
+
+    if (isSelected) {
+      form.setFieldValue(
+        `players.${playerId}.routineSelections`,
+        selections.filter(
+          (selection) =>
+            !(
+              selection.source === routine.source &&
+              selection.routineId === routine.routineId
+            )
+        )
+      );
+      return;
+    }
+
+    const hasFullRoutine = selections.some(
+      (selection) => selection.routineType === "full_lesson"
+    );
+    const hasPartialRoutine = selections.some(
+      (selection) => selection.routineType === "partial_lesson"
+    );
+
+    if (routine.routineType === "full_lesson" && hasPartialRoutine) {
+      toast.error("Full lesson routines cannot be mixed with partial lesson routines.");
+      return;
+    }
+
+    if (routine.routineType === "partial_lesson" && hasFullRoutine) {
+      toast.error("Partial lesson routines cannot be mixed with a full lesson routine.");
+      return;
+    }
+
+    if (routine.routineType === "full_lesson" && hasFullRoutine) {
+      toast.error("Only one full lesson routine can be applied per player.");
+      return;
+    }
+
+    const nextSelections = [
+      ...selections,
+      {
+        source: routine.source,
+        routineId: routine.routineId,
+        routineType: routine.routineType,
+        title: routine.title,
+      },
+    ];
+
+    form.setFieldValue(`players.${playerId}.routineSelections`, nextSelections);
+
+    const mechanicMap = {
+      ...(form.getFieldValue(`players.${playerId}.mechanics`) ?? {}),
+    };
+    for (const mechanic of routine.document.mechanics) {
+      mechanicMap[mechanic.mechanicId] = mechanicMap[mechanic.mechanicId] ?? {};
+    }
+    form.setFieldValue(`players.${playerId}.mechanics`, mechanicMap);
+
+    const drillMap = {
+      ...(form.getFieldValue(`players.${playerId}.drills`) ?? {}),
+    };
+    for (const block of routine.document.blocks) {
+      for (const drill of block.drills) {
+        drillMap[drill.drillId] = drillMap[drill.drillId] ?? {};
+      }
+    }
+    form.setFieldValue(`players.${playerId}.drills`, drillMap);
+  }
 
   function inferAttachmentType(
     source: EvidenceUploadSource,
@@ -250,6 +348,10 @@ export function LessonFormProvider({
 
         drills,
         drillsById,
+        routines,
+        routinesByKey,
+        getAvailableRoutines,
+        toggleRoutineSelection,
 
         evidenceDrafts,
         setEvidenceDrafts,

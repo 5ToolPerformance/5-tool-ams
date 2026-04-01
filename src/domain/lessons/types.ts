@@ -1,10 +1,14 @@
 import {
   lessonPlayerFatigue,
+  lessonRoutineSourceEnum,
   manualTsIso,
   pitchingLessonPlayers,
 } from "@/db/schema";
+import { RoutineDocumentV1 } from "@/domain/routines/types";
 import {
   FatigueReportData,
+  LessonRoutineSource,
+  LessonRoutineType,
   LessonType,
   StrengthLessonSpecific,
 } from "@/hooks/lessons/lessonForm.types";
@@ -19,6 +23,13 @@ export type LessonWritePayload = {
   participants: {
     playerId: string;
     notes?: string;
+    routineSelections?: {
+      source: LessonRoutineSource;
+      routineId: string;
+      routineType: LessonRoutineType;
+      title: string;
+      document?: RoutineDocumentV1;
+    }[];
     lessonSpecific?: unknown;
     fatigueReport?: FatigueReportData;
   }[];
@@ -48,6 +59,13 @@ export type LessonReadModel = {
     playerId: string;
     lessonPlayerId?: string;
     notes?: string;
+    routineSelections?: {
+      source: LessonRoutineSource;
+      routineId: string;
+      routineType: LessonRoutineType;
+      title: string;
+      document: RoutineDocumentV1;
+    }[];
     lessonSpecific?: unknown;
     fatigueReport?: FatigueReportData;
   }[];
@@ -88,3 +106,6 @@ export function isStrengthLessonSpecific(
 export type TsIsoInsert = typeof manualTsIso.$inferInsert;
 
 export type FatigueReportInsert = typeof lessonPlayerFatigue.$inferInsert;
+
+export type LessonRoutineSourceInsert =
+  (typeof lessonRoutineSourceEnum.enumValues)[number];

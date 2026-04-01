@@ -1,27 +1,47 @@
 "use server";
 
 import { createLesson } from "@/application/lessons/createLesson";
+import { resolveLessonRoutineSelections } from "@/application/lessons/routines";
 import { updateLesson } from "@/application/lessons/updateLesson";
-import { auth } from "@/auth";
 import { normalizeLessonForCreate } from "@/domain/lessons/normalize";
 import type { LessonFormValues } from "@/hooks/lessons/lessonForm.types";
+import { getAuthContext, requireRole } from "@/lib/auth/auth-context";
 
 export async function submitLesson(values: LessonFormValues) {
   // Normalize (domain logic)
   const payload = normalizeLessonForCreate(values);
+  const ctx = await getAuthContext();
+  requireRole(ctx, ["coach", "admin"]);
 
-  const session = await auth();
-  if (
-    !session ||
-    (session.user.role !== "coach" && session.user.role !== "admin")
-  ) {
-    throw new Error("Unauthorized");
+  const resolvedRoutines = await resolveLessonRoutineSelections({
+    selectionsByPlayerId: Object.fromEntries(
+      payload.participants.map((participant) => [
+        participant.playerId,
+        (participant.routineSelections ?? []).map((selection) => ({
+          source: selection.source,
+          routineId: selection.routineId,
+        })),
+      ])
+    ),
+    lessonType: payload.lesson.type,
+    facilityId: ctx.facilityId,
+  });
+
+  for (const participant of payload.participants) {
+    participant.routineSelections = resolvedRoutines
+      .get(participant.playerId)
+      ?.map((routine) => ({
+        source: routine.source,
+        routineId: routine.routineId,
+        routineType: routine.routineType,
+        title: routine.title,
+        document: routine.document,
+      }));
   }
-  const coachId = session.user.id!;
 
   const { lessonId, lessonPlayerByPlayerId } = await createLesson(
     payload,
-    coachId
+    ctx.userId
   );
 
   return { lessonId, lessonPlayerByPlayerId };
@@ -32,15 +52,34 @@ export async function updateLessonAction(
   values: LessonFormValues
 ) {
   const payload = normalizeLessonForCreate(values);
+  const ctx = await getAuthContext();
+  requireRole(ctx, ["coach", "admin"]);
 
-  const session = await auth();
-  if (
-    !session ||
-    (session.user.role !== "coach" && session.user.role !== "admin")
-  ) {
-    throw new Error("Unauthorized");
+  const resolvedRoutines = await resolveLessonRoutineSelections({
+    selectionsByPlayerId: Object.fromEntries(
+      payload.participants.map((participant) => [
+        participant.playerId,
+        (participant.routineSelections ?? []).map((selection) => ({
+          source: selection.source,
+          routineId: selection.routineId,
+        })),
+      ])
+    ),
+    lessonType: payload.lesson.type,
+    facilityId: ctx.facilityId,
+  });
+
+  for (const participant of payload.participants) {
+    participant.routineSelections = resolvedRoutines
+      .get(participant.playerId)
+      ?.map((routine) => ({
+        source: routine.source,
+        routineId: routine.routineId,
+        routineType: routine.routineType,
+        title: routine.title,
+        document: routine.document,
+      }));
   }
-  const coachId = session.user.id!;
 
-  await updateLesson(lessonId, payload, coachId);
+  await updateLesson(lessonId, payload, ctx.userId);
 }

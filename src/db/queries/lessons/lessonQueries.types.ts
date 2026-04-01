@@ -1,3 +1,5 @@
+import { RoutineDocumentV1 } from "@/domain/routines/types";
+
 /** Mechanic data associated with a lesson */
 export interface LessonMechanicData {
   id: string;
@@ -97,6 +99,15 @@ export interface LessonPlayerSpecificData {
   strength: StrengthLessonData | null;
 }
 
+export interface LessonPlayerRoutineData {
+  id: string;
+  sourceRoutineId: string;
+  sourceRoutineSource: "player" | "universal";
+  sourceRoutineType: "partial_lesson" | "full_lesson";
+  sourceRoutineTitle: string;
+  sourceRoutineDocument: RoutineDocumentV1;
+}
+
 /** Player data for lesson cards */
 export interface LessonPlayerData {
   id: string;
@@ -111,6 +122,7 @@ export interface LessonPlayerData {
   notes: string | null;
   fatigueData: LessonFatigueData[];
   attachments: LessonAttachmentData[];
+  appliedRoutines: LessonPlayerRoutineData[];
   lessonSpecific: LessonPlayerSpecificData;
 }
 

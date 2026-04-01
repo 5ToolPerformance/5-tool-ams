@@ -13,11 +13,22 @@ export type PlayerDrillEntry = {
   notes?: string;
 };
 
+export type LessonRoutineSource = "player" | "universal";
+export type LessonRoutineType = "partial_lesson" | "full_lesson";
+
+export type PlayerRoutineSelection = {
+  source: LessonRoutineSource;
+  routineId: string;
+  routineType: LessonRoutineType;
+  title: string;
+};
+
 export type PlayerLessonData = {
   lessonPlayerId?: string;
   notes?: string;
   mechanics?: Record<string, PlayerMechanicEntry>;
   drills?: Record<string, PlayerDrillEntry>;
+  routineSelections?: PlayerRoutineSelection[];
   lessonSpecific?: {
     pitching?: PitchingLessonData;
     strength?: StrengthLessonSpecific;
