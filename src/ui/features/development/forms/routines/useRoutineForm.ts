@@ -107,6 +107,9 @@ export function useRoutineForm(params: UseRoutineFormParams) {
   const [values, setValues] = useState<RoutineFormValues>(initialValues);
   const [errors, setErrors] = useState<RoutineFormErrorMap>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [allDrillOptions, setAllDrillOptions] = useState<RoutineDrillOption[]>(
+    params.drillOptions
+  );
   const [submitAction, setSubmitAction] = useState<RoutineSubmitAction | null>(
     null
   );
@@ -159,10 +162,10 @@ export function useRoutineForm(params: UseRoutineFormParams) {
       return [];
     }
 
-    return params.drillOptions.filter((drill) =>
+    return allDrillOptions.filter((drill) =>
       matchesDrillDiscipline(drill, selectedDiscipline.key)
     );
-  }, [params.drillOptions, selectedDiscipline]);
+  }, [allDrillOptions, selectedDiscipline]);
 
   const availableDrillOptionsById = useMemo(
     () => buildDrillMap(availableDrillOptions),
@@ -359,6 +362,20 @@ export function useRoutineForm(params: UseRoutineFormParams) {
     []
   );
 
+  const appendDrillOption = useCallback((drill: RoutineDrillOption) => {
+    setAllDrillOptions((prev) => {
+      const existingIndex = prev.findIndex((item) => item.id === drill.id);
+
+      if (existingIndex === -1) {
+        return [...prev, drill];
+      }
+
+      const next = [...prev];
+      next[existingIndex] = drill;
+      return next;
+    });
+  }, []);
+
   const buildContext = useCallback((): RoutineCreateContext => {
     if (params.mode === "edit" && params.initialRoutine) {
       if (params.initialRoutine.contextType === "universal") {
@@ -487,6 +504,7 @@ export function useRoutineForm(params: UseRoutineFormParams) {
         : params.contextType,
     selectedDevelopmentPlan,
     selectedDiscipline,
+    allDrillOptions,
     availableMechanicOptions,
     availableDrillOptions,
     values,
@@ -502,6 +520,7 @@ export function useRoutineForm(params: UseRoutineFormParams) {
     reorderBlocks,
     removeBlock,
     addDrillsToBlock,
+    appendDrillOption,
     updateDrillInBlock,
     reorderDrillsInBlock,
     removeDrillFromBlock,

@@ -3,6 +3,7 @@ import { fireEvent, render, screen, within } from "@testing-library/react";
 
 import { RoutineBasicInfoStep } from "@/ui/features/development/forms/routines/RoutineBasicInfoStep";
 import { RoutineBlocksStep } from "@/ui/features/development/forms/routines/RoutineBlocksStep";
+import type { Drill } from "@/ui/features/drills/types";
 
 jest.mock("@heroui/react", () => {
   const actual = jest.requireActual("@heroui/react");
@@ -188,6 +189,7 @@ const mockContext = {
   reorderBlocks: jest.fn(),
   removeBlock: jest.fn(),
   addDrillsToBlock: jest.fn(),
+  appendDrillOption: jest.fn(),
   updateDrillInBlock: jest.fn(),
   reorderDrillsInBlock: jest.fn(),
   removeDrillFromBlock: jest.fn(),
@@ -201,6 +203,46 @@ jest.mock(
     useRoutineFormContext: () => mockContext,
   })
 );
+
+jest.mock("@/ui/features/drills/DrillForm", () => ({
+  DrillForm: ({
+    onSaved,
+    onCancel,
+    initialDiscipline,
+  }: {
+    onSaved?: (drill: Drill) => void | Promise<void>;
+    onCancel?: () => void;
+    initialDiscipline?: string;
+  }) => (
+    <div>
+      <div>{`mock-drill-form:${initialDiscipline ?? "none"}`}</div>
+      <button
+        type="button"
+        onClick={() =>
+          onSaved?.({
+            id: "drill-new",
+            title: "New drill",
+            description: "Created from modal",
+            discipline: "pitching",
+            videoProvider: null,
+            videoId: null,
+            videoUrl: null,
+            createdBy: { id: "coach-1", name: "Coach" },
+            createdOn: new Date().toISOString(),
+            updatedOn: new Date().toISOString(),
+            tags: ["new-tag"],
+            media: [],
+          })
+        }
+      >
+        Save mock drill
+      </button>
+      <button type="button" onClick={onCancel}>
+        Cancel mock drill
+      </button>
+    </div>
+  ),
+}));
 
 describe("routine form step UX", () => {
   beforeEach(() => {
@@ -272,5 +314,29 @@ describe("routine form step UX", () => {
     fireEvent.click(modalQueries.getByRole("button", { name: "Add" }));
 
     expect(mockContext.addDrillsToBlock).toHaveBeenCalledWith(0, ["drill-2"]);
+  });
+
+  it("creates a drill in the picker, refreshes the selection view, and keeps it selected until add", () => {
+    render(<RoutineBlocksStep />);
+
+    fireEvent.click(screen.getByRole("button", { name: "Add Drills" }));
+    fireEvent.click(screen.getByRole("button", { name: "Create Drill" }));
+
+    expect(screen.getByText("mock-drill-form:pitching")).toBeTruthy();
+
+    fireEvent.click(screen.getByRole("button", { name: "Save mock drill" }));
+
+    expect(mockContext.appendDrillOption).toHaveBeenCalledWith({
+      id: "drill-new",
+      title: "New drill",
+      description: "Created from modal",
+      discipline: "pitching",
+      tags: ["new-tag"],
+    });
+    expect(screen.getByText("1 selected | 1 already in this block")).toBeTruthy();
+
+    fireEvent.click(screen.getByRole("button", { name: "Add" }));
+
+    expect(mockContext.addDrillsToBlock).toHaveBeenCalledWith(0, ["drill-new"]);
   });
 });

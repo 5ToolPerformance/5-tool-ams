@@ -17,19 +17,30 @@ import {
 type DrillFormProps = {
   mode: "create" | "edit";
   initialDrill?: Drill;
+  initialDiscipline?: DrillDiscipline;
+  onSaved?: (drill: Drill) => void | Promise<void>;
+  onCancel?: () => void;
+  hideHeader?: boolean;
 };
 
 type SaveDrillResponse = {
   drill: Drill;
 };
 
-export function DrillForm({ mode, initialDrill }: DrillFormProps) {
+export function DrillForm({
+  mode,
+  initialDrill,
+  initialDiscipline,
+  onSaved,
+  onCancel,
+  hideHeader = false,
+}: DrillFormProps) {
   const router = useRouter();
 
   const [title, setTitle] = useState(initialDrill?.title ?? "");
   const [description, setDescription] = useState(initialDrill?.description ?? "");
   const [discipline, setDiscipline] = useState<DrillDiscipline>(
-    initialDrill?.discipline ?? "hitting"
+    initialDrill?.discipline ?? initialDiscipline ?? "hitting"
   );
   const [tags, setTags] = useState<string[]>(initialDrill?.tags ?? []);
   const [videoUrl, setVideoUrl] = useState(initialDrill?.videoUrl ?? "");
@@ -107,11 +118,15 @@ export function DrillForm({ mode, initialDrill }: DrillFormProps) {
     setIsSaving(true);
 
     try {
-      await saveDrillMeta();
+      const drill = await saveDrillMeta();
 
       toast.success(mode === "create" ? "Drill created" : "Drill updated");
-      router.push("/resources/drills");
-      router.refresh();
+      if (onSaved) {
+        await onSaved(drill);
+      } else {
+        router.push("/resources/drills");
+        router.refresh();
+      }
     } catch (error) {
       const message = error instanceof Error ? error.message : "Failed to save drill";
       toast.error(message);
@@ -122,14 +137,16 @@ export function DrillForm({ mode, initialDrill }: DrillFormProps) {
 
   return (
     <div className="mx-auto max-w-3xl space-y-6">
-      <div>
-        <h1 className="text-2xl font-semibold">
-          {mode === "create" ? "Create Drill" : "Edit Drill"}
-        </h1>
-        <p className="text-sm text-foreground-500">
-          Add drill details and a YouTube video reference for coaches in your facility.
-        </p>
-      </div>
+      {hideHeader ? null : (
+        <div>
+          <h1 className="text-2xl font-semibold">
+            {mode === "create" ? "Create Drill" : "Edit Drill"}
+          </h1>
+          <p className="text-sm text-foreground-500">
+            Add drill details and a YouTube video reference for coaches in your facility.
+          </p>
+        </div>
+      )}
 
       <Input
         label="Title"
@@ -220,7 +237,7 @@ export function DrillForm({ mode, initialDrill }: DrillFormProps) {
       </div>
 
       <div className="flex justify-end gap-2">
-        <Button variant="flat" onPress={() => router.push("/resources/drills")}>
+        <Button variant="flat" onPress={() => (onCancel ? onCancel() : router.push("/resources/drills"))}>
           Cancel
         </Button>
         <Button color="primary" onPress={handleSubmit} isLoading={isSaving}>

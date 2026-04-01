@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 
 import { Button, Card, CardBody, Spinner } from "@heroui/react";
-import { useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 
 import type {
@@ -11,7 +11,9 @@ import type {
   EvaluationDetailData,
 } from "@/application/players/development/getDevelopmentDocumentDetails";
 import type { PlayerDevelopmentTabData } from "@/application/players/development/getPlayerDevelopmentTabData";
+import type { PlayerDevelopmentPageBootstrapData } from "@/application/players/development/loadPlayerDevelopmentPageData";
 import type { RoutineFormConfig } from "@/application/routines/getRoutineFormConfig";
+import { usePlayerDevelopmentPageData } from "@/hooks/usePlayerDevelopmentPageData";
 import { RightSideDrawer } from "@/ui/core/RightSideDrawer";
 import { DevelopmentPlanForm } from "@/ui/features/development/forms/development-plan/DevelopmentPlanForm";
 import { DevelopmentPlanFormProvider } from "@/ui/features/development/forms/development-plan/DevelopmentPlanFormProvider";
@@ -47,10 +49,9 @@ import { RoutinesPanel } from "./RoutinesPanel";
 interface DevelopmentTabProps {
   playerId: string;
   createdBy: string;
-  data: PlayerDevelopmentTabData;
+  initialPageData: PlayerDevelopmentPageBootstrapData;
   evaluationDisciplineOptions: EvaluationDisciplineOption[];
   evaluationBucketOptions: EvaluationBucketOption[];
-  routineFormConfig: RoutineFormConfig;
 }
 
 type DevelopmentDrawerAction = "evaluation" | "plan" | "routine" | null;
@@ -125,12 +126,17 @@ function formatEvaluationSummary(
 export function DevelopmentTab({
   playerId,
   createdBy,
-  data,
+  initialPageData,
   evaluationDisciplineOptions,
   evaluationBucketOptions,
-  routineFormConfig,
 }: DevelopmentTabProps) {
-  const router = useRouter();
+  const searchParams = useSearchParams();
+  const discipline = searchParams.get("discipline");
+  const {
+    data: pageData,
+    isLoading: isPageDataLoading,
+    refresh,
+  } = usePlayerDevelopmentPageData(playerId, discipline, initialPageData);
   const [activeAction, setActiveAction] =
     useState<DevelopmentDrawerAction>(null);
   const [initialPlanEvaluationId, setInitialPlanEvaluationId] = useState("");
@@ -148,6 +154,10 @@ export function DevelopmentTab({
     useState<DevelopmentPlanFormRecord | null>(null);
   const [isEditLoading, setIsEditLoading] = useState(false);
   const [editError, setEditError] = useState<string | null>(null);
+
+  const data = pageData?.data ?? initialPageData.data;
+  const routineFormConfig =
+    pageData?.routineFormConfig ?? initialPageData.routineFormConfig;
 
   const selectedDiscipline = data.selectedDiscipline;
 
@@ -216,6 +226,11 @@ export function DevelopmentTab({
     setInitialDevelopmentPlanRecord(null);
     setIsEditLoading(false);
     setEditError(null);
+  };
+
+  const refreshDevelopmentData = async () => {
+    const next = await refresh();
+    return next ?? pageData ?? initialPageData;
   };
 
   const openEvaluationDrawer = () => {
@@ -470,12 +485,24 @@ export function DevelopmentTab({
                 createdBy={createdBy}
                 disciplineOptions={evaluationDisciplineOptions}
                 bucketOptions={evaluationBucketOptions}
-                onSaved={() => {
+                onSaved={async () => {
+                  await refreshDevelopmentData();
                   closeDrawer();
-                  router.refresh();
                 }}
                 onSavedAndContinue={(evaluationId) => {
-                  openPlanDrawer(evaluationId, true);
+                  void (async () => {
+                    const nextPageData = await refreshDevelopmentData();
+                    closeDrawer();
+                    const nextData = nextPageData.data;
+                    const nextEvaluationId =
+                      nextData.latestEvaluation?.id === evaluationId ||
+                      nextData.evaluationHistory.some(
+                        (evaluation) => evaluation.id === evaluationId
+                      )
+                        ? evaluationId
+                        : nextData.latestEvaluation?.id ?? evaluationId;
+                    openPlanDrawer(nextEvaluationId, true);
+                  })();
                 }}
               >
                 <EvaluationForm onCancel={closeDrawer} />
@@ -490,6 +517,13 @@ export function DevelopmentTab({
   return (
     <>
       <div className="space-y-6">
+        {isPageDataLoading ? (
+          <Card shadow="sm">
+            <CardBody className="flex min-h-[160px] items-center justify-center">
+              <Spinner label="Refreshing development data" />
+            </CardBody>
+          </Card>
+        ) : null}
         <Card shadow="sm">
           <CardBody className="space-y-3">
             <h2 className="text-lg font-semibold">Development</h2>
@@ -596,12 +630,24 @@ export function DevelopmentTab({
               createdBy={createdBy}
               disciplineOptions={evaluationDisciplineOptions}
               bucketOptions={evaluationBucketOptions}
-              onSaved={() => {
+              onSaved={async () => {
+                await refreshDevelopmentData();
                 closeDrawer();
-                router.refresh();
               }}
               onSavedAndContinue={(evaluationId) => {
-                openPlanDrawer(evaluationId, true);
+                void (async () => {
+                  const nextPageData = await refreshDevelopmentData();
+                  closeDrawer();
+                  const nextData = nextPageData.data;
+                  const nextEvaluationId =
+                    nextData.latestEvaluation?.id === evaluationId ||
+                    nextData.evaluationHistory.some(
+                      (evaluation) => evaluation.id === evaluationId
+                    )
+                      ? evaluationId
+                      : nextData.latestEvaluation?.id ?? evaluationId;
+                  openPlanDrawer(nextEvaluationId, true);
+                })();
               }}
             >
               <EvaluationForm onCancel={closeDrawer} />
@@ -622,9 +668,9 @@ export function DevelopmentTab({
                 disciplineOptions={evaluationDisciplineOptions}
                 bucketOptions={evaluationBucketOptions}
                 initialEvaluation={initialEvaluationRecord}
-                onSaved={() => {
+                onSaved={async () => {
+                  await refreshDevelopmentData();
                   closeDrawer();
-                  router.refresh();
                 }}
               >
                 <EvaluationForm onCancel={closeDrawer} />
@@ -640,12 +686,23 @@ export function DevelopmentTab({
               evaluationOptions={evaluationOptions}
               initialEvaluationId={initialPlanEvaluationId}
               isEvaluationSelectionLocked={isPlanEvaluationLocked}
-              onSaved={() => {
+              onSaved={async () => {
+                await refreshDevelopmentData();
                 closeDrawer();
-                router.refresh();
               }}
               onSavedAndContinue={(developmentPlanId) => {
-                openRoutineDrawer(developmentPlanId, true);
+                void (async () => {
+                  const nextPageData = await refreshDevelopmentData();
+                  closeDrawer();
+                  const nextPlanOptions =
+                    nextPageData.routineFormConfig.developmentPlanOptions;
+                  const nextPlanId = nextPlanOptions.some(
+                    (plan) => plan.id === developmentPlanId
+                  )
+                    ? developmentPlanId
+                    : nextPlanOptions[0]?.id ?? developmentPlanId;
+                  openRoutineDrawer(nextPlanId, true);
+                })();
               }}
             >
               <DevelopmentPlanForm onCancel={closeDrawer} />
@@ -665,9 +722,9 @@ export function DevelopmentTab({
                 createdBy={createdBy}
                 evaluationOptions={evaluationOptions}
                 initialDevelopmentPlan={initialDevelopmentPlanRecord}
-                onSaved={() => {
+                onSaved={async () => {
+                  await refreshDevelopmentData();
                   closeDrawer();
-                  router.refresh();
                 }}
               >
                 <DevelopmentPlanForm onCancel={closeDrawer} />
@@ -685,9 +742,9 @@ export function DevelopmentTab({
               drillOptions={routineFormConfig.drillOptions}
               initialDevelopmentPlanId={initialRoutineDevelopmentPlanId}
               isDevelopmentPlanSelectionLocked={isRoutinePlanLocked}
-              onSaved={() => {
+              onSaved={async () => {
+                await refreshDevelopmentData();
                 closeDrawer();
-                router.refresh();
               }}
             >
               <RoutineForm onCancel={closeDrawer} />

@@ -1,15 +1,29 @@
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 
 import { RoutineFormProvider, useRoutineFormContext } from "@/ui/features/development/forms/routines/RoutineFormProvider";
 
 function TestConsumer() {
-  const { availableMechanicOptions, availableDrillOptions } =
+  const { availableMechanicOptions, availableDrillOptions, appendDrillOption } =
     useRoutineFormContext();
 
   return (
     <div>
       <span>{`mechanics:${availableMechanicOptions.map((item) => item.id).join(",")}`}</span>
       <span>{`drills:${availableDrillOptions.map((item) => item.id).join(",")}`}</span>
+      <button
+        type="button"
+        onClick={() =>
+          appendDrillOption({
+            id: "drill-3",
+            title: "New pitching drill",
+            description: "",
+            discipline: "pitching",
+            tags: [],
+          })
+        }
+      >
+        append drill
+      </button>
     </div>
   );
 }
@@ -98,6 +112,18 @@ describe("RoutineFormProvider", () => {
     );
 
     expect(screen.getByText("mechanics:mech-1,mech-2")).toBeTruthy();
+  });
+
+  it("appends newly created drills into the filtered drill options", () => {
+    render(
+      <RoutineFormProvider {...baseProps} initialDevelopmentPlanId="plan-1">
+        <TestConsumer />
+      </RoutineFormProvider>
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "append drill" }));
+
+    expect(screen.getByText("drills:drill-1,drill-3")).toBeTruthy();
   });
 });
 

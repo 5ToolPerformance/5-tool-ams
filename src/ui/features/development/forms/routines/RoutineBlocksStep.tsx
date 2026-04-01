@@ -31,6 +31,7 @@ export function RoutineBlocksStep() {
     reorderBlocks,
     removeBlock,
     addDrillsToBlock,
+    appendDrillOption,
     updateDrillInBlock,
     reorderDrillsInBlock,
     removeDrillFromBlock,
@@ -351,6 +352,7 @@ export function RoutineBlocksStep() {
         isOpen={activeBlockIndex !== null}
         onClose={() => setActiveBlockIndex(null)}
         onAdd={handleAddDrills}
+        onDrillCreated={appendDrillOption}
         drillOptions={availableDrillOptions}
         existingDrillIds={
           activeBlockIndex === null

@@ -7,6 +7,7 @@ import {
   waitFor,
   within,
 } from "@testing-library/react";
+import { SWRConfig } from "swr";
 
 import type { RoutineFormConfig } from "@/application/routines/getRoutineFormConfig";
 import { DevelopmentTab } from "@/ui/features/athlete-development/DevelopmentTab";
@@ -506,6 +507,28 @@ const baseRoutineFormConfig: RoutineFormConfig = {
   drillOptions: [],
 };
 
+function buildInitialPageData(
+  overrides?: Partial<{
+    data: typeof baseData;
+    routineFormConfig: RoutineFormConfig;
+  }>
+) {
+  return {
+    data: overrides?.data ?? baseData,
+    routineFormConfig: overrides?.routineFormConfig ?? baseRoutineFormConfig,
+    evaluationDisciplineOptions: [{ id: "disc-1", key: "pitching", label: "Pitching" }],
+    evaluationBucketOptions: [],
+  };
+}
+
+function renderDevelopmentTab(node: ReactNode) {
+  return render(
+    <SWRConfig value={{ provider: () => new Map() }}>
+      {node}
+    </SWRConfig>
+  );
+}
+
 describe("DevelopmentTab", () => {
   beforeEach(() => {
     refresh.mockReset();
@@ -525,16 +548,15 @@ describe("DevelopmentTab", () => {
   });
 
   it("renders expected sections for populated state", () => {
-    render(
+    renderDevelopmentTab(
       <DevelopmentTab
         playerId="player-1"
         createdBy="coach-1"
-        data={baseData}
+        initialPageData={buildInitialPageData()}
         evaluationDisciplineOptions={[
           { id: "disc-1", key: "pitching", label: "Pitching" },
         ]}
         evaluationBucketOptions={[]}
-        routineFormConfig={baseRoutineFormConfig}
       />
     );
     const actionGroup = screen.getByRole("group", {
@@ -580,24 +602,25 @@ describe("DevelopmentTab", () => {
   });
 
   it("renders tabs only for evaluated disciplines", () => {
-    render(
+    renderDevelopmentTab(
       <DevelopmentTab
         playerId="player-1"
         createdBy="coach-1"
-        data={{
-          ...baseData,
-          disciplineOptions: [
-            { id: "disc-1", key: "pitching", label: "Pitching" },
-            { id: "disc-3", key: "strength", label: "Strength" },
-          ],
-        }}
+        initialPageData={buildInitialPageData({
+          data: {
+            ...baseData,
+            disciplineOptions: [
+              { id: "disc-1", key: "pitching", label: "Pitching" },
+              { id: "disc-3", key: "strength", label: "Strength" },
+            ],
+          },
+        })}
         evaluationDisciplineOptions={[
           { id: "disc-1", key: "pitching", label: "Pitching" },
           { id: "disc-2", key: "hitting", label: "Hitting" },
           { id: "disc-3", key: "strength", label: "Strength" },
         ]}
         evaluationBucketOptions={[]}
-        routineFormConfig={baseRoutineFormConfig}
       />
     );
 
@@ -607,31 +630,32 @@ describe("DevelopmentTab", () => {
   });
 
   it("shows the zero-evaluation empty state when the player has no evaluations", () => {
-    render(
+    renderDevelopmentTab(
       <DevelopmentTab
         playerId="player-1"
         createdBy="coach-1"
-        data={{
-          ...baseData,
-          latestEvaluation: null,
-          evaluationHistory: [],
-          report: {
-            linkedEvaluationId: null,
-            canGenerate: false,
+        initialPageData={buildInitialPageData({
+          data: {
+            ...baseData,
+            latestEvaluation: null,
+            evaluationHistory: [],
+            report: {
+              linkedEvaluationId: null,
+              canGenerate: false,
+            },
+            disciplineOptions: [],
+            selectedDiscipline: null,
+            flags: {
+              ...baseData.flags,
+              hasAnyDisciplineData: false,
+              hasEvaluations: false,
+            },
           },
-          disciplineOptions: [],
-          selectedDiscipline: null,
-          flags: {
-            ...baseData.flags,
-            hasAnyDisciplineData: false,
-            hasEvaluations: false,
-          },
-        }}
+        })}
         evaluationDisciplineOptions={[
           { id: "disc-1", key: "pitching", label: "Pitching" },
         ]}
         evaluationBucketOptions={[]}
-        routineFormConfig={baseRoutineFormConfig}
       />
     );
 
@@ -640,25 +664,26 @@ describe("DevelopmentTab", () => {
   });
 
   it("renders empty state when no discipline data exists", () => {
-    render(
+    renderDevelopmentTab(
       <DevelopmentTab
         playerId="player-1"
         createdBy="coach-1"
-        data={{
-          ...baseData,
-          selectedDiscipline: null,
-          disciplineOptions: [],
-          report: {
-            linkedEvaluationId: null,
-            canGenerate: false,
+        initialPageData={buildInitialPageData({
+          data: {
+            ...baseData,
+            selectedDiscipline: null,
+            disciplineOptions: [],
+            report: {
+              linkedEvaluationId: null,
+              canGenerate: false,
+            },
+            flags: { ...baseData.flags, hasAnyDisciplineData: false },
           },
-          flags: { ...baseData.flags, hasAnyDisciplineData: false },
-        }}
+        })}
         evaluationDisciplineOptions={[
           { id: "disc-1", key: "pitching", label: "Pitching" },
         ]}
         evaluationBucketOptions={[]}
-        routineFormConfig={baseRoutineFormConfig}
       />
     );
 
@@ -672,16 +697,15 @@ describe("DevelopmentTab", () => {
   });
 
   it("opens the manual plan drawer with current-discipline evaluation options", async () => {
-    render(
+    renderDevelopmentTab(
       <DevelopmentTab
         playerId="player-1"
         createdBy="coach-1"
-        data={baseData}
+        initialPageData={buildInitialPageData()}
         evaluationDisciplineOptions={[
           { id: "disc-1", key: "pitching", label: "Pitching" },
         ]}
         evaluationBucketOptions={[]}
-        routineFormConfig={baseRoutineFormConfig}
       />
     );
 
@@ -703,40 +727,41 @@ describe("DevelopmentTab", () => {
   });
 
   it("opens the manual routine drawer with current-discipline plan options", async () => {
-    render(
+    renderDevelopmentTab(
       <DevelopmentTab
         playerId="player-1"
         createdBy="coach-1"
-        data={baseData}
+        initialPageData={buildInitialPageData({
+          routineFormConfig: {
+            developmentPlanOptions: [
+              {
+                id: "plan-1",
+                playerId: "player-1",
+                disciplineId: "disc-1",
+                disciplineKey: "pitching",
+                disciplineLabel: "Pitching",
+                status: "active" as const,
+                title: "Active plan",
+              },
+              {
+                id: "plan-2",
+                playerId: "player-1",
+                disciplineId: "disc-1",
+                disciplineKey: "pitching",
+                disciplineLabel: "Pitching",
+                status: "draft" as const,
+                title: "Older plan",
+              },
+            ],
+            disciplineOptions: [{ id: "disc-1", key: "pitching", label: "Pitching" }],
+            mechanicOptions: [],
+            drillOptions: [],
+          },
+        })}
         evaluationDisciplineOptions={[
           { id: "disc-1", key: "pitching", label: "Pitching" },
         ]}
         evaluationBucketOptions={[]}
-        routineFormConfig={{
-          developmentPlanOptions: [
-            {
-              id: "plan-1",
-              playerId: "player-1",
-              disciplineId: "disc-1",
-              disciplineKey: "pitching",
-              disciplineLabel: "Pitching",
-              status: "active" as const,
-              title: "Active plan",
-            },
-            {
-              id: "plan-2",
-              playerId: "player-1",
-              disciplineId: "disc-1",
-              disciplineKey: "pitching",
-              disciplineLabel: "Pitching",
-              status: "draft" as const,
-              title: "Older plan",
-            },
-          ],
-          disciplineOptions: [{ id: "disc-1", key: "pitching", label: "Pitching" }],
-          mechanicOptions: [],
-          drillOptions: [],
-        }}
       />
     );
 
@@ -756,31 +781,100 @@ describe("DevelopmentTab", () => {
   });
 
   it("transitions from evaluation continue into the plan drawer and then into the routine drawer", async () => {
-    render(
+    (global.fetch as jest.Mock)
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          data: {
+            ...baseData,
+            latestEvaluation: { ...baseData.latestEvaluation, id: "eval-from-save" },
+            evaluationHistory: [],
+          },
+          routineFormConfig: {
+            developmentPlanOptions: [
+              {
+                id: "plan-1",
+                playerId: "player-1",
+                disciplineId: "disc-1",
+                disciplineKey: "pitching",
+                disciplineLabel: "Pitching",
+                status: "active",
+                title: "Active plan",
+              },
+            ],
+            disciplineOptions: [{ id: "disc-1", key: "pitching", label: "Pitching" }],
+            mechanicOptions: [],
+            drillOptions: [],
+          },
+          evaluationDisciplineOptions: [
+            { id: "disc-1", key: "pitching", label: "Pitching" },
+          ],
+          evaluationBucketOptions: [],
+        }),
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          data: {
+            ...baseData,
+            activePlan: {
+              ...baseData.activePlan,
+              id: "plan-1",
+            },
+          },
+          routineFormConfig: {
+            developmentPlanOptions: [
+              {
+                id: "plan-1",
+                playerId: "player-1",
+                disciplineId: "disc-1",
+                disciplineKey: "pitching",
+                disciplineLabel: "Pitching",
+                status: "active",
+                title: "Active plan",
+              },
+            ],
+            disciplineOptions: [{ id: "disc-1", key: "pitching", label: "Pitching" }],
+            mechanicOptions: [],
+            drillOptions: [],
+          },
+          evaluationDisciplineOptions: [
+            { id: "disc-1", key: "pitching", label: "Pitching" },
+          ],
+          evaluationBucketOptions: [],
+        }),
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => buildInitialPageData(),
+      });
+
+    renderDevelopmentTab(
       <DevelopmentTab
         playerId="player-1"
         createdBy="coach-1"
-        data={baseData}
+        initialPageData={buildInitialPageData({
+          routineFormConfig: {
+            developmentPlanOptions: [
+              {
+                id: "plan-1",
+                playerId: "player-1",
+                disciplineId: "disc-1",
+                disciplineKey: "pitching",
+                disciplineLabel: "Pitching",
+                status: "active" as const,
+                title: "Active plan",
+              },
+            ],
+            disciplineOptions: [{ id: "disc-1", key: "pitching", label: "Pitching" }],
+            mechanicOptions: [],
+            drillOptions: [],
+          },
+        })}
         evaluationDisciplineOptions={[
           { id: "disc-1", key: "pitching", label: "Pitching" },
         ]}
         evaluationBucketOptions={[]}
-        routineFormConfig={{
-          developmentPlanOptions: [
-            {
-              id: "plan-1",
-              playerId: "player-1",
-              disciplineId: "disc-1",
-              disciplineKey: "pitching",
-              disciplineLabel: "Pitching",
-              status: "active" as const,
-              title: "Active plan",
-            },
-          ],
-          disciplineOptions: [{ id: "disc-1", key: "pitching", label: "Pitching" }],
-          mechanicOptions: [],
-          drillOptions: [],
-        }}
       />
     );
 
@@ -823,26 +917,30 @@ describe("DevelopmentTab", () => {
       expect(screen.queryByRole("heading", { name: "New Routine" })).toBeNull();
     });
 
-    expect(refresh).toHaveBeenCalled();
+    expect(global.fetch).toHaveBeenNthCalledWith(
+      1,
+      "/api/players/player-1/development?discipline=disc-1"
+    );
   });
 
   it("keeps raw-json export available when PDF export is unavailable", () => {
-    render(
+    renderDevelopmentTab(
       <DevelopmentTab
         playerId="player-1"
         createdBy="coach-1"
-        data={{
-          ...baseData,
-          report: {
-            linkedEvaluationId: null,
-            canGenerate: false,
+        initialPageData={buildInitialPageData({
+          data: {
+            ...baseData,
+            report: {
+              linkedEvaluationId: null,
+              canGenerate: false,
+            },
           },
-        }}
+        })}
         evaluationDisciplineOptions={[
           { id: "disc-1", key: "pitching", label: "Pitching" },
         ]}
         evaluationBucketOptions={[]}
-        routineFormConfig={baseRoutineFormConfig}
       />
     );
 
@@ -864,25 +962,26 @@ describe("DevelopmentTab", () => {
   });
 
   it("opens the report options flow and opens the printable preview in a new tab", async () => {
-    render(
+    renderDevelopmentTab(
       <DevelopmentTab
         playerId="player-1"
         createdBy="coach-1"
-        data={{
-          ...baseData,
-          playerRoutines: [
-            {
-              id: "routine-1",
-              title: "Reset",
-              routineType: "partial_lesson",
-            },
-          ],
-        }}
+        initialPageData={buildInitialPageData({
+          data: {
+            ...baseData,
+            playerRoutines: [
+              {
+                id: "routine-1",
+                title: "Reset",
+                routineType: "partial_lesson",
+              },
+            ],
+          },
+        })}
         evaluationDisciplineOptions={[
           { id: "disc-1", key: "pitching", label: "Pitching" },
         ]}
         evaluationBucketOptions={[]}
-        routineFormConfig={baseRoutineFormConfig}
       />
     );
 
@@ -923,16 +1022,15 @@ describe("DevelopmentTab", () => {
         }),
       });
 
-    render(
+    renderDevelopmentTab(
       <DevelopmentTab
         playerId="player-1"
         createdBy="coach-1"
-        data={baseData}
+        initialPageData={buildInitialPageData()}
         evaluationDisciplineOptions={[
           { id: "disc-1", key: "pitching", label: "Pitching" },
         ]}
         evaluationBucketOptions={[]}
-        routineFormConfig={baseRoutineFormConfig}
       />
     );
 
@@ -990,16 +1088,15 @@ describe("DevelopmentTab", () => {
       }),
     });
 
-    render(
+    renderDevelopmentTab(
       <DevelopmentTab
         playerId="player-1"
         createdBy="coach-1"
-        data={baseData}
+        initialPageData={buildInitialPageData()}
         evaluationDisciplineOptions={[
           { id: "disc-1", key: "pitching", label: "Pitching" },
         ]}
         evaluationBucketOptions={[]}
-        routineFormConfig={baseRoutineFormConfig}
       />
     );
 
@@ -1037,28 +1134,29 @@ describe("DevelopmentTab", () => {
       }),
     });
 
-    render(
+    renderDevelopmentTab(
       <DevelopmentTab
         playerId="player-1"
         createdBy="coach-1"
-        data={{
-          ...baseData,
-          developmentPlanHistory: [
-            {
-              id: "plan-2",
-              evaluationId: "eval-1",
-              status: "draft",
-              startDate: new Date("2026-01-02"),
-              targetEndDate: new Date("2026-02-02"),
-              documentData: null,
-            },
-          ],
-        }}
+        initialPageData={buildInitialPageData({
+          data: {
+            ...baseData,
+            developmentPlanHistory: [
+              {
+                id: "plan-2",
+                evaluationId: "eval-1",
+                status: "draft",
+                startDate: new Date("2026-01-02"),
+                targetEndDate: new Date("2026-02-02"),
+                documentData: null,
+              },
+            ],
+          },
+        })}
         evaluationDisciplineOptions={[
           { id: "disc-1", key: "pitching", label: "Pitching" },
         ]}
         evaluationBucketOptions={[]}
-        routineFormConfig={baseRoutineFormConfig}
       />
     );
 
@@ -1094,16 +1192,15 @@ describe("DevelopmentTab", () => {
       }),
     });
 
-    render(
+    renderDevelopmentTab(
       <DevelopmentTab
         playerId="player-1"
         createdBy="coach-1"
-        data={baseData}
+        initialPageData={buildInitialPageData()}
         evaluationDisciplineOptions={[
           { id: "disc-1", key: "pitching", label: "Pitching" },
         ]}
         evaluationBucketOptions={[]}
-        routineFormConfig={baseRoutineFormConfig}
       />
     );
 
