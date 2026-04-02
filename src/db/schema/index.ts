@@ -1,12 +1,12 @@
 // Core auth and user access
 export { default as accounts } from "./accounts";
-export { verificationToken } from "./verificationTokens";
 export {
   allowedUsers,
   allowedUserStatusEnum,
   authProviderEnum,
 } from "./allowedUsers";
 export { rolesEnum, default as users, usersRelations } from "./users";
+export { verificationToken } from "./verificationTokens";
 
 // Core lesson/session entities
 export { default as lesson, lessonTypes } from "./lesson";
@@ -103,11 +103,11 @@ export * from "./injuries";
 export { lessonDrills } from "./lesson-logging-v2/lessonDrills";
 export { lessonPlayerFatigue } from "./lesson-logging-v2/lessonFatigue";
 export { lessonMechanics } from "./lesson-logging-v2/lessonMechanics";
-export { lessonPlayers } from "./lesson-logging-v2/lessonPlayers";
 export {
   lessonPlayerRoutines,
   lessonRoutineSourceEnum,
 } from "./lesson-logging-v2/lessonPlayerRoutines";
+export { lessonPlayers } from "./lesson-logging-v2/lessonPlayers";
 export { pitchingLessonPlayers } from "./lesson-logging-v2/lessonTypes/pitching";
 export { mechanics, mechanicTypeEnum } from "./lesson-logging-v2/mechanics";
 
@@ -153,3 +153,4 @@ export * from "./routines/universalRoutines";
 
 // Client Portals
 export * from "./clients";
+export * from "./journal/index";
