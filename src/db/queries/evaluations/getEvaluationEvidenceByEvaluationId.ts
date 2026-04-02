@@ -70,6 +70,9 @@ export async function getEvaluationEvidenceByEvaluationId(
       performanceSessionId: strength.performanceSessionId,
       recordedAt: strength.recordedAt,
       notes: strength.notes,
+      rotation: strength.rotation,
+      lowerBodyStrength: strength.lowerBodyStrength,
+      upperBodyStrength: strength.upperBodyStrength,
       powerRating: strength.powerRating,
     });
   }

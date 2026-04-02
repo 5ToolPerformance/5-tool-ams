@@ -178,7 +178,9 @@ export async function replaceEvaluationEvidence({
           playerId,
           recordedAt,
           notes: evidenceForm.notes ?? null,
-          powerRating: normalizeMetricValue(evidenceForm.powerRating),
+          rotation: normalizeMetricValue(evidenceForm.rotation),
+          lowerBodyStrength: normalizeMetricValue(evidenceForm.lowerBodyStrength),
+          upperBodyStrength: normalizeMetricValue(evidenceForm.upperBodyStrength),
         });
         break;
     }

@@ -47,7 +47,11 @@ const EVIDENCE_FIELDS: Record<
     { key: "handSpeedMax", label: "Hand Speed Max" },
     { key: "handSpeedAvg", label: "Hand Speed Avg" },
   ],
-  strength: [{ key: "powerRating", label: "Power Rating" }],
+  strength: [
+    { key: "rotation", label: "Rotation Score" },
+    { key: "lowerBodyStrength", label: "Lower Body Score" },
+    { key: "upperBodyStrength", label: "Upper Body Score" },
+  ],
 };
 
 function formatMediaType(type: "file_image" | "file_video") {

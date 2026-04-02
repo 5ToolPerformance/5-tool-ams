@@ -18,6 +18,7 @@ import type {
   DevelopmentPlanDetailData,
   EvaluationDetailData,
 } from "@/application/players/development/getDevelopmentDocumentDetails";
+import { resolveStrengthEvidencePowerRating } from "@/domain/evaluations/strengthEvidence";
 import { copyTextToClipboard } from "@/lib/clipboard";
 import FormattedText from "@/components/ui/formattedText";
 import { useAttachmentViewer } from "@/ui/features/attachments/AttachmentViewerProvider";
@@ -56,6 +57,34 @@ function renderMetricValue(value: unknown) {
   }
 
   return String(value);
+}
+
+function getEvidenceMetrics(
+  evidence: EvaluationDetailData["evidenceForms"][number]
+): Array<[string, unknown]> {
+  const metrics = Object.entries(evidence).filter(
+    ([key, value]) =>
+      ![
+        "type",
+        "evidenceId",
+        "notes",
+        "performanceSessionId",
+        "recordedAt",
+      ].includes(key) && renderMetricValue(value)
+  );
+
+  if (evidence.type !== "strength") {
+    return metrics;
+  }
+
+  const filteredMetrics = metrics.filter(([key]) => key !== "powerRating");
+  const resolvedPowerRating = resolveStrengthEvidencePowerRating(evidence);
+
+  if (resolvedPowerRating) {
+    filteredMetrics.unshift(["powerRating", resolvedPowerRating]);
+  }
+
+  return filteredMetrics;
 }
 
 function DetailSection({
@@ -218,16 +247,7 @@ function EvidenceFormsList({
   return (
     <div className="space-y-3">
       {evidenceForms.map((evidence, index) => {
-        const metrics = Object.entries(evidence).filter(
-          ([key, value]) =>
-            ![
-              "type",
-              "evidenceId",
-              "notes",
-              "performanceSessionId",
-              "recordedAt",
-            ].includes(key) && renderMetricValue(value)
-        );
+        const metrics = getEvidenceMetrics(evidence);
 
         return (
           <div

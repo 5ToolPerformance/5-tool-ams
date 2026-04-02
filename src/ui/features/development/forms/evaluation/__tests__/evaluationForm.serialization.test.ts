@@ -90,6 +90,44 @@ describe("evaluationForm.serialization", () => {
     ]);
   });
 
+  it("serializes strength evidence component scores into the payload body", () => {
+    const values = createEmptyEvaluationFormValues();
+    values.disciplineId = "disc-1";
+    values.evaluationDate = "2026-03-24";
+    values.snapshotSummary = "Snapshot summary";
+    values.strengthProfileSummary = "Strength summary";
+    values.keyConstraintsSummary = "Constraint summary";
+    values.evidence = [
+      {
+        id: "evidence-1",
+        type: "strength",
+        recordedAt: "2026-03-24T09:30",
+        notes: "Force plate review",
+        rotation: "88",
+        lowerBodyStrength: "81",
+        upperBodyStrength: "74",
+        powerRating: "",
+      },
+    ];
+
+    const payload = serializeEvaluationFormToPayload(values, {
+      playerId: "player-1",
+      disciplineId: "disc-1",
+      createdBy: "coach-1",
+    });
+
+    expect(payload.evidenceForms).toEqual([
+      expect.objectContaining({
+        type: "strength",
+        notes: "Force plate review",
+        rotation: "88",
+        lowerBodyStrength: "81",
+        upperBodyStrength: "74",
+        powerRating: null,
+      }),
+    ]);
+  });
+
   it("injects placeholder summaries for tests-only evaluations", () => {
     const values = createEmptyEvaluationFormValues();
     values.disciplineId = "disc-1";

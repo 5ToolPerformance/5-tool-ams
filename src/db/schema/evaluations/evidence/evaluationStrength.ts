@@ -12,6 +12,9 @@ export const evaluationsStrength = pgTable(
 
     // Metrics
     powerRating: numeric("power_rating"),
+    rotation: numeric("rotation"),
+    lowerBodyStrength: numeric("lower_body_strength"),
+    upperBodyStrength: numeric("upper_body_strength"),
   },
   (table) => [
     ...createEvaluationMetricBaseIndexes(table, "evaluation_strength"),

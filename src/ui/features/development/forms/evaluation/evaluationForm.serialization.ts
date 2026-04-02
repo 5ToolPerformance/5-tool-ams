@@ -92,6 +92,9 @@ export function serializeEvaluationEvidenceForms(
           return {
             ...base,
             type: "strength" as const,
+            rotation: emptyMetricToNull(item.rotation),
+            lowerBodyStrength: emptyMetricToNull(item.lowerBodyStrength),
+            upperBodyStrength: emptyMetricToNull(item.upperBodyStrength),
             powerRating: emptyMetricToNull(item.powerRating),
           };
       }

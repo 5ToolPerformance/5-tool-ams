@@ -42,6 +42,9 @@ export type EvaluationBlastEvidenceInput = EvaluationEvidenceBaseInput & {
 
 export type EvaluationStrengthEvidenceInput = EvaluationEvidenceBaseInput & {
   type: "strength";
+  rotation?: string | null;
+  lowerBodyStrength?: string | null;
+  upperBodyStrength?: string | null;
   powerRating?: string | null;
 };
 

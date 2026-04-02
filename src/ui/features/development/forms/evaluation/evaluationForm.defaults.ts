@@ -214,6 +214,9 @@ export function createEmptyEvidenceOfType(
       return {
         ...base,
         type,
+        rotation: "",
+        lowerBodyStrength: "",
+        upperBodyStrength: "",
         powerRating: "",
       };
   }
