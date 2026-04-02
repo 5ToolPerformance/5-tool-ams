@@ -1,7 +1,6 @@
 import {
   lessonPlayerFatigue,
   lessonRoutineSourceEnum,
-  manualTsIso,
   pitchingLessonPlayers,
 } from "@/db/schema";
 import { RoutineDocumentV1 } from "@/domain/routines/types";
@@ -10,7 +9,6 @@ import {
   LessonRoutineSource,
   LessonRoutineType,
   LessonType,
-  StrengthLessonSpecific,
 } from "@/hooks/lessons/lessonForm.types";
 
 export type LessonWritePayload = {
@@ -96,14 +94,6 @@ export function isPitchingLessonSpecific(
 ): value is PitchingLessonSpecific {
   return typeof value === "object" && value !== null && "summary" in value;
 }
-
-export function isStrengthLessonSpecific(
-  data: unknown
-): data is StrengthLessonSpecific {
-  return !!data && typeof data === "object" && "tsIso" in data;
-}
-
-export type TsIsoInsert = typeof manualTsIso.$inferInsert;
 
 export type FatigueReportInsert = typeof lessonPlayerFatigue.$inferInsert;
 

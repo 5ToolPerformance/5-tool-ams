@@ -31,7 +31,6 @@ export type PlayerLessonData = {
   routineSelections?: PlayerRoutineSelection[];
   lessonSpecific?: {
     pitching?: PitchingLessonData;
-    strength?: StrengthLessonSpecific;
   };
   videoAssetId?: string;
   fatigueReport?: FatigueReportData;
@@ -70,27 +69,4 @@ export type FatigueReportData = {
   report: "fatigue" | "injury" | "none";
   severity?: number;
   bodyPartId: string;
-};
-
-export type TsIsoData = {
-  shoulderErL?: number;
-  shoulderErR?: number;
-  shoulderErTtpfL?: number;
-  shoulderErTtpfR?: number;
-  shoulderIrL?: number;
-  shoulderIrR?: number;
-  shoulderIrTtpfL?: number;
-  shoulderIrTtpfR?: number;
-  shoulderRotL?: number;
-  shoulderRotR?: number;
-  shoulderRotRfdL?: number;
-  shoulderRotRfdR?: number;
-  hipRotL?: number;
-  hipRotR?: number;
-  hipRotRfdL?: number;
-  hipRotRfdR?: number;
-};
-
-export type StrengthLessonSpecific = {
-  tsIso?: TsIsoData;
 };

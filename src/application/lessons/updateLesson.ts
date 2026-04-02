@@ -9,16 +9,13 @@ import {
   lessonPlayerFatigue,
   lessonPlayerRoutines,
   lessonPlayers,
-  manualTsIso,
   pitchingLessonPlayers,
 } from "@/db/schema";
 import type {
   FatigueReportInsert,
   LessonWritePayload,
-  TsIsoInsert,
 } from "@/domain/lessons/types";
 import { isPitchingLessonSpecific } from "@/domain/lessons/types";
-import { StrengthLessonSpecific } from "@/hooks/lessons/lessonForm.types";
 
 type PitchingLessonPlayerInsert = InferInsertModel<
   typeof pitchingLessonPlayers
@@ -70,12 +67,6 @@ export async function updateLesson(
               existingLessonPlayerIds
             )
           );
-      }
-
-      if (payload.lesson.type === "strength") {
-        await tx
-          .delete(manualTsIso)
-          .where(inArray(manualTsIso.lessonPlayerId, existingLessonPlayerIds));
       }
 
       await tx
@@ -213,28 +204,6 @@ export async function updateLesson(
 
       if (pitchingRows.length > 0) {
         await tx.insert(pitchingLessonPlayers).values(pitchingRows);
-      }
-    }
-
-    if (payload.lesson.type === "strength") {
-      const tsIsoRows: TsIsoInsert[] = [];
-
-      for (const p of payload.participants) {
-        const lessonSpecific = p.lessonSpecific as
-          | { strength?: StrengthLessonSpecific }
-          | undefined;
-
-        const tsIso = lessonSpecific?.strength?.tsIso;
-        if (!tsIso) continue;
-
-        tsIsoRows.push({
-          lessonPlayerId: lessonPlayerByPlayerId[p.playerId],
-          ...tsIso,
-        });
-      }
-
-      if (tsIsoRows.length > 0) {
-        await tx.insert(manualTsIso).values(tsIsoRows);
       }
     }
 

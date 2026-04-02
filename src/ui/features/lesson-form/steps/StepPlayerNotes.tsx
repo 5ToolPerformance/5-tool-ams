@@ -102,15 +102,7 @@ export function StepPlayerNotes() {
                     {/* Lesson-type–specific notes */}
                     {lessonImpl?.PlayerNotes && (
                       <div className="space-y-2">
-                        {lessonType === "strength" && (
-                          <lessonImpl.PlayerNotes
-                            playerId={playerId}
-                            data={player.lessonSpecific?.strength?.tsIso ?? {}}
-                          />
-                        )}
-                        {lessonType !== "strength" && (
-                          <lessonImpl.PlayerNotes playerId={playerId} />
-                        )}
+                        <lessonImpl.PlayerNotes playerId={playerId} />
                         {lessonImpl?.fatigueCheck && (
                           <FatigueCheckin
                             playerId={playerId}

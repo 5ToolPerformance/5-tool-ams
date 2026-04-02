@@ -5,7 +5,6 @@ import {
   lessonPlayerFatigue,
   lessonPlayerRoutines,
   lessonPlayers,
-  manualTsIso,
   pitchingLessonPlayers,
 } from "@/db/schema";
 import { lessonDrills } from "@/db/schema/lesson-logging-v2/lessonDrills";
@@ -13,10 +12,8 @@ import {
   FatigueReportInsert,
   type LessonWritePayload,
   PitchingLessonInsert,
-  TsIsoInsert,
   isPitchingLessonSpecific,
 } from "@/domain/lessons/types";
-import { StrengthLessonSpecific } from "@/hooks/lessons/lessonForm.types";
 
 export async function createLesson(
   payload: LessonWritePayload,
@@ -119,28 +116,6 @@ export async function createLesson(
         await tx.insert(pitchingLessonPlayers).values(pitchingRows);
       }
     }
-    if (payload.lesson.type === "strength") {
-      const tsIsoRows: TsIsoInsert[] = [];
-
-      for (const p of payload.participants) {
-        const lessonSpecific = p.lessonSpecific as
-          | { strength?: StrengthLessonSpecific }
-          | undefined;
-
-        const tsIso = lessonSpecific?.strength?.tsIso;
-        if (!tsIso) continue;
-
-        tsIsoRows.push({
-          lessonPlayerId: lessonPlayerByPlayerId[p.playerId],
-          ...tsIso,
-        });
-      }
-
-      if (tsIsoRows.length > 0) {
-        await tx.insert(manualTsIso).values(tsIsoRows);
-      }
-    }
-
     /**
      * 5️⃣ Insert lesson_drills
      */
