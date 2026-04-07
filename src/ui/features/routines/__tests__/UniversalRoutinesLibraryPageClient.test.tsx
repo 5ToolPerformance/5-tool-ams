@@ -1,5 +1,5 @@
 import React from "react";
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 
 import { UniversalRoutinesLibraryPageClient } from "@/ui/features/routines/UniversalRoutinesLibraryPageClient";
 
@@ -11,11 +11,28 @@ jest.mock("@heroui/react", () => {
 
   return {
     ...actual,
-    Button: ({ children, onPress, onClick, ...props }: any) => (
-      <button type="button" onClick={onPress ?? onClick} {...props}>
+    Button: ({
+      children,
+      onPress,
+      onClick,
+      isDisabled,
+      isLoading,
+      ...props
+    }: any) => (
+      <button
+        type="button"
+        onClick={onPress ?? onClick}
+        disabled={Boolean(isDisabled || isLoading)}
+        {...props}
+      >
         {children}
       </button>
     ),
+    Modal: ({ children, isOpen }: any) => (isOpen ? <div role="dialog">{children}</div> : null),
+    ModalContent: ({ children }: any) => <div>{children}</div>,
+    ModalHeader: ({ children, ...props }: any) => <div {...props}>{children}</div>,
+    ModalBody: ({ children, ...props }: any) => <div {...props}>{children}</div>,
+    ModalFooter: ({ children }: any) => <div>{children}</div>,
   };
 });
 
@@ -125,5 +142,51 @@ describe("UniversalRoutinesLibraryPageClient", () => {
     await waitFor(() => {
       expect(screen.queryByText("Active Routine")).toBeNull();
     });
+  });
+
+  it("opens the routine modal from the library card", async () => {
+    render(
+      <UniversalRoutinesLibraryPageClient
+        routines={[
+          {
+            ...routines[0],
+            documentData: {
+              overview: {
+                summary: "Detailed summary",
+                usageNotes: "Use on recovery days",
+              },
+              mechanics: [{ mechanicId: "mechanic-1", title: "Lead leg block" }],
+              blocks: [
+                {
+                  id: "block-1",
+                  title: "Primer",
+                  notes: "Stay relaxed",
+                  drills: [
+                    {
+                      drillId: "drill-1",
+                      title: "Step-behind throw",
+                      notes: "Build into effort",
+                    },
+                  ],
+                },
+              ],
+            },
+          },
+        ]}
+        disciplineOptions={[{ id: "disc-1", key: "pitching", label: "Pitching" }]}
+        viewerRole="coach"
+        viewerUserId="coach-1"
+      />
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "View Routine" }));
+
+    const dialogs = await screen.findAllByRole("dialog");
+    const modal = dialogs[dialogs.length - 1];
+
+    expect(within(modal).getByText("Use on recovery days")).toBeTruthy();
+    expect(within(modal).getByText("Lead leg block")).toBeTruthy();
+    expect(within(modal).getByText("Primer")).toBeTruthy();
+    expect(within(modal).getByText("Step-behind throw")).toBeTruthy();
   });
 });

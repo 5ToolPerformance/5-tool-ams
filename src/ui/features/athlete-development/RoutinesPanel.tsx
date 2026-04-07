@@ -12,6 +12,10 @@ import type {
   UniversalRoutineRow,
 } from "@/application/players/development/getPlayerDevelopmentTabData";
 import { SectionShell } from "@/ui/core/athletes/SectionShell";
+import {
+  RoutineViewData,
+  RoutineViewModal,
+} from "@/ui/features/routines/RoutineViewModal";
 
 import { getDisciplineAccentClass } from "./utils";
 
@@ -21,6 +25,7 @@ interface RoutinesPanelProps {
   universalRoutinesSupported: boolean;
   activePlanId?: string;
   disciplineKey?: string;
+  disciplineLabel?: string;
   onOpenRoutine?: () => void;
   onAssignedUniversalRoutine?: () => void;
 }
@@ -97,12 +102,14 @@ export function RoutinesPanel({
   universalRoutinesSupported,
   activePlanId,
   disciplineKey,
+  disciplineLabel,
   onOpenRoutine,
   onAssignedUniversalRoutine,
 }: RoutinesPanelProps) {
   const accentClass = getDisciplineAccentClass(disciplineKey);
   const [query, setQuery] = useState("");
   const [assigningId, setAssigningId] = useState<string | null>(null);
+  const [viewRoutine, setViewRoutine] = useState<RoutineViewData | null>(null);
 
   const filteredUniversalRoutines = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase();
@@ -160,106 +167,146 @@ export function RoutinesPanel({
     }
   }
 
+  function openRoutineView(
+    routine: {
+      id: string;
+      title: string;
+      description: string | null;
+      routineType: string;
+      documentData: unknown;
+    },
+    sourceLabel: string
+  ) {
+    setViewRoutine({
+      id: routine.id,
+      title: routine.title,
+      description: routine.description,
+      routineType: routine.routineType,
+      sourceLabel,
+      disciplineLabel,
+      documentData: routine.documentData,
+    });
+  }
+
   return (
-    <SectionShell
-      title="Routines"
-      description="Routines currently available in this athlete's development context."
-    >
-      <div className="space-y-6">
-        <div className="space-y-3">
-          <div className="flex items-center justify-between gap-3">
-            <h3 className="text-sm font-semibold">Player Routines</h3>
-            <Button size="sm" color="primary" onPress={onOpenRoutine}>
-              New Routine
-            </Button>
-          </div>
-          {playerRoutines.length === 0 ? (
-            <p className="text-sm text-muted-foreground">
-              No routines are available for this athlete in the selected discipline.
-            </p>
-          ) : (
-            <div className="grid grid-cols-1 gap-3 lg:grid-cols-2">
-              {playerRoutines.map((routine) => (
-                <RoutineCard
-                  key={routine.id}
-                  routine={routine}
-                  accentClass={accentClass}
-                  footer={
-                    <div className="flex flex-wrap gap-2 pt-1">
-                      <Button size="sm" variant="flat" isDisabled>
-                        View Routine
-                      </Button>
-                      <Button size="sm" variant="flat" isDisabled>
-                        Edit Routine
-                      </Button>
-                      <Button size="sm" color="primary" isDisabled>
-                        Use in Lesson
-                      </Button>
-                    </div>
-                  }
-                />
-              ))}
+    <>
+      <SectionShell
+        title="Routines"
+        description="Routines currently available in this athlete's development context."
+      >
+        <div className="space-y-6">
+          <div className="space-y-3">
+            <div className="flex items-center justify-between gap-3">
+              <h3 className="text-sm font-semibold">Player Routines</h3>
+              <Button size="sm" color="primary" onPress={onOpenRoutine}>
+                New Routine
+              </Button>
             </div>
-          )}
+            {playerRoutines.length === 0 ? (
+              <p className="text-sm text-muted-foreground">
+                No routines are available for this athlete in the selected discipline.
+              </p>
+            ) : (
+              <div className="grid grid-cols-1 gap-3 lg:grid-cols-2">
+                {playerRoutines.map((routine) => (
+                  <RoutineCard
+                    key={routine.id}
+                    routine={routine}
+                    accentClass={accentClass}
+                    footer={
+                      <div className="flex flex-wrap gap-2 pt-1">
+                        <Button
+                          size="sm"
+                          variant="flat"
+                          onPress={() => openRoutineView(routine, "Player Routine")}
+                        >
+                          View Routine
+                        </Button>
+                        <Button size="sm" variant="flat" isDisabled>
+                          Edit Routine
+                        </Button>
+                        <Button size="sm" color="primary" isDisabled>
+                          Use in Lesson
+                        </Button>
+                      </div>
+                    }
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+
+          <div className="space-y-3">
+            <h3 className="text-sm font-semibold">Universal Routines</h3>
+            {!universalRoutinesSupported ? (
+              <p className="text-sm text-muted-foreground">
+                Universal routines are not available for this view.
+              </p>
+            ) : (
+              <>
+                <Input
+                  placeholder="Search universal routines"
+                  startContent={<Search className="h-4 w-4 text-foreground-500" />}
+                  value={query}
+                  onValueChange={setQuery}
+                />
+
+                {!activePlanId ? (
+                  <p className="text-sm text-muted-foreground">
+                    Create an active development plan before assigning universal routines.
+                  </p>
+                ) : null}
+
+                {filteredUniversalRoutines.length === 0 ? (
+                  <p className="text-sm text-muted-foreground">
+                    No universal routines match the current search.
+                  </p>
+                ) : (
+                  <div className="grid grid-cols-1 gap-3 lg:grid-cols-2">
+                    {filteredUniversalRoutines.map((routine) => (
+                      <RoutineCard
+                        key={routine.id}
+                        routine={routine}
+                        accentClass={accentClass}
+                        footer={
+                          <div className="flex flex-wrap items-center gap-2 pt-1">
+                            <Chip size="sm" variant="bordered">
+                              Shared by {routine.createdByName ?? "Unknown"}
+                            </Chip>
+                            <Button
+                              size="sm"
+                              variant="flat"
+                              onPress={() => openRoutineView(routine, "Universal Routine")}
+                            >
+                              View Routine
+                            </Button>
+                            <Button
+                              size="sm"
+                              color="primary"
+                              onPress={() => assignRoutine(routine.id)}
+                              isDisabled={!activePlanId}
+                              isLoading={assigningId === routine.id}
+                            >
+                              Assign to Plan
+                            </Button>
+                          </div>
+                        }
+                      />
+                    ))}
+                  </div>
+                )}
+              </>
+            )}
+          </div>
         </div>
+      </SectionShell>
 
-        <div className="space-y-3">
-          <h3 className="text-sm font-semibold">Universal Routines</h3>
-          {!universalRoutinesSupported ? (
-            <p className="text-sm text-muted-foreground">
-              Universal routines are not available for this view.
-            </p>
-          ) : (
-            <>
-              <Input
-                placeholder="Search universal routines"
-                startContent={<Search className="h-4 w-4 text-foreground-500" />}
-                value={query}
-                onValueChange={setQuery}
-              />
-
-              {!activePlanId ? (
-                <p className="text-sm text-muted-foreground">
-                  Create an active development plan before assigning universal routines.
-                </p>
-              ) : null}
-
-              {filteredUniversalRoutines.length === 0 ? (
-                <p className="text-sm text-muted-foreground">
-                  No universal routines match the current search.
-                </p>
-              ) : (
-                <div className="grid grid-cols-1 gap-3 lg:grid-cols-2">
-                  {filteredUniversalRoutines.map((routine) => (
-                    <RoutineCard
-                      key={routine.id}
-                      routine={routine}
-                      accentClass={accentClass}
-                      footer={
-                        <div className="flex flex-wrap items-center gap-2 pt-1">
-                          <Chip size="sm" variant="bordered">
-                            Shared by {routine.createdByName ?? "Unknown"}
-                          </Chip>
-                          <Button
-                            size="sm"
-                            color="primary"
-                            onPress={() => assignRoutine(routine.id)}
-                            isDisabled={!activePlanId}
-                            isLoading={assigningId === routine.id}
-                          >
-                            Assign to Plan
-                          </Button>
-                        </div>
-                      }
-                    />
-                  ))}
-                </div>
-              )}
-            </>
-          )}
-        </div>
-      </div>
-    </SectionShell>
+      <RoutineViewModal
+        isOpen={viewRoutine !== null}
+        onClose={() => setViewRoutine(null)}
+        routine={viewRoutine}
+      />
+    </>
   );
 }
 

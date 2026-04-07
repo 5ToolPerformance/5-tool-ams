@@ -598,6 +598,7 @@ export function DevelopmentTab({
               universalRoutinesSupported={data.universalRoutinesSupported}
               activePlanId={data.activePlan?.id}
               disciplineKey={selectedDiscipline.key}
+              disciplineLabel={selectedDiscipline.label}
               onOpenRoutine={() => openRoutineDrawer()}
             />
 
