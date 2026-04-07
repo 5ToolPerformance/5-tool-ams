@@ -46,7 +46,7 @@ export default async function PortalJournalPage({
   ]);
 
   return (
-    <div className="mx-auto max-w-md space-y-4 px-4 py-5 sm:max-w-2xl">
+    <div className="mx-auto max-w-md space-y-4 px-4 py-5">
       <PortalPlayerSwitcher players={context.players} selectedPlayerId={context.selectedPlayerId} />
       <JournalPageClient
         playerId={selectedPlayer.id}

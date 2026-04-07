@@ -9,6 +9,7 @@ import {
   Input,
   Select,
   SelectItem,
+  Slider,
   Switch,
   Textarea,
 } from "@heroui/react";
@@ -96,6 +97,62 @@ export function createEmptyArmCheckin(): ThrowingArmCheckinInput {
   };
 }
 
+function ReadinessSlider({
+  label,
+  value,
+  onChange,
+}: {
+  label: string;
+  value: number | null;
+  onChange: (next: number) => void;
+}) {
+  return (
+    <div className="space-y-2 rounded-2xl border border-black/5 bg-default-50/70 p-3 dark:border-white/10 dark:bg-white/5">
+      <div className="flex items-center justify-between gap-3">
+        <p className="text-sm font-medium text-foreground">{label}</p>
+        <span className="text-sm font-semibold text-default-500">{value ?? 0}</span>
+      </div>
+      <Slider
+        aria-label={label}
+        value={value ?? 0}
+        onChange={(next) => onChange(Array.isArray(next) ? next[0] ?? 0 : next)}
+        minValue={0}
+        maxValue={5}
+        step={1}
+        showSteps
+      />
+    </div>
+  );
+}
+
+function ScoreSlider({
+  label,
+  value,
+  onChange,
+}: {
+  label: string;
+  value: number | null;
+  onChange: (next: number) => void;
+}) {
+  return (
+    <div className="space-y-2 rounded-2xl border border-black/5 bg-default-50/70 p-3 dark:border-white/10 dark:bg-white/5">
+      <div className="flex items-center justify-between gap-3">
+        <p className="text-sm font-medium text-foreground">{label}</p>
+        <span className="text-sm font-semibold text-default-500">{value ?? 3}</span>
+      </div>
+      <Slider
+        aria-label={label}
+        value={value ?? 3}
+        onChange={(next) => onChange(Array.isArray(next) ? next[0] ?? 3 : next)}
+        minValue={1}
+        maxValue={5}
+        step={1}
+        showSteps
+      />
+    </div>
+  );
+}
+
 export function createEmptyAtBat(index = 1): HittingAtBatInput {
   return {
     atBatNumber: index,
@@ -168,28 +225,24 @@ export function ThrowingJournalForm({
   return (
     <div className="space-y-4">
       <JournalSharedFields value={value} onChange={(next) => onChange(next as typeof value)} />
-      <div className="grid grid-cols-2 gap-3">
-        <Input
-          type="number"
+      <div className="grid grid-cols-1 gap-3">
+        <ScoreSlider
           label="Overall feel"
-          placeholder="1-5"
-          value={value.overallFeel?.toString() ?? ""}
-          onChange={(event) =>
+          value={value.overallFeel}
+          onChange={(next) =>
             onChange({
               ...value,
-              overallFeel: event.target.value ? Number(event.target.value) : null,
+              overallFeel: next,
             })
           }
         />
-        <Input
-          type="number"
+        <ScoreSlider
           label="Confidence"
-          placeholder="1-5"
-          value={value.confidenceScore?.toString() ?? ""}
-          onChange={(event) =>
+          value={value.confidenceScore}
+          onChange={(next) =>
             onChange({
               ...value,
-              confidenceScore: event.target.value ? Number(event.target.value) : null,
+              confidenceScore: next,
             })
           }
         />
@@ -272,21 +325,6 @@ export function ThrowingJournalForm({
                     onChange({ ...value, workloadSegments });
                   }}
                 />
-                <Input
-                  type="number"
-                  label="Pitch count"
-                  value={segment.pitchCount?.toString() ?? ""}
-                  onChange={(event) => {
-                    const workloadSegments = [...value.workloadSegments];
-                    workloadSegments[index] = {
-                      ...segment,
-                      pitchCount: event.target.value ? Number(event.target.value) : null,
-                    };
-                    onChange({ ...value, workloadSegments });
-                  }}
-                />
-              </div>
-              <div className="grid grid-cols-2 gap-3">
                 <Select
                   label="Intent"
                   selectedKeys={segment.intentLevel ? [segment.intentLevel] : []}
@@ -303,154 +341,183 @@ export function ThrowingJournalForm({
                     <SelectItem key={option.key}>{option.label}</SelectItem>
                   ))}
                 </Select>
-                <Input
-                  type="number"
-                  label="Duration (min)"
-                  value={segment.durationMinutes?.toString() ?? ""}
-                  onChange={(event) => {
-                    const workloadSegments = [...value.workloadSegments];
-                    workloadSegments[index] = {
-                      ...segment,
-                      durationMinutes: event.target.value ? Number(event.target.value) : null,
-                    };
-                    onChange({ ...value, workloadSegments });
-                  }}
-                />
               </div>
-              <div className="grid grid-cols-2 gap-3">
-                <Input
-                  type="number"
-                  label="Avg velo"
-                  value={segment.velocityAvg?.toString() ?? ""}
-                  onChange={(event) => {
-                    const workloadSegments = [...value.workloadSegments];
-                    workloadSegments[index] = {
-                      ...segment,
-                      velocityAvg: event.target.value ? Number(event.target.value) : null,
-                    };
-                    onChange({ ...value, workloadSegments });
-                  }}
-                />
-                <Input
-                  type="number"
-                  label="Top velo"
-                  value={segment.velocityMax?.toString() ?? ""}
-                  onChange={(event) => {
-                    const workloadSegments = [...value.workloadSegments];
-                    workloadSegments[index] = {
-                      ...segment,
-                      velocityMax: event.target.value ? Number(event.target.value) : null,
-                    };
-                    onChange({ ...value, workloadSegments });
-                  }}
-                />
-              </div>
-              <Input
-                label="Pitch type"
-                value={segment.pitchType ?? ""}
-                onChange={(event) => {
-                  const workloadSegments = [...value.workloadSegments];
-                  workloadSegments[index] = {
-                    ...segment,
-                    pitchType: event.target.value || null,
-                  };
-                  onChange({ ...value, workloadSegments });
-                }}
-              />
-              <Textarea
-                label="Notes"
-                minRows={2}
-                value={segment.notes ?? ""}
-                onChange={(event) => {
-                  const workloadSegments = [...value.workloadSegments];
-                  workloadSegments[index] = {
-                    ...segment,
-                    notes: event.target.value || null,
-                  };
-                  onChange({ ...value, workloadSegments });
-                }}
-              />
-              <Switch
-                isSelected={segment.isEstimated}
-                onValueChange={(selected) => {
-                  const workloadSegments = [...value.workloadSegments];
-                  workloadSegments[index] = {
-                    ...segment,
-                    isEstimated: selected,
-                  };
-                  onChange({ ...value, workloadSegments });
-                }}
-              >
-                Estimated count
-              </Switch>
+              <Accordion variant="light">
+                <AccordionItem
+                  key={`segment-advanced-${index}`}
+                  aria-label={`Advanced details for segment ${index + 1}`}
+                  title="Advanced details"
+                >
+                  <div className="space-y-3">
+                    <div className="grid grid-cols-2 gap-3">
+                      <Input
+                        type="number"
+                        label="Pitch count"
+                        value={segment.pitchCount?.toString() ?? ""}
+                        onChange={(event) => {
+                          const workloadSegments = [...value.workloadSegments];
+                          workloadSegments[index] = {
+                            ...segment,
+                            pitchCount: event.target.value ? Number(event.target.value) : null,
+                          };
+                          onChange({ ...value, workloadSegments });
+                        }}
+                      />
+                      <Input
+                        type="number"
+                        label="Duration (min)"
+                        value={segment.durationMinutes?.toString() ?? ""}
+                        onChange={(event) => {
+                          const workloadSegments = [...value.workloadSegments];
+                          workloadSegments[index] = {
+                            ...segment,
+                            durationMinutes: event.target.value ? Number(event.target.value) : null,
+                          };
+                          onChange({ ...value, workloadSegments });
+                        }}
+                      />
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      <Input
+                        type="number"
+                        label="Avg velo"
+                        value={segment.velocityAvg?.toString() ?? ""}
+                        onChange={(event) => {
+                          const workloadSegments = [...value.workloadSegments];
+                          workloadSegments[index] = {
+                            ...segment,
+                            velocityAvg: event.target.value ? Number(event.target.value) : null,
+                          };
+                          onChange({ ...value, workloadSegments });
+                        }}
+                      />
+                      <Input
+                        type="number"
+                        label="Top velo"
+                        value={segment.velocityMax?.toString() ?? ""}
+                        onChange={(event) => {
+                          const workloadSegments = [...value.workloadSegments];
+                          workloadSegments[index] = {
+                            ...segment,
+                            velocityMax: event.target.value ? Number(event.target.value) : null,
+                          };
+                          onChange({ ...value, workloadSegments });
+                        }}
+                      />
+                    </div>
+                    <Input
+                      label="Pitch type"
+                      value={segment.pitchType ?? ""}
+                      onChange={(event) => {
+                        const workloadSegments = [...value.workloadSegments];
+                        workloadSegments[index] = {
+                          ...segment,
+                          pitchType: event.target.value || null,
+                        };
+                        onChange({ ...value, workloadSegments });
+                      }}
+                    />
+                    <Textarea
+                      label="Notes"
+                      minRows={2}
+                      value={segment.notes ?? ""}
+                      onChange={(event) => {
+                        const workloadSegments = [...value.workloadSegments];
+                        workloadSegments[index] = {
+                          ...segment,
+                          notes: event.target.value || null,
+                        };
+                        onChange({ ...value, workloadSegments });
+                      }}
+                    />
+                    <Switch
+                      isSelected={segment.isEstimated}
+                      onValueChange={(selected) => {
+                        const workloadSegments = [...value.workloadSegments];
+                        workloadSegments[index] = {
+                          ...segment,
+                          isEstimated: selected,
+                        };
+                        onChange({ ...value, workloadSegments });
+                      }}
+                    >
+                      Estimated count
+                    </Switch>
+                  </div>
+                </AccordionItem>
+              </Accordion>
             </CardBody>
           </Card>
         ))}
       </div>
 
+      <div className="space-y-3">
+        <div className="space-y-1">
+          <h3 className="text-sm font-semibold text-foreground">Arm readiness</h3>
+          <p className="text-xs text-default-500">Quick check-in from 0 to 5.</p>
+        </div>
+        <div className="grid grid-cols-1 gap-3">
+          <ReadinessSlider
+            label="Arm soreness"
+            value={value.armCheckin?.armSoreness ?? null}
+            onChange={(next) =>
+              onChange({
+                ...value,
+                armCheckin: {
+                  ...(value.armCheckin ?? createEmptyArmCheckin()),
+                  armSoreness: next,
+                },
+              })
+            }
+          />
+          <ReadinessSlider
+            label="Body fatigue"
+            value={value.armCheckin?.bodyFatigue ?? null}
+            onChange={(next) =>
+              onChange({
+                ...value,
+                armCheckin: {
+                  ...(value.armCheckin ?? createEmptyArmCheckin()),
+                  bodyFatigue: next,
+                },
+              })
+            }
+          />
+          <ReadinessSlider
+            label="Arm fatigue"
+            value={value.armCheckin?.armFatigue ?? null}
+            onChange={(next) =>
+              onChange({
+                ...value,
+                armCheckin: {
+                  ...(value.armCheckin ?? createEmptyArmCheckin()),
+                  armFatigue: next,
+                },
+              })
+            }
+          />
+        </div>
+      </div>
+
       <Accordion variant="splitted">
-        <AccordionItem key="arm-checkin" aria-label="Arm check-in" title="Optional arm check-in">
+        <AccordionItem key="arm-checkin" aria-label="Arm check-in" title="Advanced arm details">
           <div className="space-y-3">
-            <div className="grid grid-cols-2 gap-3">
-              <Input
-                type="number"
-                label="Arm soreness"
-                value={value.armCheckin?.armSoreness?.toString() ?? ""}
-                onChange={(event) =>
-                  onChange({
-                    ...value,
-                    armCheckin: {
-                      ...(value.armCheckin ?? createEmptyArmCheckin()),
-                      armSoreness: event.target.value ? Number(event.target.value) : null,
-                    },
-                  })
-                }
-              />
-              <Input
-                type="number"
-                label="Body fatigue"
-                value={value.armCheckin?.bodyFatigue?.toString() ?? ""}
-                onChange={(event) =>
-                  onChange({
-                    ...value,
-                    armCheckin: {
-                      ...(value.armCheckin ?? createEmptyArmCheckin()),
-                      bodyFatigue: event.target.value ? Number(event.target.value) : null,
-                    },
-                  })
-                }
-              />
-            </div>
-            <div className="grid grid-cols-2 gap-3">
-              <Input
-                type="number"
-                label="Arm fatigue"
-                value={value.armCheckin?.armFatigue?.toString() ?? ""}
-                onChange={(event) =>
-                  onChange({
-                    ...value,
-                    armCheckin: {
-                      ...(value.armCheckin ?? createEmptyArmCheckin()),
-                      armFatigue: event.target.value ? Number(event.target.value) : null,
-                    },
-                  })
-                }
-              />
-              <Input
-                type="number"
-                label="Recovery"
-                value={value.armCheckin?.recoveryScore?.toString() ?? ""}
-                onChange={(event) =>
-                  onChange({
-                    ...value,
-                    armCheckin: {
-                      ...(value.armCheckin ?? createEmptyArmCheckin()),
-                      recoveryScore: event.target.value ? Number(event.target.value) : null,
-                    },
-                  })
-                }
-              />
-            </div>
+            <Input
+              type="number"
+              label="Recovery"
+              min={0}
+              max={5}
+              value={value.armCheckin?.recoveryScore?.toString() ?? ""}
+              onChange={(event) =>
+                onChange({
+                  ...value,
+                  armCheckin: {
+                    ...(value.armCheckin ?? createEmptyArmCheckin()),
+                    recoveryScore: event.target.value ? Number(event.target.value) : null,
+                  },
+                })
+              }
+            />
             <Switch
               isSelected={Boolean(value.armCheckin?.feelsOff)}
               onValueChange={(selected) =>
@@ -498,43 +565,24 @@ export function HittingJournalForm({
   return (
     <div className="space-y-4">
       <JournalSharedFields value={value} onChange={(next) => onChange(next as typeof value)} />
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-        <Input
-          label="Opponent"
-          value={value.opponent ?? ""}
-          onChange={(event) => onChange({ ...value, opponent: event.target.value || null })}
-        />
-        <Input
-          label="Team name"
-          value={value.teamName ?? ""}
-          onChange={(event) => onChange({ ...value, teamName: event.target.value || null })}
-        />
-      </div>
-      <Input
-        label="Location"
-        value={value.location ?? ""}
-        onChange={(event) => onChange({ ...value, location: event.target.value || null })}
-      />
-      <div className="grid grid-cols-2 gap-3">
-        <Input
-          type="number"
+      <div className="grid grid-cols-1 gap-3">
+        <ScoreSlider
           label="Overall feel"
-          value={value.overallFeel?.toString() ?? ""}
-          onChange={(event) =>
+          value={value.overallFeel}
+          onChange={(next) =>
             onChange({
               ...value,
-              overallFeel: event.target.value ? Number(event.target.value) : null,
+              overallFeel: next,
             })
           }
         />
-        <Input
-          type="number"
+        <ScoreSlider
           label="Confidence"
-          value={value.confidenceScore?.toString() ?? ""}
-          onChange={(event) =>
+          value={value.confidenceScore}
+          onChange={(next) =>
             onChange({
               ...value,
-              confidenceScore: event.target.value ? Number(event.target.value) : null,
+              confidenceScore: next,
             })
           }
         />
@@ -545,6 +593,29 @@ export function HittingJournalForm({
         value={value.hittingSummaryNote ?? ""}
         onChange={(event) => onChange({ ...value, hittingSummaryNote: event.target.value || null })}
       />
+      <Accordion variant="splitted">
+        <AccordionItem key="hitting-details" aria-label="More details" title="More details">
+          <div className="space-y-3">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              <Input
+                label="Opponent"
+                value={value.opponent ?? ""}
+                onChange={(event) => onChange({ ...value, opponent: event.target.value || null })}
+              />
+              <Input
+                label="Team name"
+                value={value.teamName ?? ""}
+                onChange={(event) => onChange({ ...value, teamName: event.target.value || null })}
+              />
+            </div>
+            <Input
+              label="Location"
+              value={value.location ?? ""}
+              onChange={(event) => onChange({ ...value, location: event.target.value || null })}
+            />
+          </div>
+        </AccordionItem>
+      </Accordion>
 
       <div className="space-y-3">
         <div className="flex items-center justify-between">

@@ -527,7 +527,7 @@ export function JournalPageClient({
               ) : null}
             </div>
           </DrawerHeader>
-          <DrawerBody className="mx-auto w-full max-w-2xl gap-4 px-4 py-4">
+          <DrawerBody className="mx-auto w-full max-w-md gap-4 px-4 py-4">
             {draft.entryType === "throwing" ? (
               <ThrowingJournalForm
                 value={draft as CreateThrowingJournalEntryInput}

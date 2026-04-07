@@ -4,6 +4,9 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 
 import { JournalPageClient } from "@/ui/features/client-portal/journal/JournalPageClient";
 
+const createActionMock = jest.fn();
+const updateActionMock = jest.fn();
+const deleteActionMock = jest.fn();
 const pushMock = jest.fn();
 const refreshMock = jest.fn();
 const toastError = jest.fn();
@@ -25,9 +28,9 @@ jest.mock("sonner", () => ({
 }));
 
 jest.mock("@/app/actions/journal", () => ({
-  createJournalEntryAction: jest.fn(),
-  updateJournalEntryAction: jest.fn(),
-  deleteJournalEntryAction: jest.fn(),
+  createJournalEntryAction: (...args: unknown[]) => createActionMock(...args),
+  updateJournalEntryAction: (...args: unknown[]) => updateActionMock(...args),
+  deleteJournalEntryAction: (...args: unknown[]) => deleteActionMock(...args),
   getJournalEntryReadAction: (...args: unknown[]) => readActionMock(...args),
 }));
 
@@ -63,7 +66,17 @@ jest.mock("@heroui/react", () => {
     Tabs: ({ children }: any) => <div>{children}</div>,
     Tab: ({ title }: any) => <button>{title}</button>,
     Accordion: passThrough("div"),
-    AccordionItem: passThrough("div"),
+    AccordionItem: ({ children, title }: any) => {
+      const [open, setOpen] = React.useState(false);
+      return (
+        <div>
+          <button type="button" onClick={() => setOpen((current: boolean) => !current)}>
+            {title}
+          </button>
+          {open ? <div>{children}</div> : null}
+        </div>
+      );
+    },
     Input: ({ label, value, onChange, ...props }: any) => (
       <label>
         {label}
@@ -90,7 +103,18 @@ jest.mock("@heroui/react", () => {
         {children}
       </label>
     ),
-    Textarea: ({ label, value, onChange, ...props }: any) => (
+    Slider: ({ "aria-label": ariaLabel, value, onChange, minValue, maxValue, step }: any) => (
+      <input
+        aria-label={ariaLabel}
+        type="range"
+        min={minValue}
+        max={maxValue}
+        step={step}
+        value={value}
+        onChange={(event) => onChange(Number(event.target.value))}
+      />
+    ),
+    Textarea: ({ label, value, onChange, minRows: _minRows, ...props }: any) => (
       <label>
         {label}
         <textarea value={value ?? ""} onChange={onChange} {...props} />
@@ -100,6 +124,16 @@ jest.mock("@heroui/react", () => {
 });
 
 describe("JournalPageClient", () => {
+  beforeEach(() => {
+    createActionMock.mockReset();
+    updateActionMock.mockReset();
+    deleteActionMock.mockReset();
+    readActionMock.mockReset();
+    pushMock.mockReset();
+    refreshMock.mockReset();
+    toastError.mockReset();
+  });
+
   it("renders feed entries and loads detail when expanded", async () => {
     readActionMock.mockResolvedValue({
       success: true,
@@ -165,6 +199,64 @@ describe("JournalPageClient", () => {
     await waitFor(() => {
       expect(readActionMock).toHaveBeenCalledWith("entry-1");
       expect(screen.getByText("Short box first")).toBeInTheDocument();
+    });
+  });
+
+  it("keeps advanced pitching details collapsed by default and submits readiness sliders", async () => {
+    createActionMock.mockResolvedValue({
+      success: true,
+      data: { id: "new-entry" },
+    });
+
+    render(
+      <JournalPageClient
+        playerId="player-1"
+        playerName="Ava Stone"
+        selectedFilter="all"
+        canLogActivity
+        entries={[]}
+      />
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: /create first entry/i }));
+
+    expect(screen.getByLabelText("Throw type")).toBeInTheDocument();
+    expect(screen.getByLabelText("Throw count")).toBeInTheDocument();
+    expect(screen.getByLabelText("Intent")).toBeInTheDocument();
+    expect(screen.queryByLabelText("Pitch count")).not.toBeInTheDocument();
+    expect(screen.queryByLabelText("Duration (min)")).not.toBeInTheDocument();
+
+    fireEvent.change(screen.getByLabelText("Arm soreness"), { target: { value: "1" } });
+    fireEvent.change(screen.getByLabelText("Arm soreness"), { target: { value: "0" } });
+    fireEvent.change(screen.getByLabelText("Body fatigue"), { target: { value: "3" } });
+    fireEvent.change(screen.getByLabelText("Arm fatigue"), { target: { value: "5" } });
+
+    fireEvent.click(screen.getByRole("button", { name: "Advanced details" }));
+    expect(screen.getByLabelText("Pitch count")).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: /save entry/i }));
+
+    await waitFor(() => {
+      expect(createActionMock).toHaveBeenCalledWith(
+        expect.objectContaining({
+          entryType: "throwing",
+          armCheckin: expect.objectContaining({
+            armSoreness: 0,
+            bodyFatigue: 3,
+            armFatigue: 5,
+          }),
+          workloadSegments: [
+            expect.objectContaining({
+              pitchCount: null,
+              durationMinutes: null,
+              velocityAvg: null,
+              velocityMax: null,
+              pitchType: null,
+              notes: null,
+            }),
+          ],
+        })
+      );
     });
   });
 });

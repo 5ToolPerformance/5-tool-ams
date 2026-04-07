@@ -39,6 +39,20 @@ const nullableScore = z
   })
   .pipe(z.number().int().min(1).max(5).nullable());
 
+const nullableZeroBasedScore = z
+  .union([z.number(), z.string()])
+  .optional()
+  .nullable()
+  .transform((value) => {
+    if (value === null || value === undefined || value === "") {
+      return null;
+    }
+
+    const parsed = typeof value === "number" ? value : Number(value);
+    return Number.isFinite(parsed) ? parsed : value;
+  })
+  .pipe(z.number().int().min(0).max(5).nullable());
+
 const nullableInteger = z
   .union([z.number(), z.string()])
   .optional()
@@ -98,9 +112,9 @@ export const throwingWorkloadSegmentSchema = z.object({
 
 export const throwingArmCheckinSchema = z
   .object({
-    armSoreness: nullableScore,
-    bodyFatigue: nullableScore,
-    armFatigue: nullableScore,
+    armSoreness: nullableZeroBasedScore,
+    bodyFatigue: nullableZeroBasedScore,
+    armFatigue: nullableZeroBasedScore,
     recoveryScore: nullableScore,
     feelsOff: z.boolean().nullable().optional().transform((value) => value ?? null),
     statusNote: nullableTrimmedString,
