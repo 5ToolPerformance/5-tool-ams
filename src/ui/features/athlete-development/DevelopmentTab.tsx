@@ -459,7 +459,7 @@ export function DevelopmentTab({
       ? "Edit Development Plan"
       : "";
 
-  if (!hasAnyEvaluations || !selectedDiscipline) {
+  if (!selectedDiscipline) {
     return (
       <>
         <Card shadow="sm">
@@ -467,10 +467,10 @@ export function DevelopmentTab({
             <div className="max-w-md space-y-4">
               <div className="space-y-2">
                 <h2 className="text-xl font-semibold">Development</h2>
-                <p className="text-sm text-muted-foreground">
-                  No development data exists yet for this athlete. Add an
-                  evaluation to begin the development workflow.
-                </p>
+                  <p className="text-sm text-muted-foreground">
+                    No development disciplines are available for this athlete yet.
+                    Add an evaluation to begin the development workflow.
+                  </p>
               </div>
               <div className="flex justify-center">
                 <Button color="primary" size="lg" onPress={openEvaluationDrawer}>
@@ -569,7 +569,8 @@ export function DevelopmentTab({
                   <p className="text-sm text-muted-foreground">
                     This discipline is available, but no evaluation has been
                     created for this player yet. Create the first evaluation to
-                    start the development workflow for this tab.
+                    start the development-plan workflow for this tab. Routines can
+                    still be created below.
                   </p>
                 </div>
                 <div className="flex justify-center">
@@ -599,34 +600,36 @@ export function DevelopmentTab({
               onViewPlan={openDevelopmentPlanView}
               onEditPlan={openDevelopmentPlanEditDrawer}
             />
-
-            <RoutinesPanel
-              playerId={playerId}
-              playerRoutines={data.playerRoutines}
-              universalRoutines={data.universalRoutines}
-              universalRoutinesSupported={data.universalRoutinesSupported}
-              activePlanId={data.activePlan?.id}
-              disciplineId={selectedDiscipline.id}
-              disciplineKey={selectedDiscipline.key}
-              disciplineLabel={selectedDiscipline.label}
-              onOpenRoutine={() => openRoutineDrawer()}
-              onOpenRoutineExport={openReportOptions}
-            />
-
-            <DevelopmentHistoryPanel
-              evaluationHistory={data.evaluationHistory}
-              developmentPlanHistory={data.developmentPlanHistory}
-              disciplineKey={selectedDiscipline.key}
-              onCreatePlanFromEvaluation={(evaluationId) =>
-                openPlanDrawer(evaluationId)
-              }
-              onViewEvaluation={openEvaluationView}
-              onViewPlan={openDevelopmentPlanView}
-              onEditEvaluation={openEvaluationEditDrawer}
-              onEditPlan={openDevelopmentPlanEditDrawer}
-            />
           </>
         )}
+
+        <RoutinesPanel
+          playerId={playerId}
+          playerRoutines={data.playerRoutines}
+          universalRoutines={data.universalRoutines}
+          universalRoutinesSupported={data.universalRoutinesSupported}
+          activePlanId={data.activePlan?.id}
+          disciplineId={selectedDiscipline.id}
+          disciplineKey={selectedDiscipline.key}
+          disciplineLabel={selectedDiscipline.label}
+          onOpenRoutine={() => openRoutineDrawer()}
+          onOpenRoutineExport={openReportOptions}
+        />
+
+        {hasAnyEvaluations || data.developmentPlanHistory.length > 0 ? (
+          <DevelopmentHistoryPanel
+            evaluationHistory={data.evaluationHistory}
+            developmentPlanHistory={data.developmentPlanHistory}
+            disciplineKey={selectedDiscipline.key}
+            onCreatePlanFromEvaluation={(evaluationId) =>
+              openPlanDrawer(evaluationId)
+            }
+            onViewEvaluation={openEvaluationView}
+            onViewPlan={openDevelopmentPlanView}
+            onEditEvaluation={openEvaluationEditDrawer}
+            onEditPlan={openDevelopmentPlanEditDrawer}
+          />
+        ) : null}
       </div>
 
       <RightSideDrawer

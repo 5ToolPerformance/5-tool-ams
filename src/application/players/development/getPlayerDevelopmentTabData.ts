@@ -118,9 +118,17 @@ export async function getPlayerDevelopmentTabData(
   disciplineId?: string,
   facilityId?: string
 ): Promise<PlayerDevelopmentTabData> {
-  const [evaluationRows, activeDisciplineRows] = await Promise.all([
+  const [evaluationRows, activeDisciplineRows, developmentPlans, playerRoutines] =
+    await Promise.all([
     getEvaluationsForPlayer(db, { playerId, limit: MAX_READ_ROWS }),
     listActiveDisciplines(db),
+    getDevelopmentPlansForPlayer(db, {
+      playerId,
+      limit: 50,
+    }),
+    getRoutinesForPlayer(db, {
+      playerId,
+    }),
   ]);
 
   const activeDisciplineMap = new Map(
@@ -134,13 +142,25 @@ export async function getPlayerDevelopmentTabData(
     ])
   );
 
-  const evaluatedDisciplineIds = Array.from(
-    new Set(evaluationRows.map((row) => row.disciplineId))
-  );
+  const dataBackedDisciplineIds = new Set<string>([
+    ...evaluationRows.map((row) => row.disciplineId),
+    ...developmentPlans.map((plan) => plan.disciplineId),
+    ...playerRoutines
+      .map((routine) =>
+        typeof routine.disciplineId === "string" ? routine.disciplineId : null
+      )
+      .filter((discipline): discipline is string => Boolean(discipline)),
+  ]);
 
-  const disciplineOptions = evaluatedDisciplineIds
-    .map((id) => activeDisciplineMap.get(id))
-    .filter((option): option is DevelopmentDisciplineOption => Boolean(option));
+  const disciplineOptions = activeDisciplineRows
+    .filter((discipline) =>
+      dataBackedDisciplineIds.size > 0 ? dataBackedDisciplineIds.has(discipline.id) : true
+    )
+    .map((discipline) => ({
+      id: discipline.id,
+      key: discipline.key,
+      label: discipline.label,
+    }));
 
   const selectedDiscipline =
     disciplineOptions.find((option) => option.id === disciplineId) ??
@@ -171,39 +191,32 @@ export async function getPlayerDevelopmentTabData(
     };
   }
 
-  const [disciplineEvaluations, disciplinePlanHistory, universalRoutines] =
-    await Promise.all([
-      getEvaluationsForPlayer(db, {
-        playerId,
-        disciplineId: selectedDiscipline.id,
-        limit: 25,
-      }),
-      getDevelopmentPlansForPlayer(db, {
-        playerId,
-        disciplineId: selectedDiscipline.id,
-        limit: 25,
-      }),
-      facilityId
-        ? listUniversalRoutines({
-            facilityId,
-            disciplineId: selectedDiscipline.id,
-          })
-        : Promise.resolve([]),
-    ]);
+  const [disciplineEvaluations, universalRoutines] = await Promise.all([
+    getEvaluationsForPlayer(db, {
+      playerId,
+      disciplineId: selectedDiscipline.id,
+      limit: 25,
+    }),
+    facilityId
+      ? listUniversalRoutines({
+          facilityId,
+          disciplineId: selectedDiscipline.id,
+        })
+      : Promise.resolve([]),
+  ]);
+
+  const disciplinePlanHistory = developmentPlans.filter(
+    (plan) => plan.disciplineId === selectedDiscipline.id
+  );
 
   const activePlan = getEligibleActivePlan(disciplinePlanHistory);
   const developmentPlanHistory = activePlan
     ? disciplinePlanHistory.filter((plan) => plan.id !== activePlan.id)
     : disciplinePlanHistory;
 
-  const [playerRoutines, linkedEvaluation] = await Promise.all([
-    getRoutinesForPlayer(db, {
-      playerId,
-    }),
-    activePlan
-      ? getEvaluationById(db, activePlan.evaluationId).catch(() => null)
-      : Promise.resolve(null),
-  ]);
+  const linkedEvaluation = activePlan
+    ? await getEvaluationById(db, activePlan.evaluationId).catch(() => null)
+    : null;
 
   const latestEvaluation = disciplineEvaluations[0] ?? null;
 

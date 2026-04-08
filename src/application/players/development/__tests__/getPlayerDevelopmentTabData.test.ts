@@ -339,4 +339,52 @@ describe("getPlayerDevelopmentTabData", () => {
       },
     ]);
   });
+
+  it("includes routine-backed disciplines in the selector even when they have no evaluations", async () => {
+    (getEvaluationsForPlayer as jest.Mock)
+      .mockResolvedValueOnce([{ id: "eval-1", disciplineId: "disc-1" }])
+      .mockResolvedValueOnce([]);
+
+    (getDevelopmentPlansForPlayer as jest.Mock).mockResolvedValue([]);
+    (listActiveDisciplines as jest.Mock).mockResolvedValue([
+      { id: "disc-1", key: "pitching", label: "Pitching" },
+      { id: "disc-2", key: "hitting", label: "Hitting" },
+    ]);
+    (getRoutinesForPlayer as jest.Mock).mockResolvedValue([
+      {
+        id: "routine-2",
+        playerId: "player-1",
+        disciplineId: "disc-2",
+        disciplineKey: "hitting",
+        disciplineLabel: "Hitting",
+      },
+    ]);
+
+    const result = await getPlayerDevelopmentTabData("player-1", "disc-2", "facility-1");
+
+    expect(result.disciplineOptions.map((row) => row.id)).toEqual(["disc-1", "disc-2"]);
+    expect(result.selectedDiscipline?.id).toBe("disc-2");
+    expect(result.latestEvaluation).toBeNull();
+    expect(result.flags.hasEvaluations).toBe(false);
+  });
+
+  it("falls back to active disciplines when the player has no evaluations, plans, or routines yet", async () => {
+    (getEvaluationsForPlayer as jest.Mock)
+      .mockResolvedValueOnce([])
+      .mockResolvedValueOnce([]);
+
+    (getDevelopmentPlansForPlayer as jest.Mock).mockResolvedValue([]);
+    (listActiveDisciplines as jest.Mock).mockResolvedValue([
+      { id: "disc-1", key: "pitching", label: "Pitching" },
+      { id: "disc-2", key: "hitting", label: "Hitting" },
+    ]);
+    (getRoutinesForPlayer as jest.Mock).mockResolvedValue([]);
+
+    const result = await getPlayerDevelopmentTabData("player-1", undefined, "facility-1");
+
+    expect(result.disciplineOptions.map((row) => row.id)).toEqual(["disc-1", "disc-2"]);
+    expect(result.selectedDiscipline?.id).toBe("disc-1");
+    expect(result.flags.hasAnyDisciplineData).toBe(true);
+    expect(result.flags.hasEvaluations).toBe(false);
+  });
 });

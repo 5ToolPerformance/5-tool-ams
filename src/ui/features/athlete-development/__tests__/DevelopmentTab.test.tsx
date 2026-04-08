@@ -619,7 +619,7 @@ describe("DevelopmentTab", () => {
     ).toBeTruthy();
   });
 
-  it("renders tabs only for evaluated disciplines", () => {
+  it("renders tabs for routine-backed disciplines, not just evaluated ones", () => {
     renderDevelopmentTab(
       <DevelopmentTab
         playerId="player-1"
@@ -629,6 +629,7 @@ describe("DevelopmentTab", () => {
             ...baseData,
             disciplineOptions: [
               { id: "disc-1", key: "pitching", label: "Pitching" },
+              { id: "disc-2", key: "hitting", label: "Hitting" },
               { id: "disc-3", key: "strength", label: "Strength" },
             ],
           },
@@ -643,11 +644,11 @@ describe("DevelopmentTab", () => {
     );
 
     expect(screen.getByRole("tab", { name: "Pitching" })).toBeTruthy();
+    expect(screen.getByRole("tab", { name: "Hitting" })).toBeTruthy();
     expect(screen.getByRole("tab", { name: "Strength" })).toBeTruthy();
-    expect(screen.queryByRole("tab", { name: "Hitting" })).toBeNull();
   });
 
-  it("shows the zero-evaluation empty state when the player has no evaluations", () => {
+  it("keeps routine creation available when the player has no evaluations yet", () => {
     renderDevelopmentTab(
       <DevelopmentTab
         playerId="player-1"
@@ -661,11 +662,12 @@ describe("DevelopmentTab", () => {
               linkedEvaluationId: null,
               canGenerate: false,
             },
-            disciplineOptions: [],
-            selectedDiscipline: null,
+            disciplineOptions: [
+              { id: "disc-1", key: "pitching", label: "Pitching" },
+            ],
+            selectedDiscipline: { id: "disc-1", key: "pitching", label: "Pitching" },
             flags: {
               ...baseData.flags,
-              hasAnyDisciplineData: false,
               hasEvaluations: false,
             },
           },
@@ -677,8 +679,13 @@ describe("DevelopmentTab", () => {
       />
     );
 
-    expect(screen.queryByRole("tablist")).toBeNull();
+    expect(screen.getByRole("tab", { name: "Pitching" })).toBeTruthy();
     expect(screen.getByRole("button", { name: "Create Evaluation" })).toBeTruthy();
+    expect(screen.getByRole("button", { name: "New Routine" })).toBeTruthy();
+    expect(screen.getByRole("button", { name: "Panel New Routine" })).toBeTruthy();
+    expect(
+      screen.getByText(/Routines can still be created below\./)
+    ).toBeTruthy();
   });
 
   it("renders empty state when no discipline data exists", () => {
@@ -707,7 +714,7 @@ describe("DevelopmentTab", () => {
 
     expect(
       screen.getByText(
-        "No development data exists yet for this athlete. Add an evaluation to begin the development workflow."
+        "No development disciplines are available for this athlete yet. Add an evaluation to begin the development workflow."
       )
     ).toBeTruthy();
     expect(screen.queryByRole("tablist")).toBeNull();
