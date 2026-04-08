@@ -427,6 +427,29 @@ jest.mock("@/ui/features/athlete-development/DevelopmentActionButtons", () => ({
   ),
 }));
 
+jest.mock("@/ui/features/athlete-development/RoutinesPanel", () => ({
+  RoutinesPanel: ({
+    playerRoutines,
+    onOpenRoutine,
+    onOpenRoutineExport,
+  }: {
+    playerRoutines: Array<{ id: string }>;
+    onOpenRoutine?: () => void;
+    onOpenRoutineExport?: (routines: Array<{ id: string }>) => void;
+  }) => (
+    <section>
+      <h3>Routines</h3>
+      <div>{`player-routines:${playerRoutines.length}`}</div>
+      <button onClick={onOpenRoutine} type="button">
+        Panel New Routine
+      </button>
+      <button onClick={() => onOpenRoutineExport?.(playerRoutines.slice(0, 1))} type="button">
+        Panel Export Routines
+      </button>
+    </section>
+  ),
+}));
+
 jest.mock("sonner", () => ({
   toast: {
     success: jest.fn(),
@@ -989,10 +1012,51 @@ describe("DevelopmentTab", () => {
     fireEvent.click(screen.getByRole("button", { name: "Preview report with selections" }));
 
     expect(open).toHaveBeenCalledWith(
-      "/reports/routines/player-1/pdf?discipline=disc-1&routineIds=routine-1",
+      "/reports/routines/player-1/pdf?routineIds=routine-1",
       "_blank",
       "noopener,noreferrer"
     );
+  });
+
+  it("opens report options with the routines-panel filtered routines", async () => {
+    renderDevelopmentTab(
+      <DevelopmentTab
+        playerId="player-1"
+        createdBy="coach-1"
+        initialPageData={buildInitialPageData({
+          data: {
+            ...baseData,
+            playerRoutines: [
+              {
+                id: "routine-1",
+                title: "Pitching reset",
+                routineType: "partial_lesson",
+                disciplineId: "disc-1",
+                disciplineKey: "pitching",
+                disciplineLabel: "Pitching",
+              },
+              {
+                id: "routine-2",
+                title: "Hitting reset",
+                routineType: "partial_lesson",
+                disciplineId: "disc-2",
+                disciplineKey: "hitting",
+                disciplineLabel: "Hitting",
+              },
+            ],
+          },
+        })}
+        evaluationDisciplineOptions={[
+          { id: "disc-1", key: "pitching", label: "Pitching" },
+        ]}
+        evaluationBucketOptions={[]}
+      />
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "Panel Export Routines" }));
+
+    expect(await screen.findByRole("dialog", { name: "report-options-modal" })).toBeTruthy();
+    expect(screen.getByText("routine-options:1")).toBeTruthy();
   });
 
   it("copies the active evaluation and active plan raw json from export actions", async () => {

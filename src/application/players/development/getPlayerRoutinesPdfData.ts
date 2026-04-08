@@ -1,6 +1,7 @@
 import db from "@/db";
 import { getDisciplinesByIds } from "@/db/queries/players/getDisciplinesByIds";
 import { getPlayerHeader } from "@/db/queries/players/PlayerHeader";
+import { getRoutinesForPlayer } from "@/db/queries/routines/getRoutinesForPlayer";
 import { getRoutinesForPlayerDiscipline } from "@/db/queries/routines/getRoutinesForPlayerDiscipline";
 
 import { parseRoutineReportDetails } from "./documentDataParsers";
@@ -15,10 +16,13 @@ export type PlayerRoutinesPdfData = {
     id: string;
     key: string;
     label: string;
-  };
+  } | null;
   generatedOn: Date;
   routines: Array<{
     id: string;
+    disciplineId: string;
+    disciplineKey: string;
+    disciplineLabel: string;
     title: string;
     description: string | null;
     routineType: string;
@@ -40,7 +44,7 @@ export type PlayerRoutinesPdfData = {
 
 export async function getPlayerRoutinesPdfData(input: {
   playerId: string;
-  disciplineId: string;
+  disciplineId?: string | null;
   routineIds: string[];
 }): Promise<PlayerRoutinesPdfData | null> {
   const selectedRoutineIds = new Set(input.routineIds);
@@ -50,15 +54,19 @@ export async function getPlayerRoutinesPdfData(input: {
 
   const [player, disciplineRows, routines] = await Promise.all([
     getPlayerHeader(input.playerId),
-    getDisciplinesByIds(db, [input.disciplineId]),
-    getRoutinesForPlayerDiscipline(db, {
-      playerId: input.playerId,
-      disciplineId: input.disciplineId,
-    }),
+    input.disciplineId ? getDisciplinesByIds(db, [input.disciplineId]) : Promise.resolve([]),
+    input.disciplineId
+      ? getRoutinesForPlayerDiscipline(db, {
+          playerId: input.playerId,
+          disciplineId: input.disciplineId,
+        })
+      : getRoutinesForPlayer(db, {
+          playerId: input.playerId,
+        }),
   ]);
 
-  const discipline = disciplineRows[0];
-  if (!player || !discipline) {
+  const discipline = disciplineRows[0] ?? null;
+  if (!player) {
     return null;
   }
 
@@ -73,16 +81,15 @@ export async function getPlayerRoutinesPdfData(input: {
       name: `${player.firstName} ${player.lastName}`.trim(),
       primaryCoachName: player.primaryCoachName ?? null,
     },
-    discipline: {
-      id: discipline.id,
-      key: discipline.key,
-      label: discipline.label,
-    },
+    discipline,
     generatedOn: new Date(),
     routines: filteredRoutines.map((routine) => {
       const details = parseRoutineReportDetails(routine.documentData);
       return {
         id: routine.id,
+        disciplineId: routine.disciplineId as string,
+        disciplineKey: routine.disciplineKey,
+        disciplineLabel: routine.disciplineLabel,
         title: routine.title,
         description: routine.description,
         routineType: routine.routineType,

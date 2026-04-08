@@ -3,7 +3,7 @@ import { listActiveDisciplines } from "@/db/queries/config/listActiveDisciplines
 import { getDevelopmentPlansForPlayer } from "@/db/queries/development-plans/getDevelopmentPlansForPlayers";
 import { getEvaluationById } from "@/db/queries/evaluations/getEvaluationById";
 import { getEvaluationsForPlayer } from "@/db/queries/evaluations/getEvaluationsForPlayer";
-import { getRoutinesForPlayerDiscipline } from "@/db/queries/routines/getRoutinesForPlayerDiscipline";
+import { getRoutinesForPlayer } from "@/db/queries/routines/getRoutinesForPlayer";
 import { listUniversalRoutines } from "@/db/queries/routines/listUniversalRoutines";
 
 jest.mock("@/db", () => ({
@@ -30,8 +30,8 @@ jest.mock("@/db/queries/config/listActiveDisciplines", () => ({
   listActiveDisciplines: jest.fn(),
 }));
 
-jest.mock("@/db/queries/routines/getRoutinesForPlayerDiscipline", () => ({
-  getRoutinesForPlayerDiscipline: jest.fn(),
+jest.mock("@/db/queries/routines/getRoutinesForPlayer", () => ({
+  getRoutinesForPlayer: jest.fn(),
 }));
 
 jest.mock("@/db/queries/routines/listUniversalRoutines", () => ({
@@ -76,8 +76,14 @@ describe("getPlayerDevelopmentTabData", () => {
       disciplineId: "disc-1",
     });
 
-    (getRoutinesForPlayerDiscipline as jest.Mock).mockResolvedValue([
-      { id: "routine-1", playerId: "player-1", disciplineId: "disc-1" },
+    (getRoutinesForPlayer as jest.Mock).mockResolvedValue([
+      {
+        id: "routine-1",
+        playerId: "player-1",
+        disciplineId: "disc-1",
+        disciplineKey: "pitching",
+        disciplineLabel: "Pitching",
+      },
     ]);
 
     const result = await getPlayerDevelopmentTabData(
@@ -157,7 +163,7 @@ describe("getPlayerDevelopmentTabData", () => {
     ]);
 
     (getEvaluationById as jest.Mock).mockResolvedValue({ id: "eval-1" });
-    (getRoutinesForPlayerDiscipline as jest.Mock).mockResolvedValue([]);
+    (getRoutinesForPlayer as jest.Mock).mockResolvedValue([]);
 
     const result = await getPlayerDevelopmentTabData("player-1", "disc-1");
 
@@ -199,7 +205,7 @@ describe("getPlayerDevelopmentTabData", () => {
     ]);
 
     (getEvaluationById as jest.Mock).mockResolvedValue({ id: "eval-1" });
-    (getRoutinesForPlayerDiscipline as jest.Mock).mockResolvedValue([]);
+    (getRoutinesForPlayer as jest.Mock).mockResolvedValue([]);
 
     const result = await getPlayerDevelopmentTabData("player-1", "disc-1");
 
@@ -241,9 +247,8 @@ describe("getPlayerDevelopmentTabData", () => {
 
     await getPlayerDevelopmentTabData("player-1", "disc-1", "facility-1");
 
-    expect(getRoutinesForPlayerDiscipline).toHaveBeenCalledWith(expect.anything(), {
+    expect(getRoutinesForPlayer).toHaveBeenCalledWith(expect.anything(), {
       playerId: "player-1",
-      disciplineId: "disc-1",
     });
     expect(getEvaluationById).not.toHaveBeenCalled();
   });
@@ -271,7 +276,7 @@ describe("getPlayerDevelopmentTabData", () => {
     ]);
 
     (getEvaluationById as jest.Mock).mockRejectedValue(new Error("missing"));
-    (getRoutinesForPlayerDiscipline as jest.Mock).mockResolvedValue([]);
+    (getRoutinesForPlayer as jest.Mock).mockResolvedValue([]);
 
     const result = await getPlayerDevelopmentTabData("player-1", "disc-2");
 
@@ -283,5 +288,55 @@ describe("getPlayerDevelopmentTabData", () => {
     });
     expect(result.flags.hasAnyDisciplineData).toBe(true);
     expect(result.flags.hasEvaluations).toBe(true);
+  });
+
+  it("returns cross-discipline player routines with discipline metadata for the routines section", async () => {
+    (getEvaluationsForPlayer as jest.Mock)
+      .mockResolvedValueOnce([{ id: "eval-1", disciplineId: "disc-1" }])
+      .mockResolvedValueOnce([{ id: "eval-1", disciplineId: "disc-1" }]);
+
+    (getDevelopmentPlansForPlayer as jest.Mock).mockResolvedValue([]);
+    (listActiveDisciplines as jest.Mock).mockResolvedValue([
+      { id: "disc-1", key: "pitching", label: "Pitching" },
+      { id: "disc-2", key: "hitting", label: "Hitting" },
+    ]);
+    (getRoutinesForPlayer as jest.Mock).mockResolvedValue([
+      {
+        id: "routine-1",
+        playerId: "player-1",
+        disciplineId: "disc-1",
+        disciplineKey: "pitching",
+        disciplineLabel: "Pitching",
+      },
+      {
+        id: "routine-2",
+        playerId: "player-1",
+        disciplineId: "disc-2",
+        disciplineKey: "hitting",
+        disciplineLabel: "Hitting",
+      },
+    ]);
+
+    const result = await getPlayerDevelopmentTabData("player-1", "disc-1", "facility-1");
+
+    expect(result.playerRoutines.map((routine) => ({
+      id: routine.id,
+      disciplineId: routine.disciplineId,
+      disciplineKey: routine.disciplineKey,
+      disciplineLabel: routine.disciplineLabel,
+    }))).toEqual([
+      {
+        id: "routine-1",
+        disciplineId: "disc-1",
+        disciplineKey: "pitching",
+        disciplineLabel: "Pitching",
+      },
+      {
+        id: "routine-2",
+        disciplineId: "disc-2",
+        disciplineKey: "hitting",
+        disciplineLabel: "Hitting",
+      },
+    ]);
   });
 });

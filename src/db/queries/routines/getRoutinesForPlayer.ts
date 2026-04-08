@@ -3,9 +3,9 @@ import { and, asc, eq, getTableColumns, isNotNull } from "drizzle-orm";
 import { DB } from "@/db";
 import { developmentPlanRoutines, disciplines } from "@/db/schema";
 
-export async function getRoutinesForPlayerDiscipline(
+export async function getRoutinesForPlayer(
   db: DB,
-  input: { playerId: string; disciplineId: string }
+  input: { playerId: string }
 ) {
   const routineColumns = getTableColumns(developmentPlanRoutines);
 
@@ -20,11 +20,11 @@ export async function getRoutinesForPlayerDiscipline(
     .where(
       and(
         eq(developmentPlanRoutines.playerId, input.playerId),
-        isNotNull(developmentPlanRoutines.disciplineId),
-        eq(developmentPlanRoutines.disciplineId, input.disciplineId)
+        isNotNull(developmentPlanRoutines.disciplineId)
       )
     )
     .orderBy(
+      asc(disciplines.label),
       asc(developmentPlanRoutines.sortOrder),
       asc(developmentPlanRoutines.createdOn)
     );

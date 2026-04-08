@@ -30,11 +30,13 @@ export function parsePlayerRoutinesPdfQuery(input: {
 
 export function buildPlayerRoutinesPdfPath(input: {
   playerId: string;
-  disciplineId: string;
+  disciplineId?: string | null;
   routineIds: string[];
 }) {
   const params = new URLSearchParams();
-  params.set("discipline", input.disciplineId);
+  if (input.disciplineId) {
+    params.set("discipline", input.disciplineId);
+  }
   params.set("routineIds", input.routineIds.join(","));
   return `/reports/routines/${input.playerId}/pdf?${params.toString()}`;
 }

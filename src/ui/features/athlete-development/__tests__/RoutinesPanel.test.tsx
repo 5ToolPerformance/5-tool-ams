@@ -36,6 +36,31 @@ jest.mock("@heroui/react", () => {
     Card: ({ children }: any) => <div>{children}</div>,
     CardBody: ({ children, className }: any) => <div className={className}>{children}</div>,
     Chip: ({ children }: any) => <span>{children}</span>,
+    Tabs: ({ children, selectedKey, onSelectionChange }: any) => (
+      <div role="tablist">
+        {React.Children.map(children, (child: any) =>
+          React.cloneElement(child, {
+            isSelected: String(child.key) === String(selectedKey),
+            onSelect: () => onSelectionChange?.(String(child.key)),
+          })
+        )}
+      </div>
+    ),
+    Tab: ({ title, onSelect }: any) => (
+      <button role="tab" type="button" onClick={onSelect}>
+        {title}
+      </button>
+    ),
+    Accordion: ({ children }: any) => <div>{children}</div>,
+    AccordionItem: ({ title, subtitle, children }: any) => (
+      <details>
+        <summary>
+          <span>{title}</span>
+          <span>{subtitle}</span>
+        </summary>
+        <div>{children}</div>
+      </details>
+    ),
     Input: ({ value, onValueChange, startContent, ...props }: any) => (
       <input
         value={value}
@@ -101,6 +126,27 @@ describe("RoutinesPanel", () => {
         },
       ],
     },
+    disciplineId: "disc-1",
+    disciplineKey: "pitching",
+    disciplineLabel: "Pitching",
+  };
+
+  const secondPlayerRoutine = {
+    id: "player-routine-2",
+    title: "Second Player Routine",
+    description: "Second player routine description",
+    routineType: "partial_lesson",
+    isActive: true,
+    documentData: {
+      overview: {
+        summary: "Second routine summary",
+      },
+      mechanics: [],
+      blocks: [],
+    },
+    disciplineId: "disc-2",
+    disciplineKey: "hitting",
+    disciplineLabel: "Hitting",
   };
 
   const universalRoutine = {
@@ -288,7 +334,9 @@ describe("RoutinesPanel", () => {
 
     fireEvent.click(screen.getByRole("button", { name: "Export Routines" }));
 
-    expect(onOpenRoutineExport).toHaveBeenCalledTimes(1);
+    expect(onOpenRoutineExport).toHaveBeenCalledWith([
+      expect.objectContaining({ id: "player-routine-1" }),
+    ]);
   });
 
   it("opens a universal routine PDF export from the universal routine card", () => {
@@ -312,5 +360,66 @@ describe("RoutinesPanel", () => {
       "_blank",
       "noopener,noreferrer"
     );
+  });
+
+  it("shows all player-routine discipline tabs and renders cross-discipline routines in the all view", () => {
+    render(
+      <RoutinesPanel
+        playerId="player-1"
+        playerRoutines={[playerRoutine as any, secondPlayerRoutine as any]}
+        universalRoutines={[]}
+        universalRoutinesSupported
+        activePlanId="plan-1"
+        disciplineId="disc-1"
+        disciplineKey="pitching"
+        disciplineLabel="Pitching"
+      />
+    );
+
+    expect(screen.getByRole("tab", { name: "All" })).toBeTruthy();
+    expect(screen.getByRole("tab", { name: "Pitching" })).toBeTruthy();
+    expect(screen.getByRole("tab", { name: "Hitting" })).toBeTruthy();
+    expect(screen.getByText("Player Routine")).toBeTruthy();
+    expect(screen.getByText("Second Player Routine")).toBeTruthy();
+  });
+
+  it("filters player routines by selected routine discipline", () => {
+    render(
+      <RoutinesPanel
+        playerId="player-1"
+        playerRoutines={[playerRoutine as any, secondPlayerRoutine as any]}
+        universalRoutines={[]}
+        universalRoutinesSupported
+        activePlanId="plan-1"
+        disciplineId="disc-1"
+        disciplineKey="pitching"
+        disciplineLabel="Pitching"
+      />
+    );
+
+    fireEvent.click(screen.getByRole("tab", { name: "Hitting" }));
+
+    expect(screen.queryByText("Player Routine")).toBeNull();
+    expect(screen.getByText("Second Player Routine")).toBeTruthy();
+  });
+
+  it("renders universal routines inside an accordion section", () => {
+    render(
+      <RoutinesPanel
+        playerId="player-1"
+        playerRoutines={[]}
+        universalRoutines={[universalRoutine as any]}
+        universalRoutinesSupported
+        activePlanId="plan-1"
+        disciplineId="disc-1"
+        disciplineKey="pitching"
+        disciplineLabel="Pitching"
+      />
+    );
+
+    expect(screen.getByText("Universal Routines")).toBeTruthy();
+    expect(
+      screen.getByText("Shared routines for the selected top-discipline development view.")
+    ).toBeTruthy();
   });
 });

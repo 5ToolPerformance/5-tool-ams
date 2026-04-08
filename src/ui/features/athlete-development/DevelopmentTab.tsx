@@ -145,6 +145,9 @@ export function DevelopmentTab({
     useState("");
   const [isRoutinePlanLocked, setIsRoutinePlanLocked] = useState(false);
   const [isReportOptionsOpen, setIsReportOptionsOpen] = useState(false);
+  const [reportOptionRoutines, setReportOptionRoutines] = useState<
+    Array<{ id: string; title: string; routineType: string }>
+  >([]);
   const [viewDocument, setViewDocument] =
     useState<DevelopmentDocumentViewState>(null);
   const [editAction, setEditAction] = useState<DevelopmentEditAction | null>(null);
@@ -195,8 +198,7 @@ export function DevelopmentTab({
 
   const canCreatePlan = evaluationOptions.length > 0;
   const canCreateRoutine = Boolean(selectedDiscipline);
-  const canGenerateReport =
-    Boolean(selectedDiscipline) && data.playerRoutines.length > 0;
+  const canGenerateReport = data.playerRoutines.length > 0;
   const canCopyRawJson = Boolean(data.latestEvaluation && data.activePlan);
   const hasEvaluationForSelectedDiscipline = Boolean(data.latestEvaluation);
   const hasAnyEvaluations = data.flags.hasEvaluations;
@@ -247,16 +249,26 @@ export function DevelopmentTab({
     setEditError(null);
   };
 
-  const openReportOptions = () => {
-    if (!canGenerateReport || !selectedDiscipline) {
+  const openReportOptions = (
+    routines = data.playerRoutines
+  ) => {
+    if (!canGenerateReport || routines.length === 0) {
       return;
     }
 
+    setReportOptionRoutines(
+      routines.map((routine) => ({
+        id: routine.id,
+        title: routine.title,
+        routineType: routine.routineType,
+      }))
+    );
     setIsReportOptionsOpen(true);
   };
 
   const closeReportOptions = () => {
     setIsReportOptionsOpen(false);
+    setReportOptionRoutines([]);
   };
 
   const openEvaluationView = (evaluationId: string) => {
@@ -344,7 +356,7 @@ export function DevelopmentTab({
   const openReportPreview = (options: {
     routineIds: string[];
   }) => {
-    if (!selectedDiscipline || options.routineIds.length === 0) {
+    if (options.routineIds.length === 0) {
       return;
     }
 
@@ -352,7 +364,6 @@ export function DevelopmentTab({
     window.open(
       buildPlayerRoutinesPdfPath({
         playerId,
-        disciplineId: selectedDiscipline.id,
         routineIds: options.routineIds,
       }),
       "_blank",
@@ -535,7 +546,7 @@ export function DevelopmentTab({
               onOpenEvaluation={openEvaluationDrawer}
               onOpenPlan={() => openPlanDrawer()}
               onOpenRoutine={() => openRoutineDrawer()}
-              onExportPdf={openReportOptions}
+              onExportPdf={() => openReportOptions()}
               onCopyRawJson={() => {
                 void copyRawJson();
               }}
@@ -759,11 +770,7 @@ export function DevelopmentTab({
       <DevelopmentReportOptionsModal
         isOpen={isReportOptionsOpen}
         playerName={playerName}
-        routines={data.playerRoutines.map((routine) => ({
-          id: routine.id,
-          title: routine.title,
-          routineType: routine.routineType,
-        }))}
+        routines={reportOptionRoutines}
         onClose={closeReportOptions}
         onPreview={openReportPreview}
       />

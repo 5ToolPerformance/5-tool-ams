@@ -123,6 +123,9 @@ describe("GET /reports/routines/[playerId]/pdf", () => {
       routines: [
         {
           id: "routine-1",
+          disciplineId: "disc-1",
+          disciplineKey: "pitching",
+          disciplineLabel: "Pitching",
           title: "Direction Reset",
           description: "Reset timing.",
           routineType: "partial_lesson",
@@ -177,15 +180,17 @@ describe("GET /reports/routines/[playerId]/pdf", () => {
     );
   });
 
-  it("returns 400 when discipline is missing", async () => {
+  it("allows exports when discipline is omitted", async () => {
     const response = await GET(
       createRequest("http://localhost/reports/routines/player-1/pdf?routineIds=routine-1"),
       { params: Promise.resolve({ playerId: "player-1" }) }
     );
 
-    expect(response.status).toBe(400);
-    await expect(response.json()).resolves.toEqual({
-      error: "discipline is required",
+    expect(response.status).toBe(200);
+    expect(getPlayerRoutinesPdfData).toHaveBeenCalledWith({
+      playerId: "player-1",
+      disciplineId: null,
+      routineIds: ["routine-1"],
     });
   });
 

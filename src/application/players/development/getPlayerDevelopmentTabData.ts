@@ -3,7 +3,7 @@ import { listActiveDisciplines } from "@/db/queries/config/listActiveDisciplines
 import { getDevelopmentPlansForPlayer } from "@/db/queries/development-plans/getDevelopmentPlansForPlayers";
 import { getEvaluationById } from "@/db/queries/evaluations/getEvaluationById";
 import { getEvaluationsForPlayer } from "@/db/queries/evaluations/getEvaluationsForPlayer";
-import { getRoutinesForPlayerDiscipline } from "@/db/queries/routines/getRoutinesForPlayerDiscipline";
+import { getRoutinesForPlayer } from "@/db/queries/routines/getRoutinesForPlayer";
 import { listUniversalRoutines } from "@/db/queries/routines/listUniversalRoutines";
 
 const MAX_READ_ROWS = 250;
@@ -21,7 +21,7 @@ export type DevelopmentPlanRow = Awaited<
   ReturnType<typeof getDevelopmentPlansForPlayer>
 >[number];
 export type RoutineRow = Awaited<
-  ReturnType<typeof getRoutinesForPlayerDiscipline>
+  ReturnType<typeof getRoutinesForPlayer>
 >[number];
 export type UniversalRoutineRow = Awaited<
   ReturnType<typeof listUniversalRoutines>
@@ -197,9 +197,8 @@ export async function getPlayerDevelopmentTabData(
     : disciplinePlanHistory;
 
   const [playerRoutines, linkedEvaluation] = await Promise.all([
-    getRoutinesForPlayerDiscipline(db, {
+    getRoutinesForPlayer(db, {
       playerId,
-      disciplineId: selectedDiscipline.id,
     }),
     activePlan
       ? getEvaluationById(db, activePlan.evaluationId).catch(() => null)

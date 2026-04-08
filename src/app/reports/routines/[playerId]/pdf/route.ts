@@ -42,10 +42,6 @@ export async function GET(
       routineIds: request.nextUrl.searchParams.getAll("routineIds"),
     });
 
-    if (!query.disciplineId) {
-      return NextResponse.json({ error: "discipline is required" }, { status: 400 });
-    }
-
     if (query.routineIds.length === 0) {
       return NextResponse.json(
         { error: "At least one routine must be selected." },
@@ -85,7 +81,7 @@ export async function GET(
     });
 
     const filename = `player-routines-${slugify(data.player.name)}-${slugify(
-      data.discipline.label
+      data.discipline?.label ?? "all-disciplines"
     )}.pdf`;
 
     return new NextResponse(pdf, {

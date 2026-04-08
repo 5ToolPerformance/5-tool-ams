@@ -37,6 +37,9 @@ export function getPlayerRoutinesPdfHtml(
   data: PlayerRoutinesPdfData,
   input: { logoDataUri: string }
 ) {
+  const packetDisciplineLabel = data.discipline?.label ?? "All Disciplines";
+  const showRoutineDisciplines = data.discipline === null;
+
   return `
     <!DOCTYPE html>
     <html lang="en">
@@ -90,7 +93,7 @@ export function getPlayerRoutinesPdfHtml(
               <div class="routine-report-title-row">
                 <div>
                   <h1>${escapeHtml(data.player.name)}</h1>
-                  <p>${escapeHtml(data.discipline.label)} printable routine packet</p>
+                  <p>${escapeHtml(packetDisciplineLabel)} printable routine packet</p>
                 </div>
                 <div class="routine-report-header-aside">
                   <div>Prepared ${escapeHtml(formatDate(data.generatedOn))}</div>
@@ -104,7 +107,7 @@ export function getPlayerRoutinesPdfHtml(
               <div class="routine-report-meta">
                 <div class="routine-report-meta-item">
                   <span>Discipline</span>
-                  <strong>${escapeHtml(data.discipline.label)}</strong>
+                  <strong>${escapeHtml(packetDisciplineLabel)}</strong>
                 </div>
                 <div class="routine-report-meta-item">
                   <span>Routines Included</span>
@@ -123,6 +126,13 @@ export function getPlayerRoutinesPdfHtml(
                           ${
                             routine.description
                               ? `<p class="routine-report-copy">${escapeHtml(routine.description)}</p>`
+                              : ""
+                          }
+                          ${
+                            showRoutineDisciplines
+                              ? `<p class="routine-report-copy routine-report-muted">${escapeHtml(
+                                  routine.disciplineLabel
+                                )}</p>`
                               : ""
                           }
                         </div>
