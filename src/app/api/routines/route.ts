@@ -18,9 +18,17 @@ export async function POST(request: NextRequest) {
     requireRole(ctx, ["coach", "admin"]);
 
     const body = (await request.json()) as Omit<CreateRoutineRowInput, "createdBy">;
+    await assertPlayerAccess(ctx, body.playerId);
 
-    const plan = await getDevelopmentPlanById(db, body.developmentPlanId);
-    await assertPlayerAccess(ctx, plan.playerId);
+    if (body.developmentPlanId) {
+      const plan = await getDevelopmentPlanById(db, body.developmentPlanId);
+
+      if (plan.playerId !== body.playerId || plan.disciplineId !== body.disciplineId) {
+        throw new DomainError(
+          "Development plan must belong to the same player and discipline as the routine."
+        );
+      }
+    }
 
     const routine = await createRoutine(db, {
       ...body,

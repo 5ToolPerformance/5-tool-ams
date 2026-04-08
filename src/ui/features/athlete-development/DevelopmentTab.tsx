@@ -35,7 +35,7 @@ import type {
 import { RoutineForm } from "@/ui/features/development/forms/routines/RoutineForm";
 import { RoutineFormProvider } from "@/ui/features/development/forms/routines/RoutineFormProvider";
 import { copyTextToClipboard } from "@/lib/clipboard";
-import { buildDevelopmentReportPdfPath } from "@/lib/reports/developmentReportQuery";
+import { buildPlayerRoutinesPdfPath } from "@/lib/reports/playerRoutinesPdfQuery";
 
 import { ActivePlanPanel } from "./ActivePlanPanel";
 import { CurrentSnapshotPanel } from "./CurrentSnapshotPanel";
@@ -195,7 +195,8 @@ export function DevelopmentTab({
 
   const canCreatePlan = evaluationOptions.length > 0;
   const canCreateRoutine = Boolean(selectedDiscipline);
-  const canGenerateReport = data.report.canGenerate && Boolean(selectedDiscipline);
+  const canGenerateReport =
+    Boolean(selectedDiscipline) && data.playerRoutines.length > 0;
   const canCopyRawJson = Boolean(data.latestEvaluation && data.activePlan);
   const hasEvaluationForSelectedDiscipline = Boolean(data.latestEvaluation);
   const hasAnyEvaluations = data.flags.hasEvaluations;
@@ -341,19 +342,17 @@ export function DevelopmentTab({
   };
 
   const openReportPreview = (options: {
-    includeEvidence: boolean;
     routineIds: string[];
   }) => {
-    if (!selectedDiscipline) {
+    if (!selectedDiscipline || options.routineIds.length === 0) {
       return;
     }
 
     closeReportOptions();
     window.open(
-      buildDevelopmentReportPdfPath({
+      buildPlayerRoutinesPdfPath({
         playerId,
         disciplineId: selectedDiscipline.id,
-        includeEvidence: options.includeEvidence,
         routineIds: options.routineIds,
       }),
       "_blank",
@@ -428,9 +427,7 @@ export function DevelopmentTab({
   };
 
   const openRoutineDrawer = (
-    developmentPlanId = data.activePlan?.id ??
-      developmentPlanOptions[0]?.id ??
-      "",
+    developmentPlanId = "",
     isLocked = false
   ) => {
     setInitialRoutineDevelopmentPlanId(developmentPlanId);
@@ -593,13 +590,16 @@ export function DevelopmentTab({
             />
 
             <RoutinesPanel
+              playerId={playerId}
               playerRoutines={data.playerRoutines}
               universalRoutines={data.universalRoutines}
               universalRoutinesSupported={data.universalRoutinesSupported}
               activePlanId={data.activePlan?.id}
+              disciplineId={selectedDiscipline.id}
               disciplineKey={selectedDiscipline.key}
               disciplineLabel={selectedDiscipline.label}
               onOpenRoutine={() => openRoutineDrawer()}
+              onOpenRoutineExport={openReportOptions}
             />
 
             <DevelopmentHistoryPanel
@@ -737,11 +737,13 @@ export function DevelopmentTab({
             <RoutineFormProvider
               mode="create"
               createdBy={createdBy}
+              initialPlayerId={playerId}
               developmentPlanOptions={developmentPlanOptions}
               disciplineOptions={routineFormConfig.disciplineOptions}
               mechanicOptions={routineFormConfig.mechanicOptions}
               drillOptions={routineFormConfig.drillOptions}
               initialDevelopmentPlanId={initialRoutineDevelopmentPlanId}
+              initialDisciplineId={selectedDiscipline?.id}
               isDevelopmentPlanSelectionLocked={isRoutinePlanLocked}
               onSaved={async () => {
                 await refreshDevelopmentData();

@@ -12,12 +12,17 @@ export async function updateRoutine(
   db: DB,
   routineId: string,
   input: UpdateRoutineRowInput & {
-    developmentPlanId: string;
+    playerId: string;
+    disciplineId: string;
+    developmentPlanId?: string;
     createdBy: string;
   }
 ) {
   validateRoutineDocument({
+    playerId: input.playerId,
+    disciplineId: input.disciplineId,
     developmentPlanId: input.developmentPlanId,
+    requiresPlayerId: true,
     createdBy: input.createdBy,
     title: input.title,
     description: input.description,

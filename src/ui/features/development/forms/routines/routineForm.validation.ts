@@ -11,14 +11,7 @@ export function validateRoutineForm(
   const errors: RoutineFormErrorMap = {};
 
   if (options.mode === "create") {
-    if (
-      options.contextType === "development-plan" &&
-      !values.developmentPlanId
-    ) {
-      errors.developmentPlanId = "Development plan is required.";
-    }
-
-    if (options.contextType === "universal" && !values.disciplineId) {
+    if (!values.disciplineId) {
       errors.disciplineId = "Discipline is required.";
     }
   }

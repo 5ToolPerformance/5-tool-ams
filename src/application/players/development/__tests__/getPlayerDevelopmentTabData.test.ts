@@ -3,7 +3,7 @@ import { listActiveDisciplines } from "@/db/queries/config/listActiveDisciplines
 import { getDevelopmentPlansForPlayer } from "@/db/queries/development-plans/getDevelopmentPlansForPlayers";
 import { getEvaluationById } from "@/db/queries/evaluations/getEvaluationById";
 import { getEvaluationsForPlayer } from "@/db/queries/evaluations/getEvaluationsForPlayer";
-import { getRoutinesForDevelopmentPlan } from "@/db/queries/routines/getRoutinesForDevelopmentPlan";
+import { getRoutinesForPlayerDiscipline } from "@/db/queries/routines/getRoutinesForPlayerDiscipline";
 import { listUniversalRoutines } from "@/db/queries/routines/listUniversalRoutines";
 
 jest.mock("@/db", () => ({
@@ -30,8 +30,8 @@ jest.mock("@/db/queries/config/listActiveDisciplines", () => ({
   listActiveDisciplines: jest.fn(),
 }));
 
-jest.mock("@/db/queries/routines/getRoutinesForDevelopmentPlan", () => ({
-  getRoutinesForDevelopmentPlan: jest.fn(),
+jest.mock("@/db/queries/routines/getRoutinesForPlayerDiscipline", () => ({
+  getRoutinesForPlayerDiscipline: jest.fn(),
 }));
 
 jest.mock("@/db/queries/routines/listUniversalRoutines", () => ({
@@ -76,8 +76,8 @@ describe("getPlayerDevelopmentTabData", () => {
       disciplineId: "disc-1",
     });
 
-    (getRoutinesForDevelopmentPlan as jest.Mock).mockResolvedValue([
-      { id: "routine-1", developmentPlanId: "plan-1" },
+    (getRoutinesForPlayerDiscipline as jest.Mock).mockResolvedValue([
+      { id: "routine-1", playerId: "player-1", disciplineId: "disc-1" },
     ]);
 
     const result = await getPlayerDevelopmentTabData(
@@ -157,7 +157,7 @@ describe("getPlayerDevelopmentTabData", () => {
     ]);
 
     (getEvaluationById as jest.Mock).mockResolvedValue({ id: "eval-1" });
-    (getRoutinesForDevelopmentPlan as jest.Mock).mockResolvedValue([]);
+    (getRoutinesForPlayerDiscipline as jest.Mock).mockResolvedValue([]);
 
     const result = await getPlayerDevelopmentTabData("player-1", "disc-1");
 
@@ -199,7 +199,7 @@ describe("getPlayerDevelopmentTabData", () => {
     ]);
 
     (getEvaluationById as jest.Mock).mockResolvedValue({ id: "eval-1" });
-    (getRoutinesForDevelopmentPlan as jest.Mock).mockResolvedValue([]);
+    (getRoutinesForPlayerDiscipline as jest.Mock).mockResolvedValue([]);
 
     const result = await getPlayerDevelopmentTabData("player-1", "disc-1");
 
@@ -209,7 +209,7 @@ describe("getPlayerDevelopmentTabData", () => {
     ]);
   });
 
-  it("does not query routines when there is no eligible active plan", async () => {
+  it("still queries player routines when there is no eligible active plan", async () => {
     (getEvaluationsForPlayer as jest.Mock)
       .mockResolvedValueOnce([{ id: "eval-1", disciplineId: "disc-1" }])
       .mockResolvedValueOnce([{ id: "eval-1", disciplineId: "disc-1" }]);
@@ -241,7 +241,10 @@ describe("getPlayerDevelopmentTabData", () => {
 
     await getPlayerDevelopmentTabData("player-1", "disc-1", "facility-1");
 
-    expect(getRoutinesForDevelopmentPlan).not.toHaveBeenCalled();
+    expect(getRoutinesForPlayerDiscipline).toHaveBeenCalledWith(expect.anything(), {
+      playerId: "player-1",
+      disciplineId: "disc-1",
+    });
     expect(getEvaluationById).not.toHaveBeenCalled();
   });
 
@@ -268,7 +271,7 @@ describe("getPlayerDevelopmentTabData", () => {
     ]);
 
     (getEvaluationById as jest.Mock).mockRejectedValue(new Error("missing"));
-    (getRoutinesForDevelopmentPlan as jest.Mock).mockResolvedValue([]);
+    (getRoutinesForPlayerDiscipline as jest.Mock).mockResolvedValue([]);
 
     const result = await getPlayerDevelopmentTabData("player-1", "disc-2");
 

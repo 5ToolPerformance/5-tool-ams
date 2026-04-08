@@ -52,27 +52,104 @@ describe("useRoutineForm", () => {
     global.fetch = originalFetch;
   });
 
-  it("fails validation when no development plan is selected", async () => {
+  it("allows saving without a development plan selection", async () => {
+    (global.fetch as jest.Mock).mockResolvedValue({
+      ok: true,
+      json: async () => ({ id: "routine-1" }),
+    });
+
     const { result } = renderHook(() =>
       useRoutineForm({
         mode: "create",
         contextType: "development-plan",
         createdBy: "coach-1",
         developmentPlanOptions,
-        disciplineOptions: [],
+        initialPlayerId: "player-1",
+        initialDisciplineId: "disc-1",
+        disciplineOptions: [{ id: "disc-1", key: "pitching", label: "Pitching" }],
         mechanicOptions,
         drillOptions,
       })
     );
 
+    act(() => {
+      result.current.setFieldValue("title", "Routine");
+      result.current.addMechanic();
+      result.current.updateMechanic(0, {
+        mechanicId: "mech-1",
+        title: "Front-side timing",
+      });
+      result.current.addBlock();
+      result.current.updateBlock(0, { title: "Block 1" });
+      result.current.addDrillsToBlock(0, ["drill-1"]);
+    });
+
     await act(async () => {
       await result.current.handleSubmit("save");
     });
 
-    expect(result.current.errors.developmentPlanId).toBe(
-      "Development plan is required."
+    expect(result.current.errors.developmentPlanId).toBeUndefined();
+    expect(global.fetch).toHaveBeenCalled();
+  });
+
+  it("requires discipline when no development plan is selected", async () => {
+    const { result } = renderHook(() =>
+      useRoutineForm({
+        mode: "create",
+        contextType: "development-plan",
+        createdBy: "coach-1",
+        initialPlayerId: "player-1",
+        developmentPlanOptions,
+        disciplineOptions: [{ id: "disc-1", key: "pitching", label: "Pitching" }],
+        mechanicOptions,
+        drillOptions,
+      })
     );
+
+    act(() => {
+      result.current.setFieldValue("title", "Routine");
+      result.current.addMechanic();
+      result.current.updateMechanic(0, {
+        mechanicId: "mech-1",
+        title: "Front-side timing",
+      });
+      result.current.addBlock();
+      result.current.updateBlock(0, { title: "Block 1" });
+      result.current.addDrillsToBlock(0, ["drill-1"]);
+    });
+
+    await act(async () => {
+      await result.current.handleSubmit("save");
+    });
+
+    expect(result.current.errors.disciplineId).toBe("Discipline is required.");
     expect(global.fetch).not.toHaveBeenCalled();
+  });
+
+  it("inherits discipline from the selected development plan", () => {
+    const { result } = renderHook(() =>
+      useRoutineForm({
+        mode: "create",
+        contextType: "development-plan",
+        createdBy: "coach-1",
+        initialPlayerId: "player-1",
+        developmentPlanOptions,
+        disciplineOptions: [
+          { id: "disc-1", key: "pitching", label: "Pitching" },
+          { id: "disc-2", key: "hitting", label: "Hitting" },
+        ],
+        mechanicOptions,
+        drillOptions,
+        initialDisciplineId: "disc-2",
+      })
+    );
+
+    act(() => {
+      result.current.setFieldValue("developmentPlanId", "plan-1");
+    });
+
+    expect(result.current.values.disciplineId).toBe("disc-1");
+    expect(result.current.selectedDiscipline?.id).toBe("disc-1");
   });
 
   it("serializes plan-derived player visibility and discipline into the payload", async () => {
@@ -86,8 +163,9 @@ describe("useRoutineForm", () => {
         mode: "create",
         contextType: "development-plan",
         createdBy: "coach-1",
+        initialPlayerId: "player-1",
         developmentPlanOptions,
-        disciplineOptions: [],
+        disciplineOptions: [{ id: "disc-1", key: "pitching", label: "Pitching" }],
         mechanicOptions,
         drillOptions,
         initialDevelopmentPlanId: "plan-1",
@@ -142,8 +220,9 @@ describe("useRoutineForm", () => {
         mode: "create",
         contextType: "development-plan",
         createdBy: "coach-1",
+        initialPlayerId: "player-1",
         developmentPlanOptions,
-        disciplineOptions: [],
+        disciplineOptions: [{ id: "disc-1", key: "pitching", label: "Pitching" }],
         mechanicOptions,
         drillOptions,
         initialDevelopmentPlanId: "plan-1",
@@ -207,8 +286,9 @@ describe("useRoutineForm", () => {
         mode: "create",
         contextType: "development-plan",
         createdBy: "coach-1",
+        initialPlayerId: "player-1",
         developmentPlanOptions,
-        disciplineOptions: [],
+        disciplineOptions: [{ id: "disc-1", key: "pitching", label: "Pitching" }],
         mechanicOptions,
         drillOptions,
         initialDevelopmentPlanId: "plan-1",
@@ -242,8 +322,9 @@ describe("useRoutineForm", () => {
         mode: "create",
         contextType: "development-plan",
         createdBy: "coach-1",
+        initialPlayerId: "player-1",
         developmentPlanOptions,
-        disciplineOptions: [],
+        disciplineOptions: [{ id: "disc-1", key: "pitching", label: "Pitching" }],
         mechanicOptions,
         drillOptions,
         initialDevelopmentPlanId: "plan-1",

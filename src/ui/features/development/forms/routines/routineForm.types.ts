@@ -70,7 +70,9 @@ export type RoutineFormRecord = {
 export type RoutineCreateContext =
   | {
       contextType: "development-plan";
-      developmentPlan: RoutineDevelopmentPlanOption;
+      playerId: string;
+      discipline: RoutineDisciplineOption;
+      developmentPlan?: RoutineDevelopmentPlanOption | null;
       createdBy: string;
     }
   | {
@@ -80,6 +82,7 @@ export type RoutineCreateContext =
     };
 
 export type RoutineFormSubmitPayload = {
+  playerId?: string;
   developmentPlanId?: string;
   disciplineId?: string;
   createdBy: string;
@@ -142,6 +145,7 @@ export type RoutineFormProviderProps = {
   mode: RoutineFormMode;
   contextType?: RoutineFormContextType;
   createdBy: string;
+  initialPlayerId?: string;
   developmentPlanOptions?: RoutineDevelopmentPlanOption[];
   disciplineOptions?: RoutineDisciplineOption[];
   mechanicOptions?: RoutineMechanicOption[];

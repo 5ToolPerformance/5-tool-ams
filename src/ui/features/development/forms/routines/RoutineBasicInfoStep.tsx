@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  Button,
   Card,
   CardBody,
   CardHeader,
@@ -39,7 +40,7 @@ export function RoutineBasicInfoStep() {
         <p className="text-sm text-default-500">
           {contextType === "universal"
             ? "Choose a discipline and define the shared routine coaches can reuse across plans."
-            : "Select the plan context and define the routine's basic identity."}
+            : "Choose an optional plan link and define the routine's basic identity."}
         </p>
       </CardHeader>
 
@@ -56,13 +57,13 @@ export function RoutineBasicInfoStep() {
               />
             </div>
           ) : (
-            <div className="md:col-span-2">
+            <div className="space-y-3 md:col-span-2">
               <Select
                 label="Development Plan"
                 labelPlacement="outside"
                 placeholder={
                   developmentPlanOptions.length > 0
-                    ? "Select a development plan"
+                    ? "Optionally select a development plan"
                     : "No development plans available"
                 }
                 selectedKeys={
@@ -72,16 +73,32 @@ export function RoutineBasicInfoStep() {
                   const selected = Array.from(keys)[0];
                   if (typeof selected === "string") {
                     setFieldValue("developmentPlanId", selected);
+                    return;
                   }
+
+                  setFieldValue("developmentPlanId", "");
                 }}
+                disallowEmptySelection={false}
+                selectionMode="single"
                 isDisabled={developmentPlanOptions.length === 0}
                 isInvalid={!!errors.developmentPlanId}
                 errorMessage={errors.developmentPlanId}
+                description="Optional. Link this routine to a development plan, or leave it as a standalone player routine."
               >
                 {developmentPlanOptions.map((option) => (
                   <SelectItem key={option.id}>{option.title}</SelectItem>
                 ))}
               </Select>
+              <div className="flex justify-end">
+                <Button
+                  size="sm"
+                  variant="flat"
+                  onPress={() => setFieldValue("developmentPlanId", "")}
+                  isDisabled={!values.developmentPlanId}
+                >
+                  Clear Plan Link
+                </Button>
+              </div>
             </div>
           )
         ) : null}
@@ -110,15 +127,42 @@ export function RoutineBasicInfoStep() {
               {disciplineOptions.map((option) => (
                 <SelectItem key={option.id}>{option.label}</SelectItem>
               ))}
-            </Select>
+              </Select>
           </div>
-        ) : (
+        ) : selectedDevelopmentPlan ? (
           <Input
             label="Discipline"
             labelPlacement="outside"
             isReadOnly
-            value={selectedDiscipline?.label ?? "Inherited from plan"}
+            value={selectedDiscipline?.label ?? "Inherited from development plan"}
           />
+        ) : (
+          <div className="md:col-span-2">
+            <Select
+              label="Discipline"
+              labelPlacement="outside"
+              placeholder={
+                disciplineOptions.length > 0
+                  ? "Select a discipline"
+                  : "No disciplines available"
+              }
+              selectedKeys={values.disciplineId ? [values.disciplineId] : []}
+              onSelectionChange={(keys) => {
+                const selected = Array.from(keys)[0];
+                if (typeof selected === "string") {
+                  setFieldValue("disciplineId", selected);
+                }
+              }}
+              isDisabled={disciplineOptions.length === 0}
+              isInvalid={!!errors.disciplineId}
+              errorMessage={errors.disciplineId}
+              description="Choose the discipline for this standalone player routine, or select a development plan to inherit it."
+            >
+              {disciplineOptions.map((option) => (
+                <SelectItem key={option.id}>{option.label}</SelectItem>
+              ))}
+            </Select>
+          </div>
         )}
 
         <Input

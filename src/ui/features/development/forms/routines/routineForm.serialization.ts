@@ -61,8 +61,8 @@ export function serializeRoutineFormToDocumentData(
   return {
     version: 1,
     visibility: "player",
-    playerId: context.developmentPlan.playerId,
-    disciplineId: context.developmentPlan.disciplineId,
+    playerId: context.playerId,
+    disciplineId: context.discipline.id,
     overview: {
       summary: emptyToUndefined(values.summary),
       usageNotes: emptyToUndefined(values.usageNotes),
@@ -77,12 +77,13 @@ export function serializeRoutineFormToPayload(
   context: RoutineCreateContext
 ): RoutineFormSubmitPayload {
   return {
+    playerId:
+      context.contextType === "development-plan" ? context.playerId : undefined,
     developmentPlanId:
       context.contextType === "development-plan"
-        ? context.developmentPlan.id
+        ? context.developmentPlan?.id
         : undefined,
-    disciplineId:
-      context.contextType === "universal" ? context.discipline.id : undefined,
+    disciplineId: context.discipline.id,
     createdBy: context.createdBy,
     title: values.title.trim(),
     description: emptyToNull(values.description),

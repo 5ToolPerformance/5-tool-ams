@@ -4,7 +4,6 @@ import db from "@/db";
 import { listActiveDisciplines } from "@/db/queries/config/listActiveDisciplines";
 import {
   developmentPlanRoutines,
-  developmentPlans,
   universalRoutines,
 } from "@/db/schema";
 import type {
@@ -44,9 +43,9 @@ export async function getLessonRoutineOptions(params: {
     listActiveDisciplines(db),
     db
       .select({
-        playerId: developmentPlans.playerId,
-        disciplineId: developmentPlans.disciplineId,
-        disciplineKey: developmentPlans.disciplineId,
+        playerId: developmentPlanRoutines.playerId,
+        disciplineId: developmentPlanRoutines.disciplineId,
+        disciplineKey: developmentPlanRoutines.disciplineId,
         routineId: developmentPlanRoutines.id,
         routineType: developmentPlanRoutines.routineType,
         title: developmentPlanRoutines.title,
@@ -54,13 +53,9 @@ export async function getLessonRoutineOptions(params: {
         documentData: developmentPlanRoutines.documentData,
       })
       .from(developmentPlanRoutines)
-      .innerJoin(
-        developmentPlans,
-        eq(developmentPlanRoutines.developmentPlanId, developmentPlans.id)
-      )
       .where(
         and(
-          inArray(developmentPlans.playerId, params.playerIds),
+          inArray(developmentPlanRoutines.playerId, params.playerIds),
           eq(developmentPlanRoutines.isActive, true)
         )
       ),
@@ -85,6 +80,10 @@ export async function getLessonRoutineOptions(params: {
   const options: LessonRoutineOption[] = [];
 
   for (const row of planRows) {
+    if (!row.playerId || !row.disciplineId) {
+      continue;
+    }
+
     const disciplineKey = disciplineKeyById.get(row.disciplineId);
     if (
       !disciplineKey ||

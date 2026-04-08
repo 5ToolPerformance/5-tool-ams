@@ -48,7 +48,7 @@ jest.mock("@heroui/react", () => ({
 }));
 
 describe("DevelopmentReportOptionsModal", () => {
-  it("starts with evidence and routines unselected", () => {
+  it("starts with routines unselected", () => {
     render(
       <DevelopmentReportOptionsModal
         isOpen
@@ -65,11 +65,6 @@ describe("DevelopmentReportOptionsModal", () => {
       />
     );
 
-    expect(
-      (screen.getByRole("checkbox", {
-        name: "Include evaluation evidence",
-      }) as HTMLInputElement).checked
-    ).toBe(false);
     expect(
       (screen.getByRole("checkbox", {
         name: /Direction Reset/i,
@@ -96,14 +91,10 @@ describe("DevelopmentReportOptionsModal", () => {
       />
     );
 
-    fireEvent.click(
-      screen.getByRole("checkbox", { name: "Include evaluation evidence" })
-    );
     fireEvent.click(screen.getByRole("checkbox", { name: /Direction Reset/i }));
-    fireEvent.click(screen.getByRole("button", { name: "Preview Report" }));
+    fireEvent.click(screen.getByRole("button", { name: "Open PDF" }));
 
     expect(onPreview).toHaveBeenCalledWith({
-      includeEvidence: true,
       routineIds: ["routine-1"],
     });
   });

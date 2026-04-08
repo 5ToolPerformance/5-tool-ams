@@ -10,8 +10,10 @@ import {
   uuid,
 } from "drizzle-orm/pg-core";
 
-import { users } from "@/db/schema";
+import { disciplines } from "@/db/schema/config/disciplines";
 import { developmentPlans } from "@/db/schema/development-plans/developmentPlans";
+import playerInformation from "@/db/schema/players/playerInformation";
+import users from "@/db/schema/users";
 
 export const routineTypeEnum = pgEnum("routine_type", [
   "partial_lesson",
@@ -24,9 +26,16 @@ export const developmentPlanRoutines = pgTable(
   {
     id: uuid("id").defaultRandom().primaryKey(),
 
+    playerId: uuid("player_id").references(() => playerInformation.id, {
+      onDelete: "cascade",
+    }),
+
+    disciplineId: uuid("discipline_id").references(() => disciplines.id, {
+      onDelete: "no action",
+    }),
+
     developmentPlanId: uuid("development_plan_id")
-      .notNull()
-      .references(() => developmentPlans.id, { onDelete: "cascade" }),
+      .references(() => developmentPlans.id, { onDelete: "set null" }),
 
     title: text("title").notNull(),
     description: text("description"),
@@ -47,6 +56,8 @@ export const developmentPlanRoutines = pgTable(
   },
   (t) => [
     index("development_plan_routines_plan_idx").on(t.developmentPlanId),
+    index("development_plan_routines_player_idx").on(t.playerId),
+    index("development_plan_routines_discipline_idx").on(t.disciplineId),
     index("development_plan_routines_type_idx").on(t.routineType),
   ]
 );

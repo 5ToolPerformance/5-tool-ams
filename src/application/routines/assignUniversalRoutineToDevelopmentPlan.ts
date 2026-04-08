@@ -47,6 +47,8 @@ export async function assignUniversalRoutineToDevelopmentPlan(
   }
 
   return createRoutine(db, {
+    playerId: plan.playerId,
+    disciplineId: plan.disciplineId,
     developmentPlanId: plan.id,
     createdBy: input.assignedBy,
     title: universalRoutine.title,

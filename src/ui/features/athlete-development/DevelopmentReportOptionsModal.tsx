@@ -23,10 +23,7 @@ interface DevelopmentReportOptionsModalProps {
   playerName: string;
   routines: RoutineOption[];
   onClose: () => void;
-  onPreview: (options: {
-    includeEvidence: boolean;
-    routineIds: string[];
-  }) => void;
+  onPreview: (options: { routineIds: string[] }) => void;
 }
 
 export function DevelopmentReportOptionsModal({
@@ -36,12 +33,10 @@ export function DevelopmentReportOptionsModal({
   onClose,
   onPreview,
 }: DevelopmentReportOptionsModalProps) {
-  const [includeEvidence, setIncludeEvidence] = useState(false);
   const [selectedRoutineIds, setSelectedRoutineIds] = useState<string[]>([]);
 
   useEffect(() => {
     if (!isOpen) {
-      setIncludeEvidence(false);
       setSelectedRoutineIds([]);
     }
   }, [isOpen]);
@@ -64,30 +59,21 @@ export function DevelopmentReportOptionsModal({
   return (
     <Modal isOpen={isOpen} onClose={onClose} placement="center">
       <ModalContent>
-        <ModalHeader>Generate PDF Report</ModalHeader>
+        <ModalHeader>Export Routine PDF</ModalHeader>
         <ModalBody className="space-y-5">
           <div className="space-y-1">
-            <p className="text-sm font-medium">Report for {playerName}</p>
+            <p className="text-sm font-medium">Routine packet for {playerName}</p>
             <p className="text-sm text-muted-foreground">
-              Choose what to include before opening the printable preview.
+              Select the player-specific routines to include before opening the printable PDF.
             </p>
-          </div>
-
-          <div className="rounded-lg border border-default-200 p-4">
-            <Checkbox
-              isSelected={includeEvidence}
-              onValueChange={setIncludeEvidence}
-            >
-              Include evaluation evidence
-            </Checkbox>
           </div>
 
           {routines.length > 0 ? (
             <div className="space-y-3 rounded-lg border border-default-200 p-4">
               <div className="space-y-1">
-                <p className="text-sm font-medium">Include routines</p>
+                <p className="text-sm font-medium">Included routines</p>
                 <p className="text-sm text-muted-foreground">
-                  Select any routines you want included in the report.
+                  Choose one or more routines to print for the coach packet.
                 </p>
               </div>
 
@@ -120,14 +106,10 @@ export function DevelopmentReportOptionsModal({
           </Button>
           <Button
             color="primary"
-            onPress={() =>
-              onPreview({
-                includeEvidence,
-                routineIds: selectedRoutineIds,
-              })
-            }
+            onPress={() => onPreview({ routineIds: selectedRoutineIds })}
+            isDisabled={selectedRoutineIds.length === 0}
           >
-            Preview Report
+            Open PDF
           </Button>
         </ModalFooter>
       </ModalContent>

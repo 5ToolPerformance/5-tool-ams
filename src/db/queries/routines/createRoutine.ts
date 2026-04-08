@@ -2,7 +2,9 @@ import { DB } from "@/db";
 import { developmentPlanRoutines } from "@/db/schema";
 
 export type CreateRoutineRowInput = {
-  developmentPlanId: string;
+  playerId: string;
+  disciplineId: string;
+  developmentPlanId?: string;
   createdBy: string;
   title: string;
   description?: string | null;
@@ -16,6 +18,8 @@ export async function createRoutine(db: DB, input: CreateRoutineRowInput) {
   const [row] = await db
     .insert(developmentPlanRoutines)
     .values({
+      playerId: input.playerId,
+      disciplineId: input.disciplineId,
       developmentPlanId: input.developmentPlanId,
       createdBy: input.createdBy,
       title: input.title,

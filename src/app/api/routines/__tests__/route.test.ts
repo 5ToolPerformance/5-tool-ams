@@ -69,11 +69,14 @@ describe("routine routes", () => {
     (getDevelopmentPlanById as jest.Mock).mockResolvedValue({
       id: "plan-1",
       playerId: "player-1",
+      disciplineId: "disc-1",
     });
     (createRoutine as jest.Mock).mockResolvedValue({ id: "routine-1" });
 
     const response = await POST(
       createJsonRequest({
+        playerId: "player-1",
+        disciplineId: "disc-1",
         developmentPlanId: "plan-1",
         title: "Routine",
         routineType: "partial_lesson",
@@ -85,6 +88,8 @@ describe("routine routes", () => {
     expect(createRoutine).toHaveBeenCalledWith(
       expect.anything(),
       expect.objectContaining({
+        playerId: "player-1",
+        disciplineId: "disc-1",
         developmentPlanId: "plan-1",
         createdBy: "coach-1",
       })
@@ -98,6 +103,8 @@ describe("routine routes", () => {
 
     const response = await POST(
       createJsonRequest({
+        playerId: "player-1",
+        disciplineId: "disc-1",
         developmentPlanId: "missing",
         title: "Routine",
         routineType: "partial_lesson",
@@ -112,6 +119,7 @@ describe("routine routes", () => {
     (getDevelopmentPlanById as jest.Mock).mockResolvedValue({
       id: "plan-1",
       playerId: "player-1",
+      disciplineId: "disc-1",
     });
     (createRoutine as jest.Mock).mockRejectedValue(
       new DomainError("title is required.")
@@ -119,8 +127,52 @@ describe("routine routes", () => {
 
     const response = await POST(
       createJsonRequest({
+        playerId: "player-1",
+        disciplineId: "disc-1",
         developmentPlanId: "plan-1",
         title: "",
+        routineType: "partial_lesson",
+        documentData: { version: 1 },
+      })
+    );
+
+    expect(response.status).toBe(400);
+  });
+
+  it("creates a standalone player routine without a development plan", async () => {
+    (createRoutine as jest.Mock).mockResolvedValue({ id: "routine-1" });
+
+    const response = await POST(
+      createJsonRequest({
+        playerId: "player-1",
+        disciplineId: "disc-1",
+        title: "Routine",
+        routineType: "partial_lesson",
+        documentData: { version: 1 },
+      })
+    );
+
+    expect(response.status).toBe(201);
+    expect(getDevelopmentPlanById).not.toHaveBeenCalled();
+    expect(assertPlayerAccess).toHaveBeenCalledWith(
+      expect.objectContaining({ userId: "coach-1" }),
+      "player-1"
+    );
+  });
+
+  it("returns 400 when the provided development plan belongs to a different player or discipline", async () => {
+    (getDevelopmentPlanById as jest.Mock).mockResolvedValue({
+      id: "plan-1",
+      playerId: "player-2",
+      disciplineId: "disc-2",
+    });
+
+    const response = await POST(
+      createJsonRequest({
+        playerId: "player-1",
+        disciplineId: "disc-1",
+        developmentPlanId: "plan-1",
+        title: "Routine",
         routineType: "partial_lesson",
         documentData: { version: 1 },
       })
@@ -132,11 +184,9 @@ describe("routine routes", () => {
   it("updates a routine successfully", async () => {
     (getRoutineById as jest.Mock).mockResolvedValue({
       id: "routine-1",
-      developmentPlanId: "plan-1",
-    });
-    (getDevelopmentPlanById as jest.Mock).mockResolvedValue({
-      id: "plan-1",
       playerId: "player-1",
+      disciplineId: "disc-1",
+      developmentPlanId: "plan-1",
     });
     (updateRoutine as jest.Mock).mockResolvedValue({ id: "routine-1" });
 
@@ -154,6 +204,8 @@ describe("routine routes", () => {
       expect.anything(),
       "routine-1",
       expect.objectContaining({
+        playerId: "player-1",
+        disciplineId: "disc-1",
         developmentPlanId: "plan-1",
         createdBy: "coach-1",
       })

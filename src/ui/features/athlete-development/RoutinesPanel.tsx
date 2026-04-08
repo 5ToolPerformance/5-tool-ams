@@ -11,6 +11,8 @@ import type {
   RoutineRow,
   UniversalRoutineRow,
 } from "@/application/players/development/getPlayerDevelopmentTabData";
+import { buildPlayerRoutinesPdfPath } from "@/lib/reports/playerRoutinesPdfQuery";
+import { buildUniversalRoutinePdfPath } from "@/lib/reports/universalRoutinePdfQuery";
 import { SectionShell } from "@/ui/core/athletes/SectionShell";
 import {
   RoutineViewData,
@@ -20,13 +22,16 @@ import {
 import { getDisciplineAccentClass } from "./utils";
 
 interface RoutinesPanelProps {
+  playerId: string;
   playerRoutines: RoutineRow[];
   universalRoutines: UniversalRoutineRow[];
   universalRoutinesSupported: boolean;
   activePlanId?: string;
+  disciplineId?: string;
   disciplineKey?: string;
   disciplineLabel?: string;
   onOpenRoutine?: () => void;
+  onOpenRoutineExport?: () => void;
   onAssignedUniversalRoutine?: () => void;
 }
 
@@ -97,13 +102,16 @@ function RoutineCard({
 }
 
 export function RoutinesPanel({
+  playerId,
   playerRoutines,
   universalRoutines,
   universalRoutinesSupported,
   activePlanId,
+  disciplineId,
   disciplineKey,
   disciplineLabel,
   onOpenRoutine,
+  onOpenRoutineExport,
   onAssignedUniversalRoutine,
 }: RoutinesPanelProps) {
   const accentClass = getDisciplineAccentClass(disciplineKey);
@@ -188,6 +196,31 @@ export function RoutinesPanel({
     });
   }
 
+  function exportRoutine(routineId: string) {
+    if (!disciplineId) {
+      toast.error("Select a discipline before exporting a routine PDF.");
+      return;
+    }
+
+    window.open(
+      buildPlayerRoutinesPdfPath({
+        playerId,
+        disciplineId,
+        routineIds: [routineId],
+      }),
+      "_blank",
+      "noopener,noreferrer"
+    );
+  }
+
+  function exportUniversalRoutine(routineId: string) {
+    window.open(
+      buildUniversalRoutinePdfPath({ routineId }),
+      "_blank",
+      "noopener,noreferrer"
+    );
+  }
+
   return (
     <>
       <SectionShell
@@ -198,9 +231,16 @@ export function RoutinesPanel({
           <div className="space-y-3">
             <div className="flex items-center justify-between gap-3">
               <h3 className="text-sm font-semibold">Player Routines</h3>
-              <Button size="sm" color="primary" onPress={onOpenRoutine}>
-                New Routine
-              </Button>
+              <div className="flex flex-wrap items-center justify-end gap-2">
+                {playerRoutines.length > 0 ? (
+                  <Button size="sm" variant="flat" onPress={onOpenRoutineExport}>
+                    Export Routines
+                  </Button>
+                ) : null}
+                <Button size="sm" color="primary" onPress={onOpenRoutine}>
+                  New Routine
+                </Button>
+              </div>
             </div>
             {playerRoutines.length === 0 ? (
               <p className="text-sm text-muted-foreground">
@@ -221,6 +261,13 @@ export function RoutinesPanel({
                           onPress={() => openRoutineView(routine, "Player Routine")}
                         >
                           View Routine
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="flat"
+                          onPress={() => exportRoutine(routine.id)}
+                        >
+                          Export PDF
                         </Button>
                         <Button size="sm" variant="flat" isDisabled>
                           Edit Routine
@@ -279,6 +326,13 @@ export function RoutinesPanel({
                               onPress={() => openRoutineView(routine, "Universal Routine")}
                             >
                               View Routine
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="flat"
+                              onPress={() => exportUniversalRoutine(routine.id)}
+                            >
+                              Export PDF
                             </Button>
                             <Button
                               size="sm"

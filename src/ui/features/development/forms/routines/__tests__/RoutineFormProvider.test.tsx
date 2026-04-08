@@ -32,7 +32,9 @@ describe("RoutineFormProvider", () => {
   const baseProps = {
     mode: "create" as const,
     createdBy: "coach-1",
-    disciplineOptions: [],
+    initialPlayerId: "player-1",
+    initialDisciplineId: "disc-1",
+    disciplineOptions: [{ id: "disc-1", key: "pitching", label: "Pitching" }],
     developmentPlanOptions: [
       {
         id: "plan-1",
@@ -124,6 +126,34 @@ describe("RoutineFormProvider", () => {
     fireEvent.click(screen.getByRole("button", { name: "append drill" }));
 
     expect(screen.getByText("drills:drill-1,drill-3")).toBeTruthy();
+  });
+
+  it("filters options by the selected discipline when no plan is linked", () => {
+    render(
+      <RoutineFormProvider {...baseProps}>
+        <TestConsumer />
+      </RoutineFormProvider>
+    );
+
+    expect(screen.getByText("mechanics:mech-1")).toBeTruthy();
+    expect(screen.getByText("drills:drill-1")).toBeTruthy();
+  });
+
+  it("uses the chosen standalone discipline until a plan is selected", () => {
+    render(
+      <RoutineFormProvider
+        {...baseProps}
+        initialDisciplineId="disc-1"
+        disciplineOptions={[
+          { id: "disc-1", key: "pitching", label: "Pitching" },
+          { id: "disc-2", key: "hitting", label: "Hitting" },
+        ]}
+      >
+        <TestConsumer />
+      </RoutineFormProvider>
+    );
+
+    expect(screen.getByText("mechanics:mech-1")).toBeTruthy();
   });
 });
 

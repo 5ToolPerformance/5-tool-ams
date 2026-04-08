@@ -27,14 +27,31 @@ export async function PATCH(
 
     const { routineId } = await params;
     const existingRoutine = await getRoutineById(db, routineId);
-    const plan = await getDevelopmentPlanById(db, existingRoutine.developmentPlanId);
-    await assertPlayerAccess(ctx, plan.playerId);
+    const legacyPlan =
+      !existingRoutine.playerId || !existingRoutine.disciplineId
+        ? existingRoutine.developmentPlanId
+          ? await getDevelopmentPlanById(db, existingRoutine.developmentPlanId)
+          : null
+        : null;
+
+    const playerId = existingRoutine.playerId ?? legacyPlan?.playerId;
+    const disciplineId = existingRoutine.disciplineId ?? legacyPlan?.disciplineId;
+
+    if (!playerId || !disciplineId) {
+      throw new DomainError(
+        "Routine ownership is missing. Backfill player and discipline before editing this routine."
+      );
+    }
+
+    await assertPlayerAccess(ctx, playerId);
 
     const body = (await request.json()) as UpdateRoutineRowInput;
 
     const routine = await updateRoutine(db, routineId, {
       ...body,
-      developmentPlanId: existingRoutine.developmentPlanId,
+      playerId,
+      disciplineId,
+      developmentPlanId: existingRoutine.developmentPlanId ?? undefined,
       createdBy: ctx.userId,
     });
 

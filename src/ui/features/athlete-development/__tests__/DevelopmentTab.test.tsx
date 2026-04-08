@@ -142,17 +142,23 @@ jest.mock(
       children,
       developmentPlanOptions,
       initialDevelopmentPlanId,
+      initialDisciplineId,
+      initialPlayerId,
       isDevelopmentPlanSelectionLocked,
       onSaved,
     }: {
       children: ReactNode;
       developmentPlanOptions?: Array<{ id: string }>;
       initialDevelopmentPlanId?: string;
+      initialDisciplineId?: string;
+      initialPlayerId?: string;
       isDevelopmentPlanSelectionLocked?: boolean;
       onSaved?: (routineId: string) => void;
     }) => (
       <div>
         <div aria-label="routine-provider-meta">
+          <span>{`initial-player:${initialPlayerId ?? ""}`}</span>
+          <span>{`initial-discipline:${initialDisciplineId ?? ""}`}</span>
           <span>{`initial-plan:${initialDevelopmentPlanId ?? ""}`}</span>
           <span>{`plan-count:${developmentPlanOptions?.length ?? 0}`}</span>
           <span>{`plan-locked:${String(
@@ -191,27 +197,16 @@ jest.mock(
       isOpen: boolean;
       routines: Array<{ id: string }>;
       onClose: () => void;
-      onPreview: (options: {
-        includeEvidence: boolean;
-        routineIds: string[];
-      }) => void;
+      onPreview: (options: { routineIds: string[] }) => void;
     }) =>
       isOpen ? (
         <div aria-label="report-options-modal" role="dialog">
           <div>{`routine-options:${routines.length}`}</div>
-          <button
-            onClick={() => onPreview({ includeEvidence: false, routineIds: [] })}
-            type="button"
-          >
+          <button onClick={() => onPreview({ routineIds: [] })} type="button">
             Preview report without routines
           </button>
           <button
-            onClick={() =>
-              onPreview({
-                includeEvidence: true,
-                routineIds: routines.map((routine) => routine.id),
-              })
-            }
+            onClick={() => onPreview({ routineIds: routines.map((routine) => routine.id) })}
             type="button"
           >
             Preview report with selections
@@ -726,7 +721,7 @@ describe("DevelopmentTab", () => {
     expect(screen.getByText("locked:false")).toBeTruthy();
   });
 
-  it("opens the manual routine drawer with current-discipline plan options", async () => {
+  it("opens the manual routine drawer with no preselected development plan", async () => {
     renderDevelopmentTab(
       <DevelopmentTab
         playerId="player-1"
@@ -775,7 +770,8 @@ describe("DevelopmentTab", () => {
 
     expect(await screen.findByRole("heading", { name: "New Routine" })).toBeTruthy();
     expect(screen.getByLabelText("routine-form")).toBeTruthy();
-    expect(screen.getByText("initial-plan:plan-1")).toBeTruthy();
+    expect(screen.getByText("initial-plan:")).toBeTruthy();
+    expect(screen.getByText("initial-discipline:disc-1")).toBeTruthy();
     expect(screen.getByText("plan-count:2")).toBeTruthy();
     expect(screen.getByText("plan-locked:false")).toBeTruthy();
   });
@@ -993,7 +989,7 @@ describe("DevelopmentTab", () => {
     fireEvent.click(screen.getByRole("button", { name: "Preview report with selections" }));
 
     expect(open).toHaveBeenCalledWith(
-      "/reports/development/player-1/pdf?discipline=disc-1&includeEvidence=1&routineIds=routine-1",
+      "/reports/routines/player-1/pdf?discipline=disc-1&routineIds=routine-1",
       "_blank",
       "noopener,noreferrer"
     );

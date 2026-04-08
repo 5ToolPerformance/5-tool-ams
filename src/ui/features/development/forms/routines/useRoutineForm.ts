@@ -37,6 +37,7 @@ type UseRoutineFormParams = {
   mode: RoutineFormMode;
   contextType: RoutineFormContextType;
   createdBy: string;
+  initialPlayerId?: string;
   developmentPlanOptions: RoutineDevelopmentPlanOption[];
   disciplineOptions: RoutineDisciplineOption[];
   mechanicOptions: RoutineMechanicOption[];
@@ -52,9 +53,15 @@ function getInitialValues(params: UseRoutineFormParams): RoutineFormValues {
     return createRoutineFormValuesFromRecord(params.initialRoutine);
   }
 
+  const initialPlan = params.initialDevelopmentPlanId
+    ? params.developmentPlanOptions.find(
+        (plan) => plan.id === params.initialDevelopmentPlanId
+      )
+    : null;
+
   return createEmptyRoutineFormValues(
     params.initialDevelopmentPlanId,
-    params.initialDisciplineId
+    initialPlan?.disciplineId ?? params.initialDisciplineId
   );
 }
 
@@ -124,15 +131,19 @@ export function useRoutineForm(params: UseRoutineFormParams) {
 
   const selectedDiscipline = useMemo(() => {
     if (params.contextType === "development-plan") {
-      if (!selectedDevelopmentPlan) {
-        return null;
+      if (selectedDevelopmentPlan) {
+        return {
+          id: selectedDevelopmentPlan.disciplineId,
+          key: selectedDevelopmentPlan.disciplineKey,
+          label: selectedDevelopmentPlan.disciplineLabel,
+        };
       }
 
-      return {
-        id: selectedDevelopmentPlan.disciplineId,
-        key: selectedDevelopmentPlan.disciplineKey,
-        label: selectedDevelopmentPlan.disciplineLabel,
-      };
+      return (
+        params.disciplineOptions.find(
+          (discipline) => discipline.id === values.disciplineId
+        ) ?? null
+      );
     }
 
     return (
@@ -182,9 +193,15 @@ export function useRoutineForm(params: UseRoutineFormParams) {
     <K extends keyof RoutineFormValues>(key: K, value: RoutineFormValues[K]) => {
       setValues((prev) => {
         if (key === "developmentPlanId" && prev.developmentPlanId !== value) {
+          const nextDevelopmentPlanId = value as RoutineFormValues["developmentPlanId"];
+          const nextDevelopmentPlan = params.developmentPlanOptions.find(
+            (plan) => plan.id === nextDevelopmentPlanId
+          );
+
           return {
             ...prev,
-            developmentPlanId: value as RoutineFormValues["developmentPlanId"],
+            developmentPlanId: nextDevelopmentPlanId,
+            disciplineId: nextDevelopmentPlan?.disciplineId ?? prev.disciplineId,
             mechanics: [],
             blocks: [],
           };
@@ -205,7 +222,7 @@ export function useRoutineForm(params: UseRoutineFormParams) {
         };
       });
     },
-    []
+    [params.developmentPlanOptions]
   );
 
   const addMechanic = useCallback(() => {
@@ -392,16 +409,24 @@ export function useRoutineForm(params: UseRoutineFormParams) {
 
       return {
         contextType: "development-plan",
-        createdBy: params.initialRoutine.createdBy,
-        developmentPlan: {
-          id: params.initialRoutine.developmentPlanId ?? "",
-          playerId: params.initialRoutine.playerId ?? "",
-          disciplineId: params.initialRoutine.disciplineId,
-          disciplineKey: params.initialRoutine.disciplineKey,
-          disciplineLabel: params.initialRoutine.disciplineLabel,
-          status: "active",
-          title: selectedDevelopmentPlan?.title ?? params.initialRoutine.title,
+        playerId: params.initialRoutine.playerId ?? params.initialPlayerId ?? "",
+        discipline: {
+          id: params.initialRoutine.disciplineId,
+          key: params.initialRoutine.disciplineKey,
+          label: params.initialRoutine.disciplineLabel,
         },
+        createdBy: params.initialRoutine.createdBy,
+        developmentPlan: params.initialRoutine.developmentPlanId
+          ? {
+              id: params.initialRoutine.developmentPlanId,
+              playerId: params.initialRoutine.playerId ?? params.initialPlayerId ?? "",
+              disciplineId: params.initialRoutine.disciplineId,
+              disciplineKey: params.initialRoutine.disciplineKey,
+              disciplineLabel: params.initialRoutine.disciplineLabel,
+              status: "active",
+              title: selectedDevelopmentPlan?.title ?? params.initialRoutine.title,
+            }
+          : null,
       };
     }
 
@@ -417,12 +442,18 @@ export function useRoutineForm(params: UseRoutineFormParams) {
       };
     }
 
-    if (!selectedDevelopmentPlan) {
-      throw new Error("A development plan is required for routine creation.");
+    if (!selectedDiscipline) {
+      throw new Error("A discipline is required for routine creation.");
+    }
+
+    if (!params.initialPlayerId) {
+      throw new Error("A player is required for routine creation.");
     }
 
     return {
       contextType: "development-plan",
+      playerId: params.initialPlayerId,
+      discipline: selectedDiscipline,
       createdBy: params.createdBy,
       developmentPlan: selectedDevelopmentPlan,
     };

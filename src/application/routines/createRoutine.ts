@@ -9,6 +9,6 @@ import {
 } from "@/domain/routines/validateRoutineDocument";
 
 export async function createRoutine(db: DB, input: CreateRoutineRowInput) {
-  validateRoutineDocument(input as ValidateRoutineInput);
+  validateRoutineDocument({ ...input, requiresPlayerId: true } as ValidateRoutineInput);
   return createRoutineQuery(db, input);
 }

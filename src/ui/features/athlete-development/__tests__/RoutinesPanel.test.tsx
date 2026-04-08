@@ -4,6 +4,7 @@ import { fireEvent, render, screen, waitFor, within } from "@testing-library/rea
 import { RoutinesPanel } from "@/ui/features/athlete-development/RoutinesPanel";
 
 const originalFetch = global.fetch;
+const originalOpen = window.open;
 
 jest.mock("@heroui/react", () => {
   const actual = jest.requireActual("@heroui/react");
@@ -65,10 +66,12 @@ jest.mock("@/ui/core/athletes/SectionShell", () => ({
 describe("RoutinesPanel", () => {
   beforeEach(() => {
     global.fetch = jest.fn();
+    window.open = jest.fn();
   });
 
   afterAll(() => {
     global.fetch = originalFetch;
+    window.open = originalOpen;
   });
 
   const playerRoutine = {
@@ -117,10 +120,12 @@ describe("RoutinesPanel", () => {
   it("opens the player routine modal with mechanics, blocks, and notes", async () => {
     render(
       <RoutinesPanel
+        playerId="player-1"
         playerRoutines={[playerRoutine as any]}
         universalRoutines={[]}
         universalRoutinesSupported
         activePlanId="plan-1"
+        disciplineId="disc-1"
         disciplineKey="pitching"
         disciplineLabel="Pitching"
       />
@@ -163,10 +168,12 @@ describe("RoutinesPanel", () => {
 
     render(
       <RoutinesPanel
+        playerId="player-1"
         playerRoutines={[playerRoutine as any]}
         universalRoutines={[]}
         universalRoutinesSupported
         activePlanId="plan-1"
+        disciplineId="disc-1"
         disciplineKey="pitching"
         disciplineLabel="Pitching"
       />
@@ -194,10 +201,12 @@ describe("RoutinesPanel", () => {
 
     render(
       <RoutinesPanel
+        playerId="player-1"
         playerRoutines={[playerRoutine as any]}
         universalRoutines={[]}
         universalRoutinesSupported
         activePlanId="plan-1"
+        disciplineId="disc-1"
         disciplineKey="pitching"
         disciplineLabel="Pitching"
       />
@@ -217,10 +226,12 @@ describe("RoutinesPanel", () => {
   it("opens universal routines from the panel without affecting assignment actions", async () => {
     render(
       <RoutinesPanel
+        playerId="player-1"
         playerRoutines={[]}
         universalRoutines={[universalRoutine as any]}
         universalRoutinesSupported
         activePlanId="plan-1"
+        disciplineId="disc-1"
         disciplineKey="pitching"
         disciplineLabel="Pitching"
       />
@@ -233,5 +244,73 @@ describe("RoutinesPanel", () => {
 
     expect(within(modal).getByText("Universal summary")).toBeTruthy();
     expect(screen.getByRole("button", { name: "Assign to Plan" })).toBeTruthy();
+  });
+
+  it("opens a single-routine PDF export from the player routine card", () => {
+    render(
+      <RoutinesPanel
+        playerId="player-1"
+        playerRoutines={[playerRoutine as any]}
+        universalRoutines={[]}
+        universalRoutinesSupported
+        activePlanId="plan-1"
+        disciplineId="disc-1"
+        disciplineKey="pitching"
+        disciplineLabel="Pitching"
+      />
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "Export PDF" }));
+
+    expect(window.open).toHaveBeenCalledWith(
+      "/reports/routines/player-1/pdf?discipline=disc-1&routineIds=player-routine-1",
+      "_blank",
+      "noopener,noreferrer"
+    );
+  });
+
+  it("opens the player routine packet selector from the routines header", () => {
+    const onOpenRoutineExport = jest.fn();
+
+    render(
+      <RoutinesPanel
+        playerId="player-1"
+        playerRoutines={[playerRoutine as any]}
+        universalRoutines={[]}
+        universalRoutinesSupported
+        activePlanId="plan-1"
+        disciplineId="disc-1"
+        disciplineKey="pitching"
+        disciplineLabel="Pitching"
+        onOpenRoutineExport={onOpenRoutineExport}
+      />
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "Export Routines" }));
+
+    expect(onOpenRoutineExport).toHaveBeenCalledTimes(1);
+  });
+
+  it("opens a universal routine PDF export from the universal routine card", () => {
+    render(
+      <RoutinesPanel
+        playerId="player-1"
+        playerRoutines={[]}
+        universalRoutines={[universalRoutine as any]}
+        universalRoutinesSupported
+        activePlanId="plan-1"
+        disciplineId="disc-1"
+        disciplineKey="pitching"
+        disciplineLabel="Pitching"
+      />
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "Export PDF" }));
+
+    expect(window.open).toHaveBeenCalledWith(
+      "/reports/universal-routines/universal-routine-1/pdf",
+      "_blank",
+      "noopener,noreferrer"
+    );
   });
 });
