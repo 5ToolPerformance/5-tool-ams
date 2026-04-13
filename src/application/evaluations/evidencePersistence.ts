@@ -15,6 +15,7 @@ import {
   getSupportedEvidenceTypesForDisciplineKey,
   isSupportedEvidenceTypeForDisciplineKey,
 } from "@/domain/evaluations/evidence";
+import { resolveStrengthEvidencePowerRating } from "@/domain/evaluations/strengthEvidence";
 import type { EvaluationDocumentV1 } from "@/domain/evaluations/types";
 import { DomainError } from "@/lib/errors";
 
@@ -178,6 +179,7 @@ export async function replaceEvaluationEvidence({
           playerId,
           recordedAt,
           notes: evidenceForm.notes ?? null,
+          powerRating: resolveStrengthEvidencePowerRating(evidenceForm),
           rotation: normalizeMetricValue(evidenceForm.rotation),
           lowerBodyStrength: normalizeMetricValue(evidenceForm.lowerBodyStrength),
           upperBodyStrength: normalizeMetricValue(evidenceForm.upperBodyStrength),

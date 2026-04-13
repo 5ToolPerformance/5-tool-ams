@@ -1,7 +1,4 @@
-import { Suspense } from "react";
-
-import { getPerformanceDocumentsData } from "@/application/players/performance-documents/getPerformanceDocumentsData";
-import { ChartAreaSkeleton } from "@/ui/features/athlete-performance/shared/skeletons/ChartAreaSkeleton";
+import { getPlayerPerformanceData } from "@/application/players/performance/getPlayerPerformanceData";
 import { StrengthPerformanceTab } from "@/ui/features/athlete-performance/strength/StrengthPerformanceTab";
 
 export default async function StrengthPerformancePage({
@@ -10,11 +7,7 @@ export default async function StrengthPerformancePage({
   params: Promise<{ playerId: string }>;
 }) {
   const { playerId } = await params;
-  const performanceAttachments = await getPerformanceDocumentsData(playerId);
+  const performance = await getPlayerPerformanceData(playerId);
 
-  return (
-    <Suspense fallback={<ChartAreaSkeleton />}>
-      <StrengthPerformanceTab performanceAttachments={performanceAttachments} />
-    </Suspense>
-  );
+  return <StrengthPerformanceTab data={performance.strength} />;
 }

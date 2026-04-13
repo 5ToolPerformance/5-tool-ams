@@ -26,18 +26,12 @@ export function resolveStrengthEvidencePowerRating(
     "powerRating" | "rotation" | "lowerBodyStrength" | "upperBodyStrength"
   >
 ): string | null {
-  const explicitPowerRating = evidence.powerRating?.trim();
-
-  if (explicitPowerRating) {
-    return explicitPowerRating;
-  }
-
   const rotation = parseMetricValue(evidence.rotation);
   const lowerBody = parseMetricValue(evidence.lowerBodyStrength);
   const upperBody = parseMetricValue(evidence.upperBodyStrength);
 
   if (rotation == null || lowerBody == null || upperBody == null) {
-    return null;
+    return evidence.powerRating?.trim() || null;
   }
 
   const calculated =

@@ -1,8 +1,5 @@
-import { Suspense } from "react";
-
-import { getPerformanceDocumentsData } from "@/application/players/performance-documents/getPerformanceDocumentsData";
+import { getPlayerPerformanceData } from "@/application/players/performance/getPlayerPerformanceData";
 import { HittingPerformanceTab } from "@/ui/features/athlete-performance/hitting/HittingPerformanceTab";
-import { ChartAreaSkeleton } from "@/ui/features/athlete-performance/shared/skeletons/ChartAreaSkeleton";
 
 export default async function HittingPerformancePage({
   params,
@@ -10,11 +7,7 @@ export default async function HittingPerformancePage({
   params: Promise<{ playerId: string }>;
 }) {
   const { playerId } = await params;
-  const performanceAttachments = await getPerformanceDocumentsData(playerId);
+  const performance = await getPlayerPerformanceData(playerId);
 
-  return (
-    <Suspense fallback={<ChartAreaSkeleton />}>
-      <HittingPerformanceTab performanceAttachments={performanceAttachments} />
-    </Suspense>
-  );
+  return <HittingPerformanceTab data={performance.hitting} />;
 }

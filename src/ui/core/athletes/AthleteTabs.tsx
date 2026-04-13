@@ -7,15 +7,6 @@ interface AthleteTabsProps {
   onChange: (key: string) => void;
 }
 
-function DisabledTab({ title }: { title: string }) {
-  return (
-    <div className="flex cursor-not-allowed items-center gap-2 opacity-40">
-      <span>{title}</span>
-      <span className="text-xs text-muted-foreground">(Coming soon)</span>
-    </div>
-  );
-}
-
 export function AthleteTabs({ activeKey, onChange }: AthleteTabsProps) {
   return (
     <Tabs
@@ -27,14 +18,9 @@ export function AthleteTabs({ activeKey, onChange }: AthleteTabsProps) {
       <Tab key="overview" title="Overview" />
       <Tab key="training" title="Training" />
       <Tab key="development" title="Development" />
-      {/* <Tab
-        key="performance"
-        title={<DisabledTab title="Performance" />}
-        isDisabled
-      /> */}
+      <Tab key="performance" title="Performance" />
       <Tab key="context" title="Context & Documents" />
       <Tab key="health" title="Health" />
-      {/* <Tab key="systems" title={<DisabledTab title="Systems" />} isDisabled /> */}
     </Tabs>
   );
 }
