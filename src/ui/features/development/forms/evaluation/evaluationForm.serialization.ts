@@ -33,10 +33,6 @@ function parseDateInput(value: string): Date {
   return parsed;
 }
 
-function parseDateTimeInput(value: string): Date {
-  return new Date(value);
-}
-
 function emptyMetricToNull(value: string | null | undefined): string | null {
   if (!value) {
     return null;
@@ -50,11 +46,10 @@ export function serializeEvaluationEvidenceForms(
   values: EvaluationFormValues
 ): EvaluationEvidenceWriteInput[] {
   return values.evidence
-    .filter((item) => item.recordedAt)
     .map((item) => {
       const base = {
         type: item.type,
-        recordedAt: parseDateTimeInput(item.recordedAt),
+        recordedAt: parseDateInput(values.evaluationDate),
         notes: emptyToNull(item.notes),
         performanceSessionId: item.performanceSessionId,
         evidenceId: item.evidenceId,
@@ -87,6 +82,7 @@ export function serializeEvaluationEvidenceForms(
             timeToContactAvg: emptyMetricToNull(item.timeToContactAvg),
             handSpeedMax: emptyMetricToNull(item.handSpeedMax),
             handSpeedAvg: emptyMetricToNull(item.handSpeedAvg),
+            powerAvg: emptyMetricToNull(item.powerAvg),
           };
         case "strength":
           return {
@@ -96,6 +92,21 @@ export function serializeEvaluationEvidenceForms(
             lowerBodyStrength: emptyMetricToNull(item.lowerBodyStrength),
             upperBodyStrength: emptyMetricToNull(item.upperBodyStrength),
             powerRating: emptyMetricToNull(item.powerRating),
+            plyoPushup: emptyMetricToNull(item.plyoPushup),
+            seatedShoulderErL: emptyMetricToNull(item.seatedShoulderErL),
+            seatedShoulderErR: emptyMetricToNull(item.seatedShoulderErR),
+            seatedShoulderIrL: emptyMetricToNull(item.seatedShoulderIrL),
+            seatedShoulderIrR: emptyMetricToNull(item.seatedShoulderIrR),
+            cmj: emptyMetricToNull(item.cmj),
+            cmjPropulsiveImpulse: emptyMetricToNull(item.cmjPropulsiveImpulse),
+            cmjPeakPower: emptyMetricToNull(item.cmjPeakPower),
+            pogoJump: emptyMetricToNull(item.pogoJump),
+            dropJump: emptyMetricToNull(item.dropJump),
+            midThighPull: emptyMetricToNull(item.midThighPull),
+            midThighPullTtpf: emptyMetricToNull(item.midThighPullTtpf),
+            netForce100ms: emptyMetricToNull(item.netForce100ms),
+            shotPut: emptyMetricToNull(item.shotPut),
+            scoopToss: emptyMetricToNull(item.scoopToss),
           };
       }
     });

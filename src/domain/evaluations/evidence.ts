@@ -38,14 +38,30 @@ export type EvaluationBlastEvidenceInput = EvaluationEvidenceBaseInput & {
   timeToContactAvg?: string | null;
   handSpeedMax?: string | null;
   handSpeedAvg?: string | null;
+  powerAvg?: string | null;
 };
 
 export type EvaluationStrengthEvidenceInput = EvaluationEvidenceBaseInput & {
   type: "strength";
+  powerRating?: string | null;
   rotation?: string | null;
   lowerBodyStrength?: string | null;
   upperBodyStrength?: string | null;
-  powerRating?: string | null;
+  plyoPushup?: string | null;
+  seatedShoulderErL?: string | null;
+  seatedShoulderErR?: string | null;
+  seatedShoulderIrL?: string | null;
+  seatedShoulderIrR?: string | null;
+  cmj?: string | null;
+  cmjPropulsiveImpulse?: string | null;
+  cmjPeakPower?: string | null;
+  pogoJump?: string | null;
+  dropJump?: string | null;
+  midThighPull?: string | null;
+  midThighPullTtpf?: string | null;
+  netForce100ms?: string | null;
+  shotPut?: string | null;
+  scoopToss?: string | null;
 };
 
 export type EvaluationEvidenceWriteInput =

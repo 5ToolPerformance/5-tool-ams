@@ -57,12 +57,6 @@ export function validateEvaluationForm(
     }
   }
 
-  values.evidence.forEach((item, index) => {
-    if (!item.recordedAt.trim()) {
-      errors[`evidence.${index}.recordedAt`] = "Recorded at is required.";
-    }
-  });
-
   const selectedEvidenceTypes = values.evidence.map((item) => item.type);
 
   if (new Set(selectedEvidenceTypes).size !== selectedEvidenceTypes.length) {

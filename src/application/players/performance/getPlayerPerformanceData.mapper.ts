@@ -81,6 +81,53 @@ const METRIC_DEFINITIONS: Record<
       label: "Upper Body Strength",
       sourceGroup: "Strength",
     },
+    { key: "plyoPushup", label: "Plyo Pushup", sourceGroup: "Strength" },
+    {
+      key: "seatedShoulderErL",
+      label: "Seated Shoulder ER Left",
+      sourceGroup: "Strength",
+    },
+    {
+      key: "seatedShoulderErR",
+      label: "Seated Shoulder ER Right",
+      sourceGroup: "Strength",
+    },
+    {
+      key: "seatedShoulderIrL",
+      label: "Seated Shoulder IR Left",
+      sourceGroup: "Strength",
+    },
+    {
+      key: "seatedShoulderIrR",
+      label: "Seated Shoulder IR Right",
+      sourceGroup: "Strength",
+    },
+    { key: "cmj", label: "Counter Movement Jump", sourceGroup: "Strength" },
+    {
+      key: "cmjPropulsiveImpulse",
+      label: "CMJ Propulsive Impulse",
+      sourceGroup: "Strength",
+    },
+    {
+      key: "cmjPeakPower",
+      label: "CMJ Peak Power",
+      sourceGroup: "Strength",
+    },
+    { key: "pogoJump", label: "Pogo Jump", sourceGroup: "Strength" },
+    { key: "dropJump", label: "Drop Jump", sourceGroup: "Strength" },
+    { key: "midThighPull", label: "Mid Thigh Pull", sourceGroup: "Strength" },
+    {
+      key: "midThighPullTtpf",
+      label: "Mid Thigh Pull TTPF",
+      sourceGroup: "Strength",
+    },
+    {
+      key: "netForce100ms",
+      label: "Net Force 100ms",
+      sourceGroup: "Strength",
+    },
+    { key: "shotPut", label: "Shot Put", sourceGroup: "Strength" },
+    { key: "scoopToss", label: "Scoop Toss", sourceGroup: "Strength" },
   ],
   hittrax: [
     {
@@ -181,6 +228,11 @@ const METRIC_DEFINITIONS: Record<
       key: "handSpeedAvg",
       label: "Avg Hand Speed",
       unit: "mph",
+      sourceGroup: "Blast",
+    },
+    {
+      key: "powerAvg",
+      label: "Power Avg",
       sourceGroup: "Blast",
     },
   ],

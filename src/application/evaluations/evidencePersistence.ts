@@ -15,7 +15,6 @@ import {
   getSupportedEvidenceTypesForDisciplineKey,
   isSupportedEvidenceTypeForDisciplineKey,
 } from "@/domain/evaluations/evidence";
-import { resolveStrengthEvidencePowerRating } from "@/domain/evaluations/strengthEvidence";
 import type { EvaluationDocumentV1 } from "@/domain/evaluations/types";
 import { DomainError } from "@/lib/errors";
 
@@ -170,6 +169,7 @@ export async function replaceEvaluationEvidence({
           timeToContactAvg: normalizeMetricValue(evidenceForm.timeToContactAvg),
           handSpeedMax: normalizeMetricValue(evidenceForm.handSpeedMax),
           handSpeedAvg: normalizeMetricValue(evidenceForm.handSpeedAvg),
+          powerAvg: normalizeMetricValue(evidenceForm.powerAvg),
         });
         break;
       case "strength":
@@ -179,10 +179,27 @@ export async function replaceEvaluationEvidence({
           playerId,
           recordedAt,
           notes: evidenceForm.notes ?? null,
-          powerRating: resolveStrengthEvidencePowerRating(evidenceForm),
+          powerRating: normalizeMetricValue(evidenceForm.powerRating),
           rotation: normalizeMetricValue(evidenceForm.rotation),
           lowerBodyStrength: normalizeMetricValue(evidenceForm.lowerBodyStrength),
           upperBodyStrength: normalizeMetricValue(evidenceForm.upperBodyStrength),
+          plyoPushup: normalizeMetricValue(evidenceForm.plyoPushup),
+          seatedShoulderErL: normalizeMetricValue(evidenceForm.seatedShoulderErL),
+          seatedShoulderErR: normalizeMetricValue(evidenceForm.seatedShoulderErR),
+          seatedShoulderIrL: normalizeMetricValue(evidenceForm.seatedShoulderIrL),
+          seatedShoulderIrR: normalizeMetricValue(evidenceForm.seatedShoulderIrR),
+          cmj: normalizeMetricValue(evidenceForm.cmj),
+          cmjPropulsiveImpulse: normalizeMetricValue(
+            evidenceForm.cmjPropulsiveImpulse
+          ),
+          cmjPeakPower: normalizeMetricValue(evidenceForm.cmjPeakPower),
+          pogoJump: normalizeMetricValue(evidenceForm.pogoJump),
+          dropJump: normalizeMetricValue(evidenceForm.dropJump),
+          midThighPull: normalizeMetricValue(evidenceForm.midThighPull),
+          midThighPullTtpf: normalizeMetricValue(evidenceForm.midThighPullTtpf),
+          netForce100ms: normalizeMetricValue(evidenceForm.netForce100ms),
+          shotPut: normalizeMetricValue(evidenceForm.shotPut),
+          scoopToss: normalizeMetricValue(evidenceForm.scoopToss),
         });
         break;
     }

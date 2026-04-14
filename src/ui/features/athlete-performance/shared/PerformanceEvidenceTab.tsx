@@ -31,7 +31,7 @@ export function PerformanceEvidenceTab({
   }
 
   const featuredKpis =
-    featuredKpiKeys && featuredKpiKeys.length > 0
+    featuredKpiKeys !== undefined
       ? featuredKpiKeys.flatMap((key) => {
           const kpi = data.kpis.find(
             (item) => `${item.sourceGroup}:${item.key}` === key

@@ -23,7 +23,7 @@ const EVIDENCE_TYPE_LABELS: Record<EvaluationEvidenceType, string> = {
 };
 
 const EVIDENCE_FIELDS: Record<
-  EvaluationEvidenceType,
+  Exclude<EvaluationEvidenceType, "strength">,
   Array<{ key: string; label: string }>
 > = {
   hittrax: [
@@ -46,13 +46,65 @@ const EVIDENCE_FIELDS: Record<
     { key: "timeToContactAvg", label: "Time To Contact Avg" },
     { key: "handSpeedMax", label: "Hand Speed Max" },
     { key: "handSpeedAvg", label: "Hand Speed Avg" },
-  ],
-  strength: [
-    { key: "rotation", label: "Rotation Score" },
-    { key: "lowerBodyStrength", label: "Lower Body Score" },
-    { key: "upperBodyStrength", label: "Upper Body Score" },
+    { key: "powerAvg", label: "Power Avg" },
   ],
 };
+
+const STRENGTH_TEST_GROUPS: Array<{
+  title: string;
+  fields: Array<{ key: string; label: string }>;
+}> = [
+  {
+    title: "Plyo Pushup",
+    fields: [{ key: "plyoPushup", label: "Plyo Pushup" }],
+  },
+  {
+    title: "Seated Shoulder ER",
+    fields: [
+      { key: "seatedShoulderErL", label: "Left" },
+      { key: "seatedShoulderErR", label: "Right" },
+    ],
+  },
+  {
+    title: "Seated Shoulder IR",
+    fields: [
+      { key: "seatedShoulderIrL", label: "Left" },
+      { key: "seatedShoulderIrR", label: "Right" },
+    ],
+  },
+  {
+    title: "Counter Movement Jump",
+    fields: [
+      { key: "cmj", label: "CMJ" },
+      { key: "cmjPropulsiveImpulse", label: "Propulsive Impulse" },
+      { key: "cmjPeakPower", label: "Peak Power" },
+    ],
+  },
+  {
+    title: "Pogo Jump",
+    fields: [{ key: "pogoJump", label: "Pogo Jump" }],
+  },
+  {
+    title: "Drop Jump",
+    fields: [{ key: "dropJump", label: "Drop Jump" }],
+  },
+  {
+    title: "Mid Thigh Pull",
+    fields: [
+      { key: "midThighPull", label: "Mid Thigh Pull" },
+      { key: "midThighPullTtpf", label: "TTPF" },
+      { key: "netForce100ms", label: "Net Force 100ms" },
+    ],
+  },
+  {
+    title: "Shot Put",
+    fields: [{ key: "shotPut", label: "Shot Put" }],
+  },
+  {
+    title: "Scoop Toss",
+    fields: [{ key: "scoopToss", label: "Scoop Toss" }],
+  },
+];
 
 function formatMediaType(type: "file_image" | "file_video") {
   return type === "file_image" ? "Image" : "Video";
@@ -236,38 +288,68 @@ export function EvaluationEvidenceStep() {
                           </Button>
                         </div>
 
-                        <Input
-                          type="datetime-local"
-                          label="Recorded At"
-                          labelPlacement="outside"
-                          value={evidence.recordedAt}
-                          onValueChange={(value) =>
-                            updateEvidence(index, { recordedAt: value })
-                          }
-                          isInvalid={!!errors[`evidence.${index}.recordedAt`]}
-                          errorMessage={errors[`evidence.${index}.recordedAt`]}
-                        />
-
-                        <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-                          {EVIDENCE_FIELDS[evidence.type].map((field) => (
-                            <Input
-                              key={field.key}
-                              type="number"
-                              label={field.label}
-                              labelPlacement="outside"
-                              value={
-                                (evidence as Record<string, string | undefined>)[
-                                  field.key
-                                ] ?? ""
-                              }
-                              onValueChange={(value) =>
-                                updateEvidence(index, {
-                                  [field.key]: value,
-                                } as never)
-                              }
-                            />
-                          ))}
-                        </div>
+                        {evidence.type === "strength" ? (
+                          <div className="grid grid-cols-1 gap-3">
+                            {STRENGTH_TEST_GROUPS.map((group) => (
+                              <section
+                                key={group.title}
+                                className="space-y-1 rounded-medium border border-divider bg-content1 px-2 py-1.5"
+                              >
+                                <h4 className="text-sm font-medium">
+                                  {group.title}
+                                </h4>
+                                <div className="grid grid-cols-1 gap-1.5 sm:grid-cols-2">
+                                  {group.fields.map((field) => (
+                                    <Input
+                                      key={field.key}
+                                      type="number"
+                                      size="sm"
+                                      label={field.label}
+                                      labelPlacement="inside"
+                                      value={
+                                        (
+                                          evidence as Record<
+                                            string,
+                                            string | undefined
+                                          >
+                                        )[field.key] ?? ""
+                                      }
+                                      onValueChange={(value) =>
+                                        updateEvidence(index, {
+                                          [field.key]: value,
+                                        } as never)
+                                      }
+                                    />
+                                  ))}
+                                </div>
+                              </section>
+                            ))}
+                          </div>
+                        ) : (
+                          <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+                            {EVIDENCE_FIELDS[evidence.type].map((field) => (
+                              <Input
+                                key={field.key}
+                                type="number"
+                                label={field.label}
+                                labelPlacement="outside"
+                                value={
+                                  (
+                                    evidence as Record<
+                                      string,
+                                      string | undefined
+                                    >
+                                  )[field.key] ?? ""
+                                }
+                                onValueChange={(value) =>
+                                  updateEvidence(index, {
+                                    [field.key]: value,
+                                  } as never)
+                                }
+                              />
+                            ))}
+                          </div>
+                        )}
 
                         <Textarea
                           label="Notes"

@@ -128,6 +128,141 @@ describe("evaluationForm.serialization", () => {
     ]);
   });
 
+  it("serializes Blast power average into the payload body", () => {
+    const values = createEmptyEvaluationFormValues();
+    values.disciplineId = "disc-1";
+    values.evaluationDate = "2026-03-24";
+    values.snapshotSummary = "Snapshot summary";
+    values.strengthProfileSummary = "Strength summary";
+    values.keyConstraintsSummary = "Constraint summary";
+    values.evidence = [
+      {
+        id: "evidence-1",
+        type: "blast",
+        recordedAt: "2026-03-24T09:30",
+        notes: "",
+        batSpeedMax: "",
+        batSpeedAvg: "",
+        rotAccMax: "",
+        rotAccAvg: "",
+        onPlanePercent: "",
+        attackAngleAvg: "",
+        earlyConnAvg: "",
+        connAtImpactAvg: "",
+        verticalBatAngleAvg: "",
+        timeToContactAvg: "",
+        handSpeedMax: "",
+        handSpeedAvg: "",
+        powerAvg: "54.2",
+      },
+    ];
+
+    const payload = serializeEvaluationFormToPayload(values, {
+      playerId: "player-1",
+      disciplineId: "disc-1",
+      createdBy: "coach-1",
+    });
+
+    expect(payload.evidenceForms).toEqual([
+      expect.objectContaining({
+        type: "blast",
+        powerAvg: "54.2",
+      }),
+    ]);
+  });
+
+  it("uses the evaluation date for evidence recordedAt", () => {
+    const values = createEmptyEvaluationFormValues();
+    values.disciplineId = "disc-1";
+    values.evaluationDate = "2026-03-24";
+    values.snapshotSummary = "Snapshot summary";
+    values.strengthProfileSummary = "Strength summary";
+    values.keyConstraintsSummary = "Constraint summary";
+    values.evidence = [
+      {
+        id: "evidence-1",
+        type: "hittrax",
+        recordedAt: "",
+        notes: "",
+        exitVelocityMax: "92.4",
+        exitVelocityAvg: "",
+        hardHitPercent: "",
+        launchAngleAvg: "",
+        lineDriveAvg: "",
+      },
+    ];
+
+    const payload = serializeEvaluationFormToPayload(values, {
+      playerId: "player-1",
+      disciplineId: "disc-1",
+      createdBy: "coach-1",
+    });
+
+    expect(payload.evidenceForms).toEqual([
+      expect.objectContaining({
+        recordedAt: new Date("2026-03-24T00:00:00"),
+      }),
+    ]);
+  });
+
+  it("serializes raw strength evidence metrics and preserves hidden legacy scores", () => {
+    const values = createEmptyEvaluationFormValues();
+    values.disciplineId = "disc-1";
+    values.evaluationDate = "2026-03-24";
+    values.snapshotSummary = "Snapshot summary";
+    values.strengthProfileSummary = "Strength summary";
+    values.keyConstraintsSummary = "Constraint summary";
+    values.evidence = [
+      {
+        id: "evidence-1",
+        type: "strength",
+        recordedAt: "2026-03-24T09:30",
+        notes: "Raw test capture",
+        powerRating: "91",
+        rotation: "88",
+        lowerBodyStrength: "81",
+        upperBodyStrength: "74",
+        plyoPushup: "18",
+        seatedShoulderErL: "22",
+        seatedShoulderErR: "24",
+        seatedShoulderIrL: "30",
+        seatedShoulderIrR: "31",
+        cmj: "28",
+        cmjPropulsiveImpulse: "140",
+        cmjPeakPower: "4200",
+        pogoJump: "2.1",
+        dropJump: "1.8",
+        midThighPull: "650",
+        midThighPullTtpf: "0.42",
+        netForce100ms: "310",
+        shotPut: "32",
+        scoopToss: "34",
+      },
+    ];
+
+    const payload = serializeEvaluationFormToPayload(values, {
+      playerId: "player-1",
+      disciplineId: "disc-1",
+      createdBy: "coach-1",
+    });
+
+    expect(payload.evidenceForms).toEqual([
+      expect.objectContaining({
+        type: "strength",
+        powerRating: "91",
+        rotation: "88",
+        lowerBodyStrength: "81",
+        upperBodyStrength: "74",
+        plyoPushup: "18",
+        seatedShoulderErL: "22",
+        seatedShoulderErR: "24",
+        cmjPeakPower: "4200",
+        midThighPull: "650",
+        scoopToss: "34",
+      }),
+    ]);
+  });
+
   it("injects placeholder summaries for tests-only evaluations", () => {
     const values = createEmptyEvaluationFormValues();
     values.disciplineId = "disc-1";

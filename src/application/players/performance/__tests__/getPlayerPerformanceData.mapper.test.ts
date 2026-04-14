@@ -96,6 +96,7 @@ describe("buildPlayerPerformanceData", () => {
           metrics: {
             batSpeedMax: "71.8",
             attackAngleAvg: "11.6",
+            powerAvg: "54.2",
           },
         },
       ],
@@ -108,9 +109,67 @@ describe("buildPlayerPerformanceData", () => {
     expect(data.hitting.kpis.map((kpi) => kpi.label)).toEqual([
       "Max Bat Speed",
       "Avg Attack Angle",
+      "Power Avg",
       "Max Exit Velocity",
       "Avg Exit Velocity",
     ]);
+  });
+
+  it("maps raw strength evidence metrics into trends and session tables", () => {
+    const data = buildPlayerPerformanceData({
+      strengthRows: [
+        {
+          sessionId: "strength-session-1",
+          evaluationId: "evaluation-1",
+          source: "strength",
+          recordedAt: baseDate,
+          status: "completed",
+          notes: "Raw tests",
+          metrics: {
+            plyoPushup: "18",
+            seatedShoulderErL: "22",
+            seatedShoulderErR: "24",
+            cmjPeakPower: "4200",
+            midThighPull: "650",
+            scoopToss: "34",
+          },
+        },
+      ],
+      hittraxRows: [],
+      blastRows: [],
+    });
+
+    expect(data.strength.kpis.map((kpi) => kpi.label)).toEqual([
+      "Plyo Pushup",
+      "Seated Shoulder ER Left",
+      "Seated Shoulder ER Right",
+      "CMJ Peak Power",
+      "Mid Thigh Pull",
+      "Scoop Toss",
+    ]);
+    expect(data.strength.trends.map((trend) => trend.label)).toContain(
+      "CMJ Peak Power"
+    );
+    expect(data.strength.sessions[0].tableRows).toEqual(
+      expect.arrayContaining([
+        {
+          id: "plyoPushup",
+          cells: {
+            metric: "Plyo Pushup",
+            value: "18",
+            source: "Strength",
+          },
+        },
+        {
+          id: "midThighPull",
+          cells: {
+            metric: "Mid Thigh Pull",
+            value: "650",
+            source: "Strength",
+          },
+        },
+      ])
+    );
   });
 
   it("skips missing and non-numeric metric values", () => {

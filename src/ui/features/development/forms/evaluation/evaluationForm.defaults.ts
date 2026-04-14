@@ -209,15 +209,27 @@ export function createEmptyEvidenceOfType(
         timeToContactAvg: "",
         handSpeedMax: "",
         handSpeedAvg: "",
+        powerAvg: "",
       };
     case "strength":
       return {
         ...base,
         type,
-        rotation: "",
-        lowerBodyStrength: "",
-        upperBodyStrength: "",
-        powerRating: "",
+        plyoPushup: "",
+        seatedShoulderErL: "",
+        seatedShoulderErR: "",
+        seatedShoulderIrL: "",
+        seatedShoulderIrR: "",
+        cmj: "",
+        cmjPropulsiveImpulse: "",
+        cmjPeakPower: "",
+        pogoJump: "",
+        dropJump: "",
+        midThighPull: "",
+        midThighPullTtpf: "",
+        netForce100ms: "",
+        shotPut: "",
+        scoopToss: "",
       };
   }
 }

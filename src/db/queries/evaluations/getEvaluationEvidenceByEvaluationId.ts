@@ -60,6 +60,7 @@ export async function getEvaluationEvidenceByEvaluationId(
       timeToContactAvg: blast.timeToContactAvg,
       handSpeedMax: blast.handSpeedMax,
       handSpeedAvg: blast.handSpeedAvg,
+      powerAvg: blast.powerAvg,
     });
   }
 
@@ -74,6 +75,21 @@ export async function getEvaluationEvidenceByEvaluationId(
       lowerBodyStrength: strength.lowerBodyStrength,
       upperBodyStrength: strength.upperBodyStrength,
       powerRating: strength.powerRating,
+      plyoPushup: strength.plyoPushup,
+      seatedShoulderErL: strength.seatedShoulderErL,
+      seatedShoulderErR: strength.seatedShoulderErR,
+      seatedShoulderIrL: strength.seatedShoulderIrL,
+      seatedShoulderIrR: strength.seatedShoulderIrR,
+      cmj: strength.cmj,
+      cmjPropulsiveImpulse: strength.cmjPropulsiveImpulse,
+      cmjPeakPower: strength.cmjPeakPower,
+      pogoJump: strength.pogoJump,
+      dropJump: strength.dropJump,
+      midThighPull: strength.midThighPull,
+      midThighPullTtpf: strength.midThighPullTtpf,
+      netForce100ms: strength.netForce100ms,
+      shotPut: strength.shotPut,
+      scoopToss: strength.scoopToss,
     });
   }
 
