@@ -10,16 +10,13 @@ import {
   type PerformanceFilterConfig,
 } from "./PerformanceFilters";
 import { CoverageIndicator, type CoverageSystem } from "./CoverageIndicator";
-import { TimeRangeSelector, type TimeRangeOption } from "./TimeRangeSelector";
 import { CompareToggle } from "./CompareToggle";
 
 interface PerformanceHeaderProps {
   title?: string;
   description?: string;
   disciplines?: DisciplineOption[];
-  timeRanges?: TimeRangeOption[];
   selectedDiscipline?: string;
-  selectedRange?: string;
   filters?: PerformanceFilterConfig[];
   filterValues?: Record<string, string>;
   coverage?: {
@@ -34,9 +31,7 @@ export function PerformanceHeader({
   title = "Performance",
   description,
   disciplines,
-  timeRanges,
   selectedDiscipline,
-  selectedRange,
   filters = [],
   filterValues,
   coverage,
@@ -56,10 +51,6 @@ export function PerformanceHeader({
             <DisciplineSelector
               disciplines={disciplines}
               selectedKey={selectedDiscipline}
-            />
-            <TimeRangeSelector
-              ranges={timeRanges}
-              selectedKey={selectedRange}
             />
             {showCompareToggle && <CompareToggle />}
           </div>
