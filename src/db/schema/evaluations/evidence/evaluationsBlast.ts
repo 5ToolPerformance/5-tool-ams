@@ -22,6 +22,7 @@ export const evaluationBlast = pgTable(
     timeToContactAvg: numeric("time_to_contact_avg"),
     handSpeedMax: numeric("hand_speed_max"),
     handSpeedAvg: numeric("hand_speed_avg"),
+    powerAvg: numeric("power_avg"),
   },
   (table) => [...createEvaluationMetricBaseIndexes(table, "evaluation_blast")]
 );
