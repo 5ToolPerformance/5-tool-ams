@@ -4,9 +4,9 @@ import {
   assertCanAccessInjury,
   getAuthContext,
   requireRole,
-} from "@/lib/auth/auth-context";
-import { toAuthErrorResponse } from "@/lib/auth/http";
-import { playerRepository } from "@/lib/services/repository/players";
+} from "@/application/auth/auth-context";
+import { toAuthErrorResponse } from "@/application/auth/http";
+import { createPlayerInjury, getPlayerInjuriesByPlayerId, listPlayersForLessonForm, listPlayersForLessonFormScoped, updatePlayerInjury } from "@/db/queries/players/playerInjuryAndLessonFormQueries";
 import { RouteParams } from "@/types/api";
 import { PlayerInjuryInsert } from "@/types/database";
 
@@ -21,7 +21,7 @@ export async function PATCH(
     const body: Partial<PlayerInjuryInsert> = await request.json();
     const { injuryId } = await params;
     await assertCanAccessInjury(ctx, injuryId);
-    const injury = await playerRepository.updatePlayerInjury(injuryId, body);
+    const injury = await updatePlayerInjury(injuryId, body);
 
     return NextResponse.json({
       success: true,

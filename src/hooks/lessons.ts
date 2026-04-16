@@ -1,6 +1,6 @@
 import { default as useSWR } from "swr";
 
-import { ApiService } from "@/lib/services/api";
+import { fetchAllLessons, fetchAllPlayers, fetchAssessmentsByLessonId, fetchLessonById, fetchLessonsByCoachId, fetchMotorPreferenceById, fetchPlayerWithInformationById, fetchUserById, patchPlayerInformationById } from "@/application/api-client/apiClient";
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
@@ -12,7 +12,7 @@ const fetcher = (url: string) => fetch(url).then((res) => res.json());
  */
 export function useLessonById(id: string) {
   return useSWR(id ? ["lesson", id] : null, () =>
-    ApiService.fetchLessonById(id)
+    fetchLessonById(id)
   );
 }
 
@@ -24,7 +24,7 @@ export function useLessonById(id: string) {
  */
 export function useLessonsByCoachId(coachId: string) {
   return useSWR(coachId ? ["lessons", coachId] : null, () =>
-    ApiService.fetchLessonsByCoachId(coachId)
+    fetchLessonsByCoachId(coachId)
   );
 }
 
@@ -34,7 +34,7 @@ export function useLessonsByCoachId(coachId: string) {
  * @throws Error if there is an issue with the API request.
  */
 export function useAllLessons() {
-  return useSWR("lessons", ApiService.fetchAllLessons);
+  return useSWR("lessons", fetchAllLessons);
 }
 
 /**
@@ -45,7 +45,7 @@ export function useAllLessons() {
  */
 export function useAssessmentsByLessonId(lessonId: string) {
   return useSWR(lessonId ? ["assessments", lessonId] : null, () =>
-    ApiService.fetchAssessmentsByLessonId(lessonId)
+    fetchAssessmentsByLessonId(lessonId)
   );
 }
 

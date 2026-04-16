@@ -8,8 +8,8 @@ import {
   armcareExamsUnmatched,
   externalAthleteIds,
 } from "@/db/schema";
-import { getAuthContext, requireRole } from "@/lib/auth/auth-context";
-import { toAuthErrorResponse } from "@/lib/auth/http";
+import { getAuthContext, requireRole } from "@/application/auth/auth-context";
+import { toAuthErrorResponse } from "@/application/auth/http";
 
 export async function GET() {
   try {

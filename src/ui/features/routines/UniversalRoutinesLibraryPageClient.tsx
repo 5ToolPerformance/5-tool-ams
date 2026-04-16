@@ -17,7 +17,7 @@ import { Search } from "lucide-react";
 import { toast } from "sonner";
 
 import { parseRoutineSummary } from "@/application/players/development/documentDataParsers";
-import type { AppRole } from "@/lib/auth/auth-context";
+import type { AppRole } from "@/application/auth/auth-context";
 import {
   RoutineViewData,
   RoutineViewModal,

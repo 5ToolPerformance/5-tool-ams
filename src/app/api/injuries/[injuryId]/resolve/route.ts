@@ -6,8 +6,8 @@ import {
   assertCanAccessInjury,
   getAuthContext,
   requireRole,
-} from "@/lib/auth/auth-context";
-import { toAuthErrorResponse } from "@/lib/auth/http";
+} from "@/application/auth/auth-context";
+import { toAuthErrorResponse } from "@/application/auth/http";
 
 export async function PATCH(
   _request: Request,

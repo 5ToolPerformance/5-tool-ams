@@ -2,8 +2,8 @@ import { NextResponse } from "next/server";
 
 import db from "@/db";
 import { positions } from "@/db/schema";
-import { getAuthContext } from "@/lib/auth/auth-context";
-import { toAuthErrorResponse } from "@/lib/auth/http";
+import { getAuthContext } from "@/application/auth/auth-context";
+import { toAuthErrorResponse } from "@/application/auth/http";
 
 export async function GET() {
   try {

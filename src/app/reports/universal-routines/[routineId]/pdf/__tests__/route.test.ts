@@ -1,4 +1,4 @@
-import { AuthError } from "@/lib/auth/auth-context";
+import { AuthError } from "@/application/auth/auth-context";
 
 jest.mock("next/server", () => {
   class MockHeaders {
@@ -63,7 +63,7 @@ jest.mock("@/application/routines/getUniversalRoutinePdfData", () => ({
   getUniversalRoutinePdfData: jest.fn(),
 }));
 
-jest.mock("@/lib/auth/auth-context", () => ({
+jest.mock("@/application/auth/auth-context", () => ({
   AuthError: class AuthError extends Error {
     status: number;
 
@@ -76,7 +76,7 @@ jest.mock("@/lib/auth/auth-context", () => ({
   assertCanReadUniversalRoutine: jest.fn(),
 }));
 
-jest.mock("@/lib/reports/puppeteer", () => ({
+jest.mock("@/application/reports/puppeteer", () => ({
   launchPdfBrowser: jest.fn(),
 }));
 
@@ -87,8 +87,8 @@ const {
 const {
   getAuthContext,
   assertCanReadUniversalRoutine,
-} = require("@/lib/auth/auth-context");
-const { launchPdfBrowser } = require("@/lib/reports/puppeteer");
+} = require("@/application/auth/auth-context");
+const { launchPdfBrowser } = require("@/application/reports/puppeteer");
 const { GET } = require("@/app/reports/universal-routines/[routineId]/pdf/route");
 
 describe("GET /reports/universal-routines/[routineId]/pdf", () => {

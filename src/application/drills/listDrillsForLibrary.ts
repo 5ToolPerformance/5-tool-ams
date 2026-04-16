@@ -1,7 +1,7 @@
 import { listDrills } from "@/db/queries/drills/listDrills";
 import { assertDrillDiscipline, canCoachEditDrill } from "@/domain/drills/rules";
 import { DrillListItem } from "@/domain/drills/types";
-import { AuthContext } from "@/lib/auth/auth-context";
+import { AuthContext } from "@/application/auth/auth-context";
 
 export async function listDrillsForLibrary(
   facilityId: string,

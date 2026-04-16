@@ -7,7 +7,7 @@ import { Button, Input, Tab, Tabs } from "@heroui/react";
 import { Search } from "lucide-react";
 import { toast } from "sonner";
 
-import type { AppRole } from "@/lib/auth/auth-context";
+import type { AppRole } from "@/application/auth/auth-context";
 
 import { DrillCard } from "@/ui/features/drills/DrillCard";
 import { DrillViewModal } from "@/ui/features/drills/DrillViewModal";

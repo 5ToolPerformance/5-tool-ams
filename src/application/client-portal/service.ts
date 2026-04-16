@@ -24,9 +24,9 @@ import {
   ClientPortalProfile,
   CreateClientInviteInput,
 } from "@/domain/client-portal/types";
-import { calculateAge } from "@/lib/dates";
+import { calculateAge } from "@/utils/dates";
 import { getHealthTabData } from "@/application/players/health/getHealthTabData";
-import { hashClientInviteToken } from "@/lib/client-portal/tokens";
+import { hashClientInviteToken } from "@/application/client-portal/tokens";
 import {
   assertPortalInviteUserIsExternal,
   resolveClientInviteStatus,

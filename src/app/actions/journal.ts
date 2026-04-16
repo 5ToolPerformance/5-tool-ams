@@ -7,7 +7,7 @@ import {
   updateJournalEntrySchema,
 } from "@/domain/journal/schemas";
 import type { CreateJournalEntryInput, UpdateJournalEntryInput } from "@/domain/journal/types";
-import { requireClientPortalAccess } from "@/lib/auth/client-auth";
+import { requireClientPortalAccess } from "@/application/auth/client-auth";
 import {
   assertCanAccessJournalEntry,
   assertCanLogPortalJournalForPlayer,

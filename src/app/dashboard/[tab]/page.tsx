@@ -6,7 +6,7 @@ import { getDashboardPlayersData } from "@/application/dashboard/getDashboardPla
 import { getDashboardReportsData } from "@/application/dashboard/getDashboardReportsData";
 import { getDashboardRangeWindow } from "@/domain/dashboard/range";
 import { DashboardTabKey } from "@/domain/dashboard/types";
-import { getAuthContext } from "@/lib/auth/auth-context";
+import { getAuthContext } from "@/application/auth/auth-context";
 import { DashboardCoachesTab } from "@/ui/features/dashboard/DashboardCoachesTab";
 import { DashboardOverviewTab } from "@/ui/features/dashboard/DashboardOverviewTab";
 import { DashboardPlayersTab } from "@/ui/features/dashboard/DashboardPlayersTab";

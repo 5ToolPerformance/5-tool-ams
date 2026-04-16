@@ -1,5 +1,5 @@
 import { PlayersForDirectoryQueryResult } from "@/db/queries/players/listPlayersForDirectory";
-import { calculateAge } from "@/lib/dates";
+import { calculateAge } from "@/utils/dates";
 
 import {
   PlayerDirectoryInjuryStatus,

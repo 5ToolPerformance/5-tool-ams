@@ -4,10 +4,10 @@ import path from "node:path";
 import { NextResponse } from "next/server";
 
 import { getUniversalRoutinePdfData } from "@/application/routines/getUniversalRoutinePdfData";
-import { assertCanReadUniversalRoutine, getAuthContext } from "@/lib/auth/auth-context";
-import { toAuthErrorResponse } from "@/lib/auth/http";
-import { launchPdfBrowser } from "@/lib/reports/puppeteer";
-import { getUniversalRoutinePdfHtml } from "@/lib/reports/universalRoutinePdf";
+import { assertCanReadUniversalRoutine, getAuthContext } from "@/application/auth/auth-context";
+import { toAuthErrorResponse } from "@/application/auth/http";
+import { launchPdfBrowser } from "@/application/reports/puppeteer";
+import { getUniversalRoutinePdfHtml } from "@/application/reports/universalRoutinePdf";
 
 export const runtime = "nodejs";
 

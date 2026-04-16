@@ -9,8 +9,8 @@ import {
   getClientPortalContext,
 } from "@/application/client-portal/service";
 import { auth } from "@/auth";
-import { getOptionalClientAuthContext } from "@/lib/auth/client-auth";
-import { formatDateShort } from "@/lib/dates";
+import { getOptionalClientAuthContext } from "@/application/auth/client-auth";
+import { formatDateShort } from "@/utils/dates";
 import { PortalMagicLinkCard } from "@/ui/features/client-portal/PortalMagicLinkCard";
 import { PortalPlayerSwitcher } from "@/ui/features/client-portal/PortalPlayerSwitcher";
 

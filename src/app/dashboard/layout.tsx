@@ -3,8 +3,8 @@ import { redirect } from "next/navigation";
 
 import { Avatar, Card, CardBody } from "@heroui/react";
 
-import { getAuthContext } from "@/lib/auth/auth-context";
-import { UserService } from "@/lib/services/users";
+import { getAuthContext } from "@/application/auth/auth-context";
+import { getAllCoachesScoped, getAllUsersScoped, getUserById, getUserByIdScoped } from "@/application/users/userFunctions";
 import { DashboardExportPlayersButton } from "@/ui/features/dashboard/DashboardExportPlayersButton";
 import { DashboardPageShell } from "@/ui/features/dashboard/DashboardPageShell";
 import { DashboardTabsController } from "@/ui/features/dashboard/DashboardTabsController";
@@ -27,7 +27,7 @@ export default async function DashboardLayout({ children }: DashboardLayoutProps
     redirect("/players");
   }
 
-  const user = await UserService.getUserByIdScoped(ctx.userId, ctx.facilityId);
+  const user = await getUserByIdScoped(ctx.userId, ctx.facilityId);
 
   return (
     <DashboardPageShell>

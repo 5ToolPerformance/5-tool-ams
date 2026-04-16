@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 
 import { getPlayersDirectoryData } from "@/application/players/directory/getPlayersDirectoryData";
-import { getAuthContext } from "@/lib/auth/auth-context";
+import { getAuthContext } from "@/application/auth/auth-context";
 import PlayersPageClient from "@/ui/features/players/PlayersPageClient";
 
 export default async function PlayersPage() {

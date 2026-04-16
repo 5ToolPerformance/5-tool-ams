@@ -18,7 +18,7 @@ import { CalendarDate, parseDate } from "@internationalized/date";
 import { useForm } from "@tanstack/react-form";
 
 import { useCoaches } from "@/hooks";
-import { ApiService } from "@/lib/services/api";
+import { fetchAllLessons, fetchAllPlayers, fetchAssessmentsByLessonId, fetchLessonById, fetchLessonsByCoachId, fetchMotorPreferenceById, fetchPlayerWithInformationById, fetchUserById, patchPlayerInformationById } from "@/application/api-client/apiClient";
 import { ApiResponse } from "@/types/api";
 import { PlayerInsert, PlayerSelect } from "@/types/database";
 
@@ -94,7 +94,7 @@ export default function PlayerCreateForm({
       };
       try {
         if (isEdit && player?.id) {
-          const updated = await ApiService.patchPlayerInformationById(
+          const updated = await patchPlayerInformationById(
             player.id,
             formattedValue as Partial<PlayerInsert>
           );

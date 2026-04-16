@@ -16,7 +16,7 @@ import {
   isSupportedEvidenceTypeForDisciplineKey,
 } from "@/domain/evaluations/evidence";
 import type { EvaluationDocumentV1 } from "@/domain/evaluations/types";
-import { DomainError } from "@/lib/errors";
+import { DomainError } from "@/domain/errors";
 
 type Transaction = Parameters<Parameters<DB["transaction"]>[0]>[0];
 

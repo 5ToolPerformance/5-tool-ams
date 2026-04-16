@@ -4,11 +4,11 @@ import path from "node:path";
 import { NextRequest, NextResponse } from "next/server";
 
 import { getDevelopmentReportData } from "@/application/players/development";
-import { assertPlayerAccess, getAuthContext } from "@/lib/auth/auth-context";
-import { toAuthErrorResponse } from "@/lib/auth/http";
-import { getDevelopmentReportPdfHtml } from "@/lib/reports/developmentReportPdf";
-import { parseDevelopmentReportQuery } from "@/lib/reports/developmentReportQuery";
-import { launchPdfBrowser } from "@/lib/reports/puppeteer";
+import { assertPlayerAccess, getAuthContext } from "@/application/auth/auth-context";
+import { toAuthErrorResponse } from "@/application/auth/http";
+import { getDevelopmentReportPdfHtml } from "@/application/reports/developmentReportPdf";
+import { parseDevelopmentReportQuery } from "@/application/reports/developmentReportQuery";
+import { launchPdfBrowser } from "@/application/reports/puppeteer";
 
 export const runtime = "nodejs";
 

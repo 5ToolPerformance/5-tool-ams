@@ -5,9 +5,9 @@ import { getDrillsForLessonForm } from "@/db/queries/drills/getDrillsForLessonFo
 import { getInjuryBodyParts } from "@/db/queries/injuryTaxonomy/getInjuryBodyParts";
 import { hydrateLessonForm } from "@/domain/lessons/hydrate";
 import { env } from "@/env/server";
-import { getAuthContext } from "@/lib/auth/auth-context";
-import { mechanicsRepository } from "@/lib/services/repository/mechanics";
-import { playerRepository } from "@/lib/services/repository/players";
+import { getAuthContext } from "@/application/auth/auth-context";
+import { createMechanic, deleteMechanic, listMechanics, listMechanicsForLessonForm, updateMechanic } from "@/db/queries/mechanics/mechanicsRepository";
+import { createPlayerInjury, getPlayerInjuriesByPlayerId, listPlayersForLessonForm, listPlayersForLessonFormScoped, updatePlayerInjury } from "@/db/queries/players/playerInjuryAndLessonFormQueries";
 import { DebugFormState } from "@/ui/features/lesson-form/DebugFormState";
 import { LessonFormProvider } from "@/ui/features/lesson-form/LessonFormProvider";
 import { LessonStepper } from "@/ui/features/lesson-form/LessonStepper";
@@ -17,8 +17,8 @@ export default async function EditLessonPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
-  const players = await playerRepository.findPlayersForLessonForm();
-  const mechanics = await mechanicsRepository.findAllForLessonForm();
+  const players = await listPlayersForLessonForm();
+  const mechanics = await listMechanicsForLessonForm();
   const drills = await getDrillsForLessonForm(db);
   const bodyParts = await getInjuryBodyParts(db);
   const { id } = await params;

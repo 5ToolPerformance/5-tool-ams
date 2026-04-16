@@ -3,8 +3,8 @@ import { ReactNode } from "react";
 import { notFound } from "next/navigation";
 
 import { getPlayerHeader } from "@/db/queries/players/PlayerHeader";
-import { requirePlayerRouteAccess } from "@/lib/auth/page-guards";
-import { toHandednessAbbrev } from "@/lib/utils/handedness";
+import { requirePlayerRouteAccess } from "@/application/auth/page-guards";
+import { toHandednessAbbrev } from "@/utils/handedness";
 import { AthleteHeader } from "@/ui/core/athletes/AthleteHeader";
 import { AthleteHeaderMeta } from "@/ui/core/athletes/AthleteHeaderMeta";
 import { AthletePageShell } from "@/ui/core/athletes/AthletePageShell";

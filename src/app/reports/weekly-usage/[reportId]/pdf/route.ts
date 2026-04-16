@@ -4,10 +4,10 @@ import path from "node:path";
 import { NextRequest, NextResponse } from "next/server";
 
 import { getWeeklyUsageReportById } from "@/db/queries/dashboard/getDashboardWeeklyReports";
-import { getAuthContext, assertFacilityAccess, requireRole } from "@/lib/auth/auth-context";
-import { toAuthErrorResponse } from "@/lib/auth/http";
-import { launchPdfBrowser } from "@/lib/reports/puppeteer";
-import { getWeeklyUsageReportPdfHtml } from "@/lib/reports/weeklyUsageReportPdf";
+import { getAuthContext, assertFacilityAccess, requireRole } from "@/application/auth/auth-context";
+import { toAuthErrorResponse } from "@/application/auth/http";
+import { launchPdfBrowser } from "@/application/reports/puppeteer";
+import { getWeeklyUsageReportPdfHtml } from "@/application/reports/weeklyUsageReportPdf";
 
 export const runtime = "nodejs";
 

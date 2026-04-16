@@ -1,6 +1,6 @@
 import db from "@/db";
 import { getPlayerInjuries } from "@/db/queries/injuries/getPlayerInjuries";
-import { armcareExamsRepository } from "@/lib/services/repository/armcare-exams";
+import { getLatestPlayerArmScore, getPlayerSummary, getUnmatchedExams, getUnmatchedPlayers, linkArmcarePlayer } from "@/db/queries/external-systems/armcare/armcareExamsRepository";
 
 export type HealthInjury = Awaited<ReturnType<typeof getPlayerInjuries>>[number];
 
@@ -17,7 +17,7 @@ export interface HealthTabData {
 export async function getHealthTabData(playerId: string): Promise<HealthTabData> {
   const [injuries, latestArmScore] = await Promise.all([
     getPlayerInjuries(db, playerId),
-    armcareExamsRepository.getLatestPlayerArmScore(playerId),
+    getLatestPlayerArmScore(playerId),
   ]);
 
   const parsedScore = latestArmScore?.armScore

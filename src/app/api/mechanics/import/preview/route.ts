@@ -3,9 +3,9 @@ import { NextResponse } from "next/server";
 
 import Papa from "papaparse";
 
-import { getAuthContext, requireRole } from "@/lib/auth/auth-context";
-import { toAuthErrorResponse } from "@/lib/auth/http";
-import { mechanicImportRowSchema } from "@/lib/schemas/mechanics.schema";
+import { getAuthContext, requireRole } from "@/application/auth/auth-context";
+import { toAuthErrorResponse } from "@/application/auth/http";
+import { mechanicImportRowSchema } from "@/application/mechanics/import/mechanicImportRowSchema";
 
 export async function POST(req: Request) {
   try {

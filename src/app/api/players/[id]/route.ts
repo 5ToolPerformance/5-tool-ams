@@ -2,9 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { updatePlayer } from "@/db/queries/players/updatePlayer";
 import { PlayerUpsertInput } from "@/domain/player/types";
-import { assertPlayerAccess, getAuthContext } from "@/lib/auth/auth-context";
-import { toAuthErrorResponse } from "@/lib/auth/http";
-import { PlayerService } from "@/lib/services/players";
+import { assertPlayerAccess, getAuthContext } from "@/application/auth/auth-context";
+import { toAuthErrorResponse } from "@/application/auth/http";
+import { createMotorPreferences, createPlayerInformation, getAllPlayersWithInformationScoped, getMotorPreferencesById, getPlayerById, getPlayerByIdScoped, getPlayerInformationById } from "@/application/players/playerFunctions";
 import { RouteParams } from "@/types/api";
 
 export async function GET(
@@ -25,7 +25,7 @@ export async function GET(
 
     // Get lessons for the player
     await assertPlayerAccess(ctx, id);
-    const player = await PlayerService.getPlayerByIdScoped(id, ctx.facilityId);
+    const player = await getPlayerByIdScoped(id, ctx.facilityId);
 
     return NextResponse.json({
       success: true,

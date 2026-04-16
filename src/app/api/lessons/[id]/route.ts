@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { assertCanAccessLesson, getAuthContext, requireRole } from "@/lib/auth/auth-context";
-import { toAuthErrorResponse } from "@/lib/auth/http";
-import { LessonService } from "@/lib/services/lessons";
+import { assertCanAccessLesson, getAuthContext, requireRole } from "@/application/auth/auth-context";
+import { toAuthErrorResponse } from "@/application/auth/http";
+import { createLesson, deleteLessonById, getLastLessonsByPlayer, getLessonAssessmentById, getLessonById, getNumberOfLessonsByPlayer, getWriteupsByPlayer, validateLessonData } from "@/application/lessons/lessonFunctions";
 import { RouteParams } from "@/types/api";
 
 export async function GET(
@@ -13,7 +13,7 @@ export async function GET(
     const ctx = await getAuthContext();
     const { id } = await params;
     await assertCanAccessLesson(ctx, id);
-    const lesson = await LessonService.getLessonById(id);
+    const lesson = await getLessonById(id);
 
     if (!lesson) {
       return NextResponse.json(
@@ -52,7 +52,7 @@ export async function DELETE(
     requireRole(ctx, ["coach", "admin"]);
     const { id } = await params;
     await assertCanAccessLesson(ctx, id);
-    const deletedLesson = await LessonService.deleteLessonById(id);
+    const deletedLesson = await deleteLessonById(id);
 
     return NextResponse.json({
       success: true,

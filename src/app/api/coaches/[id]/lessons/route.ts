@@ -3,8 +3,8 @@ import { and, eq } from "drizzle-orm";
 
 import db from "@/db";
 import { lesson, playerInformation, users } from "@/db/schema";
-import { getAuthContext, requireRole } from "@/lib/auth/auth-context";
-import { toAuthErrorResponse } from "@/lib/auth/http";
+import { getAuthContext, requireRole } from "@/application/auth/auth-context";
+import { toAuthErrorResponse } from "@/application/auth/http";
 import { RouteParams } from "@/types/api";
 
 export async function GET(

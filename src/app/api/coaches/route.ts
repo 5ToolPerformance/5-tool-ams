@@ -1,15 +1,15 @@
 import { NextResponse } from "next/server";
 
-import { getAuthContext, requireRole } from "@/lib/auth/auth-context";
-import { toAuthErrorResponse } from "@/lib/auth/http";
-import { UserService } from "@/lib/services/users";
+import { getAuthContext, requireRole } from "@/application/auth/auth-context";
+import { toAuthErrorResponse } from "@/application/auth/http";
+import { getAllCoachesScoped, getAllUsersScoped, getUserById, getUserByIdScoped } from "@/application/users/userFunctions";
 
 export async function GET() {
   try {
     const ctx = await getAuthContext();
     requireRole(ctx, ["coach", "admin"]);
 
-    const coaches = await UserService.getAllCoachesScoped(ctx.facilityId);
+    const coaches = await getAllCoachesScoped(ctx.facilityId);
 
     return NextResponse.json({
       success: true,

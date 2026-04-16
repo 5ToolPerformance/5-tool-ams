@@ -1,4 +1,4 @@
-import { DomainError } from "@/lib/errors";
+import { DomainError } from "@/domain/errors";
 
 export type ValidateDevelopmentPlanInput = {
   playerId: string;

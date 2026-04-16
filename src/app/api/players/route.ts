@@ -2,16 +2,16 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { createPlayer } from "@/db/queries/players/createPlayer";
 import { PlayerUpsertInput } from "@/domain/player/types";
-import { getAuthContext, requireRole } from "@/lib/auth/auth-context";
-import { toAuthErrorResponse } from "@/lib/auth/http";
-import { PlayerService } from "@/lib/services/players";
+import { getAuthContext, requireRole } from "@/application/auth/auth-context";
+import { toAuthErrorResponse } from "@/application/auth/http";
+import { createMotorPreferences, createPlayerInformation, getAllPlayersWithInformationScoped, getMotorPreferencesById, getPlayerById, getPlayerByIdScoped, getPlayerInformationById } from "@/application/players/playerFunctions";
 
 export async function GET() {
   try {
     const ctx = await getAuthContext();
     requireRole(ctx, ["coach", "admin"]);
 
-    const allPlayers = await PlayerService.getAllPlayersWithInformationScoped(
+    const allPlayers = await getAllPlayersWithInformationScoped(
       ctx.facilityId
     );
 

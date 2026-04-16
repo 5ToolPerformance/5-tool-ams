@@ -2,7 +2,7 @@ import { listDrillsForLibrary } from "@/application/drills/listDrillsForLibrary"
 import db from "@/db";
 import { listActiveDisciplines } from "@/db/queries/config/listActiveDisciplines";
 import { getDevelopmentPlansForPlayer } from "@/db/queries/development-plans/getDevelopmentPlansForPlayers";
-import { mechanicsRepository } from "@/lib/services/repository/mechanics";
+import { createMechanic, deleteMechanic, listMechanics, listMechanicsForLessonForm, updateMechanic } from "@/db/queries/mechanics/mechanicsRepository";
 
 export type RoutineDevelopmentPlanOption = {
   id: string;
@@ -82,7 +82,7 @@ export async function getRoutineFormConfig(params: {
       limit: 50,
     }),
     listActiveDisciplines(db),
-    mechanicsRepository.findAllForLessonForm(),
+    listMechanicsForLessonForm(),
     listDrillsForLibrary(params.facilityId, params.viewer),
   ]);
 

@@ -2,9 +2,9 @@ import { NextResponse } from "next/server";
 
 import { z } from "zod";
 
-import { getAuthContext, requireRole } from "@/lib/auth/auth-context";
-import { toAuthErrorResponse } from "@/lib/auth/http";
-import { mechanicsRepository } from "@/lib/services/repository/mechanics";
+import { getAuthContext, requireRole } from "@/application/auth/auth-context";
+import { toAuthErrorResponse } from "@/application/auth/http";
+import { createMechanic, deleteMechanic, listMechanics, listMechanicsForLessonForm, updateMechanic } from "@/db/queries/mechanics/mechanicsRepository";
 
 const updateSchema = z.object({
   name: z.string().optional(),
@@ -27,7 +27,7 @@ export async function PUT(
     const body = await req.json();
     const parsed = updateSchema.parse(body);
 
-    const mechanic = await mechanicsRepository.update(id, parsed);
+    const mechanic = await updateMechanic(id, parsed);
     return NextResponse.json(mechanic);
   } catch (error) {
     const authResponse = toAuthErrorResponse(error);
@@ -45,7 +45,7 @@ export async function DELETE(
     requireRole(ctx, ["coach", "admin"]);
 
     const { id } = await params;
-    await mechanicsRepository.delete(id);
+    await deleteMechanic(id);
     return NextResponse.json({ success: true });
   } catch (error) {
     const authResponse = toAuthErrorResponse(error);

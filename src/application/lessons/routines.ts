@@ -12,7 +12,7 @@ import type {
   LessonType,
 } from "@/hooks/lessons/lessonForm.types";
 import type { LessonRoutineOption } from "@/hooks/lessons/lessonRoutineOptions";
-import { DomainError } from "@/lib/errors";
+import { DomainError } from "@/domain/errors";
 
 import type { RoutineDocumentV1 } from "@/domain/routines/types";
 

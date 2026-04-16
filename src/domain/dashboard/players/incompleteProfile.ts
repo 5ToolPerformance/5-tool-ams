@@ -2,7 +2,7 @@ import {
   IncompletePlayerProfile,
   IncompleteProfileReason,
 } from "@/domain/dashboard/types";
-import { calculateAge } from "@/lib/dates";
+import { calculateAge } from "@/utils/dates";
 
 const VALID_HANDEDNESS = new Set(["right", "left", "switch"]);
 

@@ -8,8 +8,8 @@ import {
   assertCanReadDrill,
   getAuthContext,
   requireRole,
-} from "@/lib/auth/auth-context";
-import { toAuthErrorResponse } from "@/lib/auth/http";
+} from "@/application/auth/auth-context";
+import { toAuthErrorResponse } from "@/application/auth/http";
 import { RouteParams } from "@/types/api";
 
 export async function GET(

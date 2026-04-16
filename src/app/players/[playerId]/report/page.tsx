@@ -6,8 +6,8 @@ import { auth } from "@/auth";
 import LessonCountSelector from "@/components/LessonCountSelector";
 import WriteupChecklist from "@/components/WriteupChecklist";
 import PlayerProfileCard from "@/components/players/playerCard";
-import { LessonService } from "@/lib/services/lessons";
-import { PlayerService } from "@/lib/services/players";
+import { createLesson, deleteLessonById, getLastLessonsByPlayer, getLessonAssessmentById, getLessonById, getNumberOfLessonsByPlayer, getWriteupsByPlayer, validateLessonData } from "@/application/lessons/lessonFunctions";
+import { createMotorPreferences, createPlayerInformation, getAllPlayersWithInformationScoped, getMotorPreferencesById, getPlayerById, getPlayerByIdScoped, getPlayerInformationById } from "@/application/players/playerFunctions";
 import { PageProps } from "@/types/page";
 
 type PlayerPageProps = PageProps<{ id: string }>;
@@ -27,10 +27,10 @@ export default async function PlayerReportPage({
   const allowed = [5, 10, 20];
   const count = allowed.includes(parsed) ? parsed : 10;
 
-  const player = await PlayerService.getPlayerById(id);
+  const player = await getPlayerById(id);
   if (!player) return notFound();
-  const lessons = await LessonService.getLastLessonsByPlayer(id, count);
-  const writeups = await LessonService.getWriteupsByPlayer(id);
+  const lessons = await getLastLessonsByPlayer(id, count);
+  const writeups = await getWriteupsByPlayer(id);
 
   // Determine if checklist is complete: every lesson type has a writeup
   const lessonTypes = new Set(lessons.map((l) => l.lessonType));

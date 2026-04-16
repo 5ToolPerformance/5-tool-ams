@@ -1,4 +1,4 @@
-import type { AuthContext } from "@/lib/auth/auth-context";
+import type { AuthContext } from "@/application/auth/auth-context";
 import { getEvaluationFormConfig } from "@/application/evaluations/getEvaluationFormConfig";
 import { getRoutineFormConfig, type RoutineFormConfig } from "@/application/routines/getRoutineFormConfig";
 

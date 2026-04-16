@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { assertPlayerAccess, getAuthContext } from "@/lib/auth/auth-context";
-import { toAuthErrorResponse } from "@/lib/auth/http";
+import { assertPlayerAccess, getAuthContext } from "@/application/auth/auth-context";
+import { toAuthErrorResponse } from "@/application/auth/http";
 import { loadPlayerDevelopmentPageData } from "@/application/players/development/loadPlayerDevelopmentPageData";
 import type { RouteParams } from "@/types/api";
 

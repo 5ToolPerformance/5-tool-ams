@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { assertCanAccessLesson, getAuthContext } from "@/lib/auth/auth-context";
-import { toAuthErrorResponse } from "@/lib/auth/http";
-import { AssessmentService } from "@/lib/services/assessments";
+import { assertCanAccessLesson, getAuthContext } from "@/application/auth/auth-context";
+import { toAuthErrorResponse } from "@/application/auth/http";
+import { getAssessmentsByLessonId } from "@/application/assessments/assessmentFunctions";
 
 export async function GET(request: NextRequest) {
   try {
@@ -20,7 +20,7 @@ export async function GET(request: NextRequest) {
     await assertCanAccessLesson(ctx, lessonId);
 
     const assessments =
-      await AssessmentService.getAssessmentsByLessonId(lessonId);
+      await getAssessmentsByLessonId(lessonId);
 
     return NextResponse.json({
       success: true,

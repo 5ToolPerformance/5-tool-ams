@@ -1,5 +1,5 @@
 import type { DevelopmentReportData } from "@/application/players/development";
-import { toHandednessAbbrev } from "@/lib/utils/handedness";
+import { toHandednessAbbrev } from "@/utils/handedness";
 
 import { formatDate } from "./utils";
 

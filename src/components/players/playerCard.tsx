@@ -3,8 +3,8 @@ import React from "react";
 import { Avatar, Card, CardBody, Chip } from "@heroui/react";
 
 import { useCoachById } from "@/hooks";
-import { DateTimeService } from "@/lib/services/date-time";
-import { StringService } from "@/lib/services/strings";
+import { formatLessonDate, getAge } from "@/utils/date-time";
+import { formatLessonType, toTitleCase } from "@/utils/strings";
 import { PlayerSelect } from "@/types/database";
 
 interface PlayerProfileCardProps {
@@ -111,7 +111,7 @@ const PlayerProfileCard: React.FC<PlayerProfileCardProps> = ({
 
           {player.date_of_birth && (
             <p className={`text-default-500 ${currentSize.details}`}>
-              Age: {DateTimeService.getAge(player.date_of_birth)}
+              Age: {getAge(player.date_of_birth)}
             </p>
           )}
 
@@ -122,7 +122,7 @@ const PlayerProfileCard: React.FC<PlayerProfileCardProps> = ({
               <span className="text-default-500">
                 Bats:{" "}
                 <span className="font-medium text-default-700">
-                  {StringService.toTitleCase(player.hits)}
+                  {toTitleCase(player.hits)}
                 </span>
               </span>
             )}
@@ -130,7 +130,7 @@ const PlayerProfileCard: React.FC<PlayerProfileCardProps> = ({
               <span className="text-default-500">
                 Throws:{" "}
                 <span className="font-medium text-default-700">
-                  {StringService.toTitleCase(player.throws)}
+                  {toTitleCase(player.throws)}
                 </span>
               </span>
             )}

@@ -1,6 +1,6 @@
 import { listActiveDisciplines } from "@/db/queries/config/listActiveDisciplines";
 import { listUniversalRoutines } from "@/db/queries/routines/listUniversalRoutines";
-import { getAuthContext } from "@/lib/auth/auth-context";
+import { getAuthContext } from "@/application/auth/auth-context";
 import { UniversalRoutinesLibraryPageClient } from "@/ui/features/routines/UniversalRoutinesLibraryPageClient";
 
 export default async function ResourcesRoutinesPage() {

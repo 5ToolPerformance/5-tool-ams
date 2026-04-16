@@ -1,4 +1,4 @@
-import { AuthError } from "@/lib/auth/auth-context";
+import { AuthError } from "@/application/auth/auth-context";
 
 jest.mock("next/server", () => {
   class MockHeaders {
@@ -72,7 +72,7 @@ jest.mock("@/application/players/development", () => ({
   getDevelopmentReportData: jest.fn(),
 }));
 
-jest.mock("@/lib/auth/auth-context", () => ({
+jest.mock("@/application/auth/auth-context", () => ({
   AuthError: class AuthError extends Error {
     status: number;
 
@@ -85,14 +85,14 @@ jest.mock("@/lib/auth/auth-context", () => ({
   assertPlayerAccess: jest.fn(),
 }));
 
-jest.mock("@/lib/reports/puppeteer", () => ({
+jest.mock("@/application/reports/puppeteer", () => ({
   launchPdfBrowser: jest.fn(),
 }));
 
 const { readFile } = require("node:fs/promises");
 const { getDevelopmentReportData } = require("@/application/players/development");
-const { getAuthContext, assertPlayerAccess } = require("@/lib/auth/auth-context");
-const { launchPdfBrowser } = require("@/lib/reports/puppeteer");
+const { getAuthContext, assertPlayerAccess } = require("@/application/auth/auth-context");
+const { launchPdfBrowser } = require("@/application/reports/puppeteer");
 const { GET } = require("@/app/reports/development/[playerId]/pdf/route");
 
 describe("GET /reports/development/[playerId]/pdf", () => {

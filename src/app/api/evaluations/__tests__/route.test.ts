@@ -5,7 +5,7 @@ import {
   assertPlayerAccess,
   getAuthContext,
   requireRole,
-} from "@/lib/auth/auth-context";
+} from "@/application/auth/auth-context";
 
 jest.mock("next/server", () => ({
   NextResponse: {
@@ -29,7 +29,7 @@ jest.mock("@/application/evaluations/updateEvaluation", () => ({
 jest.mock("@/db/queries/config/listBucketsByIds", () => ({
   listBucketsByIds: jest.fn(),
 }));
-jest.mock("@/lib/auth/auth-context", () => ({
+jest.mock("@/application/auth/auth-context", () => ({
   AuthError: class AuthError extends Error {
     status: number;
 

@@ -3,8 +3,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { AzureBlobStorage } from "@/application/storage/azureBlobStorage";
 import db from "@/db";
 import { attachmentFiles, attachments } from "@/db/schema";
-import { assertCanAccessAttachment, getAuthContext } from "@/lib/auth/auth-context";
-import { toAuthErrorResponse } from "@/lib/auth/http";
+import { assertCanAccessAttachment, getAuthContext } from "@/application/auth/auth-context";
+import { toAuthErrorResponse } from "@/application/auth/http";
 import { eq } from "drizzle-orm";
 
 export const runtime = "nodejs";

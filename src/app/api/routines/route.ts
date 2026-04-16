@@ -8,9 +8,9 @@ import {
   assertPlayerAccess,
   getAuthContext,
   requireRole,
-} from "@/lib/auth/auth-context";
-import { toAuthErrorResponse } from "@/lib/auth/http";
-import { DomainError, NotFoundError } from "@/lib/errors";
+} from "@/application/auth/auth-context";
+import { toAuthErrorResponse } from "@/application/auth/http";
+import { DomainError, NotFoundError } from "@/domain/errors";
 
 export async function POST(request: NextRequest) {
   try {

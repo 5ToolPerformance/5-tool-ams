@@ -5,7 +5,7 @@ import { resolveLessonRoutineSelections } from "@/application/lessons/routines";
 import { updateLesson } from "@/application/lessons/updateLesson";
 import { normalizeLessonForCreate } from "@/domain/lessons/normalize";
 import type { LessonFormValues } from "@/hooks/lessons/lessonForm.types";
-import { getAuthContext, requireRole } from "@/lib/auth/auth-context";
+import { getAuthContext, requireRole } from "@/application/auth/auth-context";
 
 export async function submitLesson(values: LessonFormValues) {
   // Normalize (domain logic)

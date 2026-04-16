@@ -3,7 +3,7 @@ import { getClientAccessForPlayer } from "@/application/client-portal/service";
 import { assertCanViewPortalJournalPlayer } from "@/application/journal/access";
 import { listJournalEntriesForPlayer } from "@/application/journal/listJournalEntriesForPlayer";
 import type { JournalFeedFilter } from "@/domain/journal/types";
-import { requireClientPortalAccess } from "@/lib/auth/client-auth";
+import { requireClientPortalAccess } from "@/application/auth/client-auth";
 import { PortalPlayerSwitcher } from "@/ui/features/client-portal/PortalPlayerSwitcher";
 import { JournalPageClient } from "@/ui/features/client-portal/journal/JournalPageClient";
 

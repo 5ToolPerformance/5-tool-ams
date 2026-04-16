@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import { removeDrillFile } from "@/application/drills/removeDrillFile";
-import { assertCanEditDrill, getAuthContext, requireRole } from "@/lib/auth/auth-context";
-import { toAuthErrorResponse } from "@/lib/auth/http";
+import { assertCanEditDrill, getAuthContext, requireRole } from "@/application/auth/auth-context";
+import { toAuthErrorResponse } from "@/application/auth/http";
 import { RouteParams } from "@/types/api";
 
 export async function DELETE(

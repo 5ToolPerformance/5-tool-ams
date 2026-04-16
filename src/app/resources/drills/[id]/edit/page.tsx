@@ -5,7 +5,7 @@ import {
   assertCanEditDrill,
   AuthError,
   getAuthContext,
-} from "@/lib/auth/auth-context";
+} from "@/application/auth/auth-context";
 import { DrillForm } from "@/ui/features/drills/DrillForm";
 
 export default async function EditResourceDrillPage({

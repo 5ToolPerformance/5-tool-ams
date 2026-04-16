@@ -11,7 +11,7 @@ import {
   users,
 } from "@/db/schema";
 import { Handedness } from "@/domain/player/header/types";
-import { calculateAge } from "@/lib/dates";
+import { calculateAge } from "@/utils/dates";
 
 function assertHandedness(value: string): Handedness {
   if (value === "right" || value === "left" || value === "switch") {

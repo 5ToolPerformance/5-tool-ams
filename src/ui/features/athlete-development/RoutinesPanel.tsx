@@ -21,8 +21,8 @@ import type {
   RoutineRow,
   UniversalRoutineRow,
 } from "@/application/players/development/getPlayerDevelopmentTabData";
-import { buildPlayerRoutinesPdfPath } from "@/lib/reports/playerRoutinesPdfQuery";
-import { buildUniversalRoutinePdfPath } from "@/lib/reports/universalRoutinePdfQuery";
+import { buildPlayerRoutinesPdfPath } from "@/application/reports/playerRoutinesPdfQuery";
+import { buildUniversalRoutinePdfPath } from "@/application/reports/universalRoutinePdfQuery";
 import { SectionShell } from "@/ui/core/athletes/SectionShell";
 import {
   RoutineViewData,

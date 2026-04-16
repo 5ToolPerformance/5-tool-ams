@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { assertPlayerAccess, getAuthContext, requireRole } from "@/lib/auth/auth-context";
-import { toAuthErrorResponse } from "@/lib/auth/http";
-import { PlayerService } from "@/lib/services/players";
+import { assertPlayerAccess, getAuthContext, requireRole } from "@/application/auth/auth-context";
+import { toAuthErrorResponse } from "@/application/auth/http";
+import { createMotorPreferences, createPlayerInformation, getAllPlayersWithInformationScoped, getMotorPreferencesById, getPlayerById, getPlayerByIdScoped, getPlayerInformationById } from "@/application/players/playerFunctions";
 import { RouteParams } from "@/types/api";
 import { PlayerInsert } from "@/types/database";
 
@@ -24,7 +24,7 @@ export async function GET(
 
     await assertPlayerAccess(ctx, id);
     // Get lessons for the player
-    const playerInfo = await PlayerService.getPlayerInformationById(id);
+    const playerInfo = await getPlayerInformationById(id);
 
     return NextResponse.json({ playerInfo });
   } catch (error) {
@@ -45,7 +45,7 @@ export async function POST(request: NextRequest) {
     requireRole(ctx, ["coach", "admin"]);
 
     const body: PlayerInsert = await request.json();
-    const playerInfo = await PlayerService.createPlayerInformation({
+    const playerInfo = await createPlayerInformation({
       ...body,
       facilityId: ctx.facilityId,
     });

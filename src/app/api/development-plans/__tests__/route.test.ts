@@ -6,8 +6,8 @@ import {
   assertPlayerAccess,
   getAuthContext,
   requireRole,
-} from "@/lib/auth/auth-context";
-import { DomainError, NotFoundError } from "@/lib/errors";
+} from "@/application/auth/auth-context";
+import { DomainError, NotFoundError } from "@/domain/errors";
 
 jest.mock("next/server", () => ({
   NextResponse: {
@@ -34,7 +34,7 @@ jest.mock("@/application/development-plans/updateDevelopmentPlan", () => ({
 jest.mock("@/db/queries/development-plans/getDevelopmentPlanById", () => ({
   getDevelopmentPlanById: jest.fn(),
 }));
-jest.mock("@/lib/auth/auth-context", () => ({
+jest.mock("@/application/auth/auth-context", () => ({
   AuthError: class AuthError extends Error {
     status: number;
 

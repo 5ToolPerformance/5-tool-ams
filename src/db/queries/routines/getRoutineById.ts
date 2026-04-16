@@ -2,7 +2,7 @@ import { eq } from "drizzle-orm";
 
 import { DB } from "@/db";
 import { developmentPlanRoutines } from "@/db/schema";
-import { NotFoundError } from "@/lib/errors";
+import { NotFoundError } from "@/domain/errors";
 
 export async function getRoutineById(db: DB, routineId: string) {
   const [row] = await db

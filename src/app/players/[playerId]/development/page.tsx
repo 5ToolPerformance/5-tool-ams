@@ -2,7 +2,7 @@ import { Suspense } from "react";
 
 import { getEvaluationFormConfig } from "@/application/evaluations/getEvaluationFormConfig";
 import { loadPlayerDevelopmentPageData } from "@/application/players/development/loadPlayerDevelopmentPageData";
-import { getAuthContext } from "@/lib/auth/auth-context";
+import { getAuthContext } from "@/application/auth/auth-context";
 import { DevelopmentTab } from "@/ui/features/athlete-development/DevelopmentTab";
 
 interface DevelopmentPageProps {

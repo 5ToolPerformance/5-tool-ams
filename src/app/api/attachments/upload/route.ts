@@ -5,8 +5,8 @@ import {
   assertPlayerAccess,
   getAuthContext,
   requireRole,
-} from "@/lib/auth/auth-context";
-import { toAuthErrorResponse } from "@/lib/auth/http";
+} from "@/application/auth/auth-context";
+import { toAuthErrorResponse } from "@/application/auth/http";
 
 // IMPORTANT: must run in Node runtime for file uploads
 export const runtime = "nodejs";

@@ -1,7 +1,7 @@
 import { Button, Card, CardBody, Chip } from "@heroui/react";
 
-import { DateTimeService } from "@/lib/services/date-time";
-import { StringService } from "@/lib/services/strings";
+import { formatLessonDate, getAge } from "@/utils/date-time";
+import { formatLessonType, toTitleCase } from "@/utils/strings";
 
 import FormattedText from "../ui/formattedText";
 
@@ -38,10 +38,10 @@ const LessonCard: React.FC<LessonCardProps> = ({ lesson }) => {
           <div className="flex-1">
             <div className="mb-2 flex items-center gap-2">
               <h3 className="text-lg font-semibold">
-                {StringService.formatLessonType(lesson.lesson.lessonType)}
+                {formatLessonType(lesson.lesson.lessonType)}
               </h3>
               <span className="text-sm text-default-500">
-                • {DateTimeService.formatLessonDate(lesson.lesson.lessonDate)}
+                • {formatLessonDate(lesson.lesson.lessonDate)}
               </span>
             </div>
 

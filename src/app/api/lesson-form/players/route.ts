@@ -1,15 +1,15 @@
 import { NextResponse } from "next/server";
 
-import { getAuthContext, requireRole } from "@/lib/auth/auth-context";
-import { toAuthErrorResponse } from "@/lib/auth/http";
-import { playerRepository } from "@/lib/services/repository/players";
+import { getAuthContext, requireRole } from "@/application/auth/auth-context";
+import { toAuthErrorResponse } from "@/application/auth/http";
+import { createPlayerInjury, getPlayerInjuriesByPlayerId, listPlayersForLessonForm, listPlayersForLessonFormScoped, updatePlayerInjury } from "@/db/queries/players/playerInjuryAndLessonFormQueries";
 
 export async function GET() {
   try {
     const ctx = await getAuthContext();
     requireRole(ctx, ["coach", "admin"]);
 
-    const players = await playerRepository.findPlayersForLessonFormScoped(
+    const players = await listPlayersForLessonFormScoped(
       ctx.facilityId
     );
     return NextResponse.json(players);

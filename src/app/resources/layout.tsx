@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { redirect } from "next/navigation";
 
-import { getAuthContext } from "@/lib/auth/auth-context";
+import { getAuthContext } from "@/application/auth/auth-context";
 import { ResourcesPageShell } from "@/ui/features/resources/ResourcesPageShell";
 import { ResourcesTabsController } from "@/ui/features/resources/ResourcesTabsController";
 

@@ -19,7 +19,7 @@ import type {
   EvaluationDetailData,
 } from "@/application/players/development/getDevelopmentDocumentDetails";
 import { resolveStrengthEvidencePowerRating } from "@/domain/evaluations/strengthEvidence";
-import { copyTextToClipboard } from "@/lib/clipboard";
+import { copyTextToClipboard } from "@/utils/clipboard";
 import FormattedText from "@/components/ui/formattedText";
 import { useAttachmentViewer } from "@/ui/features/attachments/AttachmentViewerProvider";
 

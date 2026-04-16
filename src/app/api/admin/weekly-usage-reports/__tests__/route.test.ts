@@ -48,19 +48,19 @@ jest.mock("@/application/admin/weeklyUsageReport/generateWeeklyUsageReports", ()
   generateWeeklyUsageReportForFacility: jest.fn(),
 }));
 
-jest.mock("@/lib/auth/auth-context", () => ({
+jest.mock("@/application/auth/auth-context", () => ({
   getAuthContext: jest.fn(),
   requireRole: jest.fn(),
 }));
 
-jest.mock("@/lib/auth/http", () => ({
+jest.mock("@/application/auth/http", () => ({
   toAuthErrorResponse: jest.fn(() => null),
 }));
 
 const {
   generateWeeklyUsageReportForFacility,
 } = require("@/application/admin/weeklyUsageReport/generateWeeklyUsageReports");
-const { getAuthContext, requireRole } = require("@/lib/auth/auth-context");
+const { getAuthContext, requireRole } = require("@/application/auth/auth-context");
 const { POST } = require("@/app/api/admin/weekly-usage-reports/route");
 
 describe("POST /api/admin/weekly-usage-reports", () => {

@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { assertPlayerAccess, getAuthContext } from "@/lib/auth/auth-context";
-import { toAuthErrorResponse } from "@/lib/auth/http";
-import { lessonRepository } from "@/lib/services/repository/lessons";
+import { assertPlayerAccess, getAuthContext } from "@/application/auth/auth-context";
+import { toAuthErrorResponse } from "@/application/auth/http";
+import { getLessonReportByPlayerIdScoped, getLessonsByPlayerIdScoped } from "@/db/queries/lessons/lessonReportQueries";
 import { RouteParams } from "@/types/api";
 
 export async function GET(
@@ -23,7 +23,7 @@ export async function GET(
 
     await assertPlayerAccess(ctx, id);
     // Get lessons for the player
-    const lessons = await lessonRepository.getLessonsByPlayerIdScoped(
+    const lessons = await getLessonsByPlayerIdScoped(
       id,
       ctx.facilityId
     );

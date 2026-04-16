@@ -4,8 +4,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { AzureBlobStorage } from "@/application/storage/azureBlobStorage";
 import db from "@/db";
 import { fileLinks, files } from "@/db/schema";
-import { assertCanReadDrill, getAuthContext, requireRole } from "@/lib/auth/auth-context";
-import { toAuthErrorResponse } from "@/lib/auth/http";
+import { assertCanReadDrill, getAuthContext, requireRole } from "@/application/auth/auth-context";
+import { toAuthErrorResponse } from "@/application/auth/http";
 import { RouteParams } from "@/types/api";
 
 export const runtime = "nodejs";

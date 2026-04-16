@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 
 import { getUnlinkedHawkinAthletes } from "@/db/queries/hawkin/getUnlinkedHawkinAthletes";
-import { getAuthContext, requireRole } from "@/lib/auth/auth-context";
-import { toAuthErrorResponse } from "@/lib/auth/http";
+import { getAuthContext, requireRole } from "@/application/auth/auth-context";
+import { toAuthErrorResponse } from "@/application/auth/http";
 
 /**
  * GET /api/admin/hawkin/unlinked-athletes

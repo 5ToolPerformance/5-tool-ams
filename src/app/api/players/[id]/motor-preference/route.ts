@@ -4,9 +4,9 @@ import {
   assertPlayerAccess,
   getAuthContext,
   requireRole,
-} from "@/lib/auth/auth-context";
-import { toAuthErrorResponse } from "@/lib/auth/http";
-import { PlayerService } from "@/lib/services/players";
+} from "@/application/auth/auth-context";
+import { toAuthErrorResponse } from "@/application/auth/http";
+import { createMotorPreferences, createPlayerInformation, getAllPlayersWithInformationScoped, getMotorPreferencesById, getPlayerById, getPlayerByIdScoped, getPlayerInformationById } from "@/application/players/playerFunctions";
 import { RouteParams } from "@/types/api";
 import { MotorPreferencesForm } from "@/types/assessments";
 
@@ -27,7 +27,7 @@ export async function GET(
 
     await assertPlayerAccess(ctx, id);
 
-    const motorPref = await PlayerService.getMotorPreferencesById(id);
+    const motorPref = await getMotorPreferencesById(id);
 
     if (!motorPref) {
       return NextResponse.json(
@@ -66,7 +66,7 @@ export async function POST(request: NextRequest) {
     const body: MotorPreferencesForm = await request.json();
     await assertPlayerAccess(ctx, body.playerId);
     body.coachId = ctx.userId;
-    const motorPreference = await PlayerService.createMotorPreferences(body);
+    const motorPreference = await createMotorPreferences(body);
 
     return NextResponse.json({
       success: true,

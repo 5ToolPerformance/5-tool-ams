@@ -4,9 +4,9 @@ import { z } from "zod";
 
 import db from "@/db";
 import { allowedUsers } from "@/db/schema/allowedUsers";
-import { getAuthContext, requireRole } from "@/lib/auth/auth-context";
-import { toAuthErrorResponse } from "@/lib/auth/http";
-import { DEFAULT_ORGANIZATION_ID } from "@/lib/constants";
+import { getAuthContext, requireRole } from "@/application/auth/auth-context";
+import { toAuthErrorResponse } from "@/application/auth/http";
+import { DEFAULT_ORGANIZATION_ID } from "@/domain/organizations/constants";
 
 const schema = z.object({
   email: z.string().email(),

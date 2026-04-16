@@ -2,9 +2,9 @@ import { NextResponse } from "next/server";
 
 import { z } from "zod";
 
-import { getAuthContext, requireRole } from "@/lib/auth/auth-context";
-import { toAuthErrorResponse } from "@/lib/auth/http";
-import { mechanicsRepository } from "@/lib/services/repository/mechanics";
+import { getAuthContext, requireRole } from "@/application/auth/auth-context";
+import { toAuthErrorResponse } from "@/application/auth/http";
+import { createMechanic, deleteMechanic, listMechanics, listMechanicsForLessonForm, updateMechanic } from "@/db/queries/mechanics/mechanicsRepository";
 
 const createSchema = z.object({
   name: z.string().min(1),
@@ -18,7 +18,7 @@ export async function GET() {
     const ctx = await getAuthContext();
     requireRole(ctx, ["coach", "admin"]);
 
-    const mechanics = await mechanicsRepository.findAll();
+    const mechanics = await listMechanics();
     return NextResponse.json(mechanics);
   } catch (error) {
     const authResponse = toAuthErrorResponse(error);
@@ -35,7 +35,7 @@ export async function POST(req: Request) {
     const body = await req.json();
     const parsed = createSchema.parse(body);
 
-    const mechanic = await mechanicsRepository.create(parsed);
+    const mechanic = await createMechanic(parsed);
     return NextResponse.json(mechanic, { status: 201 });
   } catch (error) {
     const authResponse = toAuthErrorResponse(error);

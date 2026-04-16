@@ -34,8 +34,8 @@ import type {
 } from "@/ui/features/development/forms/evaluation/evaluationForm.types";
 import { RoutineForm } from "@/ui/features/development/forms/routines/RoutineForm";
 import { RoutineFormProvider } from "@/ui/features/development/forms/routines/RoutineFormProvider";
-import { copyTextToClipboard } from "@/lib/clipboard";
-import { buildPlayerRoutinesPdfPath } from "@/lib/reports/playerRoutinesPdfQuery";
+import { copyTextToClipboard } from "@/utils/clipboard";
+import { buildPlayerRoutinesPdfPath } from "@/application/reports/playerRoutinesPdfQuery";
 
 import { ActivePlanPanel } from "./ActivePlanPanel";
 import { CurrentSnapshotPanel } from "./CurrentSnapshotPanel";

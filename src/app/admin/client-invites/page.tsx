@@ -1,4 +1,4 @@
-import { getAuthContext, requireRole } from "@/lib/auth/auth-context";
+import { getAuthContext, requireRole } from "@/application/auth/auth-context";
 import { ClientInvitesAdminPageClient } from "@/ui/features/client-portal/ClientInvitesAdminPageClient";
 
 export default async function ClientInvitesAdminPage() {

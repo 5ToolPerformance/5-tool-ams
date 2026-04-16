@@ -15,7 +15,7 @@ import {
 } from "@/db/schema";
 import { env } from "@/env/server";
 
-import { DEFAULT_ORGANIZATION_ID } from "./lib/constants";
+import { DEFAULT_ORGANIZATION_ID } from "@/domain/organizations/constants";
 
 const normalizedRole = (
   value: unknown

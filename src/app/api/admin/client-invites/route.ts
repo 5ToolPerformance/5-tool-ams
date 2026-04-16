@@ -7,10 +7,10 @@ import {
   getPortalInvitePlayerNames,
   listClientInvites,
 } from "@/application/client-portal/service";
-import { getAuthContext, requireRole } from "@/lib/auth/auth-context";
-import { toAuthErrorResponse } from "@/lib/auth/http";
-import { sendClientInviteEmail } from "@/lib/client-portal/email";
-import { createClientInviteToken } from "@/lib/client-portal/tokens";
+import { getAuthContext, requireRole } from "@/application/auth/auth-context";
+import { toAuthErrorResponse } from "@/application/auth/http";
+import { sendClientInviteEmail } from "@/application/client-portal/email";
+import { createClientInviteToken } from "@/application/client-portal/tokens";
 
 const createInviteSchema = z.object({
   email: z.string().email(),

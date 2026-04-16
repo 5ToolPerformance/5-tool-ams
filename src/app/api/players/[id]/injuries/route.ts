@@ -2,8 +2,8 @@ import { NextResponse } from "next/server";
 
 import db from "@/db";
 import { getPlayerInjuries } from "@/db/queries/injuries/getPlayerInjuries";
-import { assertPlayerAccess, getAuthContext } from "@/lib/auth/auth-context";
-import { toAuthErrorResponse } from "@/lib/auth/http";
+import { assertPlayerAccess, getAuthContext } from "@/application/auth/auth-context";
+import { toAuthErrorResponse } from "@/application/auth/http";
 
 export async function GET(
   _req: Request,

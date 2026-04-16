@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { getAuthContext, requireRole } from "@/lib/auth/auth-context";
-import { toAuthErrorResponse } from "@/lib/auth/http";
-import { ArmCareService } from "@/lib/services/external-systems/armcare/armcare-service";
+import { getAuthContext, requireRole } from "@/application/auth/auth-context";
+import { toAuthErrorResponse } from "@/application/auth/http";
+import { syncArmCare } from "@/application/external-systems/armcare/armcare-service";
 
 export async function POST(request: NextRequest) {
   try {
@@ -15,8 +15,7 @@ export async function POST(request: NextRequest) {
 
     switch (system) {
       case "armcare":
-        const armcare = new ArmCareService();
-        result = await armcare.sync("manual");
+        result = await syncArmCare("manual");
         break;
       default:
         return NextResponse.json(

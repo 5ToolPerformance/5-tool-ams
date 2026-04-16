@@ -16,7 +16,7 @@ import {
 import { useForm } from "@tanstack/react-form";
 
 import DecimalNumberInput from "@/components/ui/DecimalNumberInput";
-import { getCompleteLessonDefaults } from "@/lib/form-defaults";
+import { getCompleteLessonDefaults } from "@/application/lessons/forms/getCompleteLessonDefaults";
 import { ApiResponse } from "@/types/api";
 import { PlayerSelect } from "@/types/database";
 import {

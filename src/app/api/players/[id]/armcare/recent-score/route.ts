@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { assertPlayerAccess, getAuthContext } from "@/lib/auth/auth-context";
-import { toAuthErrorResponse } from "@/lib/auth/http";
-import { armcareExamsRepository } from "@/lib/services/repository/armcare-exams";
+import { assertPlayerAccess, getAuthContext } from "@/application/auth/auth-context";
+import { toAuthErrorResponse } from "@/application/auth/http";
+import { getLatestPlayerArmScore, getPlayerSummary, getUnmatchedExams, getUnmatchedPlayers, linkArmcarePlayer } from "@/db/queries/external-systems/armcare/armcareExamsRepository";
 import { RouteParams } from "@/types/api";
 
 export async function GET(
@@ -14,7 +14,7 @@ export async function GET(
     const { id } = await params;
     await assertPlayerAccess(ctx, id);
 
-    const armscore = await armcareExamsRepository.getLatestPlayerArmScore(id);
+    const armscore = await getLatestPlayerArmScore(id);
 
     if (!armscore) {
       return NextResponse.json({

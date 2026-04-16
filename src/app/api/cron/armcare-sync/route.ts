@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
+import { syncArmCare } from "@/application/external-systems/armcare/armcare-service";
 import { env } from "@/env/server";
-import { ArmCareService } from "@/lib/services/external-systems/armcare/armcare-service";
 
 export async function GET(request: NextRequest) {
   if (request.headers.get("Authorization") !== `Bearer ${env.CRON_SECRET}`) {
@@ -9,8 +9,7 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const armcare = new ArmCareService();
-    const result = await armcare.sync("cron");
+    const result = await syncArmCare("cron");
     return NextResponse.json({
       success: true,
       result,

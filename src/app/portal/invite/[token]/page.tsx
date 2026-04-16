@@ -6,8 +6,8 @@ import {
   acceptClientInvite,
   getClientInvitePreviewByToken,
 } from "@/application/client-portal/service";
-import { getOptionalClientAuthContext } from "@/lib/auth/client-auth";
-import { formatDateShort } from "@/lib/dates";
+import { getOptionalClientAuthContext } from "@/application/auth/client-auth";
+import { formatDateShort } from "@/utils/dates";
 import { PortalMagicLinkCard } from "@/ui/features/client-portal/PortalMagicLinkCard";
 
 export default async function PortalInvitePage({

@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Button } from "@heroui/react";
 
 import { getDevelopmentReportData } from "@/application/players/development";
-import { requirePlayerRouteAccess } from "@/lib/auth/page-guards";
+import { requirePlayerRouteAccess } from "@/application/auth/page-guards";
 import { DevelopmentReportPreview } from "@/ui/features/athlete-development/DevelopmentReportPreview";
 import { DevelopmentReportPrintActions } from "@/ui/features/athlete-development/DevelopmentReportPrintActions";
 

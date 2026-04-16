@@ -1,7 +1,7 @@
 import { Card, CardBody } from "@heroui/react";
 
 import { getClientPortalContext } from "@/application/client-portal/service";
-import { requireClientPortalAccess } from "@/lib/auth/client-auth";
+import { requireClientPortalAccess } from "@/application/auth/client-auth";
 import { PortalPlayerSwitcher } from "@/ui/features/client-portal/PortalPlayerSwitcher";
 
 export default async function PortalMessagesPage({

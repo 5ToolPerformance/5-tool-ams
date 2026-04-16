@@ -2,8 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { createDrill } from "@/application/drills/createDrill";
 import { listDrillsForLibrary } from "@/application/drills/listDrillsForLibrary";
-import { getAuthContext, requireRole } from "@/lib/auth/auth-context";
-import { toAuthErrorResponse } from "@/lib/auth/http";
+import { getAuthContext, requireRole } from "@/application/auth/auth-context";
+import { toAuthErrorResponse } from "@/application/auth/http";
 
 export async function GET() {
   try {

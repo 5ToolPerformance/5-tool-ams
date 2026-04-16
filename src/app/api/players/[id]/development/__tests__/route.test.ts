@@ -2,7 +2,7 @@ import {
   AuthError,
   assertPlayerAccess,
   getAuthContext,
-} from "@/lib/auth/auth-context";
+} from "@/application/auth/auth-context";
 import { loadPlayerDevelopmentPageData } from "@/application/players/development/loadPlayerDevelopmentPageData";
 
 jest.mock("next/server", () => ({
@@ -14,7 +14,7 @@ jest.mock("next/server", () => ({
   },
 }));
 
-jest.mock("@/lib/auth/auth-context", () => ({
+jest.mock("@/application/auth/auth-context", () => ({
   AuthError: class AuthError extends Error {
     status: number;
 

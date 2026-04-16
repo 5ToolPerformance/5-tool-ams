@@ -7,9 +7,9 @@ import {
   assertPlayerAccess,
   getAuthContext,
   requireRole,
-} from "@/lib/auth/auth-context";
-import { toAuthErrorResponse } from "@/lib/auth/http";
-import { LessonService } from "@/lib/services/lessons";
+} from "@/application/auth/auth-context";
+import { toAuthErrorResponse } from "@/application/auth/http";
+import { createLesson, deleteLessonById, getLastLessonsByPlayer, getLessonAssessmentById, getLessonById, getNumberOfLessonsByPlayer, getWriteupsByPlayer, validateLessonData } from "@/application/lessons/lessonFunctions";
 import { LessonCreateData } from "@/types/lessons";
 
 export async function POST(request: NextRequest) {
@@ -22,7 +22,7 @@ export async function POST(request: NextRequest) {
     body.coachId = ctx.userId;
 
     // Validate the request data
-    const validationErrors = LessonService.validateLessonData(body);
+    const validationErrors = validateLessonData(body);
     if (validationErrors.length > 0) {
       return NextResponse.json(
         {
@@ -35,7 +35,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Create the lesson
-    const lesson = await LessonService.createLesson(body);
+    const lesson = await createLesson(body);
 
     return NextResponse.json({
       success: true,

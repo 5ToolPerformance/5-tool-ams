@@ -1,5 +1,5 @@
 import { listDrillsForLibrary } from "@/application/drills/listDrillsForLibrary";
-import { getAuthContext } from "@/lib/auth/auth-context";
+import { getAuthContext } from "@/application/auth/auth-context";
 import { DrillsLibraryPageClient } from "@/ui/features/drills/DrillsLibraryPageClient";
 
 export default async function ResourcesDrillsPage() {

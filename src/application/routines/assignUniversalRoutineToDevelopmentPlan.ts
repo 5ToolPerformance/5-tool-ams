@@ -3,7 +3,7 @@ import { getDevelopmentPlanById } from "@/db/queries/development-plans/getDevelo
 import { createRoutine } from "@/db/queries/routines/createRoutine";
 import { getUniversalRoutineById } from "@/db/queries/routines/getUniversalRoutineById";
 import { RoutineDocumentV1 } from "@/domain/routines/types";
-import { DomainError } from "@/lib/errors";
+import { DomainError } from "@/domain/errors";
 
 function withTemplateSource(
   documentData: unknown,

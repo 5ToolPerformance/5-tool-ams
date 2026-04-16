@@ -9,8 +9,8 @@ import {
   assertCanEditUniversalRoutine,
   AuthError,
   getAuthContext,
-} from "@/lib/auth/auth-context";
-import { mechanicsRepository } from "@/lib/services/repository/mechanics";
+} from "@/application/auth/auth-context";
+import { createMechanic, deleteMechanic, listMechanics, listMechanicsForLessonForm, updateMechanic } from "@/db/queries/mechanics/mechanicsRepository";
 import { UniversalRoutineFormPage } from "@/ui/features/routines/UniversalRoutineFormPage";
 
 async function getUniversalRoutineFormConfig(
@@ -21,7 +21,7 @@ async function getUniversalRoutineFormConfig(
 > {
   const [disciplineOptions, mechanicOptions, drillRows] = await Promise.all([
     listActiveDisciplines(),
-    mechanicsRepository.findAllForLessonForm(),
+    listMechanicsForLessonForm(),
     listDrillsForLibrary(facilityId, viewer),
   ]);
 

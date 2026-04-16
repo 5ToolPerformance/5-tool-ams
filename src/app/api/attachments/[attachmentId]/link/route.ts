@@ -2,8 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 
 import db from "@/db";
 import { attachments, lessonPlayers } from "@/db/schema";
-import { assertCanAccessAttachment, getAuthContext, requireRole } from "@/lib/auth/auth-context";
-import { toAuthErrorResponse } from "@/lib/auth/http";
+import { assertCanAccessAttachment, getAuthContext, requireRole } from "@/application/auth/auth-context";
+import { toAuthErrorResponse } from "@/application/auth/http";
 import { eq } from "drizzle-orm";
 
 export async function PATCH(

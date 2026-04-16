@@ -5,8 +5,8 @@ import {
   assertCanEditUniversalRoutine,
   getAuthContext,
   requireRole,
-} from "@/lib/auth/auth-context";
-import { DomainError, NotFoundError } from "@/lib/errors";
+} from "@/application/auth/auth-context";
+import { DomainError, NotFoundError } from "@/domain/errors";
 
 jest.mock("next/server", () => ({
   NextResponse: {
@@ -30,7 +30,7 @@ jest.mock("@/application/routines/updateUniversalRoutine", () => ({
 jest.mock("@/db/queries/routines/getUniversalRoutineById", () => ({
   getUniversalRoutineById: jest.fn(),
 }));
-jest.mock("@/lib/auth/auth-context", () => ({
+jest.mock("@/application/auth/auth-context", () => ({
   AuthError: class AuthError extends Error {
     status: number;
 

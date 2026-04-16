@@ -29,9 +29,9 @@ import {
 } from "@/components/ui/chart";
 import { useLessonsByCoachId, useUserById } from "@/hooks";
 import { useCoachPlayerLessonCounts } from "@/hooks/coaches";
-import { CoachesService } from "@/lib/services/coaches";
-import { DateTimeService } from "@/lib/services/date-time";
-import { StringService } from "@/lib/services/strings";
+import { countLessonsByDateRange, countPlayers, getLessonsByCurrentWeek } from "@/utils/coaches";
+import { formatLessonDate, getAge } from "@/utils/date-time";
+import { formatLessonType, toTitleCase } from "@/utils/strings";
 import { LessonWithCoachAndUser } from "@/types/lessons";
 
 type Props = {
@@ -82,10 +82,10 @@ export default function CoachDashboard({ coachId }: Props) {
     [];
 
   // Calculate summary statistics
-  const totalCounts = CoachesService.countLessonsByDateRange(lessons);
-  const totalPlayers = CoachesService.countPlayers(lessonsInformation);
+  const totalCounts = countLessonsByDateRange(lessons);
+  const totalPlayers = countPlayers(lessonsInformation);
 
-  const weeklyLessonsData = CoachesService.getLessonsByCurrentWeek(lessons);
+  const weeklyLessonsData = getLessonsByCurrentWeek(lessons);
 
   const chartConfig = {
     lessons: {
@@ -257,7 +257,7 @@ export default function CoachDashboard({ coachId }: Props) {
                       <div className="mt-2 flex gap-4 text-sm text-default-600">
                         <span>
                           📅{" "}
-                          {DateTimeService.formatLessonDate(
+                          {formatLessonDate(
                             lesson.lesson.lessonDate
                           )}
                         </span>
@@ -265,7 +265,7 @@ export default function CoachDashboard({ coachId }: Props) {
                     </div>
                     <div className="flex items-center gap-3">
                       <Chip color="primary" variant="flat" size="sm">
-                        {StringService.formatLessonType(
+                        {formatLessonType(
                           lesson.lesson.lessonType
                         )}
                       </Chip>

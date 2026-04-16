@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { assertPlayerAccess, getAuthContext } from "@/lib/auth/auth-context";
-import { toAuthErrorResponse } from "@/lib/auth/http";
-import { lessonRepository } from "@/lib/services/repository/lessons";
+import { assertPlayerAccess, getAuthContext } from "@/application/auth/auth-context";
+import { toAuthErrorResponse } from "@/application/auth/http";
+import { getLessonReportByPlayerIdScoped, getLessonsByPlayerIdScoped } from "@/db/queries/lessons/lessonReportQueries";
 
 export async function GET(request: NextRequest) {
   try {
@@ -20,7 +20,7 @@ export async function GET(request: NextRequest) {
 
     await assertPlayerAccess(ctx, playerId);
 
-    const data = await lessonRepository.getLessonReportByPlayerIdScoped(
+    const data = await getLessonReportByPlayerIdScoped(
       playerId,
       lessonCount,
       ctx.facilityId

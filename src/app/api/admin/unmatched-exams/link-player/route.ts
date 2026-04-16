@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { assertPlayerAccess, getAuthContext, requireRole } from "@/lib/auth/auth-context";
-import { toAuthErrorResponse } from "@/lib/auth/http";
-import { armcareExamsRepository } from "@/lib/services/repository/armcare-exams";
+import { assertPlayerAccess, getAuthContext, requireRole } from "@/application/auth/auth-context";
+import { toAuthErrorResponse } from "@/application/auth/http";
+import { getLatestPlayerArmScore, getPlayerSummary, getUnmatchedExams, getUnmatchedPlayers, linkArmcarePlayer } from "@/db/queries/external-systems/armcare/armcareExamsRepository";
 
 export async function POST(request: NextRequest) {
   try {
@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
     }
     await assertPlayerAccess(ctx, pathPlayerId);
 
-    const result = await armcareExamsRepository.linkArmcarePlayer(
+    const result = await linkArmcarePlayer(
       externalPlayerId,
       pathPlayerId,
       ctx.userId

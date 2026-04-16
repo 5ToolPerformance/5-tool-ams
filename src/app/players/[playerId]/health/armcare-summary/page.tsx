@@ -5,7 +5,7 @@ import { Button } from "@heroui/react";
 import { ArrowLeft } from "lucide-react";
 
 import { ArmCareSummaryView } from "@/components/players/ArmCareSummaryView";
-import { armcareExamsRepository } from "@/lib/services/repository/armcare-exams";
+import { getLatestPlayerArmScore, getPlayerSummary, getUnmatchedExams, getUnmatchedPlayers, linkArmcarePlayer } from "@/db/queries/external-systems/armcare/armcareExamsRepository";
 
 export default async function PlayerHealthArmCareSummaryPage({
   params,
@@ -14,7 +14,7 @@ export default async function PlayerHealthArmCareSummaryPage({
 }) {
   try {
     const { playerId } = await params;
-    const summary = await armcareExamsRepository.getPlayerSummary(playerId);
+    const summary = await getPlayerSummary(playerId);
 
     if (!summary.latestExam) {
       return (

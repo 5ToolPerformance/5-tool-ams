@@ -3,9 +3,9 @@ import { NextResponse } from "next/server";
 
 import { z } from "zod";
 
-import { getAuthContext, requireRole } from "@/lib/auth/auth-context";
-import { toAuthErrorResponse } from "@/lib/auth/http";
-import { mechanicsRepository } from "@/lib/services/repository/mechanics";
+import { getAuthContext, requireRole } from "@/application/auth/auth-context";
+import { toAuthErrorResponse } from "@/application/auth/http";
+import { createMechanic, deleteMechanic, listMechanics, listMechanicsForLessonForm, updateMechanic } from "@/db/queries/mechanics/mechanicsRepository";
 
 const commitSchema = z.object({
   rows: z.array(
@@ -28,7 +28,7 @@ export async function POST(req: Request) {
 
     await Promise.all(
       parsed.rows.map((row) =>
-        mechanicsRepository.create({
+        createMechanic({
           name: row.name,
           description: row.description,
           type: row.type,

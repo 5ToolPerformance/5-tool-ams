@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { getAuthContext, requireRole } from "@/lib/auth/auth-context";
-import { toAuthErrorResponse } from "@/lib/auth/http";
-import { createLessonNote } from "@/lib/db/notes";
+import { getAuthContext, requireRole } from "@/application/auth/auth-context";
+import { toAuthErrorResponse } from "@/application/auth/http";
+import { createLessonNote } from "@/db/queries/notes/notes";
 
 export async function POST(req: NextRequest) {
   try {

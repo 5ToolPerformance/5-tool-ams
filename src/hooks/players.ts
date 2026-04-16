@@ -2,27 +2,27 @@ import { useMemo } from "react";
 
 import useSWR from "swr";
 
-import { ApiService } from "@/lib/services/api";
+import { fetchAllLessons, fetchAllPlayers, fetchAssessmentsByLessonId, fetchLessonById, fetchLessonsByCoachId, fetchMotorPreferenceById, fetchPlayerWithInformationById, fetchUserById, patchPlayerInformationById } from "@/application/api-client/apiClient";
 
 export function useAllPlayers() {
-  return useSWR("/api/players", ApiService.fetchAllPlayers);
+  return useSWR("/api/players", fetchAllPlayers);
 }
 
 export function useUserById(id: string) {
   return useSWR(id ? `/api/users/${id}` : null, () =>
-    ApiService.fetchUserById(id)
+    fetchUserById(id)
   );
 }
 
 export function useMotorPreferences(id: string) {
   return useSWR(id ? `/api/players/${id}/motor-preferences` : null, () =>
-    ApiService.fetchMotorPreferenceById(id)
+    fetchMotorPreferenceById(id)
   );
 }
 
 export function usePlayerWithInformationById(id: string) {
   return useSWR(id ? `/api/players/${id}` : null, () =>
-    ApiService.fetchPlayerWithInformationById(id)
+    fetchPlayerWithInformationById(id)
   );
 }
 

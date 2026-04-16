@@ -13,9 +13,9 @@ import {
 import {
   getAuthContext,
   requireRole,
-} from "@/lib/auth/auth-context";
-import { toAuthErrorResponse } from "@/lib/auth/http";
-import { DEFAULT_ORGANIZATION_ID } from "@/lib/constants";
+} from "@/application/auth/auth-context";
+import { toAuthErrorResponse } from "@/application/auth/http";
+import { DEFAULT_ORGANIZATION_ID } from "@/domain/organizations/constants";
 
 const schema = z.object({
   playerId: z.string().uuid(),

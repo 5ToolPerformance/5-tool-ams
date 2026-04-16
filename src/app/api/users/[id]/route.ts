@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { getAuthContext, requireRole } from "@/lib/auth/auth-context";
-import { toAuthErrorResponse } from "@/lib/auth/http";
-import { UserService } from "@/lib/services/users";
+import { getAuthContext, requireRole } from "@/application/auth/auth-context";
+import { toAuthErrorResponse } from "@/application/auth/http";
+import { getAllCoachesScoped, getAllUsersScoped, getUserById, getUserByIdScoped } from "@/application/users/userFunctions";
 import { RouteParams } from "@/types/api";
 
 export async function GET(
@@ -24,7 +24,7 @@ export async function GET(
     }
 
     // Get lessons for the player
-    const user = await UserService.getUserByIdScoped(id, ctx.facilityId);
+    const user = await getUserByIdScoped(id, ctx.facilityId);
     if (!user) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
