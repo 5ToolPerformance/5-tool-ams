@@ -3,8 +3,8 @@ import { Suspense } from "react";
 
 import { Toaster } from "sonner";
 
-import Providers from "@/components/layout/providers";
-import SidebarLayout from "@/components/layout/sidebar-layout";
+import Providers from "@/ui/core/layout/Providers";
+import SidebarLayout from "@/ui/core/layout/SidebarLayout";
 
 import "./globals.css";
 

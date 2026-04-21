@@ -5,7 +5,7 @@ import type {
   DevelopmentPlanRow,
   EvaluationRow,
 } from "@/application/players/development/getPlayerDevelopmentTabData";
-import FormattedText from "@/components/ui/formattedText";
+import FormattedText from "@/ui/core/primitives/formattedText";
 import { SectionShell } from "@/ui/core/athletes/SectionShell";
 
 import { formatDate, getDisciplineAccentClass } from "./utils";

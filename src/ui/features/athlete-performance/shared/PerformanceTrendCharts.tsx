@@ -15,7 +15,7 @@ import {
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
-} from "@/components/ui/chart";
+} from "@/ui/core/primitives/chart";
 import type { PerformanceTrend } from "@/application/players/performance/getPlayerPerformanceData.types";
 
 interface PerformanceTrendChartsProps {

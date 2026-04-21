@@ -20,7 +20,7 @@ import type {
 } from "@/application/players/development/getDevelopmentDocumentDetails";
 import { resolveStrengthEvidencePowerRating } from "@/domain/evaluations/strengthEvidence";
 import { copyTextToClipboard } from "@/utils/clipboard";
-import FormattedText from "@/components/ui/formattedText";
+import FormattedText from "@/ui/core/primitives/formattedText";
 import { useAttachmentViewer } from "@/ui/features/attachments/AttachmentViewerProvider";
 
 import { formatDate } from "./utils";

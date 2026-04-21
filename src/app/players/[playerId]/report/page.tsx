@@ -3,9 +3,9 @@ import { notFound } from "next/navigation";
 import { Button } from "@heroui/react";
 
 import { auth } from "@/auth";
-import LessonCountSelector from "@/components/LessonCountSelector";
-import WriteupChecklist from "@/components/WriteupChecklist";
-import PlayerProfileCard from "@/components/players/playerCard";
+import LessonCountSelector from "@/ui/features/player-report/LessonCountSelector";
+import PlayerProfileCard from "@/ui/features/player-report/PlayerProfileCard";
+import WriteupChecklist from "@/ui/features/player-report/WriteupChecklist";
 import { createLesson, deleteLessonById, getLastLessonsByPlayer, getLessonAssessmentById, getLessonById, getNumberOfLessonsByPlayer, getWriteupsByPlayer, validateLessonData } from "@/application/lessons/lessonFunctions";
 import { createMotorPreferences, createPlayerInformation, getAllPlayersWithInformationScoped, getMotorPreferencesById, getPlayerById, getPlayerByIdScoped, getPlayerInformationById } from "@/application/players/playerFunctions";
 import { PageProps } from "@/types/page";

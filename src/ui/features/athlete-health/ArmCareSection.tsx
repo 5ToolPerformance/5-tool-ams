@@ -1,7 +1,7 @@
 import { Card, CardBody } from "@heroui/react";
 
 import type { HealthArmCareSnapshot } from "@/application/players/health/getHealthTabData";
-import { ArmCareProfileCard } from "@/components/players/ArmCareProfileCard";
+import { ArmCareProfileCard } from "@/ui/features/athlete-health/ArmCareProfileCard";
 
 interface ArmCareSectionProps {
   playerId: string;

@@ -2,7 +2,7 @@ import { Button, Card, CardBody, Chip } from "@heroui/react";
 
 import { parseEvaluationSummary } from "@/application/players/development/documentDataParsers";
 import type { EvaluationRow } from "@/application/players/development/getPlayerDevelopmentTabData";
-import FormattedText from "@/components/ui/formattedText";
+import FormattedText from "@/ui/core/primitives/formattedText";
 import { SectionShell } from "@/ui/core/athletes/SectionShell";
 
 import { formatDate, getDisciplineAccentClass } from "./utils";

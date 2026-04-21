@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { Button } from "@heroui/react";
 import { ArrowLeft } from "lucide-react";
 
-import { ArmCareSummaryView } from "@/components/players/ArmCareSummaryView";
+import { ArmCareSummaryView } from "@/ui/features/athlete-health/ArmCareSummaryView";
 import { getLatestPlayerArmScore, getPlayerSummary, getUnmatchedExams, getUnmatchedPlayers, linkArmcarePlayer } from "@/db/queries/external-systems/armcare/armcareExamsRepository";
 
 export default async function PlayerHealthArmCareSummaryPage({

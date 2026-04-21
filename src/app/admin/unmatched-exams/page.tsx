@@ -19,7 +19,7 @@ import {
 } from "@heroui/react";
 import { AlertCircle, FileText, Search, TrendingUp, Users } from "lucide-react";
 
-import { LinkPlayerDialog } from "@/components/admin/LinkPlayerDialog";
+import { ArmCareLinkPlayerDialog } from "@/ui/features/external-systems/ArmCareLinkPlayerDialog";
 import { useUnmatchedPlayers } from "@/hooks";
 
 export default function UnmatchedPlayersPage() {
@@ -262,7 +262,7 @@ export default function UnmatchedPlayersPage() {
             </CardBody>
           </Card>
 
-          <LinkPlayerDialog
+          <ArmCareLinkPlayerDialog
             isOpen={isDialogOpen}
             onClose={() => setIsDialogOpen(false)}
             armcarePlayer={selectedPlayer}

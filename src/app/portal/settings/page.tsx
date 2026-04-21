@@ -2,7 +2,7 @@ import { Card, CardBody } from "@heroui/react";
 
 import { getClientPortalContext } from "@/application/client-portal/service";
 import { requireClientPortalAccess } from "@/application/auth/client-auth";
-import { ThemeSwitcher } from "@/components/layout/theme-switcher";
+import { ThemeSwitcher } from "@/ui/core/layout/ThemeSwitcher";
 import { PortalSignOutButton } from "@/ui/features/client-portal/PortalSignOutButton";
 
 export default async function PortalSettingsPage() {

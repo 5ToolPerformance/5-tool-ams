@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 
 import { auth } from "@/auth";
-import CoachProfile from "@/components/coach-profile";
+import CoachProfile from "@/ui/features/coaches/CoachProfile";
 import { getLessonsByCoachId } from "@/db/queries/lessons/lessonQueries";
 import { findCoachPlayerLessonCounts, getAvgSubmissionTime } from "@/db/queries/coaches/coachRepository";
 import { getAllCoachesScoped, getAllUsersScoped, getUserById, getUserByIdScoped } from "@/application/users/userFunctions";

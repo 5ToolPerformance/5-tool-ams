@@ -13,7 +13,11 @@ import {
 } from "@heroui/react";
 import { Bar, BarChart, CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
 
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
+import {
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from "@/ui/core/primitives/chart";
 import { DashboardOverviewData } from "@/domain/dashboard/types";
 
 const chartConfig = {
