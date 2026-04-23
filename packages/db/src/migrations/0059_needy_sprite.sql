@@ -1,0 +1,3 @@
+ALTER TABLE "lesson_player_fatigue" ALTER COLUMN "body_part_id" SET DATA TYPE uuid USING body_part_id::uuid;--> statement-breakpoint
+ALTER TABLE "lesson_player_fatigue" ALTER COLUMN "body_part_id" SET NOT NULL;--> statement-breakpoint
+ALTER TABLE "lesson_player_fatigue" ADD CONSTRAINT "lesson_player_fatigue_body_part_id_injury_body_part_id_fk" FOREIGN KEY ("body_part_id") REFERENCES "public"."injury_body_part"("id") ON DELETE no action ON UPDATE no action;

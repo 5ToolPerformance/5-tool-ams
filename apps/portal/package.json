@@ -1,0 +1,12 @@
+{
+  "name": "@ams/portal",
+  "version": "0.1.0",
+  "private": true,
+  "description": "New portal application scaffold for copy-first migration.",
+  "scripts": {
+    "dev": "next dev .",
+    "build": "next build .",
+    "start": "next start .",
+    "test": "jest --config jest.config.js"
+  }
+}

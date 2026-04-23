@@ -1,0 +1,183 @@
+"use client";
+
+import { useEffect } from "react";
+
+import { Card, CardBody, Textarea } from "@heroui/react";
+
+import { DrillSelector } from "@/ui/features/lesson-form/components/DrillSelector";
+import { FatigueCheckin } from "@/ui/features/lesson-form/components/FatigueCheckin";
+import { RoutineSelector } from "@/ui/features/lesson-form/components/RoutineSelector";
+
+import { useLessonFormContext } from "../LessonFormProvider";
+import { EvidenceUploadSection } from "../components/EvidenceUploadSection";
+import { MechanicSelector } from "../components/MechanicSelector";
+import { LESSON_TYPE_REGISTRY } from "../lessonTypes";
+
+export function StepPlayerNotes() {
+  const {
+    form,
+    ensurePlayer,
+    playerById,
+    mechanics,
+    bodyParts,
+    drills,
+    evidenceDrafts,
+    setEvidenceDrafts,
+  } = useLessonFormContext();
+
+  /**
+   * Ensure player nodes exist when this step mounts.
+   * IMPORTANT: this runs in an effect, not during render.
+   */
+  useEffect(() => {
+    const values = form.state.values;
+
+    values.selectedPlayerIds.forEach((id) => {
+      // ✅ Only initialize if the player does NOT already exist
+      if (!values.players?.[id]) {
+        ensurePlayer(id);
+      }
+    });
+  }, [form, ensurePlayer]);
+
+  return (
+    <form.Subscribe selector={(state) => state.values}>
+      {(values) => {
+        const { lessonType, selectedPlayerIds, players } = values;
+
+        if (!lessonType) {
+          return (
+            <p className="text-sm text-foreground-500">
+              Please select a lesson type.
+            </p>
+          );
+        }
+
+        const lessonImpl = LESSON_TYPE_REGISTRY[lessonType] ?? null;
+
+        /**
+         * Filter mechanics based on lesson type
+         */
+        const availableMechanics = mechanics.filter((m) => {
+          if (m.type === null) return true;
+
+          if (lessonImpl?.allowedMechanicTypes) {
+            return lessonImpl.allowedMechanicTypes.includes(m.type);
+          }
+
+          return m.type === lessonType;
+        });
+
+        const availableDrills = drills.filter((d) => {
+          if (d.discipline === null) return true;
+
+          if (lessonImpl?.allowedDrillTypes) {
+            return lessonImpl.allowedDrillTypes.includes(d.discipline);
+          }
+
+          return d.discipline === lessonType;
+        });
+
+        return (
+          <div className="space-y-6">
+            {/* Step Header */}
+            <div>
+              <h2 className="text-lg font-semibold">Player Notes</h2>
+              <p className="text-sm text-foreground-500">
+                Add notes and mechanics for each player.
+              </p>
+            </div>
+
+            {/* Player Cards */}
+            {selectedPlayerIds.map((playerId) => {
+              const player = players[playerId] ?? {};
+              const playerName = playerById[playerId] ?? `Player ${playerId}`;
+
+              return (
+                <Card key={playerId} shadow="sm">
+                  <CardBody className="space-y-6">
+                    {/* Player Name */}
+                    <h3 className="text-base font-semibold">{playerName}</h3>
+
+                    {/* Lesson-type–specific notes */}
+                    {lessonImpl?.PlayerNotes && (
+                      <div className="space-y-2">
+                        <lessonImpl.PlayerNotes playerId={playerId} />
+                        {lessonImpl?.fatigueCheck && (
+                          <FatigueCheckin
+                            playerId={playerId}
+                            bodyParts={bodyParts}
+                          />
+                        )}
+                      </div>
+                    )}
+
+                    {/* Mechanics */}
+                    <div className="space-y-2">
+                      <p className="text-sm font-medium">Routines</p>
+                      <RoutineSelector playerId={playerId} />
+                    </div>
+
+                    {lessonImpl?.allowedMechanicTypes &&
+                      lessonImpl.allowedMechanicTypes.length > 0 && (
+                        <div className="space-y-2">
+                          <p className="text-sm font-medium">
+                            Mechanics Worked
+                          </p>
+                          <MechanicSelector
+                            playerId={playerId}
+                            mechanics={availableMechanics}
+                          />
+                        </div>
+                      )}
+
+                    {/* Drills */}
+                    {lessonImpl?.allowedDrillTypes &&
+                      lessonImpl.allowedDrillTypes.length > 0 && (
+                        <div className="space-y-2">
+                          <p className="text-sm font-medium">Drills</p>
+                          <DrillSelector
+                            playerId={playerId}
+                            drills={availableDrills}
+                          />
+                        </div>
+                      )}
+
+                    {/* Evidence Upload */}
+                    <div className="space-y-2">
+                      <p className="text-sm font-medium">Evidence Upload</p>
+                      <EvidenceUploadSection
+                        playerName={playerName}
+                        draft={evidenceDrafts[playerId]}
+                        onDraftChange={(draft) =>
+                          setEvidenceDrafts((prev) => ({
+                            ...prev,
+                            [playerId]: draft,
+                          }))
+                        }
+                      />
+                    </div>
+
+                    {/* Base Notes */}
+                    <Textarea
+                      label="General Notes"
+                      placeholder="Notes for this player…"
+                      minRows={3}
+                      value={player.notes ?? ""}
+                      onChange={(e) =>
+                        form.setFieldValue(
+                          `players.${playerId}.notes`,
+                          e.target.value
+                        )
+                      }
+                    />
+                  </CardBody>
+                </Card>
+              );
+            })}
+          </div>
+        );
+      }}
+    </form.Subscribe>
+  );
+}

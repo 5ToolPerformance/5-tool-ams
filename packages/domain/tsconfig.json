@@ -1,0 +1,17 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/domain/*": ["./src/*"],
+      "@/db": ["../../packages/db/src/index.ts"],
+      "@/db/*": ["../../packages/db/src/*"],
+      "@/types/database": ["../../packages/db/src/types/database.ts"],
+      "@/types/lesson-form": ["../../packages/contracts/src/types/lesson-form.ts"],
+      "@/types/*": ["../../packages/contracts/src/types/*"],
+      "@/utils": ["./src/utils/index.ts"],
+      "@/utils/*": ["./src/utils/*"]
+    }
+  },
+  "include": ["src/**/*.ts", "src/**/*.tsx"]
+}

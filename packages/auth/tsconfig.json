@@ -1,0 +1,14 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@ams/domain": ["../../packages/domain/src/index.ts"],
+      "@ams/domain/*": ["../../packages/domain/src/*"],
+      "@ams/permissions": ["../../packages/permissions/src/index.ts"],
+      "@ams/permissions/*": ["../../packages/permissions/src/*"],
+      "@/auth/*": ["./src/*"]
+    }
+  },
+  "include": ["src/**/*.ts", "src/**/*.tsx"]
+}

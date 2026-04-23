@@ -1,0 +1,4 @@
+ALTER TABLE "development_plans" ADD COLUMN "discipline" uuid NOT NULL;--> statement-breakpoint
+ALTER TABLE "evaluations" ADD COLUMN "discipline" uuid NOT NULL;--> statement-breakpoint
+ALTER TABLE "development_plans" ADD CONSTRAINT "development_plans_discipline_disciplines_id_fk" FOREIGN KEY ("discipline") REFERENCES "public"."disciplines"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "evaluations" ADD CONSTRAINT "evaluations_discipline_disciplines_id_fk" FOREIGN KEY ("discipline") REFERENCES "public"."disciplines"("id") ON DELETE no action ON UPDATE no action;

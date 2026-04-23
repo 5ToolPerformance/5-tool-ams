@@ -1,0 +1,26 @@
+-- BASELINE RECONCILIATION MIGRATION
+-- --------------------------------------------------
+-- The following schema objects already exist in the database:
+--
+-- athlete_cohorts
+-- athlete_context_flags
+-- athlete_events
+-- athlete_metric_snapshots
+-- cohort_definitions
+-- cohort_metric_stats
+-- computed_scores
+-- metric_definitions
+-- metric_sources
+-- metric_weights
+-- player_positions
+-- positions
+--
+-- Along with all associated foreign key constraints.
+--
+-- This migration intentionally performs NO ACTION.
+-- It exists solely to advance Drizzle's snapshot/journal
+-- to reflect the current database state.
+--
+-- DO NOT DELETE.
+-- DO NOT MODIFY.
+-- --------------------------------------------------

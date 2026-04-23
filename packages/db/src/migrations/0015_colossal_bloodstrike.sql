@@ -1,0 +1,1 @@
+ALTER TABLE "motor_preferences" ADD CONSTRAINT "motor_preferences_player_id_user_id_fk" FOREIGN KEY ("player_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;

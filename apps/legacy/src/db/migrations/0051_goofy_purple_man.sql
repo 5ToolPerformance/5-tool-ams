@@ -1,0 +1,1 @@
+ALTER TABLE "attachments" ADD COLUMN "effective_date" date DEFAULT now() NOT NULL;

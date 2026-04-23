@@ -1,0 +1,515 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 240 5.9% 10%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 240 5% 45%;
+    --chart-1: 12 76% 61%;
+    --chart-2: 173 58% 39%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
+    --radius: 0.5rem;
+  }
+
+  /* Neutral dark mode (no blue tint) */
+  .dark {
+    --background: 240 5% 10%;
+    --foreground: 210 40% 98%;
+
+    --card: 240 5% 12%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 240 5% 12%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 240 5% 90%;
+    --primary-foreground: 240 6% 10%;
+
+    --secondary: 240 4% 16%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 240 4% 16%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 240 4% 16%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 240 4% 18%;
+    --input: 240 4% 18%;
+    --ring: 240 5% 65%;
+
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* Add to your existing app/globals.css */
+
+@media print {
+  @page {
+    margin: 0.5in;
+    size: letter;
+  }
+
+  /* Force light mode for print */
+  * {
+    color-scheme: light !important;
+  }
+
+  body {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+    background: white !important;
+    color: black !important;
+  }
+
+  /* Override dark mode classes */
+  .dark,
+  [data-theme="dark"] {
+    color-scheme: light !important;
+    background: white !important;
+  }
+
+  /* Force light backgrounds and text */
+  * {
+    background-color: white !important;
+    border-color: #e5e7eb !important;
+  }
+
+  /* Specific overrides for text colors */
+  .text-default-500,
+  .text-default-600,
+  .text-default-700 {
+    color: #6b7280 !important;
+  }
+
+  .text-danger {
+    color: #dc2626 !important;
+  }
+
+  /* Hide all non-report elements */
+  .print\:hidden {
+    display: none !important;
+  }
+
+  /* Remove borders and shadows for cleaner print */
+  .print\:border-0 {
+    border: none !important;
+  }
+
+  .print\:border {
+    border: 1px solid #e5e7eb !important;
+  }
+
+  /* Prevent page breaks inside cards */
+  .print\:break-inside-avoid {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  /* Adjust spacing for print */
+  .print\:space-y-4 > * + * {
+    margin-top: 1rem !important;
+  }
+
+  /* Background colors for print */
+  .print\:bg-gray-50,
+  .bg-default-50 {
+    background-color: #f9fafb !important;
+  }
+
+  /* Ensure full width and no overflow */
+  .container {
+    max-width: 100% !important;
+    width: 100% !important;
+  }
+
+  /* Remove any max-height constraints */
+  * {
+    max-height: none !important;
+    overflow: visible !important;
+  }
+
+  /* Chips and badges */
+  [class*="chip"],
+  [class*="badge"] {
+    border: 1px solid #d1d5db !important;
+    background-color: #f3f4f6 !important;
+  }
+
+  /* Cards should have subtle borders */
+  [class*="card"] {
+    background-color: white !important;
+    border: 1px solid #e5e7eb !important;
+    box-shadow: none !important;
+  }
+
+  /* Dividers */
+  [class*="divider"] {
+    border-color: #e5e7eb !important;
+  }
+
+  /* Tables and grids */
+  [class*="grid"] {
+    display: grid !important;
+  }
+
+  .development-report-page {
+    background: white !important;
+    padding: 0 !important;
+  }
+
+  .development-report-document {
+    box-shadow: none !important;
+    border: none !important;
+    margin: 0 !important;
+    max-width: none !important;
+    padding: 0.1in 0 !important;
+  }
+
+  .development-report-watermark {
+    opacity: 0.1 !important;
+    position: fixed !important;
+  }
+
+  .development-report-watermark img {
+    print-color-adjust: exact !important;
+    -webkit-print-color-adjust: exact !important;
+  }
+
+  .development-report-header {
+    padding-bottom: 0.18in !important;
+  }
+
+  .development-report-title-row,
+  .development-report-section-heading,
+  .development-report-detail-header,
+  .development-report-routine-header {
+    flex-direction: row !important;
+  }
+
+  .development-report-title-aside {
+    text-align: right !important;
+  }
+
+  .development-report-section {
+    margin-top: 0.22in !important;
+    padding-top: 0.18in !important;
+  }
+
+  .development-report-meta-grid,
+  .development-report-summary-grid {
+    gap: 0.12in !important;
+  }
+
+  .development-report-meta-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .development-report-player-meta-row {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+
+  .development-report-summary-card,
+  .development-report-callout,
+  .development-report-detail,
+  .development-report-routine,
+  .development-report-meta-item {
+    background: transparent !important;
+    padding: 0.14in !important;
+  }
+
+  .development-report-section,
+  .development-report-header,
+  .development-report-routine,
+  .development-report-detail,
+  .development-report-callout,
+  .development-report-summary-card {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+}
+
+.development-report-document {
+  background: #fdfefe;
+  border: 1px solid #d4def0;
+  box-shadow: 0 18px 50px rgba(19, 35, 63, 0.08);
+  color: #13233f;
+  margin: 0 auto;
+  max-width: 960px;
+  overflow: hidden;
+  padding: 48px 56px;
+  position: relative;
+}
+
+.development-report-content {
+  position: relative;
+  z-index: 1;
+}
+
+.development-report-watermark {
+  inset: 50% auto auto 50%;
+  opacity: 0.07;
+  pointer-events: none;
+  position: fixed;
+  transform: translate(-50%, -50%);
+  z-index: 0;
+}
+
+.development-report-watermark img {
+  display: block;
+  height: auto;
+  width: 360px;
+}
+
+.development-report-header {
+  border-bottom: 1px solid #9ab0d4;
+  padding-bottom: 24px;
+}
+
+.development-report-eyebrow {
+  color: #274a7f;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.24em;
+  margin-bottom: 12px;
+  text-transform: uppercase;
+}
+
+.development-report-title-row {
+  align-items: flex-start;
+  display: flex;
+  gap: 24px;
+  justify-content: space-between;
+}
+
+.development-report-title-row h1 {
+  font-size: 2.35rem;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  margin: 0;
+}
+
+.development-report-title-row p {
+  color: #3d5478;
+  font-size: 1rem;
+  margin: 8px 0 0;
+}
+
+.development-report-title-aside {
+  color: #3d5478;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  font-size: 0.95rem;
+  gap: 8px;
+  text-align: right;
+}
+
+.development-report-meta-grid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-top: 24px;
+}
+
+.development-report-player-meta-row {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.development-report-meta-item {
+  background: #eef3fb;
+  border: 1px solid #c8d4e7;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-height: 72px;
+  padding: 14px 16px;
+}
+
+.development-report-meta-item span {
+  color: #355886;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.development-report-meta-item strong {
+  color: #13233f;
+  font-size: 0.98rem;
+  font-weight: 600;
+}
+
+.development-report-section {
+  border-top: 1px solid #d9e2f2;
+  margin-top: 32px;
+  padding-top: 28px;
+}
+
+.development-report-section-heading {
+  align-items: center;
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.development-report-section-heading h2 {
+  font-size: 1.35rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+.development-report-pill-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.development-report-pill {
+  background: #dde8f7;
+  border: 1px solid #9db2d5;
+  border-radius: 999px;
+  color: #23436d;
+  display: inline-flex;
+  font-size: 0.78rem;
+  font-weight: 600;
+  line-height: 1;
+  padding: 8px 12px;
+  text-transform: capitalize;
+}
+
+.development-report-summary-card,
+.development-report-callout,
+.development-report-detail,
+.development-report-routine {
+  background: #fff;
+  border: 1px solid #d4deef;
+  border-radius: 14px;
+  padding: 18px 20px;
+}
+
+.development-report-summary-card h3,
+.development-report-callout h3,
+.development-report-block h3,
+.development-report-routine h3,
+.development-report-detail h4 {
+  color: #17325a;
+  margin: 0 0 8px;
+}
+
+.development-report-summary-card p,
+.development-report-callout p,
+.development-report-detail p,
+.development-report-routine p {
+  color: #243956;
+  line-height: 1.65;
+  margin: 0;
+}
+
+.development-report-block {
+  margin-top: 20px;
+}
+
+.development-report-list {
+  color: #223752;
+  margin: 0;
+  padding-left: 20px;
+}
+
+.development-report-list li + li {
+  margin-top: 8px;
+}
+
+.development-report-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.development-report-stack-sm {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.development-report-detail-header,
+.development-report-routine-header {
+  align-items: flex-start;
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+}
+
+.development-report-routine-copy {
+  margin-top: 12px !important;
+}
+
+.development-report-muted {
+  color: #4b6387 !important;
+}
+
+@media (max-width: 768px) {
+  .development-report-document {
+    padding: 28px 20px;
+  }
+
+  .development-report-title-row,
+  .development-report-section-heading,
+  .development-report-detail-header,
+  .development-report-routine-header {
+    flex-direction: column;
+  }
+
+  .development-report-title-aside {
+    text-align: left;
+  }
+
+  .development-report-meta-grid,
+  .development-report-summary-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .development-report-player-meta-row {
+    grid-template-columns: 1fr;
+  }
+}

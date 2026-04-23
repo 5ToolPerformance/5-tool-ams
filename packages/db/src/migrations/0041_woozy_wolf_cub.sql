@@ -1,0 +1,20 @@
+ALTER TABLE "hawkins_cmj" RENAME COLUMN "external_uniqueId" TO "external_unique_id";--> statement-breakpoint
+ALTER TABLE "hawkins_cmj" RENAME COLUMN "testType_name" TO "test_type_name";--> statement-breakpoint
+ALTER TABLE "hawkins_cmj" RENAME COLUMN "testType_canonicalId" TO "test_type_canonical_id";--> statement-breakpoint
+ALTER TABLE "hawkins_cmj" RENAME COLUMN "rawData" TO "raw_data";--> statement-breakpoint
+ALTER TABLE "hawkins_drop_jump" RENAME COLUMN "external_uniqueId" TO "external_unique_id";--> statement-breakpoint
+ALTER TABLE "hawkins_drop_jump" RENAME COLUMN "testType_name" TO "test_type_name";--> statement-breakpoint
+ALTER TABLE "hawkins_drop_jump" RENAME COLUMN "testType_canonicalId" TO "test_type_canonical_id";--> statement-breakpoint
+ALTER TABLE "hawkins_drop_jump" RENAME COLUMN "rawData" TO "raw_data";--> statement-breakpoint
+ALTER TABLE "hawkins_iso" RENAME COLUMN "external_uniqueId" TO "external_unique_id";--> statement-breakpoint
+ALTER TABLE "hawkins_iso" RENAME COLUMN "testType_name" TO "test_type_name";--> statement-breakpoint
+ALTER TABLE "hawkins_iso" RENAME COLUMN "testType_canonicalId" TO "test_type_canonical_id";--> statement-breakpoint
+ALTER TABLE "hawkins_iso" RENAME COLUMN "rawData" TO "raw_data";--> statement-breakpoint
+ALTER TABLE "hawkins_multi" RENAME COLUMN "external_uniqueId" TO "external_unique_id";--> statement-breakpoint
+ALTER TABLE "hawkins_multi" RENAME COLUMN "testType_name" TO "test_type_name";--> statement-breakpoint
+ALTER TABLE "hawkins_multi" RENAME COLUMN "testType_canonicalId" TO "test_type_canonical_id";--> statement-breakpoint
+ALTER TABLE "hawkins_multi" RENAME COLUMN "rawData" TO "raw_data";--> statement-breakpoint
+ALTER TABLE "hawkins_ts_iso" RENAME COLUMN "external_uniqueId" TO "external_unique_id";--> statement-breakpoint
+ALTER TABLE "hawkins_ts_iso" RENAME COLUMN "testType_name" TO "test_type_name";--> statement-breakpoint
+ALTER TABLE "hawkins_ts_iso" RENAME COLUMN "testType_canonicalId" TO "test_type_canonical_id";--> statement-breakpoint
+ALTER TABLE "hawkins_ts_iso" RENAME COLUMN "rawData" TO "raw_data";

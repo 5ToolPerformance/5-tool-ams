@@ -1,33 +1,33 @@
 import nextJest from "next/jest.js";
 
-// Provide the path to your Next.js app to load next.config.js and .env files in your test environment
+// Workspace-level compatibility shim that points Jest at the legacy app.
 const createJestConfig = nextJest({
-  dir: "./",
+  dir: "./apps/legacy",
 });
 
 // Add any custom config to be passed to Jest
 const customJestConfig = {
   // Setup files to run before each test
-  setupFilesAfterEnv: ["<rootDir>/jest.setup.js"],
+  setupFilesAfterEnv: ["<rootDir>/apps/legacy/jest.setup.js"],
 
   // Test environment
   testEnvironment: "jest-environment-jsdom",
 
   // Module name mapper for path aliases (adjust to match your tsconfig paths)
   moduleNameMapper: {
-    "^@/(.*)$": "<rootDir>/src/$1",
-    "^@/components/(.*)$": "<rootDir>/src/components/$1",
-    "^@/lib/(.*)$": "<rootDir>/src/lib/$1",
-    "^@/services/(.*)$": "<rootDir>/src/services/$1",
-    "^@/hooks/(.*)$": "<rootDir>/src/hooks/$1",
+    "^@/(.*)$": "<rootDir>/apps/legacy/src/$1",
+    "^@/components/(.*)$": "<rootDir>/apps/legacy/src/components/$1",
+    "^@/lib/(.*)$": "<rootDir>/apps/legacy/src/lib/$1",
+    "^@/services/(.*)$": "<rootDir>/apps/legacy/src/services/$1",
+    "^@/hooks/(.*)$": "<rootDir>/apps/legacy/src/hooks/$1",
   },
 
   // Coverage configuration
   collectCoverageFrom: [
-    "src/**/*.{js,jsx,ts,tsx}",
-    "!src/**/*.d.ts",
-    "!src/**/*.stories.{js,jsx,ts,tsx}",
-    "!src/**/__tests__/**",
+    "apps/legacy/src/**/*.{js,jsx,ts,tsx}",
+    "!apps/legacy/src/**/*.d.ts",
+    "!apps/legacy/src/**/*.stories.{js,jsx,ts,tsx}",
+    "!apps/legacy/src/**/__tests__/**",
   ],
 
   // Test match patterns

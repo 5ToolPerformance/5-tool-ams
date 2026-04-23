@@ -1,0 +1,20 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@ams/domain": ["../../packages/domain/src/index.ts"],
+      "@ams/domain/*": ["../../packages/domain/src/*"],
+      "@/db": ["./src/index.ts"],
+      "@/db/*": ["./src/*"],
+      "@/db/schema": ["./src/schema/index.ts"],
+      "@/domain/*": ["../../packages/domain/src/*"],
+      "@/types/assessments": ["../../packages/contracts/src/types/assessments.ts"],
+      "@/types/database": ["./src/types/database.ts"],
+      "@/types/lessons": ["./src/types/lessons.ts"],
+      "@/env/*": ["../../packages/config/src/env/*"],
+      "@/utils/*": ["../../packages/domain/src/utils/*"]
+    }
+  },
+  "include": ["src/**/*.ts", "src/**/*.tsx"]
+}

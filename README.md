@@ -4,7 +4,15 @@
 
 > **Internal project**: This repository is private and intended solely for the 5 Tool Performance engineering and coaching teams.
 
-A full-stack platform for coaches and admins to manage athletes, capture lesson data, track assessments, and sync external Arm Care data. The project is built on Next.js App Router with a typed Drizzle ORM/Postgres backend, NextAuth authentication, and HeroUI components for the interface.
+A full-stack platform for coaches and admins to manage athletes, capture lesson data, track assessments, and sync external Arm Care data. The repository now uses a monorepo workspace layout with the current production app preserved at `apps/legacy` while new apps and shared packages are introduced alongside it.
+
+## Workspace Status
+
+- The current production baseline now lives in `apps/legacy`.
+- The repo root owns shared workspace config such as `pnpm-workspace.yaml`, `nx.json`, and `tsconfig.base.json`.
+- New surfaces are scaffolded at `apps/api`, `apps/portal`, and `apps/ams`.
+- Shared package entrypoints are scaffolded under `packages/*`.
+- Copy-first migration state is tracked in `docs/migration-ledger.md`.
 
 ## Table of Contents
 
@@ -99,11 +107,11 @@ pnpm install
 pnpm dev
 ```
 
-Open http://localhost:3000 and sign in with a configured provider account.
+This starts the preserved legacy app from `apps/legacy`. Open http://localhost:3000 and sign in with a configured provider account.
 
 ## Environment Variables
 
-All variables are validated in `src/env/server.ts` before the app boots, ensuring misconfigurations fail fast:
+All variables are validated in `apps/legacy/src/env/server.ts` before the app boots, ensuring misconfigurations fail fast:
 
 | Variable                                                 | Description                                                       |
 | -------------------------------------------------------- | ----------------------------------------------------------------- |
@@ -119,6 +127,8 @@ Create a `.env.local` file mirroring these keys before running the app.
 
 ## Development Workflow
 
+The default workspace commands target `apps/legacy` until the new apps are ready for cutover.
+
 - `pnpm dev` – Next.js dev server with hot reload.
 - `pnpm lint` – ESLint (configured for Next.js, React hooks, and file-name conventions).
 - `pnpm format` – Prettier with Tailwind class sorting.
@@ -126,6 +136,8 @@ Create a `.env.local` file mirroring these keys before running the app.
 - `pnpm start` – Run the production build locally.
 
 ## Database & Migrations
+
+Legacy schemas currently live in `apps/legacy/src/db/schema`.
 
 - Schemas live in `src/db/schema`. Update them before generating migrations.
 - Drizzle config (`drizzle.config.ts`) points to `./src/db/migrations` and uses the same `DATABASE_URL` as the app.

@@ -1,0 +1,35 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@ams/domain": ["../../packages/domain/src/index.ts"],
+      "@ams/domain/*": ["../../packages/domain/src/*"],
+      "@ams/contracts": ["../../packages/contracts/src/index.ts"],
+      "@ams/contracts/*": ["../../packages/contracts/src/*"],
+      "@ams/db": ["../../packages/db/src/index.ts"],
+      "@ams/db/*": ["../../packages/db/src/*"],
+      "@ams/auth": ["../../packages/auth/src/index.ts"],
+      "@ams/auth/*": ["../../packages/auth/src/*"],
+      "@ams/permissions": ["../../packages/permissions/src/index.ts"],
+      "@ams/permissions/*": ["../../packages/permissions/src/*"],
+      "@ams/config": ["../../packages/config/src/index.ts"],
+      "@ams/config/*": ["../../packages/config/src/*"],
+      "@/application/*": ["./src/*"],
+      "@/auth/*": ["../../packages/auth/src/*"],
+      "@/db": ["../../packages/db/src/index.ts"],
+      "@/db/*": ["../../packages/db/src/*"],
+      "@/domain/*": ["../../packages/domain/src/*"],
+      "@/env/*": ["../../packages/config/src/env/*"],
+      "@/types/database": ["../../packages/db/src/types/database.ts"],
+      "@/types/lessons": ["../../packages/db/src/types/lessons.ts"],
+      "@/types/lesson-form": ["../../packages/contracts/src/types/lesson-form.ts"],
+      "@/types/lesson-routines": ["../../packages/contracts/src/types/lesson-routines.ts"],
+      "@/types/*": ["../../packages/contracts/src/types/*"],
+      "@/ui/*": ["./src/ui/*"],
+      "@/utils": ["./src/utils/index.ts"],
+      "@/utils/*": ["./src/utils/*"]
+    }
+  },
+  "include": ["src/**/*.ts", "src/**/*.tsx"]
+}

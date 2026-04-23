@@ -1,0 +1,16 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@ams/domain": ["../../packages/domain/src/index.ts"],
+      "@ams/domain/*": ["../../packages/domain/src/*"],
+      "@/db/schema": ["../../packages/db/src/schema/index.ts"],
+      "@/db/schema/*": ["../../packages/db/src/schema/*"],
+      "@/domain/*": ["../../packages/domain/src/*"],
+      "@/types/database": ["../../packages/db/src/types/database.ts"],
+      "@/types/*": ["./src/types/*"]
+    }
+  },
+  "include": ["src/**/*.ts", "src/**/*.tsx"]
+}

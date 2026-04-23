@@ -1,0 +1,1 @@
+ALTER TYPE "public"."performance_source" ADD VALUE 'strength' BEFORE 'trackman';

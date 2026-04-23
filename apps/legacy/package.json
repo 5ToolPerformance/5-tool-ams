@@ -1,0 +1,6 @@
+{
+  "name": "@ams/legacy",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Legacy AMS application kept live during copy-first monorepo migration."
+}

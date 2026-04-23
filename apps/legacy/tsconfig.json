@@ -1,0 +1,33 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "paths": {
+      "@/*": ["./src/*"],
+      "@/application/auth/auth-context": ["./src/application/auth/auth-context.ts"],
+      "@/application/auth/client-auth": ["./src/application/auth/client-auth.ts"],
+      "@/application/auth/http": ["./src/application/auth/http.ts"],
+      "@/application/auth/page-guards": ["./src/application/auth/page-guards.ts"],
+      "@ams/domain": ["../../packages/domain/src/index.ts"],
+      "@ams/contracts": ["../../packages/contracts/src/index.ts"],
+      "@ams/db": ["../../packages/db/src/index.ts"],
+      "@ams/application": ["../../packages/application/src/index.ts"],
+      "@ams/auth": ["../../packages/auth/src/index.ts"],
+      "@ams/permissions": ["../../packages/permissions/src/index.ts"],
+      "@ams/config": ["../../packages/config/src/index.ts"],
+      "@ams/observability": ["../../packages/observability/src/index.ts"]
+    }
+  },
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts"
+  ],
+  "exclude": ["node_modules"]
+}

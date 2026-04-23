@@ -1,0 +1,34 @@
+{
+  "name": "portal",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "sourceRoot": "apps/portal/src",
+  "tags": ["scope:portal", "type:app"]
+  ,
+  "targets": {
+    "dev": {
+      "command": "next dev .",
+      "options": {
+        "cwd": "apps/portal"
+      }
+    },
+    "build": {
+      "command": "next build .",
+      "options": {
+        "cwd": "apps/portal"
+      }
+    },
+    "start": {
+      "command": "next start .",
+      "options": {
+        "cwd": "apps/portal"
+      }
+    },
+    "test": {
+      "command": "jest --config jest.config.js",
+      "options": {
+        "cwd": "apps/portal"
+      }
+    }
+  }
+}

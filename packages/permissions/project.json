@@ -1,0 +1,7 @@
+{
+  "name": "permissions",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "library",
+  "sourceRoot": "packages/permissions/src",
+  "tags": ["type:package", "layer:permissions"]
+}

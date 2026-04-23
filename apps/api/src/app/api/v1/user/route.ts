@@ -1,0 +1,20 @@
+import { NextResponse } from "next/server";
+
+import { getAuthContext, requireRole } from "@/application/auth/auth-context";
+import { toAuthErrorResponse } from "@/application/auth/http";
+import { getAllCoachesScoped, getAllUsersScoped, getUserById, getUserByIdScoped } from "@ams/application/users/userFunctions";
+
+export async function GET() {
+  try {
+    const ctx = await getAuthContext();
+    requireRole(ctx, ["coach", "admin"]);
+
+    const allUsers = await getAllUsersScoped(ctx.facilityId);
+
+    return NextResponse.json(allUsers);
+  } catch (error) {
+    const authResponse = toAuthErrorResponse(error);
+    if (authResponse) return authResponse;
+    return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
+  }
+}
