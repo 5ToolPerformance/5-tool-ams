@@ -8,52 +8,14 @@ import {
   applyActorToSession,
   applyActorToToken,
   loadAuthSessionState,
-  type AuthSessionQueries,
 } from "@ams/auth";
+import { createAuthSessionQueries } from "@ams/application/auth/db-queries";
 import db from "@ams/db";
-import { allowedUsers, playerInformation, userRoles, users } from "@ams/db/schema";
+import { allowedUsers } from "@ams/db/schema";
 import { DEFAULT_ORGANIZATION_ID } from "@ams/domain/organizations/constants";
 import { env } from "@/env/server";
 
-const authSessionQueries: AuthSessionQueries = {
-  async findActorIdentity(userId) {
-    const [identity] = await db
-      .select({
-        id: users.id,
-        email: users.email,
-        systemRole: users.systemRole,
-        role: users.role,
-        access: users.access,
-        isActive: users.isActive,
-        facilityId: users.facilityId,
-      })
-      .from(users)
-      .where(eq(users.id, userId))
-      .limit(1);
-
-    return identity ?? null;
-  },
-  async listMemberships(userId) {
-    return db
-      .select({
-        facilityId: userRoles.facilityId,
-        role: userRoles.role,
-        access: userRoles.access,
-        isActive: userRoles.isActive,
-      })
-      .from(userRoles)
-      .where(eq(userRoles.userId, userId));
-  },
-  async findPlayerIdByUserId(userId) {
-    const [player] = await db
-      .select({ id: playerInformation.id })
-      .from(playerInformation)
-      .where(eq(playerInformation.userId, userId))
-      .limit(1);
-
-    return player?.id ?? null;
-  },
-};
+const authSessionQueries = createAuthSessionQueries();
 
 async function canUseGoogleSignIn(email: string) {
   const [allowed] = await db

@@ -19519,14 +19519,14 @@
         "source": "contracts",
         "target": "npm:next-auth",
         "type": "static"
+      },
+      {
+        "source": "contracts",
+        "target": "auth",
+        "type": "static"
       }
     ],
     "config": [
-      {
-        "source": "config",
-        "target": "npm:@t3-oss/env-nextjs",
-        "type": "static"
-      },
       {
         "source": "config",
         "target": "npm:dotenv",
@@ -19540,6 +19540,11 @@
       {
         "source": "config",
         "target": "npm:zod",
+        "type": "static"
+      },
+      {
+        "source": "config",
+        "target": "npm:@t3-oss/env-nextjs",
         "type": "static"
       }
     ],
@@ -19575,17 +19580,27 @@
         "source": "auth",
         "target": "domain",
         "type": "static"
+      },
+      {
+        "source": "auth",
+        "target": "npm:next-auth",
+        "type": "static"
       }
     ],
     "db": [
       {
         "source": "db",
-        "target": "npm:drizzle-orm",
+        "target": "npm:drizzle-kit",
         "type": "static"
       },
       {
         "source": "db",
         "target": "config",
+        "type": "static"
+      },
+      {
+        "source": "db",
+        "target": "npm:drizzle-orm",
         "type": "static"
       },
       {
@@ -19794,11 +19809,6 @@
       },
       {
         "source": "portal",
-        "target": "config",
-        "type": "dynamic"
-      },
-      {
-        "source": "portal",
         "target": "domain",
         "type": "static"
       },
@@ -19824,7 +19834,17 @@
       },
       {
         "source": "portal",
+        "target": "npm:@auth/drizzle-adapter",
+        "type": "static"
+      },
+      {
+        "source": "portal",
         "target": "npm:drizzle-orm",
+        "type": "static"
+      },
+      {
+        "source": "portal",
+        "target": "npm:next-auth",
         "type": "static"
       },
       {
@@ -19834,12 +19854,22 @@
       },
       {
         "source": "portal",
-        "target": "npm:@auth/drizzle-adapter",
+        "target": "npm:@t3-oss/env-nextjs",
         "type": "static"
       },
       {
         "source": "portal",
-        "target": "npm:next-auth",
+        "target": "npm:dotenv",
+        "type": "static"
+      },
+      {
+        "source": "portal",
+        "target": "npm:dotenv-expand",
+        "type": "static"
+      },
+      {
+        "source": "portal",
+        "target": "npm:zod",
         "type": "static"
       },
       {
@@ -19951,11 +19981,6 @@
       },
       {
         "source": "ams",
-        "target": "config",
-        "type": "dynamic"
-      },
-      {
-        "source": "ams",
         "target": "domain",
         "type": "static"
       },
@@ -20006,17 +20031,37 @@
       },
       {
         "source": "ams",
-        "target": "npm:drizzle-orm",
-        "type": "static"
-      },
-      {
-        "source": "ams",
         "target": "npm:@auth/drizzle-adapter",
         "type": "static"
       },
       {
         "source": "ams",
+        "target": "npm:drizzle-orm",
+        "type": "static"
+      },
+      {
+        "source": "ams",
         "target": "npm:next-auth",
+        "type": "static"
+      },
+      {
+        "source": "ams",
+        "target": "npm:@t3-oss/env-nextjs",
+        "type": "static"
+      },
+      {
+        "source": "ams",
+        "target": "npm:dotenv",
+        "type": "static"
+      },
+      {
+        "source": "ams",
+        "target": "npm:dotenv-expand",
+        "type": "static"
+      },
+      {
+        "source": "ams",
+        "target": "npm:zod",
         "type": "static"
       },
       {
@@ -20108,11 +20153,6 @@
       },
       {
         "source": "api",
-        "target": "config",
-        "type": "dynamic"
-      },
-      {
-        "source": "api",
         "target": "application",
         "type": "static"
       },
@@ -20153,7 +20193,17 @@
       },
       {
         "source": "api",
-        "target": "npm:@auth/drizzle-adapter",
+        "target": "npm:@t3-oss/env-nextjs",
+        "type": "static"
+      },
+      {
+        "source": "api",
+        "target": "npm:dotenv",
+        "type": "static"
+      },
+      {
+        "source": "api",
+        "target": "npm:dotenv-expand",
         "type": "static"
       },
       {
@@ -50964,5 +51014,5 @@
   },
   "version": "6.0",
   "errors": [],
-  "computedAt": 1776969273653
+  "computedAt": 1777296216133
 }
