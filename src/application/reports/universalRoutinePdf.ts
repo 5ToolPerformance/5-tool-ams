@@ -5,7 +5,7 @@ function escapeHtml(value: string) {
     .replaceAll("&", "&amp;")
     .replaceAll("<", "&lt;")
     .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
+    .replaceAll("\"", "&quot;")
     .replaceAll("'", "&#39;");
 }
 
@@ -25,7 +25,7 @@ function formatDate(value: Date | string | null | undefined) {
 
 function renderList(items: string[]) {
   if (items.length === 0) {
-    return `<p class="routine-report-muted">None listed.</p>`;
+    return "<p class=\"routine-report-muted\">None listed.</p>";
   }
 
   return `<div class="routine-report-pill-row">${items
@@ -169,13 +169,13 @@ export function getUniversalRoutinePdfHtml(
                                         `
                                       )
                                       .join("")}</ul>`
-                                  : `<p class="routine-report-copy routine-report-muted">No drills listed.</p>`
+                                  : "<p class=\"routine-report-copy routine-report-muted\">No drills listed.</p>"
                               }
                             </div>
                           `
                         )
                         .join("")}</div>`
-                    : `<p class="routine-report-copy routine-report-muted">No blocks listed.</p>`
+                    : "<p class=\"routine-report-copy routine-report-muted\">No blocks listed.</p>"
                 }
               </div>
             </section>

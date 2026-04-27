@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "nx": "powershell -NoProfile -Command \"$env:NX_ISOLATE_PLUGINS='false'; $env:NX_DAEMON='false'; nx $args\"",
     "dev": "next dev apps/legacy",
     "build": "next build apps/legacy",
     "start": "next start apps/legacy",
@@ -15,6 +16,10 @@
     "build:portal": "pnpm --dir apps/portal build",
     "dev:ams": "pnpm --dir apps/ams dev",
     "build:ams": "pnpm --dir apps/ams build",
+    "typecheck:all": "powershell -NoProfile -Command \"pnpm -s tsc -p apps/legacy/tsconfig.json --noEmit; if ($LASTEXITCODE) { exit $LASTEXITCODE }; pnpm -s tsc -p apps/ams/tsconfig.json --noEmit; if ($LASTEXITCODE) { exit $LASTEXITCODE }; pnpm -s tsc -p apps/portal/tsconfig.json --noEmit; if ($LASTEXITCODE) { exit $LASTEXITCODE }; $env:NODE_ENV='test'; $env:CRON_SECRET='test-cron-secret'; $env:API_INTERNAL_AUTH_SECRET='test-internal-api-secret-with-32-chars'; pnpm -s tsc -p apps/api/tsconfig.json --noEmit; if ($LASTEXITCODE) { exit $LASTEXITCODE }; pnpm -s tsc -p packages/application/tsconfig.json --noEmit; if ($LASTEXITCODE) { exit $LASTEXITCODE }; pnpm -s tsc -p packages/auth/tsconfig.json --noEmit; if ($LASTEXITCODE) { exit $LASTEXITCODE }; pnpm -s tsc -p packages/config/tsconfig.json --noEmit; if ($LASTEXITCODE) { exit $LASTEXITCODE }; pnpm -s tsc -p packages/contracts/tsconfig.json --noEmit; if ($LASTEXITCODE) { exit $LASTEXITCODE }; pnpm -s tsc -p packages/db/tsconfig.json --noEmit; if ($LASTEXITCODE) { exit $LASTEXITCODE }; pnpm -s tsc -p packages/domain/tsconfig.json --noEmit; if ($LASTEXITCODE) { exit $LASTEXITCODE }; pnpm -s tsc -p packages/observability/tsconfig.json --noEmit; if ($LASTEXITCODE) { exit $LASTEXITCODE }; pnpm -s tsc -p packages/permissions/tsconfig.json --noEmit\"",
+    "lint:all": "powershell -NoProfile -Command \"$env:NX_ISOLATE_PLUGINS='false'; $env:NX_DAEMON='false'; eslint .\"",
+    "test:all": "powershell -NoProfile -Command \"pnpm test; if ($LASTEXITCODE) { exit $LASTEXITCODE }; pnpm --dir apps/api test; if ($LASTEXITCODE) { exit $LASTEXITCODE }; pnpm --dir apps/ams test; if ($LASTEXITCODE) { exit $LASTEXITCODE }; pnpm --dir apps/portal test\"",
+    "build:all": "powershell -NoProfile -Command \"pnpm build:legacy; if ($LASTEXITCODE) { exit $LASTEXITCODE }; pnpm build:api; if ($LASTEXITCODE) { exit $LASTEXITCODE }; pnpm build:ams; if ($LASTEXITCODE) { exit $LASTEXITCODE }; pnpm build:portal\"",
     "drizzle:generate": "pnpm --dir packages/db exec drizzle-kit generate --config drizzle.config.ts",
     "drizzle:migrate": "pnpm --dir packages/db exec drizzle-kit migrate --config drizzle.config.ts",
     "drizzle:push": "pnpm --dir packages/db exec drizzle-kit push --config drizzle.config.ts",

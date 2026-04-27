@@ -19,6 +19,7 @@ export const env = createEnv({
   server: {
     NODE_ENV: z.enum(["development", "production", "test"]),
     CRON_SECRET: z.string(),
+    API_INTERNAL_AUTH_SECRET: z.string().min(32),
   },
   onValidationError: (error) => {
     console.error("Invalid API environment variables:", error);

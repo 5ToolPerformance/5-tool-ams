@@ -14,13 +14,21 @@
       "@/application/auth/http": ["./src/application/auth/http.ts"],
       "@/application/auth/page-guards": ["./src/application/auth/page-guards.ts"],
       "@ams/domain": ["../../packages/domain/src/index.ts"],
+      "@ams/domain/*": ["../../packages/domain/src/*"],
       "@ams/contracts": ["../../packages/contracts/src/index.ts"],
+      "@ams/contracts/*": ["../../packages/contracts/src/*"],
       "@ams/db": ["../../packages/db/src/index.ts"],
+      "@ams/db/*": ["../../packages/db/src/*"],
       "@ams/application": ["../../packages/application/src/index.ts"],
+      "@ams/application/*": ["../../packages/application/src/*"],
       "@ams/auth": ["../../packages/auth/src/index.ts"],
+      "@ams/auth/*": ["../../packages/auth/src/*"],
       "@ams/permissions": ["../../packages/permissions/src/index.ts"],
+      "@ams/permissions/*": ["../../packages/permissions/src/*"],
       "@ams/config": ["../../packages/config/src/index.ts"],
-      "@ams/observability": ["../../packages/observability/src/index.ts"]
+      "@ams/config/*": ["../../packages/config/src/*"],
+      "@ams/observability": ["../../packages/observability/src/index.ts"],
+      "@ams/observability/*": ["../../packages/observability/src/*"]
     }
   },
   "include": [

@@ -170,7 +170,9 @@ Ensure the cron endpoint checks `CRON_SECRET` and only runs in trusted environme
 
 1. Provision environment variables in your hosting provider (Vercel recommended).
 2. Configure the cron job (Vercel or external scheduler) to call `/api/cron/armcare-sync`.
-3. Deploy via `vercel --prod` or your CI pipeline after `pnpm build` passes.
+3. For split `apps/api` deployments, configure server-only internal API auth as
+   described in `docs/api-auth.md`.
+4. Deploy via `vercel --prod` or your CI pipeline after `pnpm build` passes.
 
 ## Contributing
 

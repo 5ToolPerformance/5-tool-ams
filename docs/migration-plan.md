@@ -129,6 +129,9 @@ Readiness basis:
 - Environment ownership split:
   - `apps/api` owns DB, cron, provider, integration, and email secrets
   - `apps/portal` and `apps/ams` own only app-specific runtime/public config plus API/auth client settings
+- Internal API calls from `apps/ams` and `apps/portal` must use the signed
+  bearer token contract in `docs/api-auth.md`; raw identity headers are not
+  accepted by `apps/api`.
 
 ## Test Plan
 - Baseline before extraction:

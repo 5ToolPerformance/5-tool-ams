@@ -5,6 +5,8 @@
     "paths": {
       "@ams/domain": ["../../packages/domain/src/index.ts"],
       "@ams/domain/*": ["../../packages/domain/src/*"],
+      "@ams/config": ["../../packages/config/src/index.ts"],
+      "@ams/config/*": ["../../packages/config/src/*"],
       "@/db": ["./src/index.ts"],
       "@/db/*": ["./src/*"],
       "@/db/schema": ["./src/schema/index.ts"],

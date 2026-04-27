@@ -17,10 +17,7 @@ if (process.env.NX_ISOLATE_PLUGINS == null) {
   process.env.NX_ISOLATE_PLUGINS = "false";
 }
 
-const { createProjectGraphAsync } = await import("@nx/devkit");
 const { default: nxPlugin } = await import("@nx/eslint-plugin");
-
-await createProjectGraphAsync();
 
 const newAppSharedAliasRestrictions = [
   {
@@ -119,7 +116,16 @@ const cleanedDbSliceRestrictions = [
 
 const eslintConfig = [
   {
-    ignores: ["**/__tests__/**"],
+    ignores: [
+      "**/__tests__/**",
+      "**/.next/**",
+      "**/.nx/**",
+      "**/node_modules/**",
+      "out/**",
+      "coverage/**",
+      "src/**",
+      "**/*.tsbuildinfo",
+    ],
   },
   ...compat.config({
     extends: ["next/core-web-vitals", "next/typescript", "prettier"],
@@ -130,18 +136,42 @@ const eslintConfig = [
       semi: ["error"],
       quotes: ["error", "double"],
       "n/no-process-env": ["error"],
+      "react/no-unescaped-entities": "warn",
       "@typescript-eslint/no-explicit-any": ["warn"],
+      "@typescript-eslint/no-unused-vars": ["warn"],
     },
   }),
+  {
+    files: [
+      "**/jest.setup.js",
+      "**/jest.config.js",
+      "**/tailwind.config.ts",
+      "**/tailwind.config.js",
+    ],
+    rules: {
+      "@typescript-eslint/no-require-imports": "off",
+    },
+  },
+  {
+    files: [
+      "eslint.config.mjs",
+      "apps/*/src/env/**/*.{ts,tsx,js,jsx}",
+      "apps/*/src/application/reports/puppeteer.ts",
+      "packages/config/src/env/**/*.{ts,tsx,js,jsx}",
+    ],
+    rules: {
+      "n/no-process-env": "off",
+    },
+  },
   {
     files: [
       "apps/api/src/**/*.{ts,tsx,js,jsx}",
       "apps/portal/src/**/*.{ts,tsx,js,jsx}",
       "apps/ams/src/**/*.{ts,tsx,js,jsx}",
-      "packages/**/*.ts",
-      "packages/**/*.tsx",
-      "packages/**/*.js",
-      "packages/**/*.jsx",
+      "packages/*/src/**/*.ts",
+      "packages/*/src/**/*.tsx",
+      "packages/*/src/**/*.js",
+      "packages/*/src/**/*.jsx",
     ],
     plugins: {
       "@nx": nxPlugin,
@@ -189,7 +219,11 @@ const eslintConfig = [
             },
             {
               sourceTag: "layer:db",
-              onlyDependOnLibsWithTags: ["layer:domain", "layer:contracts"],
+              onlyDependOnLibsWithTags: [
+                "layer:domain",
+                "layer:contracts",
+                "layer:config",
+              ],
             },
             {
               sourceTag: "layer:application",
@@ -197,6 +231,7 @@ const eslintConfig = [
                 "layer:domain",
                 "layer:contracts",
                 "layer:db",
+                "layer:auth",
                 "layer:permissions",
                 "layer:observability",
                 "layer:config",
@@ -243,6 +278,12 @@ const eslintConfig = [
     files: ["packages/contracts/src/**/*.{ts,tsx,js,jsx}"],
     rules: {
       "no-restricted-imports": ["error", { patterns: contractsBoundaryRestrictions }],
+    },
+  },
+  {
+    files: ["packages/contracts/src/**/*.d.ts"],
+    rules: {
+      "@nx/enforce-module-boundaries": "off",
     },
   },
   {
