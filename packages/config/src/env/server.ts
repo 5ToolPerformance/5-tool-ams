@@ -1,9 +1,5 @@
 import { createEnv } from "@t3-oss/env-nextjs";
-import { config } from "dotenv";
-import { expand } from "dotenv-expand";
 import { z } from "zod";
-
-expand(config({ path: "./.env.local" }));
 
 const isTestEnv = process.env.NODE_ENV === "test";
 

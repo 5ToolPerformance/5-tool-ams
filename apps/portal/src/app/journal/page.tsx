@@ -7,6 +7,8 @@ import { requireClientPortalAccess } from "@/application/auth/client-auth";
 import { PortalPlayerSwitcher } from "@/ui/features/client-portal/PortalPlayerSwitcher";
 import { JournalPageClient } from "@/ui/features/client-portal/journal/JournalPageClient";
 
+export const dynamic = "force-dynamic";
+
 export default async function PortalJournalPage({
   searchParams,
 }: {

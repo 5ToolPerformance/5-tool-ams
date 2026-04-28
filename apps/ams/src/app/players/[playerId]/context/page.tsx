@@ -3,6 +3,8 @@ import { Suspense } from "react";
 import { getContextDocumentsData } from "@ams/application/players/context-documents/getContextDocumentsData";
 import { ContextDocumentsTab } from "@/ui/features/athlete-context-documents/ContextDocumentsTab";
 
+export const dynamic = "force-dynamic";
+
 export default async function PlayerContextDocumentsPage({
   params,
 }: {

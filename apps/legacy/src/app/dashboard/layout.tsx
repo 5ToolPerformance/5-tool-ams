@@ -13,6 +13,8 @@ interface DashboardLayoutProps {
   children: ReactNode;
 }
 
+export const dynamic = "force-dynamic";
+
 export default async function DashboardLayout({ children }: DashboardLayoutProps) {
   const ctx = await getAuthContext();
 

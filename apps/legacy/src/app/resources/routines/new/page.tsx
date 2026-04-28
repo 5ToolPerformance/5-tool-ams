@@ -36,6 +36,8 @@ async function getUniversalRoutineFormConfig(
   };
 }
 
+export const dynamic = "force-dynamic";
+
 export default async function NewResourceRoutinePage() {
   const ctx = await getAuthContext();
   const config = await getUniversalRoutineFormConfig(ctx.facilityId, {

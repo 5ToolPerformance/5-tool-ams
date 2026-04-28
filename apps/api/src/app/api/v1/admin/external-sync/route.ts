@@ -41,7 +41,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       {
         error: "Failed to sync external data",
-        details: error instanceof Error ? error.message : "Unknown error",
         timestamp: new Date().toISOString(),
       },
       {

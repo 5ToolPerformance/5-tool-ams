@@ -31,6 +31,8 @@ function parseRoutineIds(value: string | string[] | undefined) {
   return Array.from(new Set(parts));
 }
 
+export const dynamic = "force-dynamic";
+
 export default async function DevelopmentReportPage({
   params,
   searchParams,

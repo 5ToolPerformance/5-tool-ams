@@ -10,6 +10,8 @@ import { getOptionalClientAuthContext } from "@/application/auth/client-auth";
 import { formatDateShort } from "@/utils/dates";
 import { PortalMagicLinkCard } from "@/ui/features/client-portal/PortalMagicLinkCard";
 
+export const dynamic = "force-dynamic";
+
 export default async function PortalInvitePage({
   params,
 }: {

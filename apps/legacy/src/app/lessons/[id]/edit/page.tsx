@@ -12,6 +12,8 @@ import { DebugFormState } from "@/ui/features/lesson-form/DebugFormState";
 import { LessonFormProvider } from "@/ui/features/lesson-form/LessonFormProvider";
 import { LessonStepper } from "@/ui/features/lesson-form/LessonStepper";
 
+export const dynamic = "force-dynamic";
+
 export default async function EditLessonPage({
   params,
 }: {

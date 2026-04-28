@@ -2,6 +2,8 @@ import { listDrillsForLibrary } from "@/application/drills/listDrillsForLibrary"
 import { getAuthContext } from "@/application/auth/auth-context";
 import { DrillsLibraryPageClient } from "@/ui/features/drills/DrillsLibraryPageClient";
 
+export const dynamic = "force-dynamic";
+
 export default async function ResourcesDrillsPage() {
   const ctx = await getAuthContext();
 

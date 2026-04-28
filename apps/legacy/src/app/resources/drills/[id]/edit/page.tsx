@@ -8,6 +8,8 @@ import {
 } from "@/application/auth/auth-context";
 import { DrillForm } from "@/ui/features/drills/DrillForm";
 
+export const dynamic = "force-dynamic";
+
 export default async function EditResourceDrillPage({
   params,
 }: {

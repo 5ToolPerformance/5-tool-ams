@@ -12,6 +12,8 @@ import { PageProps } from "@/types/page";
 
 type PlayerPageProps = PageProps<{ id: string }>;
 
+export const dynamic = "force-dynamic";
+
 export default async function PlayerReportPage({
   params,
   searchParams,

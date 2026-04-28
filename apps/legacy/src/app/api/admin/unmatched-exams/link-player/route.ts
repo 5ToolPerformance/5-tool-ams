@@ -44,7 +44,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       {
         error: "Failed to link player",
-        details: error instanceof Error ? error.message : String(error),
       },
       { status: 500 }
     );

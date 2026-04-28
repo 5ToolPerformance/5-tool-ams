@@ -25,7 +25,6 @@ export async function GET() {
     return NextResponse.json(
       {
         error: "Failed to fetch data",
-        details: error instanceof Error ? error.message : String(error),
       },
       { status: 500 }
     );

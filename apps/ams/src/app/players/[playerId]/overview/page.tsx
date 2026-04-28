@@ -5,6 +5,8 @@ import { getOverviewData } from "@ams/application/players/overview/getOverviewDa
 import { OverviewTab } from "@/ui/features/athlete-overview/OverviewTab";
 import { OverviewSkeleton } from "@/ui/features/athlete-overview/skeletons/OverviewSkeleton";
 
+export const dynamic = "force-dynamic";
+
 export default async function PlayerOverviewPage({
   params,
 }: {

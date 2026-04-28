@@ -42,13 +42,6 @@ export const env = createEnv({
     PORTAL_EMAIL_FROM: isTestEnv
       ? z.string().email().default("portal@example.com")
       : z.string().email(),
-    ARMCARE_STATUS: requiredString("staging"),
-    ARMCARE_USERNAME: requiredString("test-armcare-user"),
-    ARMCARE_PASSWORD: requiredString("test-armcare-password"),
-    ARMCARE_AUTH_URL_STAGING: requiredUrl("https://armcare-staging.example.com/auth"),
-    ARMCARE_API_URL_STAGING: requiredUrl("https://armcare-staging.example.com/api"),
-    ARMCARE_AUTH_URL_PROD: requiredUrl("https://armcare.example.com/auth"),
-    ARMCARE_API_URL_PROD: requiredUrl("https://armcare.example.com/api"),
     AZURE_STORAGE_ACCOUNT_NAME: requiredString("teststorage"),
     AZURE_STORAGE_CONNECTION_STRING: requiredString(
       "DefaultEndpointsProtocol=https;AccountName=teststorage;AccountKey=dGVzdA==;EndpointSuffix=core.windows.net"

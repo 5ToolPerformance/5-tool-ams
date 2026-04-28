@@ -7,6 +7,8 @@ import {
 
 type LessonPageProps = PageProps<{ id: string }, { playerId?: string }>;
 
+export const dynamic = "force-dynamic";
+
 export default async function LessonPage({
   params,
   searchParams,

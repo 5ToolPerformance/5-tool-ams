@@ -4,6 +4,8 @@ import { getTrainingTabData } from "@/application/players/training";
 import { TrainingTab } from "@/ui/features/athlete-training/TrainingTab";
 import { TrainingSkeleton } from "@/ui/features/athlete-training/skeletons/TrainingSkeleton";
 
+export const dynamic = "force-dynamic";
+
 export default async function TrainingPage({
   params,
 }: {

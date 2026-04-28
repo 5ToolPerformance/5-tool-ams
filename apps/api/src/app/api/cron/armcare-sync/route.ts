@@ -20,7 +20,6 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(
       {
         error: "Failed to sync external armcare data",
-        details: error instanceof Error ? error.message : "Unknown error",
         timestamp: new Date().toISOString(),
       },
       {

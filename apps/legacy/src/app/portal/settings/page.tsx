@@ -5,6 +5,8 @@ import { requireClientPortalAccess } from "@/application/auth/client-auth";
 import { ThemeSwitcher } from "@/ui/core/layout/ThemeSwitcher";
 import { PortalSignOutButton } from "@/ui/features/client-portal/PortalSignOutButton";
 
+export const dynamic = "force-dynamic";
+
 export default async function PortalSettingsPage() {
   const authContext = await requireClientPortalAccess();
   const context = await getClientPortalContext(authContext.userId, authContext.facilityId);

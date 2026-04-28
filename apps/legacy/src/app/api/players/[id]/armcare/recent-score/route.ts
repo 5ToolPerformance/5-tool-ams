@@ -32,10 +32,10 @@ export async function GET(
   } catch (error) {
     const authResponse = toAuthErrorResponse(error);
     if (authResponse) return authResponse;
-    console.error("Error fetching lessons for player:", error);
+    console.error("Error fetching ArmCare recent score:", error);
 
     return NextResponse.json(
-      { error: "Failed to fetch lessons" },
+      { error: "Failed to fetch ArmCare recent score" },
       { status: 500 }
     );
   }

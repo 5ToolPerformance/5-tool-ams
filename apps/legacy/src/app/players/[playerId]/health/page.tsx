@@ -4,6 +4,8 @@ import { getHealthTabData } from "@/application/players/health/getHealthTabData"
 import { HealthTab } from "@/ui/features/athlete-health/HealthTab";
 import { HealthSkeleton } from "@/ui/features/athlete-health/skeletons/HealthSkeleton";
 
+export const dynamic = "force-dynamic";
+
 export default async function PlayerHealthPage({
   params,
 }: {

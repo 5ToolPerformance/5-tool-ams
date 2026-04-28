@@ -27,6 +27,8 @@ interface PlayerLayoutProps {
   children: ReactNode;
 }
 
+export const dynamic = "force-dynamic";
+
 export default async function PlayerLayout({
   params,
   children,

@@ -10,6 +10,8 @@ interface DevelopmentPageProps {
   searchParams: Promise<{ discipline?: string }>;
 }
 
+export const dynamic = "force-dynamic";
+
 export default async function DevelopmentPage({
   params,
   searchParams,

@@ -4,6 +4,8 @@ import { Card, CardBody } from "@heroui/react";
 
 import { auth } from "@/auth";
 
+export const dynamic = "force-dynamic";
+
 export default async function Home() {
   const session = await auth();
   if (!session) {

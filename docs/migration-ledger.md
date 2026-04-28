@@ -34,3 +34,10 @@ This ledger tracks copy-first migration status. Source files remain in `apps/leg
 - With the Nx rule now active, `packages/auth` is now aligned with the target dependency graph; DB-backed actor/resource lookups are app-owned, while the shared package owns session/auth utility logic plus permission enforcement.
 - Cron schedules are API-owned. Root and `apps/legacy` Vercel configs intentionally do not schedule `/api/cron/*`; legacy cron route copies remain only for parity until legacy retirement.
 - Hawkin automatic sync is retired. Do not reintroduce Hawkin import jobs, Python worker calls, or active Hawkin matching UI without a new architecture review.
+- Build verification is centralized in `scripts/build-all.ps1`. Runtime-backed
+  pages/layouts are marked dynamic so `pnpm build:all` does not prerender with
+  live DB/session dependencies; see `docs/ops/build-verification.md`.
+- ArmCare remains the only active external sync integration. Sync is API-owned;
+  AMS and portal use server-side signed API proxies for ArmCare browser-facing
+  routes, and only API/legacy deployments require ArmCare credentials. See
+  `docs/ops/armcare-integration.md`.

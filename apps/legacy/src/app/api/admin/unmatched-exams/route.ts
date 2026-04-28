@@ -8,7 +8,7 @@ import {
   armcareExamsUnmatched,
   externalAthleteIds,
 } from "@/db/schema";
-import { getAuthContext, requireRole } from "@/application/auth/auth-context";
+import { assertPlayerAccess, getAuthContext, requireRole } from "@/application/auth/auth-context";
 import { toAuthErrorResponse } from "@/application/auth/http";
 
 export async function GET() {
@@ -39,6 +39,7 @@ export async function POST(request: NextRequest) {
     requireRole(ctx, ["admin"]);
 
     const { unmatchedExamId, playerId } = await request.json();
+    await assertPlayerAccess(ctx, playerId);
 
     const unmatchedExam = await db.query.armcareExamsUnmatched.findFirst({
       where: eq(armcareExamsUnmatched.id, unmatchedExamId),

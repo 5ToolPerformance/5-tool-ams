@@ -23,6 +23,8 @@ function toSingleValue(value: string | string[] | undefined): string | undefined
   return value;
 }
 
+export const dynamic = "force-dynamic";
+
 export default async function DashboardTabPage({
   params,
   searchParams,

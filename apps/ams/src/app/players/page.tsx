@@ -4,6 +4,8 @@ import { getPlayersDirectoryData } from "@ams/application/players/directory/getP
 import { getAuthContext } from "@/application/auth/auth-context";
 import PlayersPageClient from "@/ui/features/players/PlayersPageClient";
 
+export const dynamic = "force-dynamic";
+
 export default async function PlayersPage() {
   const ctx = await getAuthContext();
 

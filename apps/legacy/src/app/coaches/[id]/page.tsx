@@ -9,6 +9,8 @@ import { PageProps } from "@/types/page";
 
 type CoachPageProps = PageProps<{ id: string }>;
 
+export const dynamic = "force-dynamic";
+
 export default async function CoachPage({ params }: CoachPageProps) {
   const session = await auth();
   if (!session) return notFound();

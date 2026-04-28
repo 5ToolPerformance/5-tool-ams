@@ -7,6 +7,8 @@ import { ArrowLeft } from "lucide-react";
 import { ArmCareSummaryView } from "@/ui/features/athlete-health/ArmCareSummaryView";
 import { getLatestPlayerArmScore, getPlayerSummary, getUnmatchedExams, getUnmatchedPlayers, linkArmcarePlayer } from "@ams/db/queries/external-systems/armcare/armcareExamsRepository";
 
+export const dynamic = "force-dynamic";
+
 export default async function PlayerHealthArmCareSummaryPage({
   params,
 }: {

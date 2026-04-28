@@ -4,6 +4,8 @@ import { getClientPortalContext } from "@/application/client-portal/service";
 import { requireClientPortalAccess } from "@/application/auth/client-auth";
 import { PortalPlayerSwitcher } from "@/ui/features/client-portal/PortalPlayerSwitcher";
 
+export const dynamic = "force-dynamic";
+
 export default async function PortalAssistantPage({
   searchParams,
 }: {
