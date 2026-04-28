@@ -1,11 +1,13 @@
+import {
+  assertAllowedDrillFile,
+  buildDrillStorageKey,
+} from "@/application/files/fileUploadPolicy";
 import { createDrillFileLink } from "@ams/db/queries/drills/createDrillFileLink";
-import { isImageMime, isVideoMime } from "@ams/domain/drills/rules";
 import { DrillMediaItem } from "@ams/domain/drills/types";
-
-const MAX_FILE_SIZE_BYTES = 500 * 1024 * 1024;
 
 type LinkUploadedDrillFileParams = {
   drillId: string;
+  facilityId: string;
   uploadedBy: string;
   file: {
     fileId: string;
@@ -19,18 +21,26 @@ type LinkUploadedDrillFileParams = {
 export async function linkUploadedDrillFile(
   params: LinkUploadedDrillFileParams
 ): Promise<DrillMediaItem> {
-  const { drillId, uploadedBy, file } = params;
+  const { drillId, facilityId, uploadedBy, file } = params;
 
   if (!file.fileId || !file.storageKey || !file.originalName) {
     throw new Error("Missing file metadata");
   }
 
-  if (file.size > MAX_FILE_SIZE_BYTES) {
-    throw new Error("File too large");
-  }
+  const extension = assertAllowedDrillFile({
+    originalFileName: file.originalName,
+    mimeType: file.mimeType,
+    size: file.size,
+  });
+  const expectedStorageKey = buildDrillStorageKey({
+    facilityId,
+    drillId,
+    fileId: file.fileId,
+    extension,
+  });
 
-  if (!isImageMime(file.mimeType) && !isVideoMime(file.mimeType)) {
-    throw new Error("Only image and video files are allowed");
+  if (file.storageKey !== expectedStorageKey) {
+    throw new Error("Invalid file storage key");
   }
 
   const createdFile = await createDrillFileLink({

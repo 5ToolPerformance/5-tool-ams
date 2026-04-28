@@ -90,10 +90,6 @@ export function Sidebar({ isOpen, onToggle }: SidebarProps) {
       href: "/admin/unmatched-exams",
     },
     {
-      label: "Unmatched Hawkin Athletes",
-      href: "/admin/external-accounts/hawkin",
-    },
-    {
       label: "Allowed Users",
       href: "/admin/allowed-users",
     },

@@ -1,30 +1,29 @@
 import { NextResponse } from "next/server";
 
-import { getAuthContext } from "@/application/auth/auth-context";
+import { getAuthContext, requireRole } from "@/application/auth/auth-context";
 import { toAuthErrorResponse } from "@/application/auth/http";
-import { fetchInternalApi } from "@/lib/server/api-client";
 
 export async function GET() {
   try {
     const ctx = await getAuthContext();
-    const response = await fetchInternalApi(
-      ctx,
-      "/api/v1/admin/hawkin/unlinked-athletes",
-      {
-        method: "GET",
-        cache: "no-store",
-      }
-    );
-    const data = await response.json();
+    requireRole(ctx, ["admin"]);
 
-    return NextResponse.json(data, { status: response.status });
+    return NextResponse.json(
+      {
+        error: "Hawkin automatic integration is disabled",
+        athletes: [],
+        count: 0,
+        timestamp: new Date().toISOString(),
+      },
+      { status: 410 }
+    );
   } catch (error) {
     const authResponse = toAuthErrorResponse(error);
     if (authResponse) return authResponse;
 
     return NextResponse.json(
-      { error: "Failed to fetch athletes" },
-      { status: 502 }
+      { error: "Failed to check Hawkin integration status" },
+      { status: 500 }
     );
   }
 }

@@ -10,6 +10,10 @@ import { RouteParams } from "@/types/api";
 
 export const runtime = "nodejs";
 
+function safeHeaderFileName(fileName: string) {
+  return fileName.replace(/[\r\n"]/g, "_");
+}
+
 function buildHeaders(
   response: Response,
   fallback: {
@@ -44,7 +48,10 @@ function buildHeaders(
   }
 
   if (fallback.fileName) {
-    headers.set("Content-Disposition", `inline; filename="${fallback.fileName}"`);
+    headers.set(
+      "Content-Disposition",
+      `inline; filename="${safeHeaderFileName(fallback.fileName)}"`
+    );
   }
 
   headers.set("Cache-Control", "no-store");

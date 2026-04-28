@@ -389,11 +389,306 @@ importers:
         specifier: ^5
         version: 5.9.3
 
-  apps/api: {}
+  apps/api:
+    dependencies:
+      '@ams/application':
+        specifier: workspace:*
+        version: link:../../packages/application
+      '@ams/auth':
+        specifier: workspace:*
+        version: link:../../packages/auth
+      '@ams/config':
+        specifier: workspace:*
+        version: link:../../packages/config
+      '@ams/contracts':
+        specifier: workspace:*
+        version: link:../../packages/contracts
+      '@ams/db':
+        specifier: workspace:*
+        version: link:../../packages/db
+      '@ams/domain':
+        specifier: workspace:*
+        version: link:../../packages/domain
+      '@ams/observability':
+        specifier: workspace:*
+        version: link:../../packages/observability
+      '@ams/permissions':
+        specifier: workspace:*
+        version: link:../../packages/permissions
+      '@azure/storage-blob':
+        specifier: ^12.30.0
+        version: 12.30.0
+      '@neondatabase/serverless':
+        specifier: ^0.10.4
+        version: 0.10.4
+      '@sparticuz/chromium':
+        specifier: ^143.0.4
+        version: 143.0.4
+      '@t3-oss/env-nextjs':
+        specifier: ^0.12.0
+        version: 0.12.0(typescript@5.9.3)(zod@3.25.49)
+      clsx:
+        specifier: ^2.1.1
+        version: 2.1.1
+      date-fns:
+        specifier: ^4.1.0
+        version: 4.1.0
+      dotenv:
+        specifier: ^16.4.7
+        version: 16.5.0
+      dotenv-expand:
+        specifier: ^12.0.1
+        version: 12.0.2
+      drizzle-orm:
+        specifier: ^0.40.0
+        version: 0.40.1(@neondatabase/serverless@0.10.4)(@types/pg@8.11.6)(gel@2.1.0)(postgres@3.4.7)
+      jiti:
+        specifier: ^2.4.2
+        version: 2.4.2
+      next:
+        specifier: 15.1.11
+        version: 15.1.11(@babel/core@7.28.4)(babel-plugin-macros@3.1.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(sass@1.99.0)
+      next-auth:
+        specifier: 5.0.0-beta.29
+        version: 5.0.0-beta.29(next@15.1.11(@babel/core@7.28.4)(babel-plugin-macros@3.1.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(sass@1.99.0))(react@19.1.0)
+      papaparse:
+        specifier: ^5.5.3
+        version: 5.5.3
+      postgres:
+        specifier: ^3.4.5
+        version: 3.4.7
+      puppeteer-core:
+        specifier: ^24.40.0
+        version: 24.40.0
+      react:
+        specifier: ^19.0.0
+        version: 19.1.0
+      react-dom:
+        specifier: ^19.0.0
+        version: 19.1.0(react@19.1.0)
+      tailwind-merge:
+        specifier: ^3.3.0
+        version: 3.3.0
+      uuid:
+        specifier: ^13.0.0
+        version: 13.0.0
+      zod:
+        specifier: ^3.24.2
+        version: 3.25.49
+    devDependencies:
+      '@next/eslint-plugin-next':
+        specifier: ^15.1.7
+        version: 15.3.3
+      '@types/jest':
+        specifier: ^30.0.0
+        version: 30.0.0
+      '@types/node':
+        specifier: ^20
+        version: 20.17.57
+      '@types/react':
+        specifier: ^19
+        version: 19.1.6
+      '@types/react-dom':
+        specifier: ^19
+        version: 19.1.5(@types/react@19.1.6)
+      eslint:
+        specifier: ^9.20.1
+        version: 9.28.0(jiti@2.4.2)
+      eslint-config-next:
+        specifier: 15.1.7
+        version: 15.1.7(eslint@9.28.0(jiti@2.4.2))(typescript@5.9.3)
+      jest:
+        specifier: ^30.2.0
+        version: 30.2.0(@types/node@20.17.57)(babel-plugin-macros@3.1.0)(esbuild-register@3.6.0(esbuild@0.27.2))(ts-node@10.9.2(@types/node@20.17.57)(typescript@5.9.3))
+      jest-environment-jsdom:
+        specifier: ^30.2.0
+        version: 30.2.0
+      postcss:
+        specifier: ^8
+        version: 8.5.10
+      tailwindcss:
+        specifier: ^3.4.1
+        version: 3.4.17(ts-node@10.9.2(@types/node@20.17.57)(typescript@5.9.3))
+      typescript:
+        specifier: ^5
+        version: 5.9.3
 
   apps/legacy: {}
 
-  apps/portal: {}
+  apps/portal:
+    dependencies:
+      '@ams/application':
+        specifier: workspace:*
+        version: link:../../packages/application
+      '@ams/auth':
+        specifier: workspace:*
+        version: link:../../packages/auth
+      '@ams/config':
+        specifier: workspace:*
+        version: link:../../packages/config
+      '@ams/contracts':
+        specifier: workspace:*
+        version: link:../../packages/contracts
+      '@ams/db':
+        specifier: workspace:*
+        version: link:../../packages/db
+      '@ams/domain':
+        specifier: workspace:*
+        version: link:../../packages/domain
+      '@ams/observability':
+        specifier: workspace:*
+        version: link:../../packages/observability
+      '@ams/permissions':
+        specifier: workspace:*
+        version: link:../../packages/permissions
+      '@auth/drizzle-adapter':
+        specifier: ^1.9.1
+        version: 1.9.1
+      '@azure/storage-blob':
+        specifier: ^12.30.0
+        version: 12.30.0
+      '@heroui/react':
+        specifier: ^2.7.2
+        version: 2.7.9(@types/react@19.1.6)(framer-motion@12.16.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(tailwindcss@3.4.17(ts-node@10.9.2(@types/node@20.17.57)(typescript@5.9.3)))
+      '@internationalized/date':
+        specifier: ^3.8.1
+        version: 3.8.1
+      '@neondatabase/serverless':
+        specifier: ^0.10.4
+        version: 0.10.4
+      '@sparticuz/chromium':
+        specifier: ^143.0.4
+        version: 143.0.4
+      '@t3-oss/env-nextjs':
+        specifier: ^0.12.0
+        version: 0.12.0(typescript@5.9.3)(zod@3.25.49)
+      '@tabler/icons-react':
+        specifier: ^3.30.0
+        version: 3.34.0(react@19.1.0)
+      '@tanstack/react-form':
+        specifier: ^1.12.0
+        version: 1.12.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      class-variance-authority:
+        specifier: ^0.7.1
+        version: 0.7.1
+      clsx:
+        specifier: ^2.1.1
+        version: 2.1.1
+      date-fns:
+        specifier: ^4.1.0
+        version: 4.1.0
+      dotenv:
+        specifier: ^16.4.7
+        version: 16.5.0
+      dotenv-expand:
+        specifier: ^12.0.1
+        version: 12.0.2
+      drizzle-orm:
+        specifier: ^0.40.0
+        version: 0.40.1(@neondatabase/serverless@0.10.4)(@types/pg@8.11.6)(gel@2.1.0)(postgres@3.4.7)
+      framer-motion:
+        specifier: ^12.4.7
+        version: 12.16.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      jiti:
+        specifier: ^2.4.2
+        version: 2.4.2
+      lucide-react:
+        specifier: ^0.511.0
+        version: 0.511.0(react@19.1.0)
+      next:
+        specifier: 15.1.11
+        version: 15.1.11(@babel/core@7.28.4)(babel-plugin-macros@3.1.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(sass@1.99.0)
+      next-auth:
+        specifier: 5.0.0-beta.29
+        version: 5.0.0-beta.29(next@15.1.11(@babel/core@7.28.4)(babel-plugin-macros@3.1.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(sass@1.99.0))(react@19.1.0)
+      next-themes:
+        specifier: ^0.4.4
+        version: 0.4.6(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      papaparse:
+        specifier: ^5.5.3
+        version: 5.5.3
+      postgres:
+        specifier: ^3.4.5
+        version: 3.4.7
+      puppeteer-core:
+        specifier: ^24.40.0
+        version: 24.40.0
+      react:
+        specifier: ^19.0.0
+        version: 19.1.0
+      react-dom:
+        specifier: ^19.0.0
+        version: 19.1.0(react@19.1.0)
+      react-hook-form:
+        specifier: ^7.70.0
+        version: 7.70.0(react@19.1.0)
+      recharts:
+        specifier: ^2.15.3
+        version: 2.15.3(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      server-only:
+        specifier: ^0.0.1
+        version: 0.0.1
+      sonner:
+        specifier: ^2.0.7
+        version: 2.0.7(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      swr:
+        specifier: ^2.3.3
+        version: 2.3.3(react@19.1.0)
+      tailwind-merge:
+        specifier: ^3.3.0
+        version: 3.3.0
+      tailwindcss-animate:
+        specifier: ^1.0.7
+        version: 1.0.7(tailwindcss@3.4.17(ts-node@10.9.2(@types/node@20.17.57)(typescript@5.9.3)))
+      uuid:
+        specifier: ^13.0.0
+        version: 13.0.0
+      zod:
+        specifier: ^3.24.2
+        version: 3.25.49
+    devDependencies:
+      '@next/eslint-plugin-next':
+        specifier: ^15.1.7
+        version: 15.3.3
+      '@testing-library/jest-dom':
+        specifier: ^6.9.1
+        version: 6.9.1
+      '@testing-library/react':
+        specifier: ^16.3.0
+        version: 16.3.0(@testing-library/dom@10.4.1)(@types/react-dom@19.1.5(@types/react@19.1.6))(@types/react@19.1.6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@types/jest':
+        specifier: ^30.0.0
+        version: 30.0.0
+      '@types/node':
+        specifier: ^20
+        version: 20.17.57
+      '@types/react':
+        specifier: ^19
+        version: 19.1.6
+      '@types/react-dom':
+        specifier: ^19
+        version: 19.1.5(@types/react@19.1.6)
+      eslint:
+        specifier: ^9.20.1
+        version: 9.28.0(jiti@2.4.2)
+      eslint-config-next:
+        specifier: 15.1.7
+        version: 15.1.7(eslint@9.28.0(jiti@2.4.2))(typescript@5.9.3)
+      jest:
+        specifier: ^30.2.0
+        version: 30.2.0(@types/node@20.17.57)(babel-plugin-macros@3.1.0)(esbuild-register@3.6.0(esbuild@0.27.2))(ts-node@10.9.2(@types/node@20.17.57)(typescript@5.9.3))
+      jest-environment-jsdom:
+        specifier: ^30.2.0
+        version: 30.2.0
+      postcss:
+        specifier: ^8
+        version: 8.5.10
+      tailwindcss:
+        specifier: ^3.4.1
+        version: 3.4.17(ts-node@10.9.2(@types/node@20.17.57)(typescript@5.9.3))
+      typescript:
+        specifier: ^5
+        version: 5.9.3
 
   packages/application: {}
 

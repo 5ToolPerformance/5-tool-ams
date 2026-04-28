@@ -40,3 +40,30 @@ Required deployment rules:
 `apps/api` still resolves authorization through the shared auth context after
 the token is verified, so existing role, facility, player, and attachment checks
 continue to apply.
+
+## API Cron Ownership
+
+Cron routes are owned by `apps/api`. Deployment schedules for `/api/cron/*`
+belong in the API deployment target, currently `apps/api/vercel.json`, not the
+repo root or `apps/legacy`.
+
+Current scheduled API cron routes:
+
+- `GET /api/cron/armcare-sync`, scheduled daily at `0 7 * * *`
+- `GET /api/cron/weekly-usage-reports`, scheduled Mondays at `0 12 * * 1`
+
+`GET /api/cron/active` is a manually callable health/test endpoint and is not
+scheduled.
+
+All cron endpoints require:
+
+```txt
+Authorization: Bearer <CRON_SECRET>
+```
+
+Required deployment rule:
+
+- `CRON_SECRET` must be configured in the `apps/api` runtime environment.
+- Vercel cron requests must send `Authorization: Bearer ${CRON_SECRET}`.
+- Legacy cron route copies remain only for transition parity and must not be
+  scheduled from root or `apps/legacy` deployment config.

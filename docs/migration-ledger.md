@@ -5,7 +5,7 @@ This ledger tracks copy-first migration status. Source files remain in `apps/leg
 | Surface | Status | Notes |
 | --- | --- | --- |
 | `apps/legacy` | `copied-to-app` | Full current Next.js app copied from the former root structure and retained as the production baseline. |
-| `apps/api` | `copied-to-api` | Legacy API routes copied into `app/api/v1`, with auth and cron kept at compatible top-level paths. |
+| `apps/api` | `copied-to-api` | Legacy API routes copied into `app/api/v1`, with auth and cron kept at compatible top-level paths. Cron deployment ownership now lives with `apps/api`; schedules are defined in `apps/api/vercel.json`. |
 | `apps/portal` | `copied-to-portal` | Portal route tree and portal UI/hooks copied into the standalone app; shared layers resolve through packages. |
 | `apps/ams` | `copied-to-ams` | Non-portal route tree copied into the standalone app; shared layers resolve through packages. |
 | `packages/domain` | `copied-to-package` | Legacy domain source copied into the package with package entrypoints and subpath imports enabled; the package now uses domain-owned contracts and local utilities instead of DB query types, DB schema aliases, or contracts/app compatibility aliases, and the `positions` slice exposes only domain-owned types while persistence lives in `packages/db`. |
@@ -16,6 +16,7 @@ This ledger tracks copy-first migration status. Source files remain in `apps/leg
 | `packages/permissions` | `copied-to-package` | Initial pure authorization helpers are now extracted from `packages/auth`; the package owns shared role/facility/resource authorization decisions without DB access and currently passes full-package lint/typecheck in its migrated form. |
 | `packages/config` | `copied-to-package` | Legacy env parsing copied into the shared config package. |
 | `packages/observability` | `legacy-only` | Observability layer scaffolded only. |
+| Hawkin automatic integration | `retired` | Hawkin sync, unlinked-athlete matching, and new Hawkin external-athlete mapping creation are disabled. Historical Hawkin tables/data remain preserved for read-only reporting/display paths. See `docs/ops/hawkin-retirement.md`. |
 
 ## Rules
 
@@ -31,3 +32,5 @@ This ledger tracks copy-first migration status. Source files remain in `apps/leg
 - `packages/db` is now protected against regressing to legacy `@/domain/*`, `@/utils/*`, and `@/types/*` compatibility aliases; explicit `@ams/domain/*` imports and package-local helpers/types are required there.
 - The root ESLint config now prebuilds the Nx ProjectGraph with plugin isolation disabled, which avoids the local plugin-worker startup failure and keeps `@nx/enforce-module-boundaries` active for migrated apps/packages.
 - With the Nx rule now active, `packages/auth` is now aligned with the target dependency graph; DB-backed actor/resource lookups are app-owned, while the shared package owns session/auth utility logic plus permission enforcement.
+- Cron schedules are API-owned. Root and `apps/legacy` Vercel configs intentionally do not schedule `/api/cron/*`; legacy cron route copies remain only for parity until legacy retirement.
+- Hawkin automatic sync is retired. Do not reintroduce Hawkin import jobs, Python worker calls, or active Hawkin matching UI without a new architecture review.

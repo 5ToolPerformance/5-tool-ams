@@ -42,6 +42,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    if (externalSystem === "hawkin") {
+      return NextResponse.json(
+        { error: "Hawkin automatic integration is disabled" },
+        { status: 410 }
+      );
+    }
+
     // Prevent duplicate links
     const existing = await db
       .select()

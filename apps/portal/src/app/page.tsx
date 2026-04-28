@@ -14,6 +14,8 @@ import { formatDateShort } from "@/utils/dates";
 import { PortalMagicLinkCard } from "@/ui/features/client-portal/PortalMagicLinkCard";
 import { PortalPlayerSwitcher } from "@/ui/features/client-portal/PortalPlayerSwitcher";
 
+export const dynamic = "force-dynamic";
+
 export default async function PortalHomePage({
   searchParams,
 }: {

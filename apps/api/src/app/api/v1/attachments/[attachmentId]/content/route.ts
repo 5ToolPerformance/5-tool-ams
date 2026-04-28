@@ -29,6 +29,7 @@ export async function GET(
     const [record] = await db
       .select({
         attachmentId: attachments.id,
+        type: attachments.type,
         storageKey: attachmentFiles.storageKey,
       })
       .from(attachments)
@@ -50,6 +51,13 @@ export async function GET(
       return NextResponse.json(
         { error: "Attachment has no file" },
         { status: 404 }
+      );
+    }
+
+    if (record.type !== "file_csv") {
+      return NextResponse.json(
+        { error: "Attachment content is only available for CSV files" },
+        { status: 400 }
       );
     }
 

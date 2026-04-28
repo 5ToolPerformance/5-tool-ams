@@ -1,11 +1,12 @@
 import { v4 as uuidv4 } from "uuid";
 
+import {
+  assertAllowedDrillFile,
+  buildDrillStorageKey,
+} from "@/application/files/fileUploadPolicy";
 import { AzureBlobStorage } from "@/application/storage/azureBlobStorage";
 import { createDrillFileLink } from "@ams/db/queries/drills/createDrillFileLink";
-import { isImageMime, isVideoMime } from "@ams/domain/drills/rules";
 import { DrillMediaItem } from "@ams/domain/drills/types";
-
-const MAX_FILE_SIZE_BYTES = 500 * 1024 * 1024;
 
 type UploadDrillFileParams = {
   drillId: string;
@@ -24,24 +25,15 @@ export async function uploadDrillFile(
 ): Promise<DrillMediaItem> {
   const { drillId, facilityId, uploadedBy, file } = params;
 
-  if (file.size > MAX_FILE_SIZE_BYTES) {
-    throw new Error("File too large");
-  }
-
-  if (!isImageMime(file.mimeType) && !isVideoMime(file.mimeType)) {
-    throw new Error("Only image and video files are allowed");
-  }
+  const extension = assertAllowedDrillFile(file);
 
   const fileId = uuidv4();
-  const extension = file.originalFileName.split(".").pop() ?? "bin";
-  const storageKey = [
-    "drills",
-    "facility",
+  const storageKey = buildDrillStorageKey({
     facilityId,
-    "drill",
     drillId,
-    `${fileId}.${extension}`,
-  ].join("/");
+    fileId,
+    extension,
+  });
 
   const storage = new AzureBlobStorage();
   await storage.uploadFile({

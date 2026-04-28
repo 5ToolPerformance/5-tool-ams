@@ -9,6 +9,10 @@ import { eq } from "drizzle-orm";
 
 export const runtime = "nodejs";
 
+function safeHeaderFileName(fileName: string) {
+  return fileName.replace(/[\r\n"]/g, "_");
+}
+
 function buildHeaders(
   response: Response,
   fallback: { mimeType?: string | null; fileSizeBytes?: number | null; fileName?: string | null }
@@ -40,7 +44,7 @@ function buildHeaders(
   if (fallback.fileName) {
     headers.set(
       "Content-Disposition",
-      `inline; filename="${fallback.fileName}"`
+      `inline; filename="${safeHeaderFileName(fallback.fileName)}"`
     );
   }
   headers.set("Cache-Control", "no-store");

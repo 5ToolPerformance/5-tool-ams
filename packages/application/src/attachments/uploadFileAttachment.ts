@@ -1,5 +1,9 @@
 // application/attachments/uploadFileAttachment.ts
 
+import {
+    assertAllowedAttachmentFile,
+    AttachmentFileType,
+} from "@/application/files/fileUploadPolicy";
 import { AzureBlobStorage } from "@/application/storage/azureBlobStorage";
 import db from "@ams/db";
 import { attachmentFiles, attachments } from "@ams/db/schema";
@@ -19,7 +23,7 @@ interface UploadFileAttachmentParams {
         fileSizeBytes: number;
     };
 
-    type: "file_csv" | "file_video" | "file_image" | "file_pdf" | "file_docx";
+    type: AttachmentFileType;
     source: string;
     evidenceCategory?: string;
     visibility?: "internal" | "private" | "public";
@@ -57,8 +61,11 @@ export async function uploadFileAttachment(
     const attachmentId = uuidv4();
 
     // 2️⃣ Generate storage key
-    const extension =
-        file.originalFileName.split(".").pop() ?? "bin";
+    const extension = assertAllowedAttachmentFile(type, {
+        originalFileName: file.originalFileName,
+        mimeType: file.mimeType,
+        size: file.fileSizeBytes,
+    });
 
     const storageKey = [
         "attachments",

@@ -26,6 +26,7 @@ export async function POST(
 
     const media = await linkUploadedDrillFile({
       drillId: id,
+      facilityId: ctx.facilityId,
       uploadedBy: ctx.userId,
       file: {
         fileId: body.fileId ?? "",

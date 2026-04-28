@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
+import { assertAllowedAttachmentFile } from "@ams/application/files/fileUploadPolicy";
 import { uploadFileAttachment } from "@ams/application/attachments/uploadFileAttachment";
 import {
   assertPlayerAccess,
@@ -117,53 +118,15 @@ export async function POST(request: NextRequest) {
     // ---------------------------------------------------------------------
     // 3. File validation
     // ---------------------------------------------------------------------
-    const MAX_FILE_SIZE_BYTES = 500 * 1024 * 1024; // 500MB
-
-    if (file.size > MAX_FILE_SIZE_BYTES) {
-      return NextResponse.json({ error: "File too large" }, { status: 400 });
-    }
-
-    if (
-      type === "file_csv" &&
-      !file.type.includes("csv") &&
-      !file.name.endsWith(".csv")
-    ) {
-      return NextResponse.json({ error: "Invalid CSV file" }, { status: 400 });
-    }
-
-    if (type === "file_video" && !file.type.startsWith("video/")) {
+    try {
+      assertAllowedAttachmentFile(type, {
+        originalFileName: file.name,
+        mimeType: file.type || "application/octet-stream",
+        size: file.size,
+      });
+    } catch (error) {
       return NextResponse.json(
-        { error: "Invalid video file" },
-        { status: 400 }
-      );
-    }
-
-    if (type === "file_image" && !file.type.startsWith("image/")) {
-      return NextResponse.json(
-        { error: "Invalid image file" },
-        { status: 400 }
-      );
-    }
-
-    if (
-      type === "file_pdf" &&
-      file.type !== "application/pdf" &&
-      !file.name.endsWith(".pdf")
-    ) {
-      return NextResponse.json(
-        { error: "Invalid PDF file" },
-        { status: 400 }
-      );
-    }
-
-    if (
-      type === "file_docx" &&
-      file.type !==
-        "application/vnd.openxmlformats-officedocument.wordprocessingml.document" &&
-      !file.name.endsWith(".docx")
-    ) {
-      return NextResponse.json(
-        { error: "Invalid DOCX file" },
+        { error: error instanceof Error ? error.message : "Invalid file" },
         { status: 400 }
       );
     }

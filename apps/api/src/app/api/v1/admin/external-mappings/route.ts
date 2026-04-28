@@ -35,6 +35,13 @@ export async function POST(request: NextRequest) {
     const { playerId, externalSystem, externalId, externalEmail } =
       await request.json();
 
+    if (externalSystem === "hawkin") {
+      return NextResponse.json(
+        { error: "Hawkin automatic integration is disabled" },
+        { status: 410 }
+      );
+    }
+
     const [mapping] = await db
       .insert(externalAthleteIds)
       .values({
