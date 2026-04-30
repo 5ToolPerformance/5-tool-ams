@@ -1,7 +1,7 @@
 import chromium from "@sparticuz/chromium";
 import puppeteer from "puppeteer-core";
 
-import { env } from "@ams/config/env/server";
+import { env } from "@ams/config/env/pdf";
 
 function isRemotePdfRuntime() {
   const runtimeEnv = globalThis.process?.env;

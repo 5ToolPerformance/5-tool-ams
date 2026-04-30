@@ -1,4 +1,4 @@
-import { env } from "@ams/config/env/server";
+import { env } from "@ams/config/env/portal-email";
 
 export async function sendClientInviteEmail(input: {
   email: string;

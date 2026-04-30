@@ -34,19 +34,6 @@ export const env = createEnv({
     AUTH_MICROSOFT_ENTRA_ID_ID: requiredString("test-microsoft-id"),
     AUTH_MICROSOFT_ENTRA_ID_SECRET: requiredString("test-microsoft-secret"),
     AUTH_MICROSOFT_ENTRA_ID_ISSUER: requiredUrl("https://login.microsoftonline.com/test/v2.0"),
-    CRON_SECRET: requiredString("test-cron-secret"),
-    PORTAL_APP_URL: requiredUrl("https://portal.example.com"),
-    PORTAL_EMAIL_API_KEY: isTestEnv
-      ? z.string().default("test-resend-key")
-      : z.string(),
-    PORTAL_EMAIL_FROM: isTestEnv
-      ? z.string().email().default("portal@example.com")
-      : z.string().email(),
-    AZURE_STORAGE_ACCOUNT_NAME: requiredString("teststorage"),
-    AZURE_STORAGE_CONNECTION_STRING: requiredString(
-      "DefaultEndpointsProtocol=https;AccountName=teststorage;AccountKey=dGVzdA==;EndpointSuffix=core.windows.net"
-    ),
-    AZURE_STORAGE_CONTAINER_NAME: requiredString("attachments"),
     PUPPETEER_EXECUTABLE_PATH: z.string().optional(),
   },
   onValidationError: (error) => {

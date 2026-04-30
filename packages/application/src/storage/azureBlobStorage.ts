@@ -1,4 +1,4 @@
-import { env } from "@ams/config/env/server";
+import { env } from "@ams/config/env/azure";
 import {
   BlobSASPermissions,
   BlobServiceClient,

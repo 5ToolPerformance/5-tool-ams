@@ -35,19 +35,6 @@ export const env = createEnv({
     API_INTERNAL_AUTH_SECRET: isTestEnv
       ? z.string().min(32).default("test-internal-api-secret-with-32-chars")
       : z.string().min(32),
-    PORTAL_APP_URL: requiredUrl("https://portal.example.com"),
-    PORTAL_EMAIL_API_KEY: isTestEnv
-      ? z.string().default("test-resend-key")
-      : z.string(),
-    PORTAL_EMAIL_FROM: isTestEnv
-      ? z.string().email().default("portal@example.com")
-      : z.string().email(),
-    AZURE_STORAGE_ACCOUNT_NAME: requiredString("teststorage"),
-    AZURE_STORAGE_CONNECTION_STRING: requiredString(
-      "DefaultEndpointsProtocol=https;AccountName=teststorage;AccountKey=dGVzdA==;EndpointSuffix=core.windows.net"
-    ),
-    AZURE_STORAGE_CONTAINER_NAME: requiredString("attachments"),
-    PUPPETEER_EXECUTABLE_PATH: z.string().optional(),
   },
   onValidationError: (error) => {
     console.error("Invalid portal environment variables:", error);
