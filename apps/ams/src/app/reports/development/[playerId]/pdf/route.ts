@@ -93,7 +93,7 @@ export async function GET(
       data.discipline.label
     )}.pdf`;
 
-    return new NextResponse(pdf, {
+    return new NextResponse(Buffer.from(pdf), {
       status: 200,
       headers: {
         "Content-Type": "application/pdf",
