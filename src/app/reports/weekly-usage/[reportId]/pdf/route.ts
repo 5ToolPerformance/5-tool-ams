@@ -77,7 +77,7 @@ export async function GET(
       report.reportData.scope.facilityName ?? "facility"
     )}-${slugify(report.reportData.range.label)}.pdf`;
 
-    return new NextResponse(pdf, {
+    return new NextResponse(Buffer.from(pdf), {
       status: 200,
       headers: {
         "Content-Type": "application/pdf",
