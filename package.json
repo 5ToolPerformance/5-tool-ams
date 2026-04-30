@@ -5,7 +5,7 @@
   "scripts": {
     "nx": "powershell -NoProfile -Command \"$env:NX_ISOLATE_PLUGINS='false'; $env:NX_DAEMON='false'; nx $args\"",
     "dev": "next dev apps/legacy",
-    "build": "next build apps/legacy",
+    "build": "echo \"Do not run root build. Configure Vercel with an app root and run pnpm build, or use pnpm --filter @ams/ams build, pnpm --filter @ams/portal build, or pnpm --filter @ams/api build.\" && exit 1",
     "start": "next start apps/legacy",
     "dev:legacy": "next dev apps/legacy",
     "build:legacy": "next build apps/legacy",
@@ -20,6 +20,7 @@
     "lint:all": "powershell -NoProfile -Command \"$env:NX_ISOLATE_PLUGINS='false'; $env:NX_DAEMON='false'; eslint .\"",
     "test:all": "powershell -NoProfile -Command \"pnpm test; if ($LASTEXITCODE) { exit $LASTEXITCODE }; pnpm --dir apps/api test; if ($LASTEXITCODE) { exit $LASTEXITCODE }; pnpm --dir apps/ams test; if ($LASTEXITCODE) { exit $LASTEXITCODE }; pnpm --dir apps/portal test\"",
     "build:all": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/build-all.ps1",
+    "build:deployables": "pnpm --filter @ams/ams build && pnpm --filter @ams/portal build && pnpm --filter @ams/api build",
     "drizzle:generate": "pnpm --dir packages/db exec drizzle-kit generate --config drizzle.config.ts",
     "drizzle:migrate": "pnpm --dir packages/db exec drizzle-kit migrate --config drizzle.config.ts",
     "drizzle:push": "pnpm --dir packages/db exec drizzle-kit push --config drizzle.config.ts",
