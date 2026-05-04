@@ -2,23 +2,28 @@
 
 # 5 Tool Performance – Athlete Management System
 
-> **Internal project**: This repository is private and intended solely for the 5 Tool Performance engineering and coaching teams.
+> **Internal project**: This repository is private and intended solely for the 5 Tool Performance engineering and coaching teams. This is the legacy codebase.
 
 A full-stack platform for coaches and admins to manage athletes, capture lesson data, track assessments, and sync external Arm Care data. The project is built on Next.js App Router with a typed Drizzle ORM/Postgres backend, NextAuth authentication, and HeroUI components for the interface.
 
 ## Table of Contents
 
-1. [Feature Highlights](#feature-highlights)
-2. [Architecture](#architecture)
-3. [Project Structure](#project-structure)
-4. [Getting Started](#getting-started)
-5. [Environment Variables](#environment-variables)
-6. [Development Workflow](#development-workflow)
-7. [Database & Migrations](#database--migrations)
-8. [Scheduled Jobs](#scheduled-jobs)
-9. [Testing & Quality](#testing--quality)
-10. [Deployment](#deployment)
-11. [Contributing](#contributing)
+- [5 Tool Performance – Athlete Management System](#5-tool-performance--athlete-management-system)
+  - [Table of Contents](#table-of-contents)
+  - [Feature Highlights](#feature-highlights)
+  - [Architecture](#architecture)
+  - [Project Structure](#project-structure)
+  - [Getting Started](#getting-started)
+    - [Prerequisites](#prerequisites)
+    - [Installation](#installation)
+    - [Running locally](#running-locally)
+  - [Environment Variables](#environment-variables)
+  - [Development Workflow](#development-workflow)
+  - [Database \& Migrations](#database--migrations)
+  - [Scheduled Jobs](#scheduled-jobs)
+  - [Testing \& Quality](#testing--quality)
+  - [Deployment](#deployment)
+  - [Contributing](#contributing)
 
 ---
 
