@@ -7,7 +7,8 @@ import MicrosoftEntraID from "next-auth/providers/microsoft-entra-id";
 import {
   applyActorToSession,
   applyActorToToken,
-  loadAuthSessionState,
+  clearActorTokenClaims,
+  loadAuthSessionStateSafely,
 } from "@ams/auth";
 import { createAuthSessionQueries } from "@ams/application/auth/db-queries";
 import db from "@ams/db";
@@ -17,21 +18,44 @@ import { env } from "@/env/server";
 
 const authSessionQueries = createAuthSessionQueries();
 
-async function canUseGoogleSignIn(email: string) {
-  const [allowed] = await db
-    .select({ id: allowedUsers.id })
-    .from(allowedUsers)
-    .where(
-      and(
-        eq(allowedUsers.email, email),
-        eq(allowedUsers.provider, "google"),
-        eq(allowedUsers.status, "active"),
-        eq(allowedUsers.organizationId, DEFAULT_ORGANIZATION_ID)
-      )
-    )
-    .limit(1);
+function sanitizeCallbackError(error: unknown) {
+  if (!(error instanceof Error)) {
+    return { name: "UnknownError" };
+  }
 
-  return Boolean(allowed);
+  return {
+    name: error.name,
+    message: error.message.replace(
+      /postgres(?:ql)?:\/\/[^\s"'<>]+/gi,
+      "postgres://[redacted]"
+    ),
+  };
+}
+
+async function canUseGoogleSignIn(email: string) {
+  try {
+    const [allowed] = await db
+      .select({ id: allowedUsers.id })
+      .from(allowedUsers)
+      .where(
+        and(
+          eq(allowedUsers.email, email),
+          eq(allowedUsers.provider, "google"),
+          eq(allowedUsers.status, "active"),
+          eq(allowedUsers.organizationId, DEFAULT_ORGANIZATION_ID)
+        )
+      )
+      .limit(1);
+
+    return Boolean(allowed);
+  } catch (error) {
+    console.error("auth.sign_in_allowed_user_lookup_failed", {
+      provider: "google",
+      error: sanitizeCallbackError(error),
+    });
+
+    return false;
+  }
 }
 
 const asString = (value: unknown): string | undefined =>
@@ -81,9 +105,12 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
         return token;
       }
 
-      const state = await loadAuthSessionState(tokenUserId, authSessionQueries);
+      const state = await loadAuthSessionStateSafely(
+        tokenUserId,
+        authSessionQueries
+      );
       if (!state) {
-        return token;
+        return clearActorTokenClaims(token);
       }
 
       return applyActorToToken(token, state);

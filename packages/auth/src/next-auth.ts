@@ -21,6 +21,42 @@ export type AuthSessionState = {
   playerId: string | null;
 };
 
+export type AuthSessionLogger = {
+  error(message: string, context?: Record<string, unknown>): void;
+};
+
+function sanitizeError(error: unknown) {
+  if (!(error instanceof Error)) {
+    return {
+      name: "UnknownError",
+      message: "Unknown auth session lookup error",
+    };
+  }
+
+  return {
+    name: error.name,
+    message: redactErrorMessage(error.message),
+    code:
+      "code" in error && typeof error.code === "string"
+        ? error.code
+        : undefined,
+    cause:
+      error.cause instanceof Error
+        ? {
+            name: error.cause.name,
+            message: redactErrorMessage(error.cause.message),
+          }
+        : undefined,
+  };
+}
+
+function redactErrorMessage(message: string) {
+  return message.replace(
+    /postgres(?:ql)?:\/\/[^\s"'<>]+/gi,
+    "postgres://[redacted]"
+  );
+}
+
 export async function loadAuthSessionState(
   userId: string,
   queries: AuthSessionQueries
@@ -39,6 +75,37 @@ export async function loadAuthSessionState(
     actor: buildActor(identity, memberships),
     playerId,
   };
+}
+
+export async function loadAuthSessionStateSafely(
+  userId: string,
+  queries: AuthSessionQueries,
+  logger: AuthSessionLogger = console
+): Promise<AuthSessionState | null> {
+  try {
+    return await loadAuthSessionState(userId, queries);
+  } catch (error) {
+    logger.error("auth.session_lookup_failed", {
+      userId,
+      error: sanitizeError(error),
+    });
+
+    return null;
+  }
+}
+
+export function clearActorTokenClaims(token: JWT) {
+  delete token.actor;
+  delete token.systemRole;
+  delete token.memberships;
+  delete token.role;
+  delete token.portalRole;
+  delete token.isPortalClient;
+  delete token.facilityId;
+  delete token.access;
+  delete token.playerId;
+
+  return token;
 }
 
 export function applyActorToToken(

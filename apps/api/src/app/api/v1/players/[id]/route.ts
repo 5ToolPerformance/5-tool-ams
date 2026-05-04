@@ -72,6 +72,9 @@ export async function PATCH(
       message: "Player updated successfully",
     });
   } catch (error) {
+    const authResponse = toAuthErrorResponse(error);
+    if (authResponse) return authResponse;
+
     console.error("Error updating player by id:", error);
 
     return NextResponse.json(
