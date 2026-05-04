@@ -34,6 +34,7 @@ function toSessionLookup(session: Awaited<ReturnType<SessionGetter>>): SessionLo
   return {
     userId: session?.user?.id ?? null,
     email: session?.user?.email?.toLowerCase() ?? null,
+    issuer: session?.user?.issuer ?? null,
   };
 }
 

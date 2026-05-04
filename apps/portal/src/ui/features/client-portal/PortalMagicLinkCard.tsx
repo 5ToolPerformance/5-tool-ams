@@ -7,7 +7,7 @@ import { signIn } from "next-auth/react";
 
 export function PortalMagicLinkCard({
   email: initialEmail = "",
-  callbackUrl = "/portal",
+  callbackUrl = "/",
   readOnly = false,
   title = "Client Portal",
   description = "Enter your email and we'll send a secure magic link.",

@@ -597,9 +597,10 @@ Here’s a **copy-paste-ready markdown section** you can append to your Codex co
 
 ## Routing Strategy and App Structure (Important)
 
-The current AMS app is **NOT being refactored** to move all internal routes into an `/internal` folder.
+The Portal app is now a standalone client-facing app rooted at `/`.
 
-Instead, we are introducing the client portal as a **new route surface** under `/portal` while leaving all existing routes unchanged.
+The internal AMS app remains separate. Do not copy AMS/internal route handlers,
+pages, or proxy surfaces into Portal.
 
 ### Current Structure (Do NOT refactor existing routes)
 
@@ -607,44 +608,37 @@ Instead, we are introducing the client portal as a **new route surface** under `
 app/
   layout.tsx
   page.tsx
-  players/
-  lessons/
-  evaluations/
-  ...
-  portal/
-    layout.tsx
-    page.tsx
-    journal/
-    messages/
-    assistant/
-    settings/
+  journal/
+  messages/
+  assistant/
+  settings/
+  invite/
+    [token]/
+  api/
+    auth/
+    portal/
 ```
 ````
 
 ### URL Structure
 
-- Internal app (existing routes):
+- Client portal routes:
 
-  - `/players`
-  - `/lessons`
-  - `/evaluations`
-
-- Client portal (new routes):
-
-  - `/portal`
-  - `/portal/journal`
-  - `/portal/messages`
-  - `/portal/assistant`
-  - `/portal/settings`
+  - `/`
+  - `/journal`
+  - `/messages`
+  - `/assistant`
+  - `/settings`
+  - `/invite/[token]`
 
 ---
 
 ## Why This Approach Is Being Used
 
-- Avoids risky refactor of existing internal routes
-- Keeps development velocity high
-- Establishes a clean product boundary without breaking anything
-- Allows future migration to `/internal` or a separate app if needed
+- Keeps Portal deployed as its own root-based app
+- Establishes a clean product boundary from AMS
+- Avoids exposing AMS/internal route surfaces to client users
+- Keeps the client-facing URL structure simple
 
 ---
 
@@ -663,19 +657,20 @@ Important behavior:
 - Route groups are **not included in the URL**
 - They are only for organization and layout separation ([Next.js][1])
 
-We are NOT using route groups here because:
+Route groups may be used only for organization. They must not change the
+public standalone Portal URLs.
 
-- We WANT `/portal` to be a real URL segment
-- We are not reorganizing internal routes right now
-- We want a clear product boundary between internal and client-facing surfaces
+- The Portal landing page is `/`
+- Client-facing pages are root-based
+- API route handlers may still use `/api/portal/*` as a client-safe namespace
 
 ---
 
 ## Portal Layout Requirements
 
-The `/portal` route must have a completely separate layout from the internal app.
+The Portal root layout must be completely separate from the internal AMS app.
 
-### `app/portal/layout.tsx` must:
+### `app/layout.tsx` must:
 
 - Be mobile-first
 - Include fixed bottom navigation
@@ -687,11 +682,11 @@ The `/portal` route must have a completely separate layout from the internal app
 
 ## Separation Rules (Critical)
 
-Even though both internal and portal routes live in the same app:
+Because Portal is standalone:
 
 ### DO NOT:
 
-- Reuse internal pages directly inside `/portal`
+- Reuse internal AMS pages directly inside Portal
 - Expose internal-only data to client views
 - Assume internal UI patterns apply to portal
 
@@ -700,7 +695,7 @@ Even though both internal and portal routes live in the same app:
 - Create portal-specific UI components
 - Use shared query/domain logic where safe
 - Enforce access through `player_client_access`
-- Treat `/portal` as a separate product surface
+- Treat Portal as a separate product surface
 
 ---
 
@@ -708,7 +703,7 @@ Even though both internal and portal routes live in the same app:
 
 Routing alone does NOT enforce security.
 
-All `/portal` routes must:
+All Portal routes must:
 
 - Require authenticated users
 - Require `client` role via `user_roles`
@@ -728,16 +723,12 @@ Internal routes should continue to require:
 
 This structure is intentionally designed to allow:
 
-- Future migration to:
-
-  - `app/internal/` OR
-  - separate frontend apps (internal vs portal)
-
-- Shared backend (DB + API) with multiple frontend surfaces
+- Shared backend packages with multiple frontend surfaces
+- Portal-specific API routes and server actions that remain client-safe
 
 For now:
 
-> Treat `/portal` as a separate product inside the same app.
+> Treat Portal as a separate standalone client-facing app.
 
 ---
 
@@ -757,7 +748,7 @@ NOT by folder restructuring.
 ## Summary for Codex
 
 - Do NOT move existing routes
-- Add new client portal under `/portal`
+- Keep client portal routes rooted at `/`
 - Build portal as a mobile-first experience
 - Use a dedicated layout and navigation system
 - Enforce access via `player_client_access`

@@ -180,7 +180,7 @@ export function JournalPageClient({
     } else {
       params.set("filter", nextFilter);
     }
-    router.push(`/portal/journal?${params.toString()}`);
+    router.push(`/journal?${params.toString()}`);
   }
 
   function openCreate(entryType: "throwing" | "hitting") {

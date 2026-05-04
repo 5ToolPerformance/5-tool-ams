@@ -1,6 +1,7 @@
 export type SessionUserLike = {
   id?: string | null;
   email?: string | null;
+  issuer?: "ams" | "portal" | null;
 };
 
 export type SessionLike = {

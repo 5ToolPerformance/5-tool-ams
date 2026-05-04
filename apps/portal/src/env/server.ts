@@ -31,10 +31,6 @@ export const env = createEnv({
       ? z.string().email().default("portal@example.com")
       : z.string().email(),
     DATABASE_URL: requiredUrl("postgres://user:pass@localhost:5432/ams"),
-    API_BASE_URL: requiredUrl("http://api.test"),
-    API_INTERNAL_AUTH_SECRET: isTestEnv
-      ? z.string().min(32).default("test-internal-api-secret-with-32-chars")
-      : z.string().min(32),
   },
   onValidationError: (error) => {
     console.error("Invalid portal environment variables:", error);

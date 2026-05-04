@@ -22,8 +22,8 @@ variables to exist.
 | `NEXTAUTH_URL` | none | no | no | no | Legacy-style variable; not required by current Auth.js v5 setup. |
 | `AUTH_TRUST_HOST` | AMS, Portal Auth.js runtime | no | no | no | Vercel is auto-detected by Auth.js. Set to `true` only for self-hosted/reverse-proxy deployments if needed. |
 | `AUTH_REDIRECT_PROXY_URL` | AMS OAuth preview support | no | no | no | Optional for stable OAuth redirect proxy support on preview deployments. |
-| `API_BASE_URL` | AMS, Portal API proxy | yes | yes | no | Server-only base URL used by app-local proxy clients to call `apps/api`. |
-| `API_INTERNAL_AUTH_SECRET` | AMS, Portal, API | yes | yes | yes | Shared HMAC secret for signed internal API calls. Must match across all three apps and be at least 32 characters. |
+| `API_BASE_URL` | AMS API proxy | yes | no | no | Server-only base URL used by AMS app-local proxy clients to call `apps/api`. Portal must use portal-owned routes/use cases, not AMS/internal API proxies. |
+| `API_INTERNAL_AUTH_SECRET` | AMS, API | yes | no | yes | Shared HMAC secret for signed AMS-to-API calls. Must match AMS/API and be at least 32 characters. Portal must not own this secret. |
 | `CRON_SECRET` | API | no | no | yes | Protects API cron route invocations. |
 | `PORTAL_APP_URL` | API / portal email config | no | no | yes | Used when API sends portal invite links. |
 | `PORTAL_EMAIL_API_KEY` | API / portal email config | no | no | yes | API-owned transactional email key for portal invite/notification workflows. |
@@ -35,7 +35,7 @@ variables to exist.
 | `ARMCARE_API_URL_STAGING` | API / ArmCare config | no | no | yes | Staging API endpoint. |
 | `ARMCARE_AUTH_URL_PROD` | API / ArmCare config | no | no | yes | Production auth endpoint. |
 | `ARMCARE_API_URL_PROD` | API / ArmCare config | no | no | yes | Production API endpoint. |
-| `AZURE_STORAGE_ACCOUNT_NAME` | API / Azure storage config | no | no | yes | API owns direct blob storage access. AMS/Portal proxy file access through API. |
+| `AZURE_STORAGE_ACCOUNT_NAME` | API / Azure storage config | no | no | yes | API owns direct blob storage access. AMS proxies file access through API; Portal must expose only portal-scoped file routes if client file access is enabled. |
 | `AZURE_STORAGE_CONNECTION_STRING` | API / Azure storage config | no | no | yes | API owns direct blob storage access. |
 | `AZURE_STORAGE_CONTAINER_NAME` | API / Azure storage config | no | no | yes | API owns direct blob storage access. |
 | `PUPPETEER_EXECUTABLE_PATH` | AMS PDF runtime | optional | no | optional | Optional local override. Remote/Vercel PDF runtime uses bundled Chromium path. |

@@ -9,8 +9,7 @@ export function PortalLayoutChrome({ children }: { children: React.ReactNode }) 
   const pathname = usePathname();
   const { data: session } = useSession();
   const showNav =
-    pathname.startsWith("/portal") &&
-    !pathname.startsWith("/portal/invite") &&
+    !pathname.startsWith("/invite") &&
     Boolean(session?.user?.isPortalClient);
 
   return (

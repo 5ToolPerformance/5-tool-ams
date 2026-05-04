@@ -102,7 +102,8 @@ The implementation should:
 
 - The Drizzle schema files for the journal tables are already implemented.
 - Auth and client portal user identity already exist.
-- There is already a portal route area, likely something like `app/portal/...`.
+- The Portal app is standalone-rooted. Client pages live under root routes such
+  as `/`, `/journal`, `/assistant`, `/messages`, `/settings`, and `/invite/[token]`.
 - Players and parents only see journal data for the player(s) they are allowed to access.
 - Coaches/admins may later need broader views, but this initial UI is for the client portal.
 - Existing project patterns for queries, mutations, and route handlers should be followed where practical.
@@ -519,12 +520,11 @@ They should:
 
 Implement the journal page in the client portal.
 
-Suggested route:
+Route:
 
-- `app/portal/[playerId]/journal/page.tsx`
-  or whatever portal route structure already exists
+- `app/journal/page.tsx`
 
-Use the real project route conventions rather than forcing this exact path.
+Use `playerId` query params for selected-player state when needed.
 
 ## Main Journal Page
 
@@ -700,7 +700,7 @@ Follow existing project standards.
 - keep cards and forms clean, simple, and readable
 - no overdesigned internal-tool look
 - should feel appropriate for parents and players
-- keep components mobile first for all components that will be used in /portal route
+- keep components mobile first for all components used in Portal routes
 
 ## Accessibility
 

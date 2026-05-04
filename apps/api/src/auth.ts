@@ -5,7 +5,9 @@ import type { SessionLike } from "@ams/auth/session";
 
 import { env } from "@/env/server";
 
-const INTERNAL_API_ISSUERS = new Set(["ams", "portal"]);
+export type InternalApiIssuer = "ams" | "portal";
+
+const INTERNAL_API_ISSUERS: InternalApiIssuer[] = ["ams", "portal"];
 const INTERNAL_API_AUDIENCE = "api";
 
 // Legacy identity headers are intentionally rejected. User identity must come
@@ -39,18 +41,20 @@ export async function auth(): Promise<SessionLike> {
     return null;
   }
 
-  const issuerVerifiedPayloads = [...INTERNAL_API_ISSUERS].map((issuer) =>
-    verifyInternalApiToken({
+  const issuerVerifiedPayloads = INTERNAL_API_ISSUERS.map((issuer) => {
+    const payload = verifyInternalApiToken({
       token,
       secret: env.API_INTERNAL_AUTH_SECRET,
       expectedIssuer: issuer,
       expectedAudience: INTERNAL_API_AUDIENCE,
-    })
-  );
+    });
 
-  const payload = issuerVerifiedPayloads.find(Boolean);
-  const userId = payload?.sub ?? null;
-  const email = payload?.email ?? null;
+    return payload ? { issuer, payload } : null;
+  });
+
+  const verified = issuerVerifiedPayloads.find(Boolean);
+  const userId = verified?.payload.sub ?? null;
+  const email = verified?.payload.email ?? null;
 
   if (!userId && !email) {
     return null;
@@ -60,6 +64,7 @@ export async function auth(): Promise<SessionLike> {
     user: {
       id: userId,
       email,
+      issuer: verified?.issuer ?? null,
     },
   };
 }

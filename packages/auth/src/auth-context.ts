@@ -23,6 +23,7 @@ export { assertFacilityAccess, requireRole } from "@ams/permissions";
 
 export type AuthContext = {
   userId: string;
+  issuer: "ams" | "portal" | null;
   role: AppRole;
   facilityId: string;
   playerId: string | null;
@@ -34,6 +35,7 @@ export type AuthContext = {
 export type SessionLookup = {
   userId: string | null;
   email: string | null;
+  issuer: "ams" | "portal" | null;
 };
 
 export type PlayerAccessRecord = {
@@ -90,6 +92,7 @@ function toSessionLookup(session: Awaited<ReturnType<SessionGetter>>): SessionLo
   return {
     userId: session?.user?.id ?? null,
     email: session?.user?.email?.toLowerCase() ?? null,
+    issuer: session?.user?.issuer ?? null,
   };
 }
 
@@ -134,6 +137,7 @@ export function createAuthContextApi({
 
     return {
       userId: dbUser.id,
+      issuer: lookup.issuer,
       role: membership.role,
       facilityId: membership.facilityId,
       playerId: player?.id ?? null,

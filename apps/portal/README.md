@@ -1,3 +1,12 @@
 # Portal App
 
-Scaffold for the standalone portal app. Copy `/portal` routes and portal-owned UI/workflows here while keeping legacy portal traffic live.
+Standalone client portal app. The portal is rooted at `/`, with client-facing routes:
+
+- `/`
+- `/journal`
+- `/assistant`
+- `/messages`
+- `/settings`
+- `/invite/[token]`
+
+Portal API route handlers live under `/api/portal/*`; they are not AMS/internal proxy routes.

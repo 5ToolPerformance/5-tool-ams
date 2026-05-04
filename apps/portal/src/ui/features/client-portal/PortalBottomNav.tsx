@@ -12,11 +12,11 @@ import {
 } from "@tabler/icons-react";
 
 const items = [
-  { href: "/portal", label: "Profile", icon: IconHome2 },
-  { href: "/portal/journal", label: "Journal", icon: IconNotebook },
-  { href: "/portal/messages", label: "Messages", icon: IconMessageCircle },
-  { href: "/portal/assistant", label: "AI", icon: IconBrain },
-  { href: "/portal/settings", label: "Settings", icon: IconSettings },
+  { href: "/", label: "Profile", icon: IconHome2 },
+  { href: "/journal", label: "Journal", icon: IconNotebook },
+  { href: "/messages", label: "Messages", icon: IconMessageCircle },
+  { href: "/assistant", label: "AI", icon: IconBrain },
+  { href: "/settings", label: "Settings", icon: IconSettings },
 ];
 
 export function PortalBottomNav() {
@@ -32,7 +32,7 @@ export function PortalBottomNav() {
           const Icon = item.icon;
           const active =
             pathname === item.href ||
-            (item.href !== "/portal" && pathname.startsWith(`${item.href}/`));
+            (item.href !== "/" && pathname.startsWith(`${item.href}/`));
 
           return (
             <Link

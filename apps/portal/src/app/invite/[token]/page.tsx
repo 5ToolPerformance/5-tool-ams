@@ -31,7 +31,7 @@ export default async function PortalInvitePage({
       token,
       userId: authContext.userId,
     });
-    redirect("/portal");
+    redirect("/");
   }
 
   return (
@@ -64,7 +64,7 @@ export default async function PortalInvitePage({
         <PortalMagicLinkCard
           email={invite.email}
           readOnly
-          callbackUrl={`/portal/invite/${token}`}
+          callbackUrl={`/invite/${token}`}
           title="Secure portal sign-in"
           description="We'll send a magic link to the invited email address so you can accept access securely."
         />

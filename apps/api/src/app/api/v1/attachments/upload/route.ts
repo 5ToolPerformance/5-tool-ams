@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { assertAllowedAttachmentFile } from "@ams/application/files/fileUploadPolicy";
 import { uploadFileAttachment } from "@ams/application/attachments/uploadFileAttachment";
+import { DomainError } from "@ams/domain/errors";
 import {
   assertPlayerAccess,
   getAuthContext,
@@ -167,6 +168,9 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     const authResponse = toAuthErrorResponse(error);
     if (authResponse) return authResponse;
+    if (error instanceof DomainError) {
+      return NextResponse.json({ error: error.message }, { status: 400 });
+    }
     console.error("Attachment upload failed:", error);
 
     return NextResponse.json(

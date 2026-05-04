@@ -33,7 +33,7 @@ export default async function PortalHomePage({
       const acceptedCount = await acceptPendingClientInvitesForUser(session.user.id);
 
       if (acceptedCount > 0) {
-        redirect("/portal");
+        redirect("/");
       }
     }
 
@@ -239,7 +239,7 @@ export default async function PortalHomePage({
         </CardBody>
       </Card>
 
-      <Link href={`/portal/assistant?playerId=${profile.player.id}`}>
+      <Link href={`/assistant?playerId=${profile.player.id}`}>
         <Card className="border border-amber-300/50 bg-amber-50/80 shadow-lg shadow-amber-500/5 dark:border-amber-200/10 dark:bg-amber-500/10">
           <CardBody className="space-y-1 p-5">
             <p className="text-sm font-semibold uppercase tracking-[0.2em] text-amber-700 dark:text-amber-300">

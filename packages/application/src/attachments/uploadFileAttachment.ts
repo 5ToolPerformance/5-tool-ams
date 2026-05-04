@@ -8,6 +8,7 @@ import { AzureBlobStorage } from "@/application/storage/azureBlobStorage";
 import db from "@ams/db";
 import { attachmentFiles, attachments } from "@ams/db/schema";
 import { v4 as uuidv4 } from "uuid";
+import { validateAttachmentLinkage } from "./validateAttachmentLinkage";
 
 interface UploadFileAttachmentParams {
     athleteId: string;
@@ -56,6 +57,13 @@ export async function uploadFileAttachment(
         effectiveDate,
         notes,
     } = params;
+
+    await validateAttachmentLinkage(db, {
+        athleteId,
+        facilityId,
+        lessonPlayerId,
+        evaluationId,
+    });
 
     // 1️⃣ Generate attachment ID early
     const attachmentId = uuidv4();

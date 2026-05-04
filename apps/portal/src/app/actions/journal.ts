@@ -52,7 +52,7 @@ export async function createJournalEntryAction(
       userId: auth.userId,
     });
 
-    revalidatePath("/portal/journal");
+    revalidatePath("/journal");
     return { success: true, data: { id: created.id } };
   } catch (error) {
     return {
@@ -89,7 +89,7 @@ export async function updateJournalEntryAction(
       facilityId: auth.facilityId,
     });
 
-    revalidatePath("/portal/journal");
+    revalidatePath("/journal");
     return { success: true };
   } catch (error) {
     return {
@@ -117,7 +117,7 @@ export async function deleteJournalEntryAction(
       facilityId: auth.facilityId,
     });
 
-    revalidatePath("/portal/journal");
+    revalidatePath("/journal");
     return { success: true };
   } catch (error) {
     return {

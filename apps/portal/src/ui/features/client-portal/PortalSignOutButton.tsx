@@ -10,7 +10,7 @@ export function PortalSignOutButton() {
       variant="flat"
       onPress={() =>
         signOut({
-          callbackUrl: "/portal",
+          callbackUrl: "/",
         })
       }
     >
